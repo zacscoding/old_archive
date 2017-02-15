@@ -87,8 +87,7 @@ public class FeedController {
 				HashTagVO tag = feedService.selectTagByName(tag_name);
 				if(tag == null) {
 					feedService.registerTags(tag_name);
-					i--;
-					break;
+					i--;					
 				} else {
 					feedService.registerRelation(vo.getFeed_no(),tag.getTag_id());
 				}				

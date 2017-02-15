@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd">
+
+	<!-- 공통 기능을 제공할 클래스를 빈으로 등록 -->
+	<bean id="profiler" class="com.faceontalk.controller.Profiler"/>
+	
+	<!-- Aspect 설정 : Advice를 어떤 Pointcut에 적용할 지 설정 -->
+	<aop:config>
+		<aop:aspect id="traceAspect" ref="profiler">
+			<!-- net.madvirus.spring4.chap06 패키지 및 그 하위 패키지에 있는 모든 public 메소드를 Pointcut으로 설정 -->
+			<aop:pointcut id="publicMethod" expression="execution(public * com.faceontalk.controller..*(..))"/>
+			<!-- 위의 pointcut에 Around Advice로 profiler 빈 객체의 trace() 메소드를 적용 -->
+			<aop:around pointcut-ref="publicMethod" method="trace"/>		
+		</aop:aspect>	
+	</aop:config>
+	
+	
+
+</beans>
