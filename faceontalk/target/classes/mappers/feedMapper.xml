@@ -17,6 +17,7 @@
 		limit #{pageStart},#{perPageNum}
 	</select>
 	
+	
 	<!-- 피드 등록 -->
 	<insert id="register">
 	insert into tbl_feed
@@ -24,6 +25,25 @@
 	values
 		(#{user_id_fk}, #{user_name_fk}, #{content},#{file_name})	
 	</insert>
+	
+	<!-- 조회 ( by feed_no) -->
+	<select id="selectByFeedNum" resultType="FeedVO">
+		select
+			*
+		from
+			tbl_feed
+		where 
+			feed_no = #{feed_no}
+	</select>
+	
+	<!-- 수정 -->
+	<update id="update">
+		update tbl_feed set
+			content=#{content}
+		where
+			feed_no=#{feed_no}
+	</update>
+	
 	
 	<!-- 피드 삭제 -->
 	<delete id="remove">
@@ -47,16 +67,18 @@
 		select * from tbl_tag where tag_name = #{tag_name}
 	</select>
 	
+	
 	<!-- 릴레이션 -->
+	<!-- *******************<choose> 다르게 수정해보기**************** -->
 	<insert id="registerRelation">
 		insert into tbl_tagfeedrelations (feed_no,tag_id)
-		values (#{feed_no},
+		values(#{feed_no},
 			<choose>
-		    <when test="tag_id != null">
-		      #{tag_id}
+		    <when test="tag_id > 0">
+		    #{tag_id}		     
 		    </when>	    
 		    <otherwise>
-		      #{last_insert_id()}		      
+		    #{last_insert_id()}		       		      
 		    </otherwise>
 		  	</choose>		
 		 )		

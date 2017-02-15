@@ -8,7 +8,9 @@ public interface FeedDAO {
 //	public List<FeedVO> listFollower(Criteria cri) throws Exception;
 //	public List<FeedVO> listSearch(SearchCriteria cri) throws Exception;
 	public void register(FeedVO vo) throws Exception;	
-	public void remove(Integer feed_no) throws Exception;	
+	public FeedVO selectByFeedNo(Integer feed_no) throws Exception;
+	public void remove(Integer feed_no) throws Exception;
+	public void update(FeedVO vo) throws Exception;
 	public FeedVO getLastInserted() throws Exception;
 	
 	//tag

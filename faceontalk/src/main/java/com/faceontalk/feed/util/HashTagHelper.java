@@ -7,7 +7,6 @@ import java.util.List;
 
 /*
  * TEMP hash tag helper.....
- * 
  */
 public class HashTagHelper {	
 	public static String contents1 ="ㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋ\n해시 태그 테스트\n#해시#태그#테스트#ㅋㅋㅋㅋㅋㅋ";

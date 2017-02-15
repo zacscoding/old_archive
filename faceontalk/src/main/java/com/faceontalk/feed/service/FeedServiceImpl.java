@@ -45,7 +45,7 @@ public class FeedServiceImpl implements FeedService {
 
 	@Override
 	public void registerRelation(Integer feed_no, Integer tag_id) throws Exception {
-		//feedDAO.re
+		feedDAO.registerRelation(feed_no, tag_id);
 	}	
 	
 }

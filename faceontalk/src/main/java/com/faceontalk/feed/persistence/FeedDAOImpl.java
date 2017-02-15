@@ -23,6 +23,11 @@ public class FeedDAOImpl implements FeedDAO {
 	}
 
 	@Override
+	public FeedVO selectByFeedNo(Integer feed_no) throws Exception {
+		return session.selectOne(namespace+".selectByFeedNum", feed_no);		
+	}
+
+	@Override
 	public FeedVO getLastInserted() throws Exception {		
 		return session.selectOne(namespace+".lastInserted");
 	}
@@ -50,6 +55,12 @@ public class FeedDAOImpl implements FeedDAO {
 		paramMap.put("tag_id",tag_id);
 		session.insert(namespace+".registerRelation", paramMap);
 	}
+
+	@Override
+	public void update(FeedVO vo) throws Exception {
+		session.update(namespace+".update", vo);
+	}
+
 	
 	
 //	////////////////////

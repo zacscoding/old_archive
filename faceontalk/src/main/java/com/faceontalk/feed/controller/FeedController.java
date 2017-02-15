@@ -57,26 +57,47 @@ public class FeedController {
 		feedService.register(vo);		
 		List<String> hashTags = HashTagHelper.getAllHashTags(vo.getContent());
 		
+//		//sol1) ---> 이걸로 다시 하기
+//		if(!hashTags.isEmpty()) { //exist hash tag
+//			//새로 삽입된 피드 가져오기(필요한건 feed_no)
+//			vo = feedService.getLastInserted();
+//			for(String tag_name : hashTags) {
+//				logger.info("tag_name : "+tag_name);
+//				//search hashtag 
+//				HashTagVO tag = feedService.selectTagByName(tag_name);
+//				Integer tag_id = null;
+//				if(tag == null) { //not exist					
+//					feedService.registerTags(tag_name);	
+//					tag_id = -1;
+//				} else { //exist
+//					tag_id = tag.getTag_id();
+//				}			
+//				logger.info("vo : "+vo.getFeed_no() + "tag_id : "+tag_id);				
+//				feedService.registerRelation(vo.getFeed_no(),tag_id);
+//			}
+//		}		
+		
+		//sol2) --- > 임시 비효율 selectTagByName 2번 하게됨(처음 등록 시)
 		if(!hashTags.isEmpty()) { //exist hash tag
 			//새로 삽입된 피드 가져오기(필요한건 feed_no)
 			vo = feedService.getLastInserted();
-			for(String tag_name : hashTags) {
-				//search hashtag 
+			for(int i=0;i<hashTags.size();i++) {
+				String tag_name = hashTags.get(i);
+				logger.info("tag_name : "+tag_name);
 				HashTagVO tag = feedService.selectTagByName(tag_name);
-				Integer tag_id = null;
-				if(tag == null) { //not exist					
-					feedService.registerTags(tag_name);				
-				} else { //exist
-					tag_id = tag.getTag_id();
-				}
-				
-				feedService.registerRelation(vo.getFeed_no(), tag_id);
-			}
+				if(tag == null) {
+					feedService.registerTags(tag_name);
+					i--;
+					break;
+				} else {
+					feedService.registerRelation(vo.getFeed_no(),tag.getTag_id());
+				}				
+			}			
 		}		
 		
 		//rttr.addFlashAttribute("msg", "SUCCESS");		
 		//return "redirect:/sboard/list";
-		return null;
+		return "home";
 	}
 	
 	

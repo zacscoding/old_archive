@@ -21,14 +21,13 @@ import com.faceontalk.feed.util.HashTagHelper;
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebAppConfiguration
 @ContextConfiguration(locations={"file:src/main/webapp/WEB-INF/spring/**/root-context.xml"})
-public class FeedControllerTest {
-	
-	public static String content = "ㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋ\n해시 태그 테스트\n#해시#태그#테스트#ㅋㅋㅋㅋㅋㅋ";
+public class FeedControllerTest {	
+	public static String content = "aaaabbb\n#해시#태그#테스트#ㅋㅋㅋㅋㅋㅋ";
 	@Inject
 	private FeedService feedService;
 	
 	@Transactional
-	@Rollback(false)
+	//@Rollback(false)
 	@Test
 	public void feedTest() throws Exception {
 		FeedVO vo = new FeedVO();
@@ -48,7 +47,8 @@ public class FeedControllerTest {
 				HashTagVO tag = feedService.selectTagByName(tag_name);
 				Integer tag_id = null;
 				if(tag == null) { //not exist					
-					feedService.registerTags(tag_name);				
+					feedService.registerTags(tag_name);		
+					tag_id = -1;
 				} else { //exist
 					tag_id = tag.getTag_id();
 				}				
