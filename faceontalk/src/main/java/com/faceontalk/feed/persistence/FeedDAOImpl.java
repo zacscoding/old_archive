@@ -31,7 +31,7 @@ public class FeedDAOImpl implements FeedDAO {
 	
 	@Override
 	public FeedVO getLastInsertedFeed() throws Exception {		
-		return session.selectOne(namespace+".lastInsertedFeed");
+		return session.selectOne(namespace+".getLastInsertedFeed");
 	}
 	
 	@Override
@@ -45,8 +45,8 @@ public class FeedDAOImpl implements FeedDAO {
 	}
 	
 	@Override
-	public FeedVO getLastInsertedFeedNum() throws Exception {
-		return session.selectOne(namespace+".lastInsertedFeedNum");
+	public int getLastInsertedFeedNum() throws Exception {
+		return session.selectOne(namespace+".getLastInsertedFeedNum");
 	}
 
 

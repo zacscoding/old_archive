@@ -41,14 +41,15 @@
 		
 	<tx:annotation-driven/>
 		
+	<!-- 
 	<context:component-scan base-package="com.faceontalk.*.service"></context:component-scan>
 	<context:component-scan base-package="com.faceontalk.*.persistence"></context:component-scan>
-	<!-- 
+	 -->
+	
 	<context:component-scan base-package="com.faceontalk.member.persistence"></context:component-scan>
 	<context:component-scan base-package="com.faceontalk.member.service"></context:component-scan>
 	<context:component-scan base-package="com.faceontalk.feed.persistence"></context:component-scan>
 	<context:component-scan base-package="com.faceontalk.feed.service"></context:component-scan>
-	 -->
 	<!-- <context:component-scan base-package="com.faceontalk.aop"></context:component-scan>  -->
 	
 	<aop:config>

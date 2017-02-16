@@ -51,15 +51,13 @@
 	
 
 	<!-- 마지막에 삽입한 피드 번호 얻어오기 last_insert_id()는 커넥션마다 관리 have to retest -->	
-	<select id="lastInsertedFeed" resultType="FeedVO">
-		select * from tbl_feed where feed_no = last_insert_id()
+	<select id="getLastInsertedFeed" resultType="FeedVO">
+		select * from tbl_feed where feed_no = last_insert_id()		
 	</select>
 	
-	<select id="lastInsertedFeedNum" resultType="FeedVO">
+	<select id="getLastInsertedFeedNum" resultType="int">
 		select feed_no from tbl_feed where feed_no = last_insert_id()
 	</select>
-	
-	
 	
 	<!-- // hash tag // -->	
 	<!-- 해시 태그 등록 -->

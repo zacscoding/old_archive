@@ -13,6 +13,7 @@ public interface FeedService {
 	public void modify(FeedVO vo) throws Exception;
 	public List<FeedVO> listSearchCriteria(SearchCriteria cri) throws Exception;
 	public FeedVO getLastInsertedFeed() throws Exception;
+	public int getLastInsertedFeedNum() throws Exception;
 	public FeedVO selectFeedByNum(Integer feed_no) throws Exception;
 	
 	

@@ -1,9 +1,8 @@
 package com.faceontalk.feed.util;
 
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 /*
  * TEMP hash tag helper.....
@@ -21,14 +20,18 @@ public class HashTagHelper {
 		while(curIdx < content.length()) {
 			if(content.charAt(curIdx) == '#') {
 				startIdx = curIdx++;
-				while(curIdx < content.length() && content.charAt(curIdx) != ' ' && content.charAt(curIdx) != '#'){
+				
+				/** have to change statement */
+				while(curIdx < content.length() 
+						&& content.charAt(curIdx) != ' ' && content.charAt(curIdx) != '#' && content.charAt(curIdx) !='\n'){
 					curIdx++;
 				}				
 				//hashTagQue.offer(content.substring(startIdx+1, curIdx));
 				hashTagsList.add(content.substring(startIdx+1, curIdx));
 			} else {
 				curIdx++;
-			}			
+			}
+						
 		}				
 //		while(!hashTagQue.isEmpty()) {
 //			System.out.println(hashTagQue.poll());
@@ -47,4 +50,9 @@ public class HashTagHelper {
 		
 		return hashTagsList;
 	}
+	
+	
+	
+	
+	
 }

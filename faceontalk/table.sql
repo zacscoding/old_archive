@@ -69,8 +69,7 @@ create table tbl_reply(
 	regdate timestamp default now(),
 	updatedate timestamp default now(),
 	primary key(rno,feed_no),
-	foreign key (feed_no) references tbl_feed(feed_no) on update cascade on delete cascade,
-	
+	foreign key (feed_no) references tbl_feed(feed_no) on update cascade on delete cascade,	
 );
 foreign key (replyer) references tbl_member(user_name)
 	

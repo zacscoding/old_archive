@@ -14,7 +14,7 @@ public interface FeedDAO {
 	public void remove(Integer feed_no) throws Exception;
 	public void update(FeedVO vo) throws Exception;
 	public FeedVO getLastInsertedFeed() throws Exception;
-	public FeedVO getLastInsertedFeedNum() throws Exception;
+	public int getLastInsertedFeedNum() throws Exception;
 	
 	//tag
 	public void registerTag(String tag_name) throws Exception;	

@@ -1,8 +1,5 @@
 package com.faceontalk.feed;
 
-import java.util.Iterator;
-import java.util.Map;
-
 import javax.inject.Inject;
 
 import org.junit.Test;
@@ -12,8 +9,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.transaction.annotation.Transactional;
 
-import com.faceontalk.feed.domain.HashTagVO;
+import com.faceontalk.feed.domain.FeedVO;
 import com.faceontalk.feed.persistence.FeedDAO;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -72,15 +70,35 @@ public class FeedDAOTest {
 //		dao.update(vo);
 //	}
 	
+//	@Test
+//	public void getTagsMapTest() throws Exception {
+//		Integer feed_no = 1;
+//		Map<String,HashTagVO> tagsMap = dao.selectTagsByFeedNum(feed_no);
+//		logger.info("검색된 태그들 사이즈 : "+tagsMap.size());
+//		Iterator<String> keyItr = tagsMap.keySet().iterator();
+//		int i = 1;
+//		while(keyItr.hasNext()) {
+//			logger.info((i++)+"번째 : "+keyItr.next());
+//		}		
+//	}
+	
+	@Transactional
 	@Test
-	public void getTagsMapTest() throws Exception {
-		Integer feed_no = 1;
-		Map<String,HashTagVO> tagsMap = dao.selectTagsByFeedNum(feed_no);
-		logger.info("검색된 태그들 사이즈 : "+tagsMap.size());
-		Iterator<String> keyItr = tagsMap.keySet().iterator();
-		int i = 1;
-		while(keyItr.hasNext()) {
-			logger.info((i++)+"번째 : "+keyItr.next());
+	public void lastInsertedFeedNumTest() throws Exception {
+		try {
+			FeedVO vo = new FeedVO();
+			vo.setUser_id_fk(1);
+			vo.setUser_name_fk("hiva1");
+			vo.setContent("test111");
+			vo.setFile_name("none");			
+			dao.register(vo); //insert feed
+			
+			int feed_no = dao.getLastInsertedFeedNum();
+			logger.info("feed_no : "+feed_no);
+//			FeedVO newVO = dao.getLastInsertedFeed();
+//			logger.info("new feed = "+newVO);
+		} catch(Exception e) {
+			e.printStackTrace();
 		}		
 	}
 	
