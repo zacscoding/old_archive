@@ -1,4 +1,4 @@
-package com.faceontalk.controller;
+package com.faceontalk.member;
 
 import javax.inject.Inject;
 

@@ -12,6 +12,8 @@ public class FeedVO {
 	private Integer like_count;
 	private String file_name;
 	
+	
+	//getter,setter,toString
 	public Integer getFeed_no() {
 		return feed_no;
 	}

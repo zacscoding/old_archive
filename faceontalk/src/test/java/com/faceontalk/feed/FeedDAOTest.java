@@ -1,4 +1,7 @@
-package com.faceontalk.controller;
+package com.faceontalk.feed;
+
+import java.util.Iterator;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -9,9 +12,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
-import org.springframework.transaction.annotation.Transactional;
 
-import com.faceontalk.feed.domain.FeedVO;
+import com.faceontalk.feed.domain.HashTagVO;
 import com.faceontalk.feed.persistence.FeedDAO;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -48,26 +50,38 @@ public class FeedDAOTest {
 //		dao.registerRelation(8,8);
 //	}
 	
+//	@Test
+//	@Transactional
+//	public void transactionalTest() throws Exception {
+//		//register
+//		FeedVO vo = new FeedVO();
+//		vo.setUser_id_fk(1);
+//		vo.setUser_name_fk("hiva1");
+//		vo.setContent("test");
+//		vo.setFile_name("none");
+//		dao.register(vo);
+//		logger.info("등록 : "+vo);
+//		
+//		//get
+//		vo = dao.getLastInsertedFeed();
+//		logger.info("조회 : "+vo);
+//		
+//		//update
+//		vo.setContent(null);
+//		logger.info("변경 : "+vo);
+//		dao.update(vo);
+//	}
+	
 	@Test
-	@Transactional
-	public void transactionalTest() throws Exception {
-		//register
-		FeedVO vo = new FeedVO();
-		vo.setUser_id_fk(1);
-		vo.setUser_name_fk("hiva1");
-		vo.setContent("test");
-		vo.setFile_name("none");
-		dao.register(vo);
-		logger.info("등록 : "+vo);
-		
-		//get
-		vo = dao.getLastInserted();
-		logger.info("조회 : "+vo);
-		
-		//update
-		vo.setContent(null);
-		logger.info("변경 : "+vo);
-		dao.update(vo);
+	public void getTagsMapTest() throws Exception {
+		Integer feed_no = 1;
+		Map<String,HashTagVO> tagsMap = dao.selectTagsByFeedNum(feed_no);
+		logger.info("검색된 태그들 사이즈 : "+tagsMap.size());
+		Iterator<String> keyItr = tagsMap.keySet().iterator();
+		int i = 1;
+		while(keyItr.hasNext()) {
+			logger.info((i++)+"번째 : "+keyItr.next());
+		}		
 	}
 	
 	

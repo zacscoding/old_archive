@@ -16,8 +16,7 @@
 		order by feed_no desc,regdate desc
 		limit #{pageStart},#{perPageNum}
 	</select>
-	
-	
+		
 	<!-- 피드 등록 -->
 	<insert id="register">
 	insert into tbl_feed
@@ -39,7 +38,7 @@
 	<!-- 수정 -->
 	<update id="update">
 		update tbl_feed set
-			content=#{content}
+			content=#{content} ,moddate=now()
 		where
 			feed_no=#{feed_no}
 	</update>
@@ -52,7 +51,11 @@
 	
 
 	<!-- 마지막에 삽입한 피드 번호 얻어오기 last_insert_id()는 커넥션마다 관리 have to retest -->	
-	<select id="lastInserted" resultType="FeedVO">
+	<select id="lastInsertedFeed" resultType="FeedVO">
+		select * from tbl_feed where feed_no = last_insert_id()
+	</select>
+	
+	<select id="lastInsertedFeedNum" resultType="FeedVO">
 		select feed_no from tbl_feed where feed_no = last_insert_id()
 	</select>
 	
@@ -63,27 +66,29 @@
 	<insert id="registerTag">
 		insert into tbl_tag (tag_name) values (#{tag_name})
 	</insert>	
-	<select id="selectTagByName" resultType="hashTagVO">
+	
+	<select id="selectTagByName" resultType="HashTagVO">
 		select * from tbl_tag where tag_name = #{tag_name}
+	</select>
+	
+	<select id="getLastInsertedTag" resultType="HashTagVO">
+		select * from tbl_tag where tag_id = last_insert_id()	
+	</select>
+	
+	<select id="selectTagsByFeedNum" resultType="HashTagVO">
+		select * from tbl_tag where tag_id in(select tag_id from tbl_tagfeedrelations where feed_no = #{feed_no} )
 	</select>
 	
 	
 	<!-- 릴레이션 -->
 	<!-- *******************<choose> 다르게 수정해보기**************** -->
 	<insert id="registerRelation">
-		insert into tbl_tagfeedrelations (feed_no,tag_id)
-		values(#{feed_no},
-			<choose>
-		    <when test="tag_id > 0">
-		    #{tag_id}		     
-		    </when>	    
-		    <otherwise>
-		    #{last_insert_id()}		       		      
-		    </otherwise>
-		  	</choose>		
-		 )		
+		insert into tbl_tagfeedrelations (feed_no,tag_id) values(#{feed_no}, #{tag_id})
 	</insert>
 	
+	<delete id="removeRelation">
+		delete from tbl_tagfeedrelations where feed_no = #{feed_no} and tag_id = #{tag_id}
+	</delete>
 	
 	
 </mapper>

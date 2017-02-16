@@ -1,6 +1,7 @@
 package com.faceontalk.feed.service;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -14,10 +15,14 @@ import com.faceontalk.feed.persistence.FeedDAO;
 @Service
 public class FeedServiceImpl implements FeedService {	
 	@Inject
-	private FeedDAO feedDAO;	
+	private FeedDAO feedDAO;		
+	
+	/////////////////////////////
+	//feed
 	
 	@Override	
 	public List<FeedVO> listSearchCriteria(SearchCriteria cri) throws Exception {
+		//not yet implement
 		 return null;
 	}
 
@@ -27,12 +32,23 @@ public class FeedServiceImpl implements FeedService {
 	}
 	
 	@Override
-	public FeedVO getLastInserted() throws Exception {		
-		return feedDAO.getLastInserted();
+	public FeedVO getLastInsertedFeed() throws Exception {		
+		return feedDAO.getLastInsertedFeed();
 	}
+	
 
+	@Override
+	public FeedVO selectFeedByNum(Integer feed_no) throws Exception {
+		return feedDAO.selectByFeedNo(feed_no);
+	}
 	
+	@Override
+	public void modify(FeedVO vo) throws Exception {
+		feedDAO.update(vo);
+	}
 	
+	/////////////////////////////
+	//tag	
 	@Override
 	public void registerTags(String tag_name) throws Exception {
 		feedDAO.registerTag(tag_name);		
@@ -44,8 +60,26 @@ public class FeedServiceImpl implements FeedService {
 	}
 
 	@Override
+	public HashTagVO getLastInsertedTag() throws Exception {		
+		return feedDAO.getLastInsertedTag();
+	}
+	
+	/////////////////////////////
+	//relation with feed and tag	
+	@Override
 	public void registerRelation(Integer feed_no, Integer tag_id) throws Exception {
 		feedDAO.registerRelation(feed_no, tag_id);
-	}	
-	
+	}
+
+	@Override
+	public Map<String,HashTagVO> getTagsMap(Integer feed_no) throws Exception {
+		return feedDAO.selectTagsByFeedNum(feed_no);
+	}
+
+	@Override
+	public void removeRelation(Integer feed_no, Integer tag_id) throws Exception {
+		feedDAO.removeRelation(feed_no, tag_id);
+	}
+
+
 }
