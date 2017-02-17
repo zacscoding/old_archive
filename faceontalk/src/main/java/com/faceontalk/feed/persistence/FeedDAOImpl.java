@@ -84,10 +84,14 @@ public class FeedDAOImpl implements FeedDAO {
 
 	@Override
 	public void removeRelation(Integer feed_no, Integer tag_id) throws Exception {
-		Map<String,Integer> paramMap = new HashMap<>();
-		paramMap.put("feed_no",feed_no);
-		paramMap.put("tag_id",tag_id);
-		session.update(namespace+".removeRelation",paramMap);
+//		if(tag_id == null) {
+//			session.delete(namespace+".removeRelation",feed_no);
+//		} else {
+			Map<String,Integer> paramMap = new HashMap<>();
+			paramMap.put("feed_no",feed_no);
+			paramMap.put("tag_id",tag_id);
+			session.delete(namespace+".removeRelation",paramMap);			
+//		}
 	}
 
 	

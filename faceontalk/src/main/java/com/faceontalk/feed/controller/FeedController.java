@@ -22,6 +22,7 @@ public class FeedController {
 	private static final Logger logger = LoggerFactory.getLogger(FeedController.class);	
 	@Inject
 	private FeedService feedService;	
+	
 	////////////////////////
 	// get feed lists
 	///////////////////////	
@@ -52,7 +53,7 @@ public class FeedController {
 		logger.info(vo.toString());		
 		feedService.register(vo);			
 						
-		rttr.addFlashAttribute("msg", "SUCCESS");
+		rttr.addFlashAttribute("message", "SUCCESS");
 		
 		/**temp code */
 		return "redirect:/feed/result";				
@@ -71,7 +72,7 @@ public class FeedController {
 		logger.info("in controller vo : "+vo);
 		feedService.modify(vo);
 		
-		rttr.addFlashAttribute("msg", "SUCCESS");
+		rttr.addFlashAttribute("message", "SUCCESS");
 		
 		/**temp code */
 		return "redirect:/feed/result";	
@@ -79,8 +80,25 @@ public class FeedController {
 	
 		
 	//remove
-	// 게시글 삭제 -> tbl_tag에서 참조하는 피드가 0개이면 tag도 삭제할지 고민	
 	
+	@RequestMapping(value="/removeFeed",method=RequestMethod.GET)
+	public void removeFeedGET(Integer feed_no, RedirectAttributes rttr) throws Exception {
+		//empty
+	}
+	
+	// 게시글 삭제 -> tbl_tag에서 참조하는 피드가 0개이면 tag도 삭제할지 고민
+	@RequestMapping(value="/removeFeed",method=RequestMethod.POST)
+	public String removeFeedPOST(Integer feed_no, RedirectAttributes rttr) throws Exception {
+		logger.info("/removeFeed...POST");
+		logger.info("in FeedController feed_no : "+feed_no);
+		
+		feedService.remove(feed_no);	
+		
+		rttr.addFlashAttribute("message", "SUCCESS");
+		
+		/**temp code */
+		return "redirect:/feed/result";	
+	}
 	
 	
 

@@ -23,8 +23,7 @@ public class MemberController {
 	private MemberService service;	
 	/*
 	 * Join us  
-	 */
-	
+	 */	
 	//GET
 	@RequestMapping(value="/join",method=RequestMethod.GET)
 	public void registGET() throws Exception {

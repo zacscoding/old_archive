@@ -11,7 +11,7 @@ create table tbl_member(
     password varchar(20) not null,    
     regdate timestamp not null default now(),
     phone varchar(20) not null, 
-	profile varchar(50),
+	profile_pic varchar(150),
     primary key(user_id)
 );
 
@@ -58,20 +58,22 @@ create table tbl_tagFeedRelations (
 
 #댓글
 ###############################
-# -참조키 제약 조건 확인 & 추가
+# -
 # - 
 ################################
+
 create table tbl_reply(
 	rno int not null auto_increment,
-	feed_no int not null,
+	feed_no_fk int not null,
 	replytext varchar(1000) not null,
-	replyer varchar(50) not null,
+	user_name_fk varchar(20) not null,
 	regdate timestamp default now(),
-	updatedate timestamp default now(),
-	primary key(rno,feed_no),
-	foreign key (feed_no) references tbl_feed(feed_no) on update cascade on delete cascade,	
+	moddate timestamp default now(),
+	primary key(rno),
+	foreign key (feed_no_fk) references test_ex.tbl_feed(feed_no) on update cascade on delete cascade,
+	foreign key (user_name_fk) references test_ex.tbl_member(user_name) on update cascade on delete cascade	
 );
-foreign key (replyer) references tbl_member(user_name)
+
 	
 
 

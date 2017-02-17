@@ -11,6 +11,7 @@ public interface FeedService {
 	//feed
 	public void register(FeedVO vo) throws Exception;
 	public void modify(FeedVO vo) throws Exception;
+	public void remove(Integer feed_no) throws Exception;
 	public List<FeedVO> listSearchCriteria(SearchCriteria cri) throws Exception;
 	public FeedVO getLastInsertedFeed() throws Exception;
 	public int getLastInsertedFeedNum() throws Exception;

@@ -85,7 +85,10 @@
 	</insert>
 	
 	<delete id="removeRelation">
-		delete from tbl_tagfeedrelations where feed_no = #{feed_no} and tag_id = #{tag_id}
+		delete from tbl_tagfeedrelations where feed_no = #{feed_no} 
+		<if test="tag_id != null">
+			and tag_id = #{tag_id}
+		</if>		
 	</delete>
 	
 	

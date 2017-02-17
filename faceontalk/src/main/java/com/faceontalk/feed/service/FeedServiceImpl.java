@@ -121,14 +121,20 @@ public class FeedServiceImpl implements FeedService {
 		feedDAO.update(vo);
 		//3. check for modified file image		
 		
-	}
-	
+	}	
 
 	@Override
 	public int getLastInsertedFeedNum() throws Exception {
 		return feedDAO.getLastInsertedFeedNum();
 	}
 	
+	@Transactional
+	@Override
+	public void remove(Integer feed_no) throws Exception {
+		feedDAO.remove(feed_no);
+		feedDAO.removeRelation(feed_no,null);
+	}
+
 	
 	/////////////////////////////
 	//tag	
@@ -175,4 +181,5 @@ public class FeedServiceImpl implements FeedService {
 		registerRelation(feed_no,tag.getTag_id());
 	}
 
+	
 }
