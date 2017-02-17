@@ -1,0 +1,47 @@
+--Member ("/accounts" )	--
+
+	URI			METHOD
+		
+1)Join
+	"/join"		GET
+	"/join"		POST
+	
+2)Edit
+	"/edit"		GET
+	"/edit"		POST
+	
+	
+--Feed	("/feed")--
+
+	URI			METHOD
+1)Regist
+	"/register"	GET
+	"/register"	POST
+	
+2)Modify
+	"/modifyFeed"	GET
+	"/modifyFeed"	POST
+
+3)Remove
+	"/removeFeed"	GET
+	"/removeFeed"	POST
+
+	
+	
+--Reply	("/replies")--
+
+		URI			METHOD
+
+1)Regist
+		""			POST
+
+2)Modify
+		"/{rno}"	PUT,PETCH
+		
+3)Remove
+		"/{rno}"	DELETE
+
+
+
+	
+	

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.faceontalk.mapper.ReplyMapper">
+
+	<!-- register -->
+	<insert id="register">
+		insert into tbl_reply (feed_no_fk,replytext,user_name_fk)
+		values(#{feed_no_fk},#{replytext},#{user_name_fk})
+	</insert>
+	
+	<!-- modify -->
+	<update id="modify">
+		update tbl_reply set replytext=#{replytext} , moddate=now()
+	</update>
+	
+	<!-- remove -->
+	<delete id="remove">
+		delete from tbl_reply where rno = #{rno}
+	</delete>
+</mapper>
