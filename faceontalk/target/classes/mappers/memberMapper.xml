@@ -23,13 +23,23 @@
 	where user_id = #{user_id}
 	</select>
 	
-	
-	
 	<!-- 회원 정보 수정 -->
 	<update id="update">
 	update tbl_member set user_name=#{user_name}, password = #{password}, phone=#{phone}
 	where user_id=#{user_id}	
 	</update>
+	
+	
+	<!-- follower -->
+	<insert id="registFollower">
+	insert into tbl_follow (follower,following) values(#{follower},#{following})
+	</insert>
+	
+	<delete id="removeFollower">
+	delete from tbl_follow where follower = #{follower} and following = #{following}
+	</delete>
+	
+	
 	
 	
 	

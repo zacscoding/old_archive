@@ -29,8 +29,7 @@ public class ReplyController {
 	
 	
 	
-	
-	//register
+	/**		register	*/	
 	@RequestMapping(value="", method=RequestMethod.POST)
 	public ResponseEntity<String> register(@RequestBody ReplyVO vo) {
 		logger.info("/replies ...POST");
@@ -45,7 +44,7 @@ public class ReplyController {
 		return entity;
 	}
 	
-	//modify
+	/**		modify		*/
 	@RequestMapping(value="/{rno}", method={RequestMethod.PUT,RequestMethod.PATCH})
 	public ResponseEntity<String> modify(@PathVariable("rno") Integer rno,@RequestBody ReplyVO vo) {
 		logger.info("/replies/{rno} ...PUT OR PATCH");
@@ -62,7 +61,7 @@ public class ReplyController {
 	}
 	
 	
-	//remove
+	/**		remove		*/
 	@RequestMapping(value="/{rno}", method=RequestMethod.DELETE)
 	public ResponseEntity<String> remove(@PathVariable("rno") Integer rno) {
 		logger.info("/replies/{rno} ...DELETE");

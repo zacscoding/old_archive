@@ -6,7 +6,7 @@
 
 create table tbl_member(
 	user_id int not null  auto_increment,
-    user_name varchar(20) not null,
+    user_name varchar(20) not null unique,
     user_email varchar(50) not null unique,
     password varchar(20) not null,    
     regdate timestamp not null default now(),

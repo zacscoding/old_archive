@@ -1,5 +1,6 @@
 package com.faceontalk.member.service;
 
+import com.faceontalk.member.domain.FollowVO;
 import com.faceontalk.member.domain.MemberVO;
 
 public interface MemberService {
@@ -9,9 +10,15 @@ public interface MemberService {
 	public void edit(MemberVO vo) throws Exception;
 	//회원 찾기
 	public MemberVO searchByName(String user_name) throws Exception;
-	public MemberVO searchById(Integer user_id) throws Exception;
-	
+	public MemberVO searchById(Integer user_id) throws Exception;	
 	//회원 탈퇴
+	
+	
+	/*	follower	*/
+	// regist
+	public void regist(FollowVO vo) throws Exception;
+	// remove
+	public void remove(FollowVO vo) throws Exception;
 	
 	
 	

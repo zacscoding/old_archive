@@ -4,6 +4,7 @@ import javax.inject.Inject;
 
 import org.springframework.stereotype.Service;
 
+import com.faceontalk.member.domain.FollowVO;
 import com.faceontalk.member.domain.MemberVO;
 import com.faceontalk.member.persistence.MemberDAO;
 
@@ -19,7 +20,6 @@ public class MemberServiceImpl implements MemberService {
 	public void regist(MemberVO vo) throws Exception {
 		dao.regist(vo);
 	}
-
 	//회원 정보 수정
 	@Override
 	public void edit(MemberVO vo) throws Exception {
@@ -37,4 +37,13 @@ public class MemberServiceImpl implements MemberService {
 		return dao.searchById(user_id);
 	}
 	
+	@Override
+	public void regist(FollowVO vo) throws Exception {
+		dao.registFollower(vo);
+	}
+
+	@Override
+	public void remove(FollowVO vo) throws Exception {
+		dao.removeFollower(vo);
+	}	
 }

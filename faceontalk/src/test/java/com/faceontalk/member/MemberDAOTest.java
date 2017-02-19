@@ -19,23 +19,19 @@ public class MemberDAOTest {
 	@Inject
 	private MemberDAO dao;
 	
-	/*
-	 * Create member test code
-	 */
-	@Test
-	public void testCreate() throws Exception {
-		MemberVO vo = new MemberVO();
-		vo.setUser_name("hiva1");
-		vo.setUser_email("hiva1@naver.com");
-		vo.setPassword("hiva");
-		vo.setPhone("1234");
-		
-		dao.regist(vo);
-	}
+//	/**	Create member test code	 */
+//	@Test
+//	public void testCreate() throws Exception {
+//		MemberVO vo = new MemberVO();
+//		vo.setUser_name("hiva1");
+//		vo.setUser_email("hiva1@naver.com");
+//		vo.setPassword("hiva");
+//		vo.setPhone("1234");
+//		
+//		dao.regist(vo);
+//	}
 	
-//	/*
-//	 * Select by name test code
-//	 */
+//	/** Select by name test code	 */
 //	@Test
 //	public void testSelect() throws Exception {
 ////		//SearchByName
@@ -53,9 +49,7 @@ public class MemberDAOTest {
 //	}
 
 	
-//	/*
-//	 * Update test code
-//	 */
+//	/**	Update test code	*/
 //	@Test
 //	public void testUpdate() throws Exception {
 //		MemberVO vo = new MemberVO();
@@ -66,6 +60,10 @@ public class MemberDAOTest {
 //		dao.update(vo);		
 //	}
 	
+	
+	/** Regist follow test*/
+	
+	/** Remove follow test*/
 	
 	
 	

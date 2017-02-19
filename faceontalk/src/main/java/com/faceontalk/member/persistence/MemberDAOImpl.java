@@ -5,6 +5,7 @@ import javax.inject.Inject;
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.stereotype.Repository;
 
+import com.faceontalk.member.domain.FollowVO;
 import com.faceontalk.member.domain.MemberVO;
 
 @Repository
@@ -32,4 +33,14 @@ public class MemberDAOImpl implements MemberDAO {
 	public MemberVO searchById(Integer user_id) throws Exception {
 		return session.selectOne(namespace+".searchById",user_id);
 	}	
+	
+	/** follower	*/
+	@Override
+	public void registFollower(FollowVO vo) throws Exception {
+		session.insert(namespace+".registFollower",vo);
+	}
+	@Override
+	public void removeFollower(FollowVO vo) throws Exception {
+		session.insert(namespace+".removeFollower",vo);
+	}
 }

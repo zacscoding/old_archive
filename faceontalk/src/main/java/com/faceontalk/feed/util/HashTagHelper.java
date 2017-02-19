@@ -30,9 +30,9 @@ public class HashTagHelper {
 				hashTagsList.add(content.substring(startIdx+1, curIdx));
 			} else {
 				curIdx++;
-			}
-						
-		}				
+			}						
+		}	
+		
 //		while(!hashTagQue.isEmpty()) {
 //			System.out.println(hashTagQue.poll());
 //		}

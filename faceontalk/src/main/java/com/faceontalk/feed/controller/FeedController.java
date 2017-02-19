@@ -27,7 +27,7 @@ public class FeedController {
 	// get feed lists
 	///////////////////////	
 	
-	//search
+	/** 	search		*/
 	@RequestMapping(value="/explore/tags",method=RequestMethod.GET)	
 	public void listPage(@ModelAttribute("cri") SearchCriteria cri,Model model) throws Exception {
 		logger.info(cri.toString());
@@ -41,7 +41,7 @@ public class FeedController {
 		
 	}
 	
-	//register	
+	/**		register	*/		
 	@RequestMapping(value="/register", method=RequestMethod.GET)
 	public void registerGET() throws Exception {
 		//empty		
@@ -59,7 +59,7 @@ public class FeedController {
 		return "redirect:/feed/result";				
 	}
 		
-	//update
+	/**	update	*/
 	@RequestMapping(value="/modifyFeed",method=RequestMethod.GET)
 	public void modifyFeedGET(Integer feed_no, Model model) throws Exception {
 		logger.info("/modifyFeed .. get");
@@ -79,13 +79,13 @@ public class FeedController {
 	}
 	
 		
-	//remove
 	
+	
+	/**	remove	*/	
 	@RequestMapping(value="/removeFeed",method=RequestMethod.GET)
 	public void removeFeedGET(Integer feed_no, RedirectAttributes rttr) throws Exception {
 		//empty
-	}
-	
+	}	
 	// 게시글 삭제 -> tbl_tag에서 참조하는 피드가 0개이면 tag도 삭제할지 고민
 	@RequestMapping(value="/removeFeed",method=RequestMethod.POST)
 	public String removeFeedPOST(Integer feed_no, RedirectAttributes rttr) throws Exception {
