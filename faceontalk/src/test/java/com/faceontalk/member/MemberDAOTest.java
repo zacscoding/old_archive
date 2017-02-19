@@ -8,7 +8,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
-import com.faceontalk.member.domain.MemberVO;
+import com.faceontalk.member.domain.FollowVO;
 import com.faceontalk.member.persistence.MemberDAO;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -62,6 +62,18 @@ public class MemberDAOTest {
 	
 	
 	/** Regist follow test*/
+	@Test
+	public void testFollower() throws Exception {
+		FollowVO vo = new FollowVO();
+		vo.setFollower(1);
+		vo.setFollowing(2);
+		
+		//dao.registFollower(vo);
+		
+		dao.removeFollower(vo);
+		
+				
+	}
 	
 	/** Remove follow test*/
 	
