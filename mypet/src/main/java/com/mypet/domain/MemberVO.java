@@ -17,10 +17,12 @@ create table tbl_member (
 public class MemberVO {
 	private Integer user_no;
 	private String user_id;
-	private String password;
+	private String user_password;
 	private String user_name;
 	private String user_email;
 	private String user_phone;
+	private String postcode_fk;
+	private String address;
 	private String role;
 	
 	
@@ -62,6 +64,14 @@ public class MemberVO {
 		return user_phone;
 	}
 
+	public String getUser_password() {
+		return user_password;
+	}
+
+	public void setUser_password(String user_password) {
+		this.user_password = user_password;
+	}
+
 	public void setUser_phone(String user_phone) {
 		this.user_phone = user_phone;
 	}
@@ -74,17 +84,30 @@ public class MemberVO {
 		this.user_no = user_no;
 	}
 
-	public String getPassword() {
-		return password;
+	public String getPostcode_fk() {
+		return postcode_fk;
 	}
 
-	public void setPassword(String password) {
-		this.password = password;
+	public void setPostcode_fk(String postcode_fk) {
+		this.postcode_fk = postcode_fk;
+	}
+
+	public String getAddress() {
+		return address;
+	}
+
+	public void setAddress(String address) {
+		this.address = address;
 	}
 
 	@Override
 	public String toString() {
-		return "MemberVO [user_no=" + user_no + ", user_id=" + user_id + ", password=" + password + ", user_name="
-				+ user_name + ", user_email=" + user_email + ", user_phone=" + user_phone + "]";
-	}	
+		return "MemberVO [user_no=" + user_no + ", user_id=" + user_id + ", user_password=" + user_password
+				+ ", user_name=" + user_name + ", user_email=" + user_email + ", user_phone=" + user_phone
+				+ ", postcode_fk=" + postcode_fk + ", address=" + address + ", role=" + role + "]";
+	}
+	
+	
+
+	
 }

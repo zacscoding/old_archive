@@ -17,8 +17,7 @@ public class SecurityUserVO implements UserDetails {
 	public SecurityUserVO(MemberVO vo) {
 		this.vo = vo;	
 		this.role = new UserRole("ROLE_"+vo.getRole());
-	}
-	
+	}	
 	
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -29,7 +28,7 @@ public class SecurityUserVO implements UserDetails {
 
 	@Override
 	public String getPassword() {
-		return vo.getPassword();
+		return vo.getUser_password();
 	}
 
 	@Override

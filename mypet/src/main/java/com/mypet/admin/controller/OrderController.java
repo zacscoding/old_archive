@@ -14,8 +14,8 @@ import com.mypet.service.OrderService;
 @RequestMapping("/admin/order/")
 public class OrderController {
 	
-	@Inject
-	OrderService service;
+//	@Inject
+//	OrderService service;
 	
 	/*	주문 리스트 보기	*/
 	

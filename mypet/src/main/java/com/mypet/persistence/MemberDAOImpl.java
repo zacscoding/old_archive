@@ -16,15 +16,28 @@ public class MemberDAOImpl implements MemberDAO {
 	@Inject
 	SqlSession session;
 
+	/*	search	*/
 	@Override
 	public MemberVO selectById(String user_id) throws Exception {
 		return session.selectOne(namespace+".selectById",user_id);
 	}
-
+	
+	/*	search	*/
 	@Override
 	public List<UserRole> selectPermissionById(Integer user_no) throws Exception {
 		return null;
 	}
+
+	@Override
+	public void registerMember(MemberVO vo) throws Exception {
+		session.insert(namespace+".registerMember",vo);
+	}
+	
+	
+	
+	
+	
+	
 	
 	
 	

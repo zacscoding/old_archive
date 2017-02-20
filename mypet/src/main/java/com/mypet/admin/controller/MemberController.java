@@ -14,9 +14,9 @@ import com.mypet.service.MemberService;
 @RequestMapping("/admin/usermanage")
 public class MemberController {
 	
-	@Inject
-	MemberService service;
-	
+//	@Inject
+//	MemberService service;
+//	
 	/*	회원 리스트 보기*/
 	/*	회원 상세 정보 보기*/
 	/*	회원 정보 수정 */

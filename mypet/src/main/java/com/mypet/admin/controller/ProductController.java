@@ -14,8 +14,8 @@ import com.mypet.service.ProductService;
 @RequestMapping("/admin/goods")
 public class ProductController {
 	
-	@Inject
-	ProductService service;
+//	@Inject
+//	ProductService service;
 	
 	/*	상품 등록	*/
 	

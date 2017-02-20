@@ -9,4 +9,13 @@
 		select * from tbl_member where user_id = #{user_id}	
 	</select>
 	
+	<insert id="registerMember">
+		insert 
+			into 
+		tbl_member 
+			(user_no,user_id,user_password,user_name,user_email,user_phone,postcode_fk,address)		
+		values
+			(member_seq.nextval,#{user_id},#{user_password},#{user_name},#{user_email},#{user_phone},#{postcode_fk},#{address})
+	</insert>
+	
 </mapper>

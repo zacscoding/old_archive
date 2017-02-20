@@ -14,8 +14,8 @@ import com.mypet.service.CategoryService;
 @RequestMapping("/admin/category/*")
 public class CategoryController {
 	
-	@Inject
-	CategoryService service;
+//	@Inject
+//	CategoryService service;
 	
 	
 	/*	카테 고리 등록*/
