@@ -9,8 +9,8 @@ public interface MemberService {
 	//회원 정보 수정
 	public void edit(MemberVO vo) throws Exception;
 	//회원 찾기
-	public MemberVO searchByName(String user_name) throws Exception;
-	public MemberVO searchById(Integer user_id) throws Exception;	
+	public MemberVO searchById(String user_id) throws Exception;
+	public MemberVO searchByNum(Integer user_no) throws Exception;	
 	//회원 탈퇴
 	
 	

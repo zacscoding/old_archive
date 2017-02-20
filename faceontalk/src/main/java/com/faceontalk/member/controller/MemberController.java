@@ -5,7 +5,6 @@ import javax.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -32,10 +31,9 @@ public class MemberController {
 	@RequestMapping(value="/join", method=RequestMethod.POST)
 	public String registPOST(MemberVO vo, RedirectAttributes rttr) throws Exception {
 		logger.info("/accounts/join (POST)");		
-		service.regist(vo);
 		
-		rttr.addFlashAttribute("message","Successed to join us :D");
-		
+		service.regist(vo);		
+		rttr.addFlashAttribute("message","Successed to join us :D");		
 		return "redirect:/";
 	}
 	
@@ -48,7 +46,7 @@ public class MemberController {
 	}
 	@RequestMapping(value="/edit", method = RequestMethod.POST)
 	public void editGetPOST(MemberVO vo) throws Exception {
-		MemberVO anotherUser = service.searchByName(vo.getUser_name());
+		MemberVO anotherUser = service.searchById(vo.getUser_id());
 		
 		//user_name변경 
 		if(anotherUser != null) {

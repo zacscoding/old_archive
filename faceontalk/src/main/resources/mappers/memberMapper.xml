@@ -7,27 +7,37 @@
 	<!-- 회원 가입 -->
 	<insert id="regist">
 	insert into tbl_member 
-		(user_name,user_email,password,phone)
+		(user_id,user_email,password,phone)
 	values
-		(#{user_name},#{user_email},#{password},#{phone})
+		(#{user_id},#{user_email},#{password},#{phone})
 	</insert>
 	
 	<!-- 회원 찾기 by name -->
-	<select id="searchByName" resultType="MemberVO">
+	<select id="searchById" resultType="MemberVO">
 	select * from tbl_member
-	where user_name = #{user_name}
+	where user_id = #{user_id}
 	</select>
 	
-	<select id="searchById" resultType="MemberVO">
+	<select id="searchByNum" resultType="MemberVO">
 	select * from tbl_member
 	where user_id = #{user_id}
 	</select>
 	
 	<!-- 회원 정보 수정 -->
 	<update id="update">
-	update tbl_member set user_name=#{user_name}, password = #{password}, phone=#{phone}
-	where user_id=#{user_id}	
+	update tbl_member set user_id=#{user_id}, password = #{password}, phone=#{phone}
+	where user_no=#{user_no}	
 	</update>
+	
+	<!-- 로그인 상태 유지 -->
+	<update id="keepLogin"> 
+		into tbl_member sessionkey = #{sessionId},sessionlimit = #{next} where user_no = #{user_no}
+	</update>
+	
+	<select id="checkUserWithSessionKey" resultType="MemberVO">
+	select * from tbl_user where
+	sessionkey = #{value} and sessionlimit > now()
+	</select>
 	
 	
 	<!-- follower -->

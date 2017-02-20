@@ -5,14 +5,16 @@
 ################################
 
 create table tbl_member(
-	user_id int not null  auto_increment,
-    user_name varchar(20) not null unique,
+	user_no int not null  auto_increment,
+    user_id varchar(20) not null unique,
     user_email varchar(50) not null unique,
-    password varchar(20) not null,    
+    password varchar(150) not null,    
     regdate timestamp not null default now(),
     phone varchar(20) not null, 
 	profile_pic varchar(150),
-    primary key(user_id)
+	sessionkey varchar(50) not null default 'none',
+	sessionlimit timestamp,
+    primary key(user_no)
 );
 
 
