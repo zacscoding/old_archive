@@ -4,6 +4,22 @@
 	xmlns:sec="http://www.springframework.org/schema/security"
 	xsi:schemaLocation="http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.2.xsd
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
-
-
+	
+	<sec:http use-expressions="true">
+		<sec:access-denied-handler error-page="/security/accessDenied"/>
+		<sec:intercept-url pattern="/user/loginform" access="permitAll" />
+		<sec:intercept-url pattern="/user/login" access="permitAll" />
+		<sec:intercept-url pattern="/admin/**" access="hasAuthority('ROLE_ADMIN')"/>
+		<sec:intercept-url pattern="/member/**" access="isAuthenticated()"/>
+		<sec:intercept-url pattern="/**" access="permitAll"/>		
+		<sec:form-login
+			login-page="/user/loginform" 
+			login-processing-url="/user/login"
+			username-parameter="userid"
+			password-parameter="password"
+			default-target-url="/index"
+			authentication-failure-url="/user/loginform?error=true"			
+		/>
+		<sec:logout logout-url="/user/logout"/>
+	</sec:http>
 </beans>
