@@ -22,8 +22,11 @@ import org.springframework.test.context.web.WebAppConfiguration;
 @ContextConfiguration(locations={"file:src/main/webapp/WEB-INF/spring/**/root-context.xml"})
 public class DataSourceTest {
 	Logger logger = LoggerFactory.getLogger(DataSourceTest.class);	
+	
 	@Inject
-	DataSource ds;	
+	DataSource ds;
+	
+	
 	@Test
 	public void dataSourceTest() {
 		try(Connection conn = ds.getConnection()) {
@@ -32,6 +35,8 @@ public class DataSourceTest {
 			e.printStackTrace();
 		}
 	}
+	
+	
 	
 	
 	

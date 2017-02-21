@@ -13,8 +13,6 @@ public interface MemberDAO {
 	//수정
 	public void modify(MemberVO vo) throws Exception;
 	
-	
-	
 	//권한 로그
 	//public List<UserRole> selectPermissionById(Integer user_no) throws Exception;
 	//가입
@@ -26,5 +24,4 @@ public interface MemberDAO {
 	
 	
 	
-
 }

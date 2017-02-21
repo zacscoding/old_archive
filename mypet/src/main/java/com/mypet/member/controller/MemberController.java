@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.mypet.domain.MemberVO;
 import com.mypet.error.DuplicateIdException;
@@ -25,7 +26,7 @@ import com.mypet.service.MemberService;
 public class MemberController {
 	private final Logger logger = LoggerFactory.getLogger(MemberController.class);
 	private static final String USER_JOIN_SUCCESS = "/user/joinSuccess";
-	private static final String USER_JOIN_FORM = "/user/joinForm";	
+	private static final String USER_JOIN_FORM = "/user/join";	
 	
 	@Inject
 	private JoinService joinService;
@@ -37,16 +38,21 @@ public class MemberController {
 		//return USER_JOIN_FORM;		
 	}		
 	@RequestMapping(value="/join",method = RequestMethod.POST)
-	public String joinPOST(@ModelAttribute("MemberVO") MemberVO vo,Model model) {
+	public String joinPOST(@ModelAttribute("MemberVO") MemberVO vo, RedirectAttributes rttr) {
+		logger.info("joinPOST.... POST");
+		String viewPage = null;
 		try {
 			joinService.registMember(vo);			
-			return USER_JOIN_SUCCESS;
+			viewPage = USER_JOIN_SUCCESS;
 		} catch(DuplicateIdException ex) {
-			model.addAttribute("msg","duplicated id");
+			rttr.addFlashAttribute("msg","duplicated id");
+			viewPage = USER_JOIN_FORM;
 		} catch(Exception e) {
-			model.addAttribute("msg","runtime exception");
+			rttr.addFlashAttribute("msg",e.getMessage());
+			viewPage = USER_JOIN_FORM;
 		}	
-		return USER_JOIN_FORM;		
+		logger.info("join result viewPage = "+viewPage);
+		return "redirect:"+viewPage;		
 	}
 	
 	@RequestMapping(value="/loginform", method=RequestMethod.GET)
@@ -68,7 +74,6 @@ public class MemberController {
 		
 		return "redirect:/user/modify?user_no="+vo.getUser_id(); //다시		
 	}
-	
 	
 	
 	/* security authority test*/

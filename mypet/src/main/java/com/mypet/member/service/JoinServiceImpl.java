@@ -20,18 +20,13 @@ public class JoinServiceImpl implements JoinService {
 	@Transactional
 	@Override
 	public void registMember(MemberVO vo) throws Exception {
-		System.out.println(vo);
-		try {
-			MemberVO member = dao.selectById(vo.getUser_id());
-			if(member != null)
-				throw new DuplicateIdException();
-			
-			String password = passwordEncoder.encode(vo.getUser_password());
-			vo.setUser_password(password);
-			
-			dao.registerMember(vo);			
-		} catch(Exception e) {
-			e.printStackTrace();
-		}
+		MemberVO member = dao.selectById(vo.getUser_id());
+		if (member != null)
+			throw new DuplicateIdException();
+
+		String password = passwordEncoder.encode(vo.getUser_password());
+		vo.setUser_password(password);
+
+		dao.registerMember(vo);			
 	}
 }

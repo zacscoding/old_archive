@@ -19,18 +19,17 @@ import com.mypet.service.MemberService;
  *  회원 관리
  */
 @Controller
-@RequestMapping("/admin/usermanagent")
+@RequestMapping("/admin/usermanagent/*")
 public class AdminMemberController {
 	private static final Logger logger = LoggerFactory.getLogger(AdminMemberController.class);
 	@Inject
 	MemberService service;
 	
 	
-//	
 	/*	회원 리스트 보기*/
 	@Transactional
 	@RequestMapping(value="/list", method=RequestMethod.GET)
-	public void memberLists(@ModelAttribute("cri") SearchCriteria cri, Model model) throws Exception {
+	public String memberLists(@ModelAttribute("cri") SearchCriteria cri, Model model) throws Exception {
 		logger.info("AdminMemberController.memberLists....GET");
 
 		model.addAttribute("list",service.listSearchCriteria(cri));
@@ -38,7 +37,9 @@ public class AdminMemberController {
 		PageMaker pageMaker = new PageMaker();
 		pageMaker.setCri(cri);
 		pageMaker.setTotalCount(service.listSearchCount(cri));			
-		model.addAttribute("pageMaker",pageMaker);		
+		model.addAttribute("pageMaker",pageMaker);
+		
+		return "/admin/userList";
 	}
 	
 	

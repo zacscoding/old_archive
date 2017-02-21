@@ -9,12 +9,16 @@
 </head>
 <body>
 
-<c:if test="${not empty message}">
+<c:if test="${not empty msg}">
 	<script>
-		alert(message);
+		alert(msg);
 	</script>
 </c:if>
 
+
+<div align="center">
+
+<h2> Join Us..</h2>
 <form method="post">
 	<table border="1">
 		<tr>
@@ -50,5 +54,6 @@
 		</tr>		
 	</table>	
 </form>
+</div>
 </body>
 </html>

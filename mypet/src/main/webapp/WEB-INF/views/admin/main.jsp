@@ -12,6 +12,7 @@
 
 <h1> Admin Main..</h1>
 
+
 <c:url var="logoutUrl" value="/user/logout"/>
 <sec:authorize access="isAuthenticated()">
 	<li><a href="${logoutUrl}">로그아웃</a></li>

@@ -9,11 +9,8 @@
 <body>
 
 	<a href='/admin/main'>/admin/adminMain</a> <br/>	
-	<a href='/member/main'>/member/memberMain</a> <br/>
+	<a href='/user/main'>/user/main</a> <br/>
 	
-	
-	
-
 
 </body>
 </html>

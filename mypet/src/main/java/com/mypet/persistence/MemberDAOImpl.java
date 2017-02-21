@@ -9,7 +9,6 @@ import org.springframework.stereotype.Repository;
 
 import com.mypet.domain.MemberVO;
 import com.mypet.domain.SearchCriteria;
-import com.mypet.security.UserRole;
 
 @Repository
 public class MemberDAOImpl implements MemberDAO {
