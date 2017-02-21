@@ -1,5 +1,7 @@
 package com.mypet.member.service;
 
-public interface JoinService {
+import com.mypet.domain.MemberVO;
 
+public interface JoinService {
+	public void registMember(MemberVO vo) throws Exception;
 }

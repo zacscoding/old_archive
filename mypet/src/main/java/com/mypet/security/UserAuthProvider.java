@@ -13,8 +13,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
-import com.mypet.service.UserService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 /** 
  * -파라미터로 전달받은 authentication 객체에 대해 인증 처리를 지원하지 않는다면 null을 리턴
@@ -25,31 +24,37 @@ import com.mypet.service.UserService;
 public class UserAuthProvider implements AuthenticationProvider {	
 	private static final Logger logger= LoggerFactory.getLogger(UserAuthProvider.class);
 	@Inject
-	private UserService service;
-	
+	private UserDetailsServiceImpl service;
+	@Inject
+	private PasswordEncoder passwordEncoder;
 	
 	@Override
 	public Authentication authenticate(Authentication authentication) throws AuthenticationException {
 		
+		//1.authentication을 지원하는 타입으로 변환
 		String userid = authentication.getName();
-		String userpw = (String) authentication.getCredentials();
+		String userpw = (String) authentication.getCredentials();		
 		
 		logger.info("USERID : "+userid);
 		logger.info("USERPW : "+userpw);
-		
+			
 		UserDetails securityUser = service.loadUserByUsername(userid);
+
 		
+		
+		//2.사용자 정보를 조회한다. 존재하지 않으면 익셉션 발생 
 		if(securityUser == null || !securityUser.getUsername().equalsIgnoreCase(userid)) 
 			throw new BadCredentialsException("Username not found");
 		
-		if(!userpw.equals(securityUser.getPassword()))
+		//3.조회한 사용자와 파라미터로 받은 authentication의 암호를 비교 암호가 일치하지 않으면 익셉션 발생
+		if(!passwordEncoder.matches(userpw, securityUser.getPassword()))
 			throw new BadCredentialsException("Wrong password");
 		
-		Collection<? extends GrantedAuthority> authorities
-					= securityUser.getAuthorities();
-		
+		//4.사용자가 가진 권한 목록을 구한다
+		Collection<? extends GrantedAuthority> authorities = securityUser.getAuthorities();		
 		logger.info("Authorities : "+authorities);
 		
+		//5.인증된 사용자에 대한 Authentication 객체를 생성해서 리턴
 		return new UsernamePasswordAuthenticationToken(securityUser,userpw,authorities);		
 	}
 

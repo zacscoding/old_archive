@@ -1,15 +1,16 @@
-package com.mypet.service;
+package com.mypet.security;
 
 import javax.inject.Inject;
 
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import com.mypet.domain.MemberVO;
 import com.mypet.persistence.MemberDAO;
-import com.mypet.security.SecurityUserVO;
 
-public class UserServiceImpl implements UserService {
+public class UserDetailsServiceImpl implements UserDetailsService {
+	
 	@Inject
 	private MemberDAO dao;
 	
