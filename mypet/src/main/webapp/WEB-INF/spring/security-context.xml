@@ -13,32 +13,42 @@
 	
 	<!-- AuthenticationProvider를 구현 -->
 	<bean id="userAuthProvider" class="com.mypet.security.UserAuthProvider"/>
-	
-	
-	
+		
 	<sec:http auto-config="true" use-expressions="true">
-		<sec:access-denied-handler error-page="/security/accessDenied"/>
-		<sec:intercept-url pattern="/user/login" access="permitAll" />
+		<sec:access-denied-handler error-page="/errors/403"/>
+		<sec:intercept-url pattern="/user/loginform" access="permitAll" />
+		<sec:intercept-url pattern="/user/join" access="permitAll" />
 		<sec:intercept-url pattern="/admin/**" access="hasAuthority('ROLE_ADMIN')"/>
-		<sec:intercept-url pattern="/member/**" access="isAuthenticated()"/>
+		<sec:intercept-url pattern="/user/**" access="isAuthenticated()"/>
 		<sec:intercept-url pattern="/**" access="permitAll"/>
 		
+		<!-- 컨텍스트 경로를 기준으로 -->
 		<!-- 
+		login-page : 인증 전에 접근한 경로에 접근 권한이 없는 경우 인증 처리를 위해 이동할 로그인 폼 경로를 지정
+		login-proccessing-url : 로그인 요청을 위한 경로를 지정한다. 이 경로로 POST 요청이 들어오면 인증을 처리
+		username-parameter : 로그인 요청에서 사용자 이르(로그인ID)에 해당하는 요청 파라미터의 이름을 지정
+		password-parameter : 로그인 요청에서 사용자 비밀번호에 해당하는 요청 파라미터의 이름을 지정
+		default-target-url : 로그인 성공시 이동할 기본 경로. 만약 인증 전에 접근한 경로에 권한이 없어서 로그인 화면으로 이동하면,
+							 로그인 성공 후 원래 요청한 경로로 이동
+		authentication-failure-url : 인증 실패시 이동할 경로를 지정		
+		 -->
+		 
+		 <!-- check
 		<sec:form-login
-			login-page="/user/login" 
+			login-page="/user/loginform" 
 			login-processing-url="/user/login"
 			username-parameter="userid"
 			password-parameter="password"
 			default-target-url="/index"
-			authentication-failure-url="/user/login?error=true"			
+			authentication-failure-url="/user/loginform?error=true"			
 		/>
-		-->
+		 -->
+		 <sec:form-login/>
 		<sec:logout logout-url="/user/logout"/>
 	</sec:http>
 	
 	<sec:authentication-manager >		
-		<sec:authentication-provider ref="userAuthProvider"/>		
-		
+		<sec:authentication-provider ref="userAuthProvider"/>				
 		<sec:authentication-provider user-service-ref="userDetailsServiceImpl"/>		
 	</sec:authentication-manager>	
 	

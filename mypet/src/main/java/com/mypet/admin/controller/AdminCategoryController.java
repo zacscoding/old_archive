@@ -12,7 +12,7 @@ import com.mypet.service.CategoryService;
  */
 @Controller
 @RequestMapping("/admin/category/*")
-public class CategoryController {
+public class AdminCategoryController {
 	
 //	@Inject
 //	CategoryService service;

@@ -5,12 +5,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 @Controller
-@RequestMapping("/admin/main")
-public class MainController {
+@RequestMapping("/admin/*")
+public class AdminMainController {
 	
-	@RequestMapping(method = RequestMethod.GET)
+	@RequestMapping(value="/main",method = RequestMethod.GET)
 	public void mainGET() {
-		
+		//empty		
 	}
 
 }

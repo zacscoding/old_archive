@@ -8,8 +8,7 @@
 </head>
 <body>
 
-Access Denied!!!
+<h3>Access Denied</h3>
 
-<a href="/index">[/index]</a>
 </body>
 </html>

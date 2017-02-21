@@ -1,5 +1,6 @@
 package com.mypet.domain;
 
+import java.util.Date;
 
 /*
 create table tbl_member (
@@ -25,11 +26,20 @@ public class MemberVO {
 	private String user_phone;
 	private String postcode_fk;
 	private String address;
+	private Date reg_date;
 	private String role;
 	
 	
 	//setters,getters,toString()
 	
+	public Date getReg_date() {
+		return reg_date;
+	}
+
+	public void setReg_date(Date reg_date) {
+		this.reg_date = reg_date;
+	}
+
 	public String getRole() {
 		return role;
 	}

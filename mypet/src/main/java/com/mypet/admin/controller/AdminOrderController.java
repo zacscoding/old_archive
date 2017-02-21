@@ -12,7 +12,7 @@ import com.mypet.service.OrderService;
  */
 @Controller
 @RequestMapping("/admin/order/")
-public class OrderController {
+public class AdminOrderController {
 	
 //	@Inject
 //	OrderService service;

@@ -8,6 +8,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
  */
 @Controller
 @RequestMapping("/admin/qnamanage")
-public class QNABoardController {
+public class AdminQNABoardController {
 
 }

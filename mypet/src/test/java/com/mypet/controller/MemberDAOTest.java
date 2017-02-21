@@ -53,16 +53,79 @@ public class MemberDAOTest {
 //	}
 	
 	
-	/* encrypt test*/
+//	/* encrypt test*/
+//	@Test
+//	public void encryptTest() {
+//		String original = "aaa";
+//		String encrypted = passwordEncoder.encode(original);
+//		logger.info("------------------------------------------");
+//		logger.info("original : "+original);
+//		logger.info("encrypted : "+encrypted);
+//		logger.info("matched : "+passwordEncoder.matches(original,encrypted));
+//		logger.info("------------------------------------------");		
+//	}
+	
+//	/*	select test	*/
+//	@Test
+//	public void listTest() {
+//		SearchCriteria cri = new SearchCriteria();
+//		try {			
+//			logger.info("count : "+dao.listSearchCount(cri));
+//			List<MemberVO> memberList = dao.listSearchCriteria(cri);
+//			for(MemberVO vo : memberList) {
+//				logger.info(vo.toString());
+//			}			
+//		} catch(Exception e) {
+//			e.printStackTrace();
+//		}
+//	}
+	
 	@Test
-	public void encryptTest() {
-		String original = "aaa";
-		String encrypted = passwordEncoder.encode(original);
-		logger.info("------------------------------------------");
-		logger.info("original : "+original);
-		logger.info("encrypted : "+encrypted);
-		logger.info("matched : "+passwordEncoder.matches(original,encrypted));
-		logger.info("------------------------------------------");		
+	public void selectTest() {
+		//1.id
+		String id = "hiva1";		
+		//2.user_no
+		Integer user_no = 1;		
+		try {
+			MemberVO vo1 = dao.selectById(id);
+			MemberVO vo2 = dao.selectByNum(user_no);
+			
+			logger.info(vo1.toString());
+			logger.info(vo2.toString());
+		} catch(Exception e) {
+			e.printStackTrace();
+		}			
 	}
+	
+//	@Transactional
+//	@Test
+//	public void modifyTest() {
+//		try {
+//			MemberVO vo = dao.selectById("hiva1");
+//			logger.info("변경 전 : "+vo.toString());
+//			
+//			
+//			vo.setAddress("hiva@city");
+//			dao.modify(vo);
+//			vo = dao.selectById("hiva1");
+//			logger.info("변경 후 : "+vo.toString());
+//		} catch(Exception e) {
+//			e.printStackTrace();
+//		}			
+//	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 }

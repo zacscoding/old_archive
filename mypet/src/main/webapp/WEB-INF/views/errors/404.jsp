@@ -8,8 +8,7 @@
 </head>
 <body>
 
-Access Denied!!!
+<h2>Page not Founded</h2>
 
-<a href="/index">[/index]</a>
 </body>
 </html>

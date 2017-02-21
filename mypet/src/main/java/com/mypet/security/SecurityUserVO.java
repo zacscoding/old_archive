@@ -16,7 +16,7 @@ public class SecurityUserVO implements UserDetails {
 	
 	public SecurityUserVO(MemberVO vo) {
 		this.vo = vo;	
-		this.role = new UserRole("ROLE_"+vo.getRole());
+		this.role = new UserRole("ROLE_"+vo.getRole().toUpperCase());
 	}	
 	
 	@Override

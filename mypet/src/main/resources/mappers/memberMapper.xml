@@ -4,11 +4,18 @@
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.mypet.mapper.MemberMapper">
-
+	
+	<!-- 아이디로 검색 -->
 	<select id="selectById" resultType="MemberVO">
 		select * from tbl_member where user_id = #{user_id}	
 	</select>
 	
+	<!-- USER_NO로 검색 -->
+	<select id="selectByNum" resultType="MemberVO">
+		select * from tbl_member where user_no = #{user_no}
+	</select>
+	
+	<!-- 회원 등록 -->
 	<insert id="registerMember">
 		insert 
 			into 
@@ -17,5 +24,70 @@
 		values
 			(member_seq.nextval,#{user_id},#{user_password},#{user_name},#{user_email},#{user_phone},#{postcode_fk},#{address})
 	</insert>
+	
+	<!-- 회원 정보 변경 -->
+	<update id="modify">
+		update tbl_member set
+		user_phone = #{user_phone}, address = #{address}
+		where user_no = #{user_no}
+	</update>
+	
+	
+	<!-- 회원 리스트 -->
+	<select id="listSearchCriteria" resultType="MemberVO">
+		<![CDATA[		
+		select * from (
+			select tbl_member.*,row_number() over (order by user_no desc)R
+		from tbl_member where user_no > 0
+		]]>
+			<include refid="search"/>
+		<![CDATA[
+			) where R between #{pageStart} and #{perPageNum}
+		]]>	
+	</select>
+	
+	<select id="listSearchCount" resultType="int">
+		<![CDATA[
+		select 
+			count(user_no)
+		from
+			tbl_member
+		where user_no > 0		
+		]]>
+		<include refid="search"/>
+	</select>
+	
+	
+	<!-- search sql -->
+	<sql id="search">
+	<if test="searchType != null">
+		<if test="searchType=='t'.toString()">
+			and title like CONCAT('%',#{keyword},'%')
+		</if>
+		
+		<if test="searchType=='c'.toString()">
+			and content like CONCAT('%',#{keyword},'%')
+		</if>
+		
+		<if test="searchType=='w'.toString()">
+			and writer like CONCAT('%',#{keyword},'%')
+		</if>
+		
+		<if test="searchType=='tc'.toString()">
+			and (title like CONCAT('%',#{keyword},'%') OR content like CONCAT('%',#{keyword},'%'))
+		</if>
+		
+		<if test="searchType=='cw'.toString()">
+			and (content like CONCAT('%',#{keyword},'%') OR writer like CONCAT('%',#{keyword},'%'))
+		</if>
+		
+		<if test="searchType=='tcw'.toString()">
+			and (title like CONCAT('%',#{keyword},'%') OR 
+				content like CONCAT('%',#{keyword},'%') OR 
+				writer like CONCAT('%',#{keyword},'%'))
+		</if>
+	</if>	
+	</sql>	
+	
 	
 </mapper>
