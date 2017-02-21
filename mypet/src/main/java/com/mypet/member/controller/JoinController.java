@@ -27,17 +27,17 @@ public class JoinController {
 		return USER_JOIN_FORM;		
 	}	
 	
-	@RequestMapping(method = RequestMethod.POST)
-	public String submit(@ModelAttribute("MemberVO") NewUser newUser, Errors errors) {
-		new NewUserValidator().validate(newUser,errors);
-		if(errors.hasErrors())
-			return USER_JOIN_FORM;
-		try {
-			userJoinService.join(newUser);
-			return USER_JOIN_SUCCESS;
-		} catch(DuplicateUsernameException ex) {
-			errors.rejectValue("name","duplicate");
-			return USER_JOIN_FORM;
-		}
-	}
+//	@RequestMapping(method = RequestMethod.POST)
+//	public String submit(@ModelAttribute("MemberVO") NewUser newUser, Errors errors) {
+//		new NewUserValidator().validate(newUser,errors);
+//		if(errors.hasErrors())
+//			return USER_JOIN_FORM;
+//		try {
+//			userJoinService.join(newUser);
+//			return USER_JOIN_SUCCESS;
+//		} catch(DuplicateUsernameException ex) {
+//			errors.rejectValue("name","duplicate");
+//			return USER_JOIN_FORM;
+//		}
+//	}
 }
