@@ -5,14 +5,16 @@ package com.mypet.domain;
 create table tbl_member (
 	user_no number not null primary key,
 	user_id varchar2(20) not null unique,
+	user_password varchar2(150) not null,
 	user_name varchar2(40) not null,
 	user_email varchar2(40) not null,
 	user_phone varchar2(20) not null,
-	reg_date timestamp default sysdate,	
 	role varchar2(20) default 'MEMBER',
-	postcode_fk varchar2(7) not null,	
+	reg_date timestamp default sysdate,
+	postcode_fk varchar2(7) not null, 
 	address varchar2(100) 	
-); 
+);
+create sequence member_seq;
  */
 public class MemberVO {
 	private Integer user_no;

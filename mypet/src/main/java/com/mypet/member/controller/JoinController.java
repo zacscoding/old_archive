@@ -42,4 +42,18 @@ public class JoinController {
 		}	
 		return USER_JOIN_FORM;		
 	}
+	
+	@RequestMapping(value="/login")
+	public void loginGET() {
+		//empty
+	}
+	
+	@RequestMapping("/member/main")
+	public void memberMainGET() {
+		//empty
+	}
+	
+	
+	
+	
 }

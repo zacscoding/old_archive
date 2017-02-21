@@ -11,10 +11,13 @@
 
 <!-- authentication-failure-url 속성 값 : /user/loginform?error=true 에 대한 처리 -->
 <c:if test="${param.error == 'true'}">
-<strong>아이디와 암호가 일치하지 않습니다.</strong>
+	<script>
+		alert('아이디와 암호가 일치하지 않습니다.');
+	</script>
 </c:if>
+
 <form action="<c:url value='/user/login'/>" method="post">
-    <label for="name">사용자ID</label>:
+    <label for="userid">사용자ID</label>:
     <input type="text" name="userid" /> 
     <br/>
     

@@ -8,28 +8,38 @@
 	<!-- PasswordEncoder -->
 	<bean id="passwordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder" />
 	
-	<sec:http use-expressions="true">
+	<!-- UserDetailsService를 구현 -->
+	<bean id="userDetailsServiceImpl" class="com.mypet.security.UserDetailsServiceImpl"/>
+	
+	<!-- AuthenticationProvider를 구현 -->
+	<bean id="userAuthProvider" class="com.mypet.security.UserAuthProvider"/>
+	
+	
+	
+	<sec:http auto-config="true" use-expressions="true">
 		<sec:access-denied-handler error-page="/security/accessDenied"/>
-		<!-- <sec:intercept-url pattern="/user/loginform" access="permitAll" />  -->
-		<!-- <sec:intercept-url pattern="/user/login" access="permitAll" />  -->
+		<sec:intercept-url pattern="/user/login" access="permitAll" />
 		<sec:intercept-url pattern="/admin/**" access="hasAuthority('ROLE_ADMIN')"/>
 		<sec:intercept-url pattern="/member/**" access="isAuthenticated()"/>
-		<sec:intercept-url pattern="/**" access="permitAll"/>		
+		<sec:intercept-url pattern="/**" access="permitAll"/>
+		
+		<!-- 
 		<sec:form-login
-			login-page="/user/loginform" 
+			login-page="/user/login" 
 			login-processing-url="/user/login"
 			username-parameter="userid"
 			password-parameter="password"
 			default-target-url="/index"
-			authentication-failure-url="/user/loginform?error=true"			
+			authentication-failure-url="/user/login?error=true"			
 		/>
+		-->
 		<sec:logout logout-url="/user/logout"/>
 	</sec:http>
 	
-	<sec:authentication-manager alias="authenticationManager">		
-		<sec:authentication-provider>
-			<sec:jdbc-user-service data-source-ref="dataSource"/>
-		</sec:authentication-provider>
+	<sec:authentication-manager >		
+		<sec:authentication-provider ref="userAuthProvider"/>		
+		
+		<sec:authentication-provider user-service-ref="userDetailsServiceImpl"/>		
 	</sec:authentication-manager>	
 	
 </beans>

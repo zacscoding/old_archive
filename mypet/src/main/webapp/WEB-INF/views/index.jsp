@@ -8,8 +8,8 @@
 </head>
 <body>
 
-	<a href='/admin/adminMain'>/admin/adminMain</a> <br/>	
-	<a href='/member/memberMain'>/member/memberMain</a> <br/>
+	<a href='/admin/main'>/admin/adminMain</a> <br/>	
+	<a href='/member/main'>/member/memberMain</a> <br/>
 	
 	
 	
