@@ -39,7 +39,7 @@ public class AdminMemberController {
 		pageMaker.setTotalCount(service.listSearchCount(cri));			
 		model.addAttribute("pageMaker",pageMaker);
 		
-		return "/admin/userList";
+		return "/admin/member/userList";
 	}
 	
 	

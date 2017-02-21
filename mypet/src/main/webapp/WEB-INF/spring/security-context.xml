@@ -33,7 +33,6 @@
 		authentication-failure-url : 인증 실패시 이동할 경로를 지정		
 		 -->
 		 
-		 <!-- check
 		<sec:form-login
 			login-page="/user/loginform" 
 			login-processing-url="/user/login"
@@ -42,7 +41,6 @@
 			default-target-url="/index"
 			authentication-failure-url="/user/loginform?error=true"			
 		/>
-		 -->
 		 <sec:form-login/>
 		<sec:logout logout-url="/user/logout"/>
 	</sec:http>

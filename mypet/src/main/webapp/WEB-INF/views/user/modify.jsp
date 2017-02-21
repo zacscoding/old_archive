@@ -9,8 +9,15 @@
 	<title>Insert title here</title>
 </head>
 <body>
+	
+	<c:if test="${not empty msg}">
+		<script>
+			alert('${msg}');
+		</script>
+	</c:if>
 
 	<form method="POST">
+		<input type="hidden" name="user_no" value="${vo.user_no}">
 		<table border="1">		
 		<tr>
 			<td>ID:</td>
@@ -23,23 +30,23 @@
 		
 		<tr>
 			<td>name</td>
-			<td>${vo.user_name}</td>
+			<td><input type="text" name="user_name" value="${vo.user_name}" readonly = 'readonly'></td>
 		</tr>
 		<tr>
 			<td>email:</td>
-			<td>${vo.user_email}</td>
+			<td><input type="text" name="user_email" value="${vo.user_email}"></td>
 		</tr>		
 		<tr>
 			<td>phone:</td>
-			<td>${vo.user_phone}</td>
-		</tr>
-		<tr>
-			<td>ID:</td>
-			<td>${vo.user_id}</td>
-		</tr>		
+			<td><input type="text" name="user_phone" value="${vo.user_phone}" readonly = 'readonly'></td>
+		</tr>				
 		<tr>
 			<td>addr:</td>
-			<td>${vo.address}</td>
+			<td><input type="text" name="address" value="${vo.address}"></td>
+		</tr>
+		<tr>
+			<td><input type="submit" value="변경"></td>
+			<td><input type="reset" value="리셋"></td>
 		</tr>
 		</table>
 	</form>

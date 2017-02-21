@@ -9,13 +9,11 @@
 <h1>Login Page...</h1>
 <!-- authentication-failure-url 속성 값 : /user/loginform?error=true 에 대한 처리 -->
 
-<!-- 
 <c:if test="${param.error == 'true'}">
 	<script>
 		alert('아이디와 암호가 일치하지 않습니다.');
 	</script>
 </c:if>
- -->
 
 <form name='f' action='/user/login' method='POST'>
     <label for="userid">사용자ID</label>:

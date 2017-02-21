@@ -1,5 +1,7 @@
 package com.mypet.member.controller;
 
+import java.security.Principal;
+
 import javax.inject.Inject;
 
 import org.slf4j.Logger;
@@ -9,7 +11,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.mypet.domain.MemberVO;
@@ -33,6 +34,13 @@ public class MemberController {
 	@Inject
 	private MemberService memberService;
 	
+	/**		login		*/
+	@RequestMapping(value="/loginform", method=RequestMethod.GET)
+	public String loginGET() {
+		return "/user/loginForm";
+	}
+	
+	/** 	join	*/
 	@RequestMapping(value="/join",method=RequestMethod.GET)
 	public void joinGET() {
 		//return USER_JOIN_FORM;		
@@ -55,24 +63,30 @@ public class MemberController {
 		return "redirect:"+viewPage;		
 	}
 	
-	@RequestMapping(value="/loginform", method=RequestMethod.GET)
-	public String loginGET() {
-		return "loginForm";
-	}
-	
+	/** 	modify	*/
 	@RequestMapping(value="modify",method=RequestMethod.GET)
-	public void modifyGET(@RequestParam ("user_no") Integer user_no,Model model) throws Exception  {
+	public void modifyGET(Model model,Principal principal) throws Exception  {
+		// 인증 유저 얻기 1) 
+//		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+//		String user_id = auth.getName(); // get logged in username
+
+//		// 인증 유저 얻기 2)
+//		UserDetails user = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//		String user_id = user.getUsername();
 		
-		model.addAttribute("vo",memberService.selectByNum(user_no));		
+		
+		// 인증 유저 얻기 3)
+		String user_id = principal.getName();
+		model.addAttribute("vo",memberService.selectById(user_id));
 	}
 	
 	@RequestMapping(value="modify",method=RequestMethod.POST)
-	public String modifyPOST(MemberVO vo) throws Exception {
-		
+	public String modifyPOST(MemberVO vo,RedirectAttributes rttr) throws Exception {		
 		logger.info("/user/modify..POST : " + vo.toString());
 		memberService.modifyUser(vo);
 		
-		return "redirect:/user/modify?user_no="+vo.getUser_id(); //다시		
+		rttr.addFlashAttribute("msg","success");
+		return "redirect:/user/modify";		
 	}
 	
 	

@@ -10,8 +10,11 @@
 <body>
 
 <h1> Member Main..</h1>
+
+<a href="/user/modify">정보변경</a>
+
 <sec:authorize access="isAuthenticated()">
-	<li><a href="<c:url value='/user/logout' />">로그아웃</a></li>
+	<a href='/user/logout'>로그아웃</a>
 </sec:authorize>
 	
 	

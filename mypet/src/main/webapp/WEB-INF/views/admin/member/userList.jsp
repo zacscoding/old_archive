@@ -9,17 +9,16 @@
 </head>
 <body>
 
-<h3>회 원 목 록</h3>
-
 <div align="center">
+	<h3>회 원 목 록</h3>
 <table border="1">
 	<tr>
 		<th>NO</th> <th>ID</th> <th>NAME</th> <th>EMAIL</th> <th>PHONE</th> <th>ADDRESS</th>
 	</tr>
 		
-	<c:forEach var="memberVO" items="${list}">
+	<c:forEach var="memberVO" items="${list}" varStatus="status">
 		<tr>
-		<td>1</td> <td>${memberVO.user_id}</td> <td>${memberVO.user_name}</td> <td>${memberVO.user_email}</td> 
+		<td>${status.index+1}</td> <td>${memberVO.user_id}</td> <td>${memberVO.user_name}</td> <td>${memberVO.user_email}</td> 
 		<td>${memberVO.user_phone}</td> <td>${memberVO.address}</td>
 		</tr>	
 	</c:forEach>		

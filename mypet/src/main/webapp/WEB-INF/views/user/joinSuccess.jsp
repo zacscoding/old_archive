@@ -8,6 +8,7 @@
 <body>
 
 회원 가입을 완료했습니다.
+
 <br/>
 <a href="<c:url value='/index'/>">[/index로 가기]</a>
 

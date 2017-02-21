@@ -8,8 +8,11 @@
 </head>
 <body>
 
-	<a href='/admin/main'>/admin/adminMain</a> <br/>	
-	<a href='/user/main'>/user/main</a> <br/>
+<div align="center">
+<h2>INDEX PAGE</h2>
+<a href='/admin/main'>/admin/adminMain</a> <br/>	
+<a href='/user/main'>/user/main</a> <br/>
+</div>
 	
 
 </body>
