@@ -10,6 +10,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.mypet.domain.PageMaker;
 import com.mypet.domain.SearchCriteria;
@@ -43,7 +44,18 @@ public class AdminMemberController {
 	}	
 	
 	/*	회원 상세 정보 보기*/
+	@RequestMapping(value="/details",method=RequestMethod.GET)
+	public String memberDetails(@RequestParam("user_no") int user_no
+								,@ModelAttribute("cri") SearchCriteria cri ,Model model) throws Exception {
+		logger.info("AdminMemberController.memberDetails....GET");
+		logger.info(cri.toString());
+		
+		model.addAttribute("memberVO",service.selectByNum(user_no));		
+		
+		return "/admin/member/userDetail";
+	}	
 	/*	회원 정보 수정 */
+	
 	
 	
 	

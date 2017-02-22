@@ -9,7 +9,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import com.mypet.domain.MemberVO;
 
-public class SecurityUserVO implements UserDetails {	
+public class SecurityUserVO implements UserDetails {
+	private static final long serialVersionUID = 1L;
 	private MemberVO vo;
 	private UserRole role;
 

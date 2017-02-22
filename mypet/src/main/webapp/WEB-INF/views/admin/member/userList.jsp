@@ -14,6 +14,7 @@
 
 		<!-- 검색  -->
 		<div>
+			<form action="/admin/users/list">
 			<select name="searchType">
 				<!-- n : 검색 조건 없음 -->
 				<option value="n"
@@ -41,7 +42,8 @@
 					PHONE</option>				
 			</select> <input type="text" name='keyword' id="keywordInput"
 				value="${cri.keyword}">
-			<button id='searchBtn'>Search</button>			
+			<button id='searchBtn'>Search</button>
+			</form>			
 		</div>
 
 
@@ -52,8 +54,12 @@
 		
 	<c:forEach var="memberVO" items="${list}" varStatus="status">
 		<tr>
-		<!-- <td>${status.index+1}</td>  --><td>${memberVO.user_no}</td><td>${memberVO.user_id}</td> <td>${memberVO.user_name}</td> <td>${memberVO.user_email}</td> 
-		<td>${memberVO.user_phone}</td> <td>${memberVO.address}</td>
+		<!-- <td>${status.index+1}</td>  -->
+		<td>${memberVO.user_no}</td>
+		<td> <a 
+			href='/admin/users/details${pageMaker.makeSearch(pageMaker.cri.page) }&user_no=${memberVO.user_no}'>${memberVO.user_id}</a> 
+		</td>
+		<td>${memberVO.user_name}</td> <td>${memberVO.user_email}</td> <td>${memberVO.user_phone}</td> <td>${memberVO.address}</td>
 		</tr>	
 	</c:forEach>		
 </table>
@@ -87,8 +93,10 @@
 							+"&keyword="
 							+$('#keywordInput').val();			
 		});		
-	});
+	});	
 </script>
+
+
 
 </body>
 </html>

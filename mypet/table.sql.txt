@@ -25,20 +25,22 @@ create sequence member_seq;
 --동물
 create table tbl_animal (
 	animal_no number primary key,
-	animal_name varchar2(50) unique	
+	animal_name varchar2(50) not null unique	
 );
 create sequence animal_seq;
 
 
 --카테고리
 create table tbl_product_category(
-	category_no number primary key,
+	category_no number primary key,	
 	cate_name varchar2(50) not null,
-	animal_no_fk number,
-	foreign key (animal_no_fk) references tbl_animal(animal_no)
-	on delete cascade	
+	animal_no_fk number not null,	
+	animal_name_fk varchar2(50) not null,
+	foreign key (animal_no_fk) references tbl_animal(animal_no) on delete cascade,
+	foreign key (animal_name_fk) references tbl_animal(animal_name) on delete cascade			
 );
 create sequence category_seq;
+
 
 
 --상품(리스트에 보여지는 것들)

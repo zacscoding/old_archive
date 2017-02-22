@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mypet.mapper.CategoryMapper">
+
+	<select id="listAnimal" resultType="AnimalVO">
+		select * from tbl_animal	
+	</select>
+	
+	<select id="listCategory" resultType="CategoryVO">
+		select * from tbl_product_category
+	</select>
+	
+	
+	<select id="selectAnimalByName" resultType="AnimalVO">
+		select * from tbl_animal where animal_name = #{animal_name}
+	</select>
+	
+	<select id="selectAnimalByNum" resultType="AnimalVO">
+		select * from tbl_animal where animal_no = #{animal_no}
+	</select>
+	
+	
+	<select id="selectCategoryByName" resultType="CategoryVO">
+		select * from tbl_product_category where category_no = #{category_no}
+	</select>
+	
+	<select id="selectCategoryByNum" resultType="CategoryVO">
+		select * from tbl_product_category where cate_name = #{cate_name}
+	</select>
+	
+	
+	
+	<insert id="registerAnimal">
+		insert into tbl_animal (animal_no,animal_name) values(animal_seq.nextval,#{animal_name})
+	</insert>
+	
+	<insert id="registerProductCategory">
+		insert into tbl_product_category (category_no,cate_name,animal_no_fk,animal_name_fk)
+		values(category_seq.nextval, #{cate_name}, #{animal_no_fk}, #{animal_name_fk} )	
+	</insert>
+	
+	<update id="updateProductCategory">
+		update tbl_product_category set cate_name=#{cate_name} where category_no = #{category_no}	
+	</update>
+	
+	<delete id="removeAnimal">
+		delete from tbl_animal where animal_no = #{animal_no}	
+	</delete>
+	
+	<delete id="removeProductCategory">
+		delete from tbl_product_category where category_no = #{category_no}
+	</delete>
+	
+</mapper>
