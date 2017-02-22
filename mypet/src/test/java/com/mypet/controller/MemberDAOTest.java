@@ -34,23 +34,24 @@ public class MemberDAOTest {
 	private PasswordEncoder passwordEncoder;
 	
 	/* regist test*/
-//	@Transactional
-//	@Test
-//	public void registMemberTest() {
-//		MemberVO vo = new MemberVO();
-//		vo.setUser_id("hiva3");
-//		vo.setUser_password("hiva1");
-//		vo.setUser_name("hiva1");
-//		vo.setUser_email("hiva.com");
-//		vo.setUser_phone("010");
-//		vo.setPostcode_fk("123");
-//		vo.setAddress("zzz");
-//		try {			
-//			dao.registerMember(vo);
-//		} catch(Exception e) {
-//			e.printStackTrace();
-//		}		
-//	}
+	@Test
+	public void registMemberTest() {		
+		MemberVO vo = new MemberVO();
+		for(int i=200;i<250;i++) {
+			vo.setUser_id("hiva"+i);
+			vo.setUser_password("hiva1");
+			vo.setUser_name("hiva1");
+			vo.setUser_email("hiva.com");
+			vo.setUser_phone("010");
+			vo.setPostcode_fk("123");
+			vo.setAddress("zzz");
+			try {			
+				dao.registerMember(vo);
+			} catch(Exception e) {
+				e.printStackTrace();
+			}		
+		}
+	}
 	
 	
 //	/* encrypt test*/

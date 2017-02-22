@@ -42,7 +42,7 @@
 		]]>
 			<include refid="search"/>
 		<![CDATA[
-			) where R between #{pageStart} and #{perPageNum}
+			) where R between #{pageStart} and #{pageLast}
 		]]>	
 	</select>
 	
@@ -61,21 +61,22 @@
 	<!-- search sql -->
 	<sql id="search">
 	<if test="searchType != null">
-		<if test="searchType=='t'.toString()">
-			and title like CONCAT('%',#{keyword},'%')
+		<if test="searchType=='i'.toString()">
+			and user_id like CONCAT(CONCAT('%',#{keyword}),'%')
 		</if>
 		
-		<if test="searchType=='c'.toString()">
-			and content like CONCAT('%',#{keyword},'%')
+		<if test="searchType=='n'.toString()">
+			and user_name like CONCAT(CONCAT('%',#{keyword}),'%')
 		</if>
 		
-		<if test="searchType=='w'.toString()">
-			and writer like CONCAT('%',#{keyword},'%')
+		<if test="searchType=='e'.toString()">
+			and user_email like CONCAT(CONCAT('%',#{keyword}),'%')
 		</if>
 		
-		<if test="searchType=='tc'.toString()">
-			and (title like CONCAT('%',#{keyword},'%') OR content like CONCAT('%',#{keyword},'%'))
+		<if test="searchType=='p'.toString()">
+			and user_phone like CONCAT(CONCAT('%',#{keyword}),'%')
 		</if>
+		
 		
 		<if test="searchType=='cw'.toString()">
 			and (content like CONCAT('%',#{keyword},'%') OR writer like CONCAT('%',#{keyword},'%'))

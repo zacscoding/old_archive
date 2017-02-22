@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
  * QNA관리
  */
 @Controller
-@RequestMapping("/admin/qnamanage")
+@RequestMapping("/admin/qnas/*")
 public class AdminQNABoardController {
 
 }
