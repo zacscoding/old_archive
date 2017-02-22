@@ -55,7 +55,4 @@ public class SecurityUserVO implements UserDetails {
 	public boolean isEnabled() {
 		return false;
 	}
-	
-	
-
 }

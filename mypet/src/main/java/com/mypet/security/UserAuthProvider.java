@@ -39,8 +39,6 @@ public class UserAuthProvider implements AuthenticationProvider {
 		logger.info("USERPW : "+userpw);
 			
 		UserDetails securityUser = service.loadUserByUsername(userid);
-
-		
 		
 		//2.사용자 정보를 조회한다. 존재하지 않으면 익셉션 발생 
 		if(securityUser == null || !securityUser.getUsername().equalsIgnoreCase(userid)) 

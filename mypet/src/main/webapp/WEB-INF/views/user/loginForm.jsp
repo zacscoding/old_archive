@@ -26,5 +26,8 @@
     <input type="submit" value="로그인" />
 </form>
 
+<a href=''>[회원 가입]</a>
+
+
 </body>
 </html>
