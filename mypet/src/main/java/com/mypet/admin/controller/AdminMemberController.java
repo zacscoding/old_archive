@@ -19,16 +19,16 @@ import com.mypet.service.MemberService;
  *  회원 관리
  */
 @Controller
-@RequestMapping("/admin/usermanagent/*")
+@RequestMapping("/admin/users/*")
 public class AdminMemberController {
 	private static final Logger logger = LoggerFactory.getLogger(AdminMemberController.class);
-	@Inject
-	MemberService service;
 	
+	@Inject
+	MemberService service;	
 	
 	/*	회원 리스트 보기*/
-	@Transactional
 	@RequestMapping(value="/list", method=RequestMethod.GET)
+	@Transactional
 	public String memberLists(@ModelAttribute("cri") SearchCriteria cri, Model model) throws Exception {
 		logger.info("AdminMemberController.memberLists....GET");
 
@@ -40,8 +40,7 @@ public class AdminMemberController {
 		model.addAttribute("pageMaker",pageMaker);
 		
 		return "/admin/member/userList";
-	}
-	
+	}	
 	
 	/*	회원 상세 정보 보기*/
 	/*	회원 정보 수정 */
@@ -49,3 +48,16 @@ public class AdminMemberController {
 	
 	
 }
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -46,7 +46,7 @@ public class MemberController {
 		//return USER_JOIN_FORM;		
 	}		
 	@RequestMapping(value="/join",method = RequestMethod.POST)
-	public String joinPOST(@ModelAttribute("MemberVO") MemberVO vo, RedirectAttributes rttr) {
+	public String joinPOST(MemberVO vo, RedirectAttributes rttr) {
 		logger.info("joinPOST.... POST");
 		String viewPage = null;
 		try {

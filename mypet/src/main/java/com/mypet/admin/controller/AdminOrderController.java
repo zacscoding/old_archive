@@ -1,17 +1,13 @@
 package com.mypet.admin.controller;
 
-import javax.inject.Inject;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
-
-import com.mypet.service.OrderService;
 
 /**
  * 주문관리
  */
 @Controller
-@RequestMapping("/admin/order/")
+@RequestMapping("/admin/orders/*")
 public class AdminOrderController {
 	
 //	@Inject

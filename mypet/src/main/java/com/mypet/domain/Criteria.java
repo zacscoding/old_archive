@@ -3,6 +3,7 @@ package com.mypet.domain;
 public class Criteria {	
 	private int page;
 	private int perPageNum;
+	private int startRow;
 	
 	public Criteria() {
 		this.page = 1;
@@ -32,13 +33,18 @@ public class Criteria {
 	
 	//method for MyBatis SQL Mapper
 	public int getPageStart() {
-		return (this.page - 1) * perPageNum;
+		return startRow = (this.page - 1) * perPageNum +1; 
 	}
 	
 	//method for MyBatis SQL Mapper
 	public int getPerPageNum() {
 		return perPageNum;
 	}
+	
+	public int getPageLast() {
+		return startRow + perPageNum-1;
+	}
+	
 	
 	@Override
 	public String toString() {

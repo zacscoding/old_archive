@@ -53,7 +53,7 @@ public class UserAuthProvider implements AuthenticationProvider {
 		logger.info("Authorities : "+authorities);
 		
 		//5.인증된 사용자에 대한 Authentication 객체를 생성해서 리턴
-		return new UsernamePasswordAuthenticationToken(securityUser,userpw,authorities);		
+		return new UsernamePasswordAuthenticationToken(securityUser,userpw,authorities);	
 	}
 
 	@Override
