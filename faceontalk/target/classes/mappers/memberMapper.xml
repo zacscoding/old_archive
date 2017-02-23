@@ -60,7 +60,13 @@
 	
 	<!-- 이메일 인증 정보 검색 -->
 	<select id="getEmailAuth" resultType="EmailAuthVO">
-		select * from tbl_email_auth where user_id=#{usr_id} and auth_token=#{auth_token} and auth_limite > now()	
+		select * from tbl_email_auth where user_id=#{user_id} and auth_token=#{auth_token} and auth_limit > now()	
 	</select>
+	
+	<!-- 멤버 계정 활성화 -->
+	<update id="activate">
+		update tbl_member set enabled=true where user_id = #{user_id}
+	</update>
+	
 
 </mapper>

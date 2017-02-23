@@ -74,12 +74,17 @@ public class MemberDAOImpl implements MemberDAO {
 		paramMap.put("user_id",user_id);
 		paramMap.put("auth_token",auth_token);
 		paramMap.put("auth_limit",auth_limit);		
-		session.insert(namespace+".registerAuthToken");
+		session.insert(namespace+".registerAuthToken",paramMap);
 	}
 	
 	@Override
 	public EmailAuthVO getEmailAuth(EmailAuthVO dto) throws Exception {		
 		return session.selectOne(namespace+".getEmailAuth",dto);
+	}
+
+	@Override
+	public void activate(String user_id) throws Exception {
+		session.update(namespace+".activate",user_id);
 	}
 
 

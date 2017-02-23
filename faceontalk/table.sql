@@ -12,7 +12,7 @@ create table tbl_member(
     regdate timestamp not null default now(),
     phone varchar(20) not null, 
 	profile_pic varchar(150),
-	enabled char(1) default 'n',
+	enabled boolean default false,
 	sessionkey varchar(50) not null default 'none',
 	sessionlimit timestamp,
     primary key(user_no)

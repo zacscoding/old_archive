@@ -47,7 +47,7 @@
         <property name="port" value="587"/>
         <property name="protocol" value="smtp"/>
         <property name="username"><value>zactester0725@gmail.com</value></property>
-        <property name="password"><value>testtest!</value></property>
+        <property name="password"><value>INSERT PASSWORD</value></property>
         <property name="javaMailProperties">
             <props>
                 <prop key="mail.smtp.auth">true</prop>

@@ -23,6 +23,7 @@ public interface MemberDAO {
 	
 	//auth
 	public void registerAuthToken(String user_id,String auth_token,Date auth_limit) throws Exception;
-	public EmailAuthVO getEmailAuth(EmailAuthVO dto) throws Exception ;		
+	public EmailAuthVO getEmailAuth(EmailAuthVO dto) throws Exception;
+	public void activate(String user_id) throws Exception;
 	
 }

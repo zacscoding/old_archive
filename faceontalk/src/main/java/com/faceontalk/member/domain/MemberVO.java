@@ -7,6 +7,7 @@ public class MemberVO {
 	private String user_id;
 	private String user_email;
 	private String password;
+	private boolean enabled;
 	private Date regdate;
 	private String phone;
 	
@@ -48,9 +49,15 @@ public class MemberVO {
 	public void setPhone(String phone) {
 		this.phone = phone;
 	}
+	public boolean isEnabled() {
+		return enabled;
+	}
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
+	}
 	@Override
 	public String toString() {
 		return "MemberVO [user_no=" + user_no + ", user_id=" + user_id + ", user_email=" + user_email + ", password="
-				+ password + ", regdate=" + regdate + ", phone=" + phone + "]";
+				+ password + ", enabled=" + enabled + ", regdate=" + regdate + ", phone=" + phone + "]";
 	}	
 }

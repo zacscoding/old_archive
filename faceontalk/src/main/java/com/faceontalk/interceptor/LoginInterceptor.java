@@ -48,11 +48,9 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
 				loginCookie.setPath("/");
 				loginCookie.setMaxAge(60*60*24*7); //1week
 				response.addCookie(loginCookie);				
-			}
-			
+			}			
 			response.sendRedirect("/");
-			//기존 경로 URI 처리
-			
+			//기존 경로 URI 처리			
 			
 		}
 		

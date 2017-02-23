@@ -25,20 +25,13 @@ public class MemberController {
 	private MemberService service;	
 	
 	/** Join us  */	
-	//GET
-	@RequestMapping(value="/join",method=RequestMethod.GET)
-	public void registGET() throws Exception {
-		//empty
-	}	
-	
 	//POST
 	@RequestMapping(value="/join", method=RequestMethod.POST)	
 	public String registPOST(MemberVO vo, RedirectAttributes rttr) throws Exception {
 		logger.info("/accounts/join (POST)");
+		logger.info(vo.toString());
 		try {			
 			service.regist(vo);
-			String emailAddr = EmailSenderUtil.getEmailAddr(vo.getUser_email());
-			rttr.addFlashAttribute("emailAddr",emailAddr);
 			rttr.addFlashAttribute("message","Successed to join us :D\n Please confirm you email."); 
 		} catch(DuplicateIdException ex) {
 			rttr.addFlashAttribute("msg","duplicated id");

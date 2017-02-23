@@ -7,16 +7,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 @Controller
-public class FrontController {
-	
-	@RequestMapping(value="/kk",method=RequestMethod.GET)
-	public String getFront(HttpServletRequest request) {
-		
-		String uri = request.getRequestURI();
-		System.out.println("uri : "+uri);
-		request.setAttribute("str",uri);
-		
-		return "test";
+public class FrontController {	
+	@RequestMapping(value="/index",method=RequestMethod.GET)
+	public void getFront(HttpServletRequest request) {
 	}
 	
 
