@@ -9,6 +9,7 @@ import javax.inject.Inject;
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.stereotype.Repository;
 
+import com.faceontalk.member.domain.EmailAuthVO;
 import com.faceontalk.member.domain.FollowVO;
 import com.faceontalk.member.domain.MemberVO;
 
@@ -63,6 +64,22 @@ public class MemberDAOImpl implements MemberDAO {
 	@Override
 	public void removeFollower(FollowVO vo) throws Exception {
 		session.insert(namespace+".removeFollower",vo);
+	}
+
+	
+	/**		Email Auth register*/
+	@Override
+	public void registerAuthToken(String user_id, String auth_token, Date auth_limit) throws Exception {
+		Map<String,Object> paramMap = new HashMap<>();
+		paramMap.put("user_id",user_id);
+		paramMap.put("auth_token",auth_token);
+		paramMap.put("auth_limit",auth_limit);		
+		session.insert(namespace+".registerAuthToken");
+	}
+	
+	@Override
+	public EmailAuthVO getEmailAuth(EmailAuthVO dto) throws Exception {		
+		return session.selectOne(namespace+".getEmailAuth",dto);
 	}
 
 

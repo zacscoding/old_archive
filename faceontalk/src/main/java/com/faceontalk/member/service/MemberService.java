@@ -1,5 +1,6 @@
 package com.faceontalk.member.service;
 
+import com.faceontalk.member.domain.EmailAuthVO;
 import com.faceontalk.member.domain.FollowVO;
 import com.faceontalk.member.domain.MemberVO;
 
@@ -19,6 +20,9 @@ public interface MemberService {
 	public void regist(FollowVO vo) throws Exception;
 	// remove
 	public void remove(FollowVO vo) throws Exception;
+	
+	/*	Confirm Auth	*/
+	public void confirmAuth(EmailAuthVO dto) throws Exception;
 	
 	
 	

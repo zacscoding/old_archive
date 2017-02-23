@@ -2,6 +2,7 @@ package com.faceontalk.member.persistence;
 
 import java.util.Date;
 
+import com.faceontalk.member.domain.EmailAuthVO;
 import com.faceontalk.member.domain.FollowVO;
 import com.faceontalk.member.domain.MemberVO;
 
@@ -19,4 +20,9 @@ public interface MemberDAO {
 	//follower
 	public void registFollower(FollowVO vo) throws Exception;
 	public void removeFollower(FollowVO vo) throws Exception;
+	
+	//auth
+	public void registerAuthToken(String user_id,String auth_token,Date auth_limit) throws Exception;
+	public EmailAuthVO getEmailAuth(EmailAuthVO dto) throws Exception ;		
+	
 }

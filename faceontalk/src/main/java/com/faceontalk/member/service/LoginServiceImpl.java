@@ -26,8 +26,7 @@ public class LoginServiceImpl implements LoginService {
 		
 		//mismatch id or password
 		if(vo == null || !passwordEncoder.matches(dto.getPassword(),vo.getPassword()))
-			vo = null;
-		
+			vo = null;		
 		return vo;
 	}
 

@@ -50,8 +50,17 @@
 	</delete>
 	
 	
+	<!-- 이메일 인증 등록 -->
+	<insert id="registerAuthToken">
+	insert into tbl_email_auth
+		(user_id,auth_token,auth_limit)
+	values
+		(#{user_id},#{auth_token},#{auth_limit})	
+	</insert>
 	
-	
-	
+	<!-- 이메일 인증 정보 검색 -->
+	<select id="getEmailAuth" resultType="EmailAuthVO">
+		select * from tbl_email_auth where user_id=#{usr_id} and auth_token=#{auth_token} and auth_limite > now()	
+	</select>
 
 </mapper>

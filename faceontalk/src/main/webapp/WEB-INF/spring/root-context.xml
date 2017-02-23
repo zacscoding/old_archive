@@ -41,6 +41,23 @@
 	
 	<!-- PasswordEncoder -->
 	<bean id="passwordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder" />
+	
+	<bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+		<property name="host" value="smtp.gmail.com"/>
+        <property name="port" value="587"/>
+        <property name="protocol" value="smtp"/>
+        <property name="username"><value>zactester0725@gmail.com</value></property>
+        <property name="password"><value>testtest!</value></property>
+        <property name="javaMailProperties">
+            <props>
+                <prop key="mail.smtp.auth">true</prop>
+                <prop key="mail.smtp.starttls.enable">true</prop>
+                <prop key="mail.smtp.quitwait">false</prop>
+            </props>
+    </property>
+	</bean>	
+	
+	<bean id="registrationNotifierService" class="com.faceontalk.email.RegistrationNotifierService"/>
 		
 	<tx:annotation-driven/>
 		
