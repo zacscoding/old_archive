@@ -17,7 +17,7 @@ import com.faceontalk.feed.domain.FeedVO;
 import com.faceontalk.feed.service.FeedService;
 
 @Controller
-@RequestMapping(value="/feed")
+@RequestMapping(value="/feed/*")
 public class FeedController {	
 	private static final Logger logger = LoggerFactory.getLogger(FeedController.class);	
 	@Inject
@@ -76,10 +76,7 @@ public class FeedController {
 		
 		/**temp code */
 		return "redirect:/feed/result";	
-	}
-	
-		
-	
+	}	
 	
 	/**	remove	*/	
 	@RequestMapping(value="/removeFeed",method=RequestMethod.GET)
@@ -101,6 +98,10 @@ public class FeedController {
 	}
 	
 	
+	@RequestMapping(value="/result",method=RequestMethod.GET)
+	public void result() {
+		//empty
+	}
 
 	
 	

@@ -5,11 +5,13 @@ import java.util.Date;
 import javax.inject.Inject;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Service;
 
 import com.faceontalk.member.domain.MemberVO;
 import com.faceontalk.member.dto.LoginDTO;
 import com.faceontalk.member.persistence.MemberDAO;
 
+@Service
 public class LoginServiceImpl implements LoginService {
 	
 	@Inject
