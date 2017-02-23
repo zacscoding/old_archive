@@ -1,13 +1,21 @@
 package com.faceontalk.member.service;
 
+import java.util.Date;
+
 import javax.inject.Inject;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.faceontalk.email.EmailSenderUtil;
+import com.faceontalk.email.RegistrationNotifierService;
+import com.faceontalk.member.domain.EmailAuthVO;
 import com.faceontalk.member.domain.FollowVO;
 import com.faceontalk.member.domain.MemberVO;
 import com.faceontalk.member.persistence.MemberDAO;
+import com.facontalk.errors.DuplicateIdException;
+import com.facontalk.errors.ExceedPeriodException;
 
 
 @Service
@@ -17,12 +25,42 @@ public class MemberServiceImpl implements MemberService {
 	private MemberDAO dao;
 	@Inject
 	private BCryptPasswordEncoder passwordEncoder;
-	
+	@Inject 
+	private RegistrationNotifierService registrationNotifierService;
+
 	//회원 가입
+	@Transactional
 	@Override
-	public void regist(MemberVO vo) throws Exception {
+	public void regist(MemberVO vo) throws Exception {		
+		//1.confirm id
+		MemberVO member = dao.searchById(vo.getUser_id());
+		if(member != null)
+			throw new DuplicateIdException();
+		
+		//2.encrypt password
 		vo.setPassword(passwordEncoder.encode(vo.getPassword()));
+		
+		//3.register db		
 		dao.regist(vo);
+		
+		//4.create auth token
+		String auth_token = EmailSenderUtil.createToken();
+		int amount = 60*60*24; //하루
+		Date auth_limit = new Date(System.currentTimeMillis()+(1000*amount));	
+		dao.registerAuthToken(vo.getUser_id(),auth_token,auth_limit);
+		
+		//send email authentication with uri
+		registrationNotifierService.sendMail(vo, auth_token);		
+	}
+	
+	//이메일 인증
+	@Transactional
+	@Override
+	public void confirmAuth(EmailAuthVO dto) throws Exception {
+		EmailAuthVO auth = dao.getEmailAuth(dto);
+		if(auth == null)
+			throw new ExceedPeriodException();
+		//DB의 멤버 테이블에 enabled n에서 y로 바꾸기
 	}
 	
 	//회원 정보 수정
@@ -52,4 +90,6 @@ public class MemberServiceImpl implements MemberService {
 	public void remove(FollowVO vo) throws Exception {
 		dao.removeFollower(vo);
 	}
+
+	
 }

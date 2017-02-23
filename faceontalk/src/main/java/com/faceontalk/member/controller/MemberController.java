@@ -9,14 +9,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.faceontalk.email.EmailSenderUtil;
+import com.faceontalk.member.domain.EmailAuthVO;
 import com.faceontalk.member.domain.MemberVO;
 import com.faceontalk.member.service.MemberService;
+import com.facontalk.errors.DuplicateIdException;
+import com.facontalk.errors.ExceedPeriodException;
 
 @Controller
 @RequestMapping("/accounts")
 public class MemberController {	
-	private static final Logger logger
-		= LoggerFactory.getLogger(MemberController.class);
+	private static final Logger logger = LoggerFactory.getLogger(MemberController.class);
 	
 	@Inject
 	private MemberService service;	
@@ -26,15 +29,21 @@ public class MemberController {
 	@RequestMapping(value="/join",method=RequestMethod.GET)
 	public void registGET() throws Exception {
 		//empty
-	}
-	//POST	
-	@RequestMapping(value="/join", method=RequestMethod.POST)
+	}	
+	
+	//POST
+	@RequestMapping(value="/join", method=RequestMethod.POST)	
 	public String registPOST(MemberVO vo, RedirectAttributes rttr) throws Exception {
-		logger.info("/accounts/join (POST)");		
-		
-		service.regist(vo);		
-		rttr.addFlashAttribute("message","Successed to join us :D");		
-		return "redirect:/";
+		logger.info("/accounts/join (POST)");
+		try {			
+			service.regist(vo);
+			String emailAddr = EmailSenderUtil.getEmailAddr(vo.getUser_email());
+			rttr.addFlashAttribute("emailAddr",emailAddr);
+			rttr.addFlashAttribute("message","Successed to join us :D\n Please confirm you email."); 
+		} catch(DuplicateIdException ex) {
+			rttr.addFlashAttribute("msg","duplicated id");
+		}				
+		return "redirect:/index";
 	}
 	
 	
@@ -60,6 +69,22 @@ public class MemberController {
 		//2)Ajax이면 다르게		
 	}
 	
+	
+	/**	Auth Email */
+	@RequestMapping(value="/confirm_verification", method=RequestMethod.GET)
+	public String confirmAuth(EmailAuthVO dto,RedirectAttributes rttr) throws Exception {		
+		logger.info("confirm_verifination...");
+				
+		String msg = null;
+		try {
+			service.confirmAuth(dto);
+			msg = "Auth Success";
+		} catch(ExceedPeriodException e) {
+			msg = "Exceed Period...";
+		}		
+		rttr.addFlashAttribute("msg",msg);
+		return "redirect:/index";
+	}
 	
 	
 	

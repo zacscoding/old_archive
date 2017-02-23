@@ -12,10 +12,23 @@ create table tbl_member(
     regdate timestamp not null default now(),
     phone varchar(20) not null, 
 	profile_pic varchar(150),
+	enabled char(1) default 'n',
 	sessionkey varchar(50) not null default 'none',
 	sessionlimit timestamp,
     primary key(user_no)
 );
+
+#이메일 인증 테이블
+###############################
+# -
+# - 
+################################
+create table tbl_email_auth (
+	user_id varchar(20) not null,
+	auth_token varchar(150) not null,
+	auth_limit timestamp
+);
+
 
 
 
