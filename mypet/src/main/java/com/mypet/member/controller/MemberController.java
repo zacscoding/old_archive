@@ -45,8 +45,9 @@ public class MemberController {
 	/** 	join	*/
 	@RequestMapping(value="/join",method=RequestMethod.GET)
 	public void joinGET() {
-		//return USER_JOIN_FORM;		
-	}		
+		//empty
+	}
+	
 	@RequestMapping(value="/join",method = RequestMethod.POST)
 	public String joinPOST(MemberVO vo, RedirectAttributes rttr) {
 		logger.info("joinPOST.... POST");
@@ -54,6 +55,9 @@ public class MemberController {
 		try {
 			joinService.registMember(vo);			
 			viewPage = USER_JOIN_SUCCESS;
+			String emailAddr = EmailSenderUtil.getEmailAddr(vo.getUser_email());
+			rttr.addFlashAttribute("emailAddr",emailAddr);		
+			logger.info("join result viewPage = "+viewPage);
 		} catch(DuplicateIdException ex) {
 			rttr.addFlashAttribute("msg","duplicated id");
 			viewPage = USER_JOIN_FORM;
@@ -61,10 +65,13 @@ public class MemberController {
 			rttr.addFlashAttribute("msg",e.getMessage());
 			viewPage = USER_JOIN_FORM;
 		}
-		String emailAddr = EmailSenderUtil.getEmailAddr(vo.getUser_email());
-		rttr.addFlashAttribute("emailAddr",emailAddr);		
-		logger.info("join result viewPage = "+viewPage);
 		return "redirect:"+viewPage;		
+	}
+	
+	/**		Join Success	*/
+	@RequestMapping(value="/joinSuccess",method=RequestMethod.GET)
+	public void joinSuccessGET() {
+		//empty
 	}
 	
 	/** 	authentication	*/
