@@ -54,6 +54,6 @@ public class SecurityUserVO implements UserDetails {
 
 	@Override
 	public boolean isEnabled() {
-		return false;
+		return vo.getEmail_auth().equalsIgnoreCase("y");
 	}
 }

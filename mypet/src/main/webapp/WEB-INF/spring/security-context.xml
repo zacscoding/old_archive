@@ -18,6 +18,7 @@
 		<sec:access-denied-handler error-page="/errors/403"/>
 		<sec:intercept-url pattern="/user/loginform" access="permitAll" />
 		<sec:intercept-url pattern="/user/join" access="permitAll" />
+		<sec:intercept-url pattern="/user/confirm_verification" access="permitAll"/>
 		<sec:intercept-url pattern="/admin/**" access="hasAuthority('ROLE_ADMIN')"/>
 		<sec:intercept-url pattern="/user/**" access="isAuthenticated()"/>
 		<sec:intercept-url pattern="/**" access="permitAll"/>

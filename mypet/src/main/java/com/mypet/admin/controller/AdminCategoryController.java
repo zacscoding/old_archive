@@ -28,8 +28,8 @@ public class AdminCategoryController {
 		
 	/*	카테 고리 등록*/	
 	@RequestMapping(value="/register",method=RequestMethod.GET)
-	public void registerGET() {
-		//empty
+	public void registerGET(Model model) throws Exception {
+		model.addAttribute("animalList",service.listAnimal());
 	}
 	
 	@RequestMapping(value="/register/animal",method=RequestMethod.POST)
@@ -41,6 +41,7 @@ public class AdminCategoryController {
 	
 	@RequestMapping(value="/register",method=RequestMethod.POST)
 	public String registerCategoryPOST(CategoryVO vo,RedirectAttributes rttr) throws Exception{
+		logger.info("/register...POST : "+vo.toString());
 		service.registerProduct(vo);
 		rttr.addFlashAttribute("msg","SUCCESS");		
 		return "redirect:/admin/categories/list";

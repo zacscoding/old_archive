@@ -17,3 +17,11 @@ ex). aaa.com/member/active?token=abcdefg1234 or aaa.com/member/active/abcdefg123
 4. URL 요청을 받았으니 DB에 저장했던 값을 체크를합니다. 위에 토큰값이 입력될경우 계정을 활성화 합니다.
 
 5. 이후에 로그인 시키고(세션 or 쿠키 생성) 메인페이지던 사용자페이지던 이동을 합니다.
+
+
+-- github email auth
+
+https://github.com/users/zaccoding/emails/28518495/confirm_verification/e7d517f508e61b130ee6dd4856d0434ae427b962
+
+==>
+http://localhost:8080/users/confirm_verification?user_id=?auth_token=?

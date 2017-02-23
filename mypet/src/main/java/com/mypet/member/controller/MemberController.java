@@ -8,13 +8,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.mypet.domain.MemberVO;
+import com.mypet.dto.EmailAuthDTO;
+import com.mypet.email.EmailSenderUtil;
 import com.mypet.error.DuplicateIdException;
+import com.mypet.error.ExceedPeriodException;
 import com.mypet.member.service.JoinService;
 import com.mypet.service.MemberService;
 
@@ -58,10 +60,32 @@ public class MemberController {
 		} catch(Exception e) {
 			rttr.addFlashAttribute("msg",e.getMessage());
 			viewPage = USER_JOIN_FORM;
-		}	
+		}
+		String emailAddr = EmailSenderUtil.getEmailAddr(vo.getUser_email());
+		rttr.addFlashAttribute("emailAddr",emailAddr);		
 		logger.info("join result viewPage = "+viewPage);
 		return "redirect:"+viewPage;		
 	}
+	
+	/** 	authentication	*/
+	// /confirm_verifination/{user_id}/auth_token으로 다시 하기
+	@RequestMapping(value="/confirm_verification", method=RequestMethod.GET)
+	public String confirmAuth(EmailAuthDTO dto,RedirectAttributes rttr) throws Exception {		
+		logger.info("confirm_verifination...");
+		logger.info("user_id : "+dto.getUser_id());
+		logger.info("auth_token : "+dto.getAuth_token());
+		String msg = null;
+		try {
+			joinService.confirmAuth(dto);
+			msg = "Auth Success";
+		} catch(ExceedPeriodException e) {
+			msg = "Exceed Period...";
+		}
+		
+		rttr.addFlashAttribute("msg",msg);
+		return "redirect:/index";
+	}
+	
 	
 	/** 	modify	*/
 	@RequestMapping(value="modify",method=RequestMethod.GET)

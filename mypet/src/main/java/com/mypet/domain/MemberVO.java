@@ -12,6 +12,7 @@ create table tbl_member (
 	user_phone varchar2(20) not null,
 	role varchar2(20) default 'MEMBER',
 	reg_date timestamp default sysdate,
+	email_auth char(1) default 'n',	
 	postcode_fk varchar2(7) not null, 
 	address varchar2(100) 	
 );
@@ -24,6 +25,7 @@ public class MemberVO {
 	private String user_name;
 	private String user_email;
 	private String user_phone;
+	private String email_auth;
 	private String postcode_fk;
 	private String address;
 	private Date reg_date;
@@ -32,6 +34,14 @@ public class MemberVO {
 	
 	//setters,getters,toString()
 	
+	public String getEmail_auth() {
+		return email_auth;
+	}
+
+	public void setEmail_auth(String email_auth) {
+		this.email_auth = email_auth;
+	}
+
 	public Date getReg_date() {
 		return reg_date;
 	}
@@ -116,10 +126,7 @@ public class MemberVO {
 	public String toString() {
 		return "MemberVO [user_no=" + user_no + ", user_id=" + user_id + ", user_password=" + user_password
 				+ ", user_name=" + user_name + ", user_email=" + user_email + ", user_phone=" + user_phone
-				+ ", postcode_fk=" + postcode_fk + ", address=" + address + ", role=" + role + "]";
-	}
-	
-	
-
-	
+				+ ", email_auth=" + email_auth + ", postcode_fk=" + postcode_fk + ", address=" + address + ", reg_date="
+				+ reg_date + ", role=" + role + "]";
+	}	
 }

@@ -19,8 +19,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 		MemberVO vo = null;		
 		try {
 			vo = dao.selectById(username);
-			if(vo == null)
-				throw new UsernameNotFoundException(username);			
+//			if(vo == null)
+//				throw new UsernameNotFoundException(username);			
 //			List<UserRole> perms = dao.selectPermissionById(vo.getUser_no());
 //			List<GrantedAuthority> authorities = new ArrayList<>(perms.size());
 //			
@@ -28,7 +28,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 //				authorities.add(new SimpleGrantedAuthority(perm.getName()));				
 //			}			
 //			return new User(username,vo.getPassword(),authorities);
-			
+			if(vo == null)
+				return null;			
 			return new SecurityUserVO(vo);
 		}catch(Exception e) {
 			e.printStackTrace();			

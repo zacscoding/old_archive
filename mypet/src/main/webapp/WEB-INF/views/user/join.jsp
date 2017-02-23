@@ -10,9 +10,7 @@
 <body>
 
 <c:if test="${not empty msg}">
-		<script>
-			alert('${msg}');
-		</script>
+		Reason : ${msg}		
 </c:if>
 
 <div align="center">

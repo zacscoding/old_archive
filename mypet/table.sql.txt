@@ -17,10 +17,20 @@ create table tbl_member (
 	user_phone varchar2(20) not null,
 	role varchar2(20) default 'MEMBER',
 	reg_date timestamp default sysdate,
+	email_auth char(1) default 'n',	
 	postcode_fk varchar2(7) not null, 
 	address varchar2(100) 	
 );
 create sequence member_seq;
+
+--이메일 인증
+create table tbl_email_auth (
+	user_id varchar2(20) not null,
+	auth_token varchar2(150) not null,
+	auth_limit timestamp
+);
+
+	
 
 --동물
 create table tbl_animal (
