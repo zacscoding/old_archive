@@ -24,6 +24,23 @@
 	<context:component-scan base-package="com.faceontalk.controller" />
 	<context:component-scan base-package="com.faceontalk.member.controller" />
 	<context:component-scan base-package="com.faceontalk.feed.controller" />
+		
+	<beans:bean id="loginInterceptor" class="com.faceontalk.interceptor.LoginInterceptor"/>
+	<beans:bean id="authInterceptor" class="com.faceontalk.interceptor.AuthInterceptor"/>
+	
+	<interceptors>
+		<interceptor>
+			<mapping path="/user/loginPost"/>
+			<beans:ref bean="loginInterceptor"/>
+		</interceptor>
+		
+		<interceptor>
+			<mapping path="/feed/register"/>
+			
+			<beans:ref bean="authInterceptor"/>
+		</interceptor>		
+	</interceptors>
+	
 	
 	
 	

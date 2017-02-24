@@ -33,33 +33,26 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
 	@Override
 	public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
 			ModelAndView modelAndView) throws Exception {
+		logger.info("LoginInterceptor post...");
 		
 		HttpSession session = request.getSession();
 		ModelMap modelMap = modelAndView.getModelMap();
-		Object memberVO = modelMap.get("memberVO");
+		Object memberVO = modelMap.get("memberVO");		
 		
 		if(memberVO != null) {
 			logger.info("new login success");
 			session.setAttribute(LOGIN,memberVO);
 			if(request.getParameter("useCookie") != null) { //자동 로그인 체크
-				logger.info("remember me..");
-				
+				logger.info("remember me..");				
 				Cookie loginCookie = new Cookie("loginCookie",session.getId());
 				loginCookie.setPath("/");
 				loginCookie.setMaxAge(60*60*24*7); //1week
 				response.addCookie(loginCookie);				
-			}			
-			response.sendRedirect("/");
-			//기존 경로 URI 처리			
-			
+			}
+			//기존 경로 URI 처리
+			Object dest = session.getAttribute("dest");
+			logger.info("dest : "+dest.toString());
+			response.sendRedirect(dest != null ? (String)dest:"/index");			
 		}
-		
-		
 	}
-	
-	
-	
-	
-	
-
 }

@@ -25,16 +25,15 @@ public class LoginController {
 		//empty
 	}
 	
-	@RequestMapping(value="/login", method=RequestMethod.POST)
+	@RequestMapping(value="/loginPost", method=RequestMethod.POST)
 	public void loginPOST(LoginDTO dto,HttpSession session, Model model) throws Exception {
 		//check user
 		MemberVO vo = service.login(dto);
 		
-		if(vo == null) //login failed
+		if(vo == null || !vo.isEnabled()) //login failed			
 			return;
 		
-		model.addAttribute("memberVO",vo);
-		
+		model.addAttribute("memberVO",vo);		
 		//check keep login
 		if(dto.isUserCookie()) {
 			System.out.println("user Cookie");

@@ -1,6 +1,6 @@
 #유저 테이블
 ###############################
-# - follower,following 숫자를 넣을지 말지 고민
+# - 
 # - 
 ################################
 
@@ -12,6 +12,8 @@ create table tbl_member(
     regdate timestamp not null default now(),
     phone varchar(20) not null, 
 	profile_pic varchar(150),
+	follower_cnt int default 0,
+	following_cnt int default 0,
 	enabled boolean default false,
 	sessionkey varchar(50) not null default 'none',
 	sessionlimit timestamp,

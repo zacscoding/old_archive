@@ -37,15 +37,14 @@ public class MemberController {
 			rttr.addFlashAttribute("msg","duplicated id");
 		}				
 		return "redirect:/index";
-	}
-	
-	
+	}	
 	/** 	edit account	*/
 	@RequestMapping(value="/edit", method = RequestMethod.GET)
 	public void editGet() throws Exception {
 		//1)Ajax이면 반환형 달라짐
 		//2)아니면 MemberVO로 반환		
 	}
+	
 	@RequestMapping(value="/edit", method = RequestMethod.POST)
 	public void editGetPOST(MemberVO vo) throws Exception {
 		MemberVO anotherUser = service.searchById(vo.getUser_id());
@@ -61,7 +60,6 @@ public class MemberController {
 		
 		//2)Ajax이면 다르게		
 	}
-	
 	
 	/**	Auth Email */
 	@RequestMapping(value="/confirm_verification", method=RequestMethod.GET)

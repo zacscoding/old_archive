@@ -2,7 +2,6 @@ package com.faceontalk.feed.util;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.regex.Pattern;
 
 /*
  * TEMP hash tag helper.....
@@ -18,9 +17,8 @@ public class HashTagHelper {
 		int curIdx = 0;
 		int startIdx = 0;
 		while(curIdx < content.length()) {
-			if(content.charAt(curIdx) == '#') {
+			if(content.charAt(curIdx) == '#') {				
 				startIdx = curIdx++;
-				
 				/** have to change statement */
 				while(curIdx < content.length() 
 						&& content.charAt(curIdx) != ' ' && content.charAt(curIdx) != '#' && content.charAt(curIdx) !='\n'){

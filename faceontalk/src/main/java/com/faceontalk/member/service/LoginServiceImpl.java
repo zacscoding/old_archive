@@ -22,8 +22,7 @@ public class LoginServiceImpl implements LoginService {
 	
 	@Override
 	public MemberVO login(LoginDTO dto) throws Exception {
-		MemberVO vo = dao.searchById(dto.getUser_id());		
-		
+		MemberVO vo = dao.searchById(dto.getUser_id());				
 		//mismatch id or password
 		if(vo == null || !passwordEncoder.matches(dto.getPassword(),vo.getPassword()))
 			vo = null;		

@@ -7,12 +7,26 @@ public class MemberVO {
 	private String user_id;
 	private String user_email;
 	private String password;
-	private boolean enabled;
+	private boolean enabled;	
 	private Date regdate;
 	private String phone;
+	private Integer follower_cnt;
+	private Integer following_cnt;
 	
 	//setters,getters,toString
 
+	public Integer getFollower_cnt() {
+		return follower_cnt;
+	}
+	public void setFollower_cnt(Integer follower_cnt) {
+		this.follower_cnt = follower_cnt;
+	}
+	public Integer getFollowing_cnt() {
+		return following_cnt;
+	}
+	public void setFollowing_cnt(Integer following_cnt) {
+		this.following_cnt = following_cnt;
+	}
 	public String getUser_email() {
 		return user_email;
 	}
@@ -58,6 +72,9 @@ public class MemberVO {
 	@Override
 	public String toString() {
 		return "MemberVO [user_no=" + user_no + ", user_id=" + user_id + ", user_email=" + user_email + ", password="
-				+ password + ", enabled=" + enabled + ", regdate=" + regdate + ", phone=" + phone + "]";
-	}	
+				+ password + ", enabled=" + enabled + ", regdate=" + regdate + ", phone=" + phone + ", follower_cnt="
+				+ follower_cnt + ", following_cnt=" + following_cnt + "]";
+	}
+	
+	
 }
