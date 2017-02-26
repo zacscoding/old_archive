@@ -6,6 +6,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<title>User Details</title>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 </head>
 <body>
 
@@ -28,13 +29,14 @@
 	<button type="submit" id="goListBtn">GO LIST </button>
 </form>
 
-
 <!-- 
+<button type="submit" id="goListBtn">Go List</button>
 <script>
+	var formObj = $("form[role='form']");
 	//jQuery
-	$("#goListBtn ").on("click", function(){
+	$("#goListBtn").on("click", function(){
 		formObj.attr("method", "get");
-		formObj.attr("action", "/users/list");
+		formObj.attr("action", "/admin/users/list");
 		formObj.submit();
 	});
 </script>

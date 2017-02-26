@@ -6,6 +6,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<title>회 원 관 리</title>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 </head>
 <body>
 
@@ -47,11 +48,16 @@
 		</div>
 
 
-<table border="1">
+<table border="1" width="70%">
 	<tr>
 		<th>NO</th> <th>ID</th> <th>NAME</th> <th>EMAIL</th> <th>PHONE</th> <th>ADDRESS</th>
 	</tr>
-		
+	<c:if test="${empty list}">
+		<tr>
+			<td colspan="6">검색 조건에 맞는 회원이 존재하지 않습니다. </td>
+		</tr>
+	</c:if>
+			
 	<c:forEach var="memberVO" items="${list}" varStatus="status">
 		<tr>
 		<!-- <td>${status.index+1}</td>  -->
@@ -64,6 +70,7 @@
 	</c:forEach>		
 </table>
 </div>
+
 
 <div align="center">	
 	<!-- 페이징 -->	
@@ -82,6 +89,8 @@
 		<a href="list${pageMaker.makeSearch(pageMaker.endPage +1) }">[next]</a>
 	</c:if>
 </div>
+
+<a href="/admin/main">[메인으로]</a>
 
 <script>	
 	$(document).ready(function(){
