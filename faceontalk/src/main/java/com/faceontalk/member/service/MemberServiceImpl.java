@@ -91,5 +91,10 @@ public class MemberServiceImpl implements MemberService {
 		dao.removeFollower(vo);
 	}
 
-	
+	@Override
+	@Transactional
+	public void removeExpiredAuth() throws Exception {
+		dao.removeExpiredAuthMember();
+		dao.removeExpiredAuthEmail();		
+	}	
 }

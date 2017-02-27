@@ -68,5 +68,17 @@
 		update tbl_member set enabled=true where user_id = #{user_id}
 	</update>
 	
+	
+	<!-- 기간 지난 인증 삭제(멤버) -->
+	<delete id="removeExpiredAuthMember">
+		delete from tbl_member where user_id in
+		(select user_id from tbl_email_auth where now() >= auth_limit)
+	</delete>
+	
+	<!-- 기간 지난 인증 삭제(이메일) -->
+	<delete id="removeExpiredAuthMember">
+		delete from tbl_email_auth where now() >= auth_limit
+	</delete>
+	
 
 </mapper>

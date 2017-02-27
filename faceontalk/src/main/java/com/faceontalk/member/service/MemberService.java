@@ -24,6 +24,8 @@ public interface MemberService {
 	/*	Confirm Auth	*/
 	public void confirmAuth(EmailAuthVO dto) throws Exception;
 	
+	/*	remove exceed auth	*/
+	public void removeExpiredAuth() throws Exception;
 	
 	
 }

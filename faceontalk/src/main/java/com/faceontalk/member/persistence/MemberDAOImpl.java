@@ -87,5 +87,20 @@ public class MemberDAOImpl implements MemberDAO {
 		session.update(namespace+".activate",user_id);
 	}
 
+	/**		Remove Expired	Auth 	*/	
+	@Override
+	public void removeExpiredAuthEmail() throws Exception {
+		session.delete(namespace+".removeExpiredAuthEmail");
+		
+	}
+
+	@Override
+	public void removeExpiredAuthMember() throws Exception {
+		session.delete(namespace+".removeExpiredAuthMember");		
+	}
+	
+	
+	
+
 
 }
