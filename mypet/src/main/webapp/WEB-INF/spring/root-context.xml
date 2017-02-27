@@ -4,10 +4,14 @@
 	xmlns:context="http://www.springframework.org/schema/context"
 	xmlns:tx="http://www.springframework.org/schema/tx"
 	xmlns:aop="http://www.springframework.org/schema/aop"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+	xmlns:task="http://www.springframework.org/schema/task"
+	xsi:schemaLocation="http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-4.3.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
 		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd
 		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.3.xsd">
+	
+	
 	
 	<!-- Root Context: defines shared resources visible to all other web components -->
 	<aop:aspectj-autoproxy></aop:aspectj-autoproxy><!-- 자동으로 AspectJ 라이브러리를 이용 & Proxy객체 생성 -->
@@ -54,10 +58,19 @@
 		
 	<tx:annotation-driven transaction-manager="transactionManager"/>
 	
+	<!-- scheduler -->
+	<task:annotation-driven scheduler="dbScheduler"/>	
+	<task:scheduler id="dbScheduler" pool-size="3"/>
+	
+	<!-- <task:executor id="executor" keep-alive="3" pool-size="1-5"
+		queue-capacity="10" rejection-policy="ABORT"/>
+	 -->	
+	
 	<!--  		
 	<context:component-scan base-package="com.mypet.*.service"></context:component-scan>
 	<context:component-scan base-package="com.mypet.*.persistence"></context:component-scan>
 	 -->
+	<context:component-scan base-package="com.mypet.scheduler"></context:component-scan> 
 	<context:component-scan base-package="com.mypet.service"></context:component-scan>
 	<context:component-scan base-package="com.mypet.persistence"></context:component-scan>
 	

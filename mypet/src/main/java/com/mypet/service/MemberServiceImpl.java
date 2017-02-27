@@ -5,6 +5,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.mypet.domain.MemberVO;
 import com.mypet.domain.SearchCriteria;
@@ -41,7 +42,12 @@ public class MemberServiceImpl implements MemberService {
 		dao.modify(vo);
 		
 	}
-	
-	
+
+	@Override
+	@Transactional
+	public void removeExceedAuth() throws Exception {
+		dao.removeExceedAuthMember();
+		dao.checkEmailAuthPeriod();		
+	}
 
 }

@@ -49,7 +49,16 @@
 	<update id="registerMemberAuth">
 		update tbl_member set email_auth = 'y' where user_id = #{user_id}
 	</update>
-		
+
+	<!-- 회원 이메일 인증 기간 지난 것 지우기(메) -->
+	<delete id="removeExceedAuthMember">
+		delete from tbl_member where user_id in(select user_id from tbl_email_auth where sysdate >= auth_limit)
+	</delete>	
+	
+	<!-- 회원 이메일 인증 기간 지난 것 지우기(인증테이블) -->
+	<delete id="checkEmailAuthPeriod">
+		delete tbl_email_auth where sysdate >= auth_limit		
+	</delete>
 	
 	<!-- 회원 리스트 -->
 	<select id="listSearchCriteria" resultType="MemberVO">

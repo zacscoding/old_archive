@@ -21,6 +21,9 @@ public interface MemberService {
 	
 	
 	
+	//인증 기간 지난 것 삭제
+	public void removeExceedAuth() throws Exception;
+	
 	
 	
 	

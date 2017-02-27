@@ -1,7 +1,5 @@
 package com.mypet.controller;
 
-import java.util.Date;
-
 import javax.inject.Inject;
 
 import org.junit.Test;
@@ -9,15 +7,12 @@ import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
-import org.springframework.transaction.annotation.Transactional;
 
-import com.mypet.domain.MemberVO;
-import com.mypet.email.EmailSenderUtil;
 import com.mypet.persistence.MemberDAO;
+import com.mypet.service.MemberService;
 
 
 /**
@@ -33,43 +28,43 @@ public class MemberDAOTest {
 	
 	@Inject
 	MemberDAO dao;
+	@Inject
+	MemberService service;
 	
 	@Inject
 	private PasswordEncoder passwordEncoder;
 	
-	/* regist test*/
-	@Test
-	@Transactional
-	public void registMemberTest() {
-		try {
-			
-			MemberVO vo = new MemberVO();
-			vo.setUser_id("hiva4");
-			vo.setUser_password("hiva");
-			vo.setUser_name("hiva4");
-			vo.setUser_email("hiva4.com");
-			vo.setUser_phone("010");
-			vo.setPostcode_fk("123");
-			vo.setAddress("zzz");
-			dao.registerMember(vo);
-			// 인증 토큰 생성
-			String auth_token = EmailSenderUtil.createToken();
-			int amount = 60*60*24; //하루
-			Date auth_limit = new Date(System.currentTimeMillis()+(1000*amount));	
-			dao.registerAuthToken(vo.getUser_id(),auth_token,auth_limit);
-			
-		} catch(Exception e) {
-			e.printStackTrace();
-		}
-		
-		
-//		for(int i=200;i<250;i++) {
-//			try {			
-//			} catch(Exception e) {
-//				e.printStackTrace();
-//			}		
+//	/* regist test*/
+//	@Test
+//	@Transactional
+//	@Rollback(false)
+//	public void registMemberTest() {
+//		try {			
+//			MemberVO vo = new MemberVO();
+//			vo.setUser_id("hiva5");
+//			vo.setUser_password("hiva");
+//			vo.setUser_name("hiva5");
+//			vo.setUser_email("hiva4.com");
+//			vo.setUser_phone("010");
+//			vo.setPostcode_fk("123");
+//			vo.setAddress("zzz");
+//			dao.registerMember(vo);
+//			// 인증 토큰 생성
+//			String auth_token = EmailSenderUtil.createToken();
+//			int amount = 60*60*24; //하루
+//			Date auth_limit = new Date(System.currentTimeMillis()+(1000*amount));	
+//			dao.registerAuthToken(vo.getUser_id(),auth_token,auth_limit);
+//			
+//		} catch(Exception e) {
+//			e.printStackTrace();
 //		}
-	}
+////		for(int i=200;i<250;i++) {
+////			try {			
+////			} catch(Exception e) {
+////				e.printStackTrace();
+////			}		
+////		}
+//	}
 	
 	
 //	/* encrypt test*/
@@ -99,22 +94,22 @@ public class MemberDAOTest {
 //		}
 //	}
 	
-	@Test
-	public void selectTest() {
-		//1.id
-		String id = "hiva1";		
-		//2.user_no
-		Integer user_no = 1;		
-		try {
-			MemberVO vo1 = dao.selectById(id);
-			MemberVO vo2 = dao.selectByNum(user_no);
-			
-			logger.info(vo1.toString());
-			logger.info(vo2.toString());
-		} catch(Exception e) {
-			e.printStackTrace();
-		}			
-	}
+//	@Test
+//	public void selectTest() {
+//		//1.id
+//		String id = "hiva1";		
+//		//2.user_no
+//		Integer user_no = 1;		
+//		try {
+//			MemberVO vo1 = dao.selectById(id);
+//			MemberVO vo2 = dao.selectByNum(user_no);
+//			
+//			logger.info(vo1.toString());
+//			logger.info(vo2.toString());
+//		} catch(Exception e) {
+//			e.printStackTrace();
+//		}			
+//	}
 	
 //	@Transactional
 //	@Test
@@ -133,6 +128,14 @@ public class MemberDAOTest {
 //		}			
 //	}
 	
+	@Test
+	public void testScheduler() throws Exception {
+		try {
+			dao.removeExceedAuthMember();			
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
 		
 }
 
