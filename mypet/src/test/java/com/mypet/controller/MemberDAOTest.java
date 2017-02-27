@@ -131,7 +131,7 @@ public class MemberDAOTest {
 	@Test
 	public void testScheduler() throws Exception {
 		try {
-			dao.removeExceedAuthMember();			
+			dao.removeExpiredAuthMember();			
 		} catch(Exception e) {
 			e.printStackTrace();
 		}

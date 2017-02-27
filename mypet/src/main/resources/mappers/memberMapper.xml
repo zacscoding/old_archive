@@ -51,12 +51,12 @@
 	</update>
 
 	<!-- 회원 이메일 인증 기간 지난 것 지우기(메) -->
-	<delete id="removeExceedAuthMember">
+	<delete id="removeExpiredAuthMember">
 		delete from tbl_member where user_id in(select user_id from tbl_email_auth where sysdate >= auth_limit)
 	</delete>	
 	
 	<!-- 회원 이메일 인증 기간 지난 것 지우기(인증테이블) -->
-	<delete id="checkEmailAuthPeriod">
+	<delete id="removeExpiredAuthEmail">
 		delete tbl_email_auth where sysdate >= auth_limit		
 	</delete>
 	

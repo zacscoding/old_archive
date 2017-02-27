@@ -45,9 +45,9 @@ public class MemberServiceImpl implements MemberService {
 
 	@Override
 	@Transactional
-	public void removeExceedAuth() throws Exception {
-		dao.removeExceedAuthMember();
-		dao.checkEmailAuthPeriod();		
+	public void removeExpiredAuth() throws Exception {
+		dao.removeExpiredAuthMember();
+		dao.removeExpiredAuthEmail();		
 	}
 
 }

@@ -74,13 +74,13 @@ public class MemberDAOImpl implements MemberDAO {
 	}
 
 	@Override
-	public void checkEmailAuthPeriod() throws Exception {
-		session.update(namespace+".checkEmailAuthPeriod");
+	public void removeExpiredAuthEmail() throws Exception {
+		session.update(namespace+".removeExpiredAuthEmail");
 	}
 
 	@Override
-	public void removeExceedAuthMember() throws Exception {
-		session.update(namespace+".removeExceedAuthMember");
+	public void removeExpiredAuthMember() throws Exception {
+		session.update(namespace+".removeExpiredAuthMember");
 	}	
 	
 	

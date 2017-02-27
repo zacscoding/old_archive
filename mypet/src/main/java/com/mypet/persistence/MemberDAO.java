@@ -31,7 +31,7 @@ public interface MemberDAO {
 	
 	
 	//이메일 인증 기간 지난 것 지우기
-	public void removeExceedAuthMember() throws Exception;
-	public void checkEmailAuthPeriod()throws Exception;
+	public void removeExpiredAuthMember() throws Exception;
+	public void removeExpiredAuthEmail()throws Exception;
 	
 }

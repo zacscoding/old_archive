@@ -21,7 +21,7 @@ public class Scheduler {
 	//@Scheduled(cron="0 30 2 * * * * *")
 	public void removeExceed() {
 		try {
-			memberService.removeExceedAuth();			
+			memberService.removeExpiredAuth();			
 		} catch(Exception e) {
 			e.printStackTrace();
 		}		
