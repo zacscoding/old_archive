@@ -20,8 +20,8 @@ public class CategoryDAOImpl implements CategoryDAO {
 	
 	/*		등록		*/
 	@Override
-	public void registAnimal(AnimalVO vo) throws Exception {
-		session.insert(namespace+".registerAnimal",vo);
+	public void registAnimal(String animal_name) throws Exception {
+		session.insert(namespace+".registerAnimal",animal_name);
 	}
 
 	@Override

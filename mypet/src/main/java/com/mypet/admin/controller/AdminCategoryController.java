@@ -9,11 +9,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.mypet.domain.AnimalVO;
 import com.mypet.domain.CategoryVO;
 import com.mypet.service.CategoryService;
 
@@ -42,15 +43,13 @@ public class AdminCategoryController {
 	}*/
 	
 	//ajax
-	@RequestMapping(value="/register/animal",method=RequestMethod.POST)
-	public ResponseEntity<String> registerAnimalPOST(@RequestBody String animal_name) throws Exception {
-		logger.info("registerAnimalPOST");
-		AnimalVO vo = new AnimalVO();
-		vo.setAnimal_name(animal_name);
-		logger.info("vo : "+vo.toString());
+	@RequestMapping(value="/register/{animal_name}",method=RequestMethod.POST)
+	@ResponseBody
+	public ResponseEntity<String> registerAnimalPOST(@PathVariable("animal_name") String animal_name) throws Exception {
+		logger.info("registerAnimalPOST..."+animal_name);		
 		ResponseEntity<String> entity = null;
 		try {
-			service.registerAnimal(vo);
+			service.registerAnimal(animal_name);
 			entity = new ResponseEntity<>("SUCCESS",HttpStatus.OK);
 		} catch(Exception ex) {
 			ex.printStackTrace();
@@ -72,6 +71,7 @@ public class AdminCategoryController {
 	
 	//카테고리 등록
 	@RequestMapping(value="/register",method=RequestMethod.POST)
+	@ResponseBody
 	public ResponseEntity<String> registerCategoryPOST(@RequestBody CategoryVO vo) throws Exception{
 		logger.info("registerCategoryPOST");
 		logger.info("vo : "+vo.toString());

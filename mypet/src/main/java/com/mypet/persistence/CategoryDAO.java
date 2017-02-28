@@ -19,7 +19,7 @@ public interface CategoryDAO {
 	public List<CategoryVO> listCategory() throws Exception;
 	
 	/*카테고리 등록*/	
-	public void registAnimal(AnimalVO vo) throws Exception;
+	public void registAnimal(String animal_name) throws Exception;
 	public void registProduct(CategoryVO vo) throws Exception;
 	
 	/*카테고리 수정*/

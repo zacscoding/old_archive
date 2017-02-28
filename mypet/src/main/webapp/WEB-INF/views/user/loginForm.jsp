@@ -22,7 +22,7 @@
     <br/>    
     <input type="submit" value="로그인" />
 </form>
-<a href='/users/join'>[회원 가입]</a>
+<a href='/user/join'>[회원 가입]</a>
 
 
 

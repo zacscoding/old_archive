@@ -18,8 +18,8 @@ public class CategoryServiceImpl implements CategoryService {
 
 	/*		등록		*/
 	@Override
-	public void registerAnimal(AnimalVO vo) throws Exception {
-		dao.registAnimal(vo);
+	public void registerAnimal(String animal_name) throws Exception {
+		dao.registAnimal(animal_name);
 	}
 
 	@Override
@@ -41,7 +41,7 @@ public class CategoryServiceImpl implements CategoryService {
 	/*		삭제		*/
 	@Override
 	public void removeAnimal(AnimalVO vo) throws Exception {
-		dao.registAnimal(vo);
+		dao.removeAnimal(vo);
 	}
 
 	@Override

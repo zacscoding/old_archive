@@ -19,7 +19,7 @@
 	<br/><br/><br/>	
 	
 	<!-- <input type="hidden" name="aninal_no_fk" value="${vo.animal_no}">  -->						
-	<div>
+	<div align="center">
 		<h2>상품 카테고리 등록하기</h2>
 		<select name="animal_name_fk">
 				<c:forEach var="vo" items="${animalList}">
@@ -29,19 +29,50 @@
 		<input type="text" name="cate_name" id="cate_name">
 		<button type="button" id="registerCategory">Add</button>				
 	</div>
+	<br/><br/><br/>
+	<div align="center">
+		<h3>Animal List..</h3>
+		<table border="1" width="50%">
+		<tr>
+			<th>No</th><th>Name</th>
+		</tr>
+		<c:forEach var="animalVO" items="${animalList}">
+			<tr>
+			<td>${animalVO.animal_no}</td><td>${animalVO.animal_name}</td>
+			</tr>
+		</c:forEach>		
+		</table>	
+	</div>
+	<br/><br/><br/>
+	<div align="center">
+		<h3>Products List..</h3>
+		<table border="1" width="50%">
+		<tr>
+			<th>no</th><th>name</th> <th>animal_no</th> <th>animal_name</th>
+		</tr>
+		<c:forEach var="categoryVO" items="${categoryList}">
+			<tr>
+			<td>${categoryVO.category_no}</td><td>${categoryVO.cate_name}</td>
+			<td>${categoryVO.animal_no_fk}</td><td>${categoryVO.animal_name_fk}</td>
+			</tr>			
+		</c:forEach>		
+		</table>	
+	</div>		
+	
+	
 	<script>	
-		$(document).ready(function(){			
+		$(document).ready(function(){
+			/*		동물 카테고리 등록	*/
 			$('#registerAnimal').on('click',function() {
+				var animal_name = $('#animal_name').val();
+			
 				$.ajax({
 					type: 'post',
-					url: '/admin/categories/register/animal',
+					url: '/admin/categories/register/'+ animal_name,
 					headers: {
 					      "Content-Type": "application/json",
 					      "X-HTTP-Method-Override": "POST" },
-					dataType: 'text',
-					data: {
-						animal_name: $('#animal_name').val()
-					},
+					dataType: 'text',					
 					success:function(result) {
 						if(result=='SUCCESS') {
 							alert('성공적으로 등록되었습니다.');
@@ -51,12 +82,13 @@
 				});				
 			});
 			
+			/*		상품 카테고리 등록	*/
 			$('#registerCategory').click(function(){
 				var noAndName = $('select option:selected').val().split(',');
 				var animal_no = noAndName[0];				
 				var animal_name = noAndName[1];
 				var cate_name = $('#cate_name').val();
-				alert(animal_no + '\n'+animal_name+'\n'+cate_name);
+				//alert(animal_no + '\n'+animal_name+'\n'+cate_name);
 				
 				$.ajax({
 					type: 'post',
@@ -65,7 +97,7 @@
 					      "Content-Type": "application/json",
 					      "X-HTTP-Method-Override": "POST" },
 					dataType: 'text',					
-					data:JSON.stringify({animal_no:animal_no,animal_name:animal_name,cate_name:cate_name}),					
+					data:JSON.stringify({animal_no_fk:animal_no,animal_name_fk:animal_name,cate_name:cate_name}),					
 					success:function(result) {
 						if(result=='SUCCESS') {
 							alert('성공적으로 등록되었습니다.');

@@ -8,7 +8,7 @@ import com.mypet.domain.CategoryVO;
 public interface CategoryService {
 	
 	/*등록*/
-	public void registerAnimal(AnimalVO vo) throws Exception;
+	public void registerAnimal(String animal_name) throws Exception;
 	public void registerProduct(CategoryVO vo) throws Exception;
 	
 	/*수정*/

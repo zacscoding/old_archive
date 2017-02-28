@@ -6,11 +6,11 @@
 <mapper namespace="com.mypet.mapper.CategoryMapper">
 
 	<select id="listAnimal" resultType="AnimalVO">
-		select * from tbl_animal	
+		select * from tbl_animal order by animal_no	
 	</select>
 	
 	<select id="listCategory" resultType="CategoryVO">
-		select * from tbl_product_category
+		select * from tbl_product_category order by category_no
 	</select>
 	
 	
