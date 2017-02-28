@@ -25,22 +25,16 @@
 <h2>기간 별 구매 내역 ,리뷰? 등등..</h2>
 </div>
 
-<form action="/admin/users/list">	
-	<button type="submit" id="goListBtn">GO LIST </button>
-</form>
+<button type="submit" id="goListBtn">GO LIST </button>
 
-<!-- 
-<button type="submit" id="goListBtn">Go List</button>
 <script>
-	var formObj = $("form[role='form']");
-	//jQuery
-	$("#goListBtn").on("click", function(){
-		formObj.attr("method", "get");
-		formObj.attr("action", "/admin/users/list");
-		formObj.submit();
+	$(document).ready(function(){
+		$("#goListBtn").on("click", function(){
+			self.location = "list?page=${cri.page}&perPageNum=${cri.perPageNum}"
+					+"&searchType=${cri.searchType}&keyword=${cri.keyword}";
+		});		
 	});
 </script>
- -->
 
 </body>
 </html>

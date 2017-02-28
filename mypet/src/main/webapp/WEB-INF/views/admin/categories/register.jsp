@@ -6,6 +6,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<title>카테 고리 등록</title>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 </head>
 <body>
 
@@ -26,5 +27,11 @@
 		<input type="text" name="cate_name">
 		<input type="submit" value="등록">	
 	</form>	
+	
+	<script>
+	
+	
+	</script>
+	
 </body>
 </html>

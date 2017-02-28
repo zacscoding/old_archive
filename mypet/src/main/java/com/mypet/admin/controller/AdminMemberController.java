@@ -50,7 +50,7 @@ public class AdminMemberController {
 		logger.info("AdminMemberController.memberDetails....GET");
 		logger.info(cri.toString());
 		
-		model.addAttribute("memberVO",service.selectByNum(user_no));		
+		model.addAttribute("memberVO",service.selectByNum(user_no));
 		
 		return "/admin/member/userDetail";
 	}	

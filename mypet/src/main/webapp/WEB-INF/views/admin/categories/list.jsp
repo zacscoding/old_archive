@@ -10,13 +10,12 @@
 <body>
 
 <h3>Animal List..</h3>
-
 <table border="1">
 <tr>
 	<th>NO</th> <th>NAME</th>
 </tr>	
 <c:if test="${empty animalList}">
-	<td colspan="2">등록된 동물 없음</td>
+	<td colspan="2">등록된 동물이 없습니다.</td>
 </c:if>
 <c:forEach var="animalVO" items="${animalList}">
 	<tr>
@@ -36,7 +35,7 @@
 	<th>NO</th> <th>NAME</th> <th>animal_no</th> <th>animal_name</th>
 </tr>	
 <c:if test="${empty categoryList}">
-	<td colspan="4">등록된 카테고리 없음</td>
+	<td colspan="4">등록된 카테고리가 없습니다.</td>
 </c:if>
 <c:forEach var="categoryVO" items="${categoryList}">
 	<tr>
