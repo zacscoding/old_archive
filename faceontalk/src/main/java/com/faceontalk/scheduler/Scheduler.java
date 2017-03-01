@@ -9,18 +9,15 @@ import org.springframework.stereotype.Component;
 
 import com.faceontalk.member.service.MemberService;
 
+/*
+ * 1)인증 기간 지난 것, tbl_member, tbl_email_auth 삭제.
+ * 2)파일 업로드 시 썸네일 생성 후 POST 하지 않은 사진 삭제. 
+ */
 @Component
 public class Scheduler {	
-	private static final Logger logger = LoggerFactory.getLogger(Scheduler.class);
-	
+	private static final Logger logger = LoggerFactory.getLogger(Scheduler.class);	
 	@Inject
 	MemberService memberService;
-	
-	
-//	@Scheduled(fixedRate=10000)
-//	public void test() {
-//		logger.info("schduler test..");		
-//	}
 	
 	@Scheduled(cron="0 20 1 * * *") 
 	public void removeExceed() {

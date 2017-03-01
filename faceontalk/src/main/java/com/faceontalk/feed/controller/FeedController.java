@@ -37,11 +37,10 @@ public class FeedController {
 	@RequestMapping(value="/list", method=RequestMethod.GET)
 	public void listFollowerPage(@ModelAttribute("cri") Criteria cri,Model model) throws Exception {
 		logger.info(cri.toString());
-		//not yet implement
-		
+		//not yet implement		
 	}
 	
-	/**		register	*/		
+	/**		register 	*/		
 	@RequestMapping(value="/register", method=RequestMethod.GET)
 	public void registerGET() throws Exception {
 		//empty		
