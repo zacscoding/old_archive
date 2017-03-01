@@ -35,6 +35,11 @@ public class MainController {
 		//empty
 	}
 	
+	@RequestMapping("/header")
+	public String testHeader() {
+		return "include/header";
+	}
+	
 	
 
 }

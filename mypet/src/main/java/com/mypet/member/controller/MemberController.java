@@ -6,10 +6,13 @@ import javax.inject.Inject;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.mypet.domain.MemberVO;
@@ -47,6 +50,16 @@ public class MemberController {
 	public void joinGET() {
 		//empty
 	}
+	
+	@ResponseBody
+	@RequestMapping(value="/check_id/{user_id}",method=RequestMethod.GET)
+	public String checkUserId(@PathVariable String user_id) throws Exception {
+		logger.info("check user id.."+user_id);
+		MemberVO vo = memberService.selectById(user_id);
+		
+		return (vo==null) ? "사용 가능한 아이디 입니다.":"이미 사용중인 아이디 입니다.";
+	}
+	
 	
 	@RequestMapping(value="/join",method = RequestMethod.POST)
 	public String joinPOST(MemberVO vo, RedirectAttributes rttr) {
@@ -118,7 +131,10 @@ public class MemberController {
 		
 		rttr.addFlashAttribute("msg","success");
 		return "redirect:/user/modify";		
-	}
+	}	
+	
+	
+	
 	
 	
 	/* security authority test*/
