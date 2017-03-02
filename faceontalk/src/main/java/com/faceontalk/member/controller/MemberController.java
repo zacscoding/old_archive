@@ -4,12 +4,15 @@ import javax.inject.Inject;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.faceontalk.email.EmailSenderUtil;
 import com.faceontalk.member.domain.EmailAuthVO;
 import com.faceontalk.member.domain.MemberVO;
 import com.faceontalk.member.service.MemberService;
@@ -24,20 +27,28 @@ public class MemberController {
 	@Inject
 	private MemberService service;	
 	
-	/** Join us  */	
+	
+	/** Join us (AJAX)  */	
 	//POST
+	@ResponseBody
 	@RequestMapping(value="/join", method=RequestMethod.POST)	
-	public String registPOST(MemberVO vo, RedirectAttributes rttr) throws Exception {
+	public ResponseEntity<String> registPOST(@RequestBody MemberVO vo) throws Exception {
 		logger.info("/accounts/join (POST)");
-		logger.info(vo.toString());
+		logger.info(vo.toString());		
+		ResponseEntity<String> entity = null;
+		
 		try {			
 			service.regist(vo);
-			rttr.addFlashAttribute("message","Successed to join us :D\n Please confirm you email."); 
+			entity = new ResponseEntity<String>("SUCCESS",HttpStatus.OK);
 		} catch(DuplicateIdException ex) {
-			rttr.addFlashAttribute("msg","duplicated id");
-		}				
-		return "redirect:/index";
+			entity = new ResponseEntity<String>("DUPLICATED_ID",HttpStatus.OK);
+		} catch(Exception ex) {
+			ex.printStackTrace();
+			entity = new ResponseEntity<String>(ex.getMessage(),HttpStatus.BAD_REQUEST);
+		}		
+		return entity;		
 	}	
+		
 	/** 	edit account	*/
 	@RequestMapping(value="/edit", method = RequestMethod.GET)
 	public void editGet() throws Exception {

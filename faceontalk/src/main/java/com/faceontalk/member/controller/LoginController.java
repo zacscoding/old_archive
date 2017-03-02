@@ -34,6 +34,7 @@ public class LoginController {
 			return;
 		
 		model.addAttribute("memberVO",vo);		
+		
 		//check keep login
 		if(dto.isUserCookie()) {
 			System.out.println("user Cookie");
@@ -41,6 +42,7 @@ public class LoginController {
 			Date sessionLimit = new Date(System.currentTimeMillis() + (1000*amount));	
 			service.keepLogin(vo.getUser_no(), session.getId(),sessionLimit);			
 		}		
+		model.addAttribute("msg","success to login");		
 	}
 	
 	

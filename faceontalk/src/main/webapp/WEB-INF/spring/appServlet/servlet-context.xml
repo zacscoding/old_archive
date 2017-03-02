@@ -35,8 +35,7 @@
 		</interceptor>
 		
 		<interceptor>
-			<mapping path="/feed/register"/>
-			
+			<mapping path="/feed/register"/>			
 			<beans:ref bean="authInterceptor"/>
 		</interceptor>		
 	</interceptors>

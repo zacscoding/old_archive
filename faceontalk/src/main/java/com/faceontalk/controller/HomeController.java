@@ -35,4 +35,12 @@ public class HomeController {
 		return "home";
 	}
 	
+	/**
+	 *  View Page test methods
+	 */
+	@RequestMapping("/header")
+	public String test() {
+		return "/include/header";
+	}
+	
 }

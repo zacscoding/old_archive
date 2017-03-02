@@ -51,7 +51,10 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
 			}
 			//기존 경로 URI 처리
 			Object dest = session.getAttribute("dest");
-			logger.info("dest : "+dest.toString());
+			
+			/*	test code	*/
+			if(dest != null)
+				logger.info("dest : "+dest.toString());
 			response.sendRedirect(dest != null ? (String)dest:"/index");			
 		}
 	}
