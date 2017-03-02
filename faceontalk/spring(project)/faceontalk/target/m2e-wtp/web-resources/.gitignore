@@ -1,5 +1,8 @@
 /META-INF/# Created by https://www.gitignore.io/api/windows,java,eclipse
 
+
+pom.properties
+
 ### Eclipse ###
 
 .metadata

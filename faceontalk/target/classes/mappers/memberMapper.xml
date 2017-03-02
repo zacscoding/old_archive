@@ -76,7 +76,7 @@
 	</delete>
 	
 	<!-- 기간 지난 인증 삭제(이메일) -->
-	<delete id="removeExpiredAuthMember">
+	<delete id="removeExpiredAuthEmail">
 		delete from tbl_email_auth where now() >= auth_limit
 	</delete>
 	

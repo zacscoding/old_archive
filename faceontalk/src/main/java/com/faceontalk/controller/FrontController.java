@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public class FrontController {	
 	@RequestMapping(value="/index",method=RequestMethod.GET)
 	public void getFront(HttpServletRequest request) {
+		
 	}
 	
 
