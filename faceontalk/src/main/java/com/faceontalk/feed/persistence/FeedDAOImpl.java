@@ -109,7 +109,7 @@ public class FeedDAOImpl implements FeedDAO {
 //	//followers
 //	@Override
 //	public List<FeedVO> listFollower(Criteria cri) throws Exception {
-//		// TODO Auto-generated method stub
+//	
 //		return null;
 //	}
 	
