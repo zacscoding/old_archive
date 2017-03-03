@@ -3,22 +3,42 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <%@ include file="include/header.jsp" %>
-
-
+	
+	
+	
+	
+	
+	
+	
 	<!-- 캐러셀 부분 시작 -->
     <div id="carousel-generic" class="carousel slide">
       <!-- Indicators -->
        <ol class="carousel-indicators">
+       	<c:forEach  var="i" begin="0" end="${carouselSize}" step="1">
+    		<li <c:out value="${var==0?'class=active':''}"/>
+    			data-target="#carousel-generic" data-slide-to="${i}"> </li>
+    	</c:forEach>	
+       	 <!-- 	
          <li data-target="#carousel-generic" data-slide-to="0" class="active"></li>
          <li data-target="#carousel-generic" data-slide-to="1"></li>
          <li data-target="#carousel-generic" data-slide-to="2"></li>
          <li data-target="#carousel-generic" data-slide-to="3"></li>
-         <li data-target="#carousel-generic" data-slide-to="4"></li>             
+         <li data-target="#carousel-generic" data-slide-to="4"></li>
+          -->             
        </ol>
-     <!-- Carousel items -->
+       
+       
+     <!-- Carousel items -->     
        <div class="carousel-inner">
-          <div class="item active">
-          	
+		 <c:forEach var="vo" items="${carouselList}" varStatus="status">
+		 	<div <c:out value="${status.index==0?'class=item active':'class=item'}"/> >
+		 		<img src="${vo.image}">
+		 		<h1>${vo.content}</h1>
+		 	</div>
+    	</c:forEach> 
+    	
+       <!-- 
+          <div class="item active">          	
              <img src="/resources/bootstrap/imgs/0523_Q9000_MainKV.jpg" alt="First slide">
                <div class="carousel-caption"> 
                  <h1>이렇게 또 한번 바람을 일으키다. <br> 삼성 스마트 에어컨 Q9000 </h1> 
@@ -47,6 +67,7 @@
                       Samsung GALAXY Tab S</h1>
                 </div>             
           </div>                            
+        -->
                             
        </div>
       <!-- Controls -->
@@ -165,7 +186,7 @@
            </div>             
         </div>
       </div>
-   
+   </div>
     
     
 

@@ -154,8 +154,12 @@ create table product_qna(
 );
 create sequence product_qna_no_seq;
 	
-	
-	
+
+
+create table tbl_carousel(
+	image varchar2(150) not null,
+	content varchar2(200)
+);	
 
 
 
