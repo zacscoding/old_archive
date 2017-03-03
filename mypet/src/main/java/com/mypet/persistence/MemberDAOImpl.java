@@ -81,6 +81,11 @@ public class MemberDAOImpl implements MemberDAO {
 	@Override
 	public void removeExpiredAuthMember() throws Exception {
 		session.update(namespace+".removeExpiredAuthMember");
+	}
+
+	@Override
+	public void transTest() throws Exception {
+		session.insert(namespace+".transTest");
 	}	
 	
 	

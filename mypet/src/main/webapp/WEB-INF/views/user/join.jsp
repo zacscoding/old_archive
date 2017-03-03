@@ -9,7 +9,7 @@
 
 <div class="container">
 
-	<h3 class="text-primary">Join us..</h3>
+	<h3 class="text-primary">회 원 가 입</h3>
 	
 	<form class="form-horizontal" role="form" action="/user/join" method="post">
     
@@ -18,7 +18,7 @@
     <div class="form-group">
         <label for="user_id">아이디</label>
         <input type="text" class="form-control col-sm-4  col-lg-4" placeholder="아이디" name="user_id" id="user_id">
-        <button type="button" class="btn btn-info btn-sm" id="checkUserId">중복체크</button>        
+        <button type="button" class="btn btn-info btn-xs" id="checkUserId">중복체크</button>        
     </div>
     
     <!-- 중복 검사 결과  -->
@@ -77,6 +77,7 @@
     
     <button type="submit" class="btn btn-primary">가입</button>
     <button type="reset" class="btn btn-primary">취소</button>
+    <button type="reset" class="btn btn-primary" id="btnHome">홈으로</button>
     </form>
     
 </div><!-- container.끝 -->
@@ -88,9 +89,8 @@
 		//아이디 중복 체크
 		$('#checkUserId').on('click',function() {
 			var user_id = $('#user_id').val();
-			if(user_id.length < 0)
+			if(user_id.length <= 0)
 				return;
-			
 			
 			//수정해야됨			
 			$.ajax({
@@ -104,13 +104,11 @@
 						$('#possibleIdAlert').css('display','block');
 						$('#duplicateIdAlert').css('display','none');
 					} else if(result == 'DUPLICATE') {
-						alert('중복');
 						$('#duplicateIdAlert').css('display','block');						
 						$('#possibleIdAlert').css('display','none');						
 					}
 			    },
-			    error : function(request,error)
-			    {
+			    error : function(request,error) {
 			        alert("Request: "+JSON.stringify(request));
 			    }				
 			});
@@ -127,8 +125,14 @@
 				}
 			});
 			*/
-			
-		});		
+		});
+		
+		$('#btnHome').on('click',function(){
+			self.location='/';			
+		});
+		
+		
+		
 	});	
 </script>
 

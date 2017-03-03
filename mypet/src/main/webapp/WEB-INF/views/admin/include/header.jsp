@@ -53,29 +53,31 @@
 	          <span class="icon-bar"></span>
 	        </button>
 	        
-	      <a class="navbar-brand" href="#"> ADMIN PAGE </a>
+	      <a class="navbar-brand" href='/admin/main'> ADMIN PAGE </a>
 	    </div>
 	    	    
 	    <div class="collapse navbar-collapse navbar-ex1-collapse">
 		    <!--<ul class="nav  nav-justified nav-back collapse navbar-collapse navbar-ex1-collapse">-->
 		     <ul class="nav navbar-nav">   
-		    	<!-- 제품 관리 -->
-		      <li class="topMenu"><a href="#">
-		      	제품 관리</a></li>
-		      
-		      	<!-- 카테고리/슬라이드 -->
+		    	<!-- 제품,카테고리 관리 -->	
 		      <li class="topMenu"><a href="/admin/categories/main">
-		      	카테고리 관리</a></li>
+		      	제품 관리(+카테고리)</a></li>
 		      	
 		      	<!-- 회원 관리 -->		      
 		      <li class="topMenu"><a href='/admin/users/list'>
 		      	회원 관리</a></li>
 		      	
+		      	<!-- 주문관리 -->
 		      <li class="topMenu"><a href="#">
-		      	링크</a></li>
+		      	주문관리</a></li>
 		      	
+		      	<!-- 게시글 관리 -->
 		      <li class="topMenu"><a href="#">
-		      	링크</a></li>		      	
+		      	</a></li>
+		      		
+			  <li class="topMenu"><a href="/">
+		      	SHOP PAGE</a></li>		      	
+		      		      	
 		    </ul>
 	    </div>
 	  </div>

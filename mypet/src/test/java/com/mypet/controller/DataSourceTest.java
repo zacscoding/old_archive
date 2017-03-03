@@ -19,7 +19,10 @@ import org.springframework.test.context.web.WebAppConfiguration;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebAppConfiguration
-@ContextConfiguration(locations={"file:src/main/webapp/WEB-INF/spring/**/root-context.xml"})
+@ContextConfiguration(locations={
+		"file:src/main/webapp/WEB-INF/spring/root-context.xml",
+	"file:src/main/webapp/WEB-INF/spring/security-context.xml"})
+
 public class DataSourceTest {
 	Logger logger = LoggerFactory.getLogger(DataSourceTest.class);	
 	

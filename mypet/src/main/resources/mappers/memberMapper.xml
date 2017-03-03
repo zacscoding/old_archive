@@ -119,4 +119,9 @@
 	</sql>	
 	
 	
+	<!-- test -->
+	<insert id="transTest">
+		insert into test4 values(member_seq.currval)
+	</insert>	
+	
 </mapper>

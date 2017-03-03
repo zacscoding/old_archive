@@ -10,7 +10,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
-import com.mypet.service.TestService;
+import com.mypet.service.TestServiceImpl;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebAppConfiguration
@@ -23,7 +23,7 @@ public class TransactionTest {
 	
 	
 	@Inject
-	TestService service;
+	TestServiceImpl service;
 	
 	@Test
 	public void test() throws Exception {

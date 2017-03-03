@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.mypet.domain.CarouselVO;
-import com.mypet.service.TestService;
+import com.mypet.service.TestServiceImpl;
 import com.mypet.util.FileExtractorUtil;
 
 @Controller
@@ -76,7 +76,7 @@ public class MainController {
 	
 	
 	@Inject
-	TestService testService;
+	TestServiceImpl testService;
 	
 	@RequestMapping(value="/test",method=RequestMethod.GET)
 	public void test() throws Exception {

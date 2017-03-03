@@ -34,4 +34,7 @@ public interface MemberDAO {
 	public void removeExpiredAuthMember() throws Exception;
 	public void removeExpiredAuthEmail()throws Exception;
 	
+	//트랜잭션 테스트
+	public void transTest()throws Exception;
+	
 }

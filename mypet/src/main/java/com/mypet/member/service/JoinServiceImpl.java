@@ -25,8 +25,8 @@ public class JoinServiceImpl implements JoinService {
 	@Inject 
 	private RegistrationNotifierService registrationNotifierService;
 
-	@Override
 	@Transactional
+	@Override
 	public void registMember(MemberVO vo) throws Exception {		
 		/*
 		 * 1.tbl_member 에 유저 등록
@@ -41,6 +41,8 @@ public class JoinServiceImpl implements JoinService {
 		String password = passwordEncoder.encode(vo.getUser_password());
 		vo.setUser_password(password);
 		dao.registerMember(vo);
+		
+		//dao.transTest();
 		
 		// 인증 토큰 생성
 		String auth_token = EmailSenderUtil.createToken();

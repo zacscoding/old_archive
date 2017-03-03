@@ -14,21 +14,24 @@ public class RegistrationNotifierService {
 	@Autowired
 	private JavaMailSender mailSender;	
 	
-	private static final String AUTH_URI = "http://localhost:8080/user/confirm_verification";
+	private static final String AUTH_URI = "http://localhost:8181/user/confirm_verification";
 	
 	public void sendMail(MemberVO vo,String auth_token) throws Exception /*//MessagingException,UnsupportedEncodingException*/{
-		MimeMessage message = mailSender.createMimeMessage();		
-		MimeMessageHelper messageHelper = new MimeMessageHelper(message,true,"utf-8");
-		
-		messageHelper.setSubject("[MyPET] 회원 가입 인증 안내");
-		String queryURI = makeQuery(vo.getUser_id(),auth_token);
-		String htmlContent = vo.getUser_id()+"님의 이메일 인증(아래 링크를 클릭해주세요.)<br><br>:"
-				+ "<a href='"+queryURI+"'>"+queryURI+"</a>";
-		System.out.println(htmlContent);
-		messageHelper.setText(htmlContent,true);
-		messageHelper.setFrom("admin@mypet.com","admin");
-		messageHelper.setTo(new InternetAddress(vo.getUser_email(),vo.getUser_id(),"utf-8"));			
-		mailSender.send(message);
+		try {
+			MimeMessage message = mailSender.createMimeMessage();		
+			MimeMessageHelper messageHelper = new MimeMessageHelper(message,true,"utf-8");
+			
+			messageHelper.setSubject("[MyPET] 회원 가입 인증 안내");
+			String queryURI = makeQuery(vo.getUser_id(),auth_token);
+			String htmlContent = vo.getUser_id()+"님의 이메일 인증(아래 링크를 클릭해주세요.)<br><br>:"
+					+ "<a href='"+queryURI+"'>"+queryURI+"</a>";
+			messageHelper.setText(htmlContent,true);
+			messageHelper.setFrom("admin@mypet.com","admin");
+			messageHelper.setTo(new InternetAddress(vo.getUser_email(),vo.getUser_id(),"utf-8"));			
+			mailSender.send(message);			
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
 	private String makeQuery(String user_id,String auth_token) {		
