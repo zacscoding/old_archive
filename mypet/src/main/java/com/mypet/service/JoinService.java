@@ -1,4 +1,4 @@
-package com.mypet.member.service;
+package com.mypet.service;
 
 import com.mypet.domain.MemberVO;
 import com.mypet.dto.EmailAuthDTO;

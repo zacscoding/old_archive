@@ -1,4 +1,4 @@
-package com.mypet.email;
+package com.mypet.service;
 
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;

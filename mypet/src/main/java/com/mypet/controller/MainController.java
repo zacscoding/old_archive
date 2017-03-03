@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.mypet.domain.CarouselVO;
-import com.mypet.service.TestServiceImpl;
+import com.mypet.service.TestService;
 import com.mypet.util.FileExtractorUtil;
 
 @Controller
@@ -27,7 +27,7 @@ public class MainController {
 		//db로 변경하기		
 		carousels = FileExtractorUtil.getFileNameLists(carouselPath,true);
 		String imgPath = carouselPath.replace(File.separatorChar,'/') + "/";
-		System.out.println("img : "+imgPath);
+		//System.out.println("img : "+imgPath);
 		for(int i=0;i<carousels.length;i++) {
 			CarouselVO vo = new CarouselVO();
 			vo.setImage(imgPath+carousels[i]);
@@ -76,7 +76,7 @@ public class MainController {
 	
 	
 	@Inject
-	TestServiceImpl testService;
+	TestService testService;
 	
 	@RequestMapping(value="/test",method=RequestMethod.GET)
 	public void test() throws Exception {
@@ -85,6 +85,7 @@ public class MainController {
 	
 	@RequestMapping(value="/test",method=RequestMethod.POST)
 	public void testPOST(Model model) throws Exception {
+		logger.info("test..post()..");
 		testService.transTest();
 		model.addAttribute("msg","success");		
 	}

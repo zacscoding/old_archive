@@ -1,4 +1,4 @@
-package com.mypet.email;
+package com.mypet.util;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;

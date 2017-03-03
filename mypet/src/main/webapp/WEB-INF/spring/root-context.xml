@@ -60,7 +60,7 @@
     </property>
 	</bean>	
 	
-	<bean id="registrationNotifierService" class="com.mypet.email.RegistrationNotifierService"/>
+	<bean id="registrationNotifierService" class="com.mypet.service.RegistrationNotifierService"/>
 	
 	<!-- scheduler -->
 	<task:annotation-driven scheduler="dbScheduler"/>	
@@ -70,12 +70,11 @@
 		queue-capacity="10" rejection-policy="ABORT"/>
 	 -->	
 	
-	<!--  		
-	<context:component-scan base-package="com.mypet.*.service"></context:component-scan>
-	<context:component-scan base-package="com.mypet.*.persistence"></context:component-scan>
-	 -->
-	
+	<context:component-scan base-package="com.mypet.service"></context:component-scan>
+	<context:component-scan base-package="com.mypet.persistence"></context:component-scan>
 	<context:component-scan base-package="com.mypet.scheduler"></context:component-scan> 
+	
+	<!-- 
 	<context:component-scan base-package="com.mypet.service"></context:component-scan>
 	<context:component-scan base-package="com.mypet.persistence"></context:component-scan>
 	
@@ -86,7 +85,7 @@
 	
 	<context:component-scan base-package="com.mypet.admin.service"></context:component-scan>
 	<context:component-scan base-package="com.mypet.admin.persistence"></context:component-scan> 
-	 
+	  -->
 	 
 	<aop:config>
 	</aop:config>

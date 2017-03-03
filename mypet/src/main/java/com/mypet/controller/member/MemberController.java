@@ -1,4 +1,4 @@
-package com.mypet.member.controller;
+package com.mypet.controller.member;
 
 import java.security.Principal;
 
@@ -18,11 +18,11 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.mypet.domain.MemberVO;
 import com.mypet.dto.EmailAuthDTO;
-import com.mypet.email.EmailSenderUtil;
 import com.mypet.error.DuplicateIdException;
 import com.mypet.error.ExceedPeriodException;
-import com.mypet.member.service.JoinService;
+import com.mypet.service.JoinService;
 import com.mypet.service.MemberService;
+import com.mypet.util.EmailSenderUtil;
 
 /**
  * 가입 회원 관련

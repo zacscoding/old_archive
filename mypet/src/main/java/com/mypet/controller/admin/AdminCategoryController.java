@@ -1,4 +1,4 @@
-package com.mypet.admin.controller;
+package com.mypet.controller.admin;
 
 import javax.inject.Inject;
 
