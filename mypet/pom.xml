@@ -174,12 +174,14 @@
 			<version>${org.springframework-version}</version>
 		</dependency>
 		
+
 		<!-- oracle jdbc -->
+		<!-- https://mvnrepository.com/artifact/com.oracle/ojdbc6 -->
 		<dependency>
-            <groupId>com.oracle</groupId>
-            <artifactId>ojdbc6</artifactId>
-            <version>11.2.0.3</version>
-        </dependency>
+		    <groupId>com.oracle</groupId>
+		    <artifactId>ojdbc6</artifactId>
+		    <version>11.2.0.3</version>
+		</dependency>
 		
 		<!-- c3p0 라이브러리 -->
 		<!--  for connection pool
@@ -256,6 +258,9 @@
 			<artifactId>spring-security-taglibs</artifactId>
 			<version>3.2.4.RELEASE</version>
 		</dependency>
+		
+		
+				
 	</dependencies>
 	
     <build>

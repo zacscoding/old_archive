@@ -15,7 +15,7 @@
       <!-- Indicators -->
        <ol class="carousel-indicators">
        	<c:forEach  var="i" begin="0" end="${carouselSize}" step="1">
-    		<li <c:out value="${var==0?'class=active':''}"/>
+    		<li <c:out value="${i==0?'class=active':''}"/>
     			data-target="#carousel-generic" data-slide-to="${i}"> </li>
     	</c:forEach>	
        	 <!-- 	

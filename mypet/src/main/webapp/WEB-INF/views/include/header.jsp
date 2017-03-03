@@ -81,7 +81,7 @@
                 <span class="icon-bar"></span>
               </button>
               
-              <!-- 로고 삽입 -->
+            <!-- 로고 삽입 -->
             <a class="navbar-brand" href="/"><img src="/resources/bootstrap/imgs/logo.png" alt="로고"> </a>              
               
             </div>

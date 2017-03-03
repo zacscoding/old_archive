@@ -3,6 +3,8 @@ package com.mypet.controller;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -11,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.mypet.domain.CarouselVO;
+import com.mypet.service.TestService;
 import com.mypet.util.FileExtractorUtil;
 
 @Controller
@@ -29,7 +32,6 @@ public class MainController {
 			carouselList.add(vo);
 		}
 	}
-	
 	
 	Logger logger = LoggerFactory.getLogger(MainController.class);
 	
@@ -69,5 +71,17 @@ public class MainController {
 	}
 	
 	
-
+	
+	/*@Inject
+	TestService testService;
+	
+	@RequestMapping(value="/test",method=RequestMethod.GET)
+	public void test() throws Exception {
+	}
+	
+	@RequestMapping(value="/test",method=RequestMethod.POST)
+	public void testPOST(Model model) throws Exception {
+		testService.transTest();
+		model.addAttribute("msg","success");		
+	}*/
 }
