@@ -36,6 +36,7 @@ public class FileExtractorUtil {
 		String[] fileNames = new String[files.length];
 		
 		for(int i=0;i<fileNames.length;i++) {
+			System.out.println(files[i].getName());
 			fileNames[i] = files[i].getName();
 		}
 		return fileNames;

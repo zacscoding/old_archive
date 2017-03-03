@@ -1,5 +1,6 @@
 package com.mypet.controller;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,9 +26,11 @@ public class MainController {
 		String[] carousels;
 		//db로 변경하기		
 		carousels = FileExtractorUtil.getFileNameLists(carouselPath,true);
+		String imgPath = carouselPath.replace(File.separatorChar,'/') + "/";
+		System.out.println("img : "+imgPath);
 		for(int i=0;i<carousels.length;i++) {
 			CarouselVO vo = new CarouselVO();
-			vo.setImage(carouselPath+carousels);
+			vo.setImage(imgPath+carousels[i]);
 			vo.setContent(i+"번쨰");
 			carouselList.add(vo);
 		}
@@ -72,16 +75,17 @@ public class MainController {
 	
 	
 	
-	/*@Inject
+	@Inject
 	TestService testService;
 	
 	@RequestMapping(value="/test",method=RequestMethod.GET)
 	public void test() throws Exception {
+		logger.info("test.get()...");
 	}
 	
 	@RequestMapping(value="/test",method=RequestMethod.POST)
 	public void testPOST(Model model) throws Exception {
 		testService.transTest();
 		model.addAttribute("msg","success");		
-	}*/
+	}
 }

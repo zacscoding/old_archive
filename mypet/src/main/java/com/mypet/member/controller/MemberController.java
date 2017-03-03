@@ -6,6 +6,7 @@ import javax.inject.Inject;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -53,17 +54,26 @@ public class MemberController {
 	
 	@ResponseBody
 	@RequestMapping(value="/check_id/{user_id}",method=RequestMethod.GET)
-	public String checkUserId(@PathVariable String user_id) throws Exception {
+	public ResponseEntity<String> checkUserId(@PathVariable String user_id) throws Exception {
 		logger.info("check user id.."+user_id);
-		MemberVO vo = memberService.selectById(user_id);
 		
-		return (vo==null) ? "사용 가능한 아이디 입니다.":"이미 사용중인 아이디 입니다.";
+		ResponseEntity<String> entity = null;
+		String message = null;
+		try {
+			MemberVO vo = memberService.selectById(user_id);
+			message = (vo==null) ? "POSSIBLE":"DUPLICATE";
+			entity = new ResponseEntity<>(message,HttpStatus.OK);						
+		} catch(Exception e) {
+			e.printStackTrace();
+			entity = new ResponseEntity<>(e.getMessage(),HttpStatus.BAD_REQUEST);
+		}		
+		return entity; 
 	}
 	
 	
 	@RequestMapping(value="/join",method = RequestMethod.POST)
 	public String joinPOST(MemberVO vo, RedirectAttributes rttr) {
-		logger.info("joinPOST.... POST");
+		logger.info("joinPOST.... POST"+vo.toString());
 		String viewPage = null;
 		try {
 			joinService.registMember(vo);			

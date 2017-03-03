@@ -10,10 +10,12 @@
 </head>
 <body>
 	<form action="/test" method="post">
-		<input type="button" value="test">
+		<input type="submit" value="test">
 	</form>
 	
 	${msg}
+	
+	<img src='c:/mypet/Carousels/MainKV_Galaxy_Tab_S.jpg'/>
 
 </body>
 </html>

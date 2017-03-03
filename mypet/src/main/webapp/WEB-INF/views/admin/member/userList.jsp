@@ -1,19 +1,15 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html>
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-	<title>회 원 관 리</title>
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-</head>
-<body>
+    
+<%@ include file="../include/header.jsp" %>
 
-<div align="center">
-	<h3>회 원 목 록</h3>
+<br/><br/><br/><br/><br/><br/><br/>
 
-		<!-- 검색  -->
+
+<div class="container">
+  <h2>회원 관리 테이블</h2>
+  
+  <!-- 검색  -->
 		<div>
 			<form action="/admin/users/list">
 			<select name="searchType">
@@ -46,6 +42,40 @@
 			<button id='searchBtn'>Search</button>
 			</form>			
 		</div>
+  
+    
+  <table class="table table-striped">
+    <thead>
+      <tr>
+		<th>NO</th> <th>ID</th> <th>NAME</th> <th>EMAIL</th> <th>PHONE</th> <th>ADDRESS</th>
+	</tr>
+    </thead>
+    <tbody>
+    <c:if test="${empty list}">
+		<tr>
+			<td colspan="6">검색 조건에 맞는 회원이 존재하지 않습니다. </td>
+		</tr>
+	</c:if>			
+	<c:forEach var="memberVO" items="${list}" varStatus="status">
+		<tr>
+		<!-- <td>${status.index+1}</td>  -->
+		<td>${memberVO.user_no}</td>
+		<td> <a 
+			href='/admin/users/details${pageMaker.makeSearch(pageMaker.cri.page) }&user_no=${memberVO.user_no}'>${memberVO.user_id}</a> 
+		</td>
+		<td>${memberVO.user_name}</td> <td>${memberVO.user_email}</td> <td>${memberVO.user_phone}</td> <td>${memberVO.address}</td>
+		</tr>	
+	</c:forEach>
+    </tbody>
+  </table>
+</div>
+
+
+
+
+<div align="center">
+	<h3>회 원 목 록</h3>
+		
 
 
 <table border="1" width="70%">

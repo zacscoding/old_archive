@@ -6,17 +6,21 @@
 	
 	
 	
-	
-	
-	
+	<!-- 
+	<c:forEach var="vo" items="${carouselList}" varStatus = "status">
+		<c:if test="${stats==1}">
+			<img src="${vo.image}">	
+		</c:if>		
+	</c:forEach>
+	 -->
 	
 	<!-- 캐러셀 부분 시작 -->
     <div id="carousel-generic" class="carousel slide">
       <!-- Indicators -->
        <ol class="carousel-indicators">
        	<c:forEach  var="i" begin="0" end="${carouselSize}" step="1">
-    		<li <c:out value="${i==0?'class=active':''}"/>
-    			data-target="#carousel-generic" data-slide-to="${i}"> </li>
+    		<li data-target="#carousel-generic" data-slide-to="${i}"
+    			 <c:out value="${i==0?'class = active' : ''}"/> ></li>
     	</c:forEach>	
        	 <!-- 	
          <li data-target="#carousel-generic" data-slide-to="0" class="active"></li>

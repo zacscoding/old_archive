@@ -22,5 +22,8 @@ public class TestDAO {
 		session.insert(namespace+".test2");
 	}
 	
+	public void test3() throws Exception {
+		session.insert(namespace+".test3",null);
+	}
 
 }

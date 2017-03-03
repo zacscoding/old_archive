@@ -15,10 +15,27 @@
     
     <fieldset>
           <legend>기본정보 </legend>
-    <div class="form-group">   
+    <div class="form-group">
         <label for="user_id">아이디</label>
         <input type="text" class="form-control col-sm-4  col-lg-4" placeholder="아이디" name="user_id" id="user_id">
-        <button type="button" class="btn btn-info btn-sm" id="checkUserId">중복체크</button> 
+        <button type="button" class="btn btn-info btn-sm" id="checkUserId">중복체크</button>        
+    </div>
+    
+    <!-- 중복 검사 결과  -->
+    <div class="form-group">    
+    	<div class="alert alert-success simple-alert" style="display: none"
+			id="possibleIdAlert">
+			<div class="text primary">
+				<strong>사용가능 </strong>한 아이디 입니다.			
+		</div>
+	</div>
+		
+	<div class="form-group">
+		<div class="alert alert-warning simple-alert" style="display: none"
+			id="duplicateIdAlert">
+				<strong>이미 사용 중</strong> 인 아이디 입니다.
+		</div>
+		</div> 
     </div>
     
     <div class="form-group">   
@@ -43,7 +60,8 @@
 	     
     </fieldset>
     
-    <fieldset disabled> 
+	<!-- <fieldset disabled>  -->
+	<fieldset>
          <legend>부가정보 </legend>    
     <div class="form-group">   
         <label for="name">우편번호</label>
@@ -54,23 +72,62 @@
         <label for="addr">주소</label>
         <input type="text" class="form-control" placeholder="주소" name="address" value="address.."> 
     </div>
-    </fieldset>          
+    </fieldset>
+              
     
     <button type="submit" class="btn btn-primary">가입</button>
     <button type="reset" class="btn btn-primary">취소</button>
-    </form> 
-</div>
+    </form>
+    
+</div><!-- container.끝 -->
 
 
 <script>	
 	
 	$(document).ready(function() { 		
 		//아이디 중복 체크
-		$('#checkUserId').on('click',function(){
+		$('#checkUserId').on('click',function() {
 			var user_id = $('#user_id').val();
-			$.getJSON('/user/check_id/'+user_id,function(data) {
-					alert(data);				
-				});
+			if(user_id.length < 0)
+				return;
+			
+			
+			//수정해야됨			
+			$.ajax({
+				url : '/user/check_id/'+user_id,
+			    type : 'get',
+			    headers:  {
+				      "Content-Type": "application/json" },
+			    dataType:'text',
+			    success : function(result) {   
+			    	if(result == 'POSSIBLE') { 
+						$('#possibleIdAlert').css('display','block');
+						$('#duplicateIdAlert').css('display','none');
+					} else if(result == 'DUPLICATE') {
+						alert('중복');
+						$('#duplicateIdAlert').css('display','block');						
+						$('#possibleIdAlert').css('display','none');						
+					}
+			    },
+			    error : function(request,error)
+			    {
+			        alert("Request: "+JSON.stringify(request));
+			    }				
+			});
+			
+			/*
+			$.getJSON("/user/check_id/"+user_id,function(result){
+				alert(result);
+				if(result == 'POSSIBLE') { 
+					$('#possibleIdAlert').css('display','block');
+					$('#duplicateIdAlert').css('display','none');
+				} else if(result == 'DUPLICATE') {
+					$('#possibleIdAlert').css('display','none');
+					$('#duplicateIdAlert').css('display','block');						
+				}
+			});
+			*/
+			
 		});		
 	});	
 </script>

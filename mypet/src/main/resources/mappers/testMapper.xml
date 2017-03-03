@@ -13,7 +13,10 @@
 	<insert id="test2">
 		insert into test2 values(test1_seq.currval)
 	</insert>
-	
+
+	<insert id="test3">
+		insert into test3 values(${num})
+	</insert>	
 	
 
 </mapper>
