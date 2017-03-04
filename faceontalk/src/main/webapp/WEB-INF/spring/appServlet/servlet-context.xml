@@ -3,9 +3,11 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:beans="http://www.springframework.org/schema/beans"
 	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop"
 	xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd">
 
 	<!-- DispatcherServlet Context: defines this servlet's request-processing infrastructure -->
 	
@@ -21,20 +23,31 @@
 		<beans:property name="suffix" value=".jsp" />
 	</beans:bean>
 	
-	<context:component-scan base-package="com.faceontalk.controller" />
-	<context:component-scan base-package="com.faceontalk.member.controller" />
-	<context:component-scan base-package="com.faceontalk.feed.controller" />
+	<context:component-scan base-package="com.faceontalk.controller" />	
+	
+	<beans:bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<beans:property name="maxUploadSize" value="10485760"/>
+	</beans:bean>
 		
 	<beans:bean id="loginInterceptor" class="com.faceontalk.interceptor.LoginInterceptor"/>
 	<beans:bean id="authInterceptor" class="com.faceontalk.interceptor.AuthInterceptor"/>
 	
 	<interceptors>
+		<!-- 
+		login post시
+		 pre 
+		 -->
 		<interceptor>
 			<mapping path="/user/loginPost"/>
 			<beans:ref bean="loginInterceptor"/>
 		</interceptor>
 		
+		<!-- 
+			로그인 인증 검사
+			pre : 세션 및 쿠키로 로그인 체크 > request에 요청 경로 저장 
+		 -->
 		<interceptor>
+			<mapping path="/"/>
 			<mapping path="/feed/register"/>			
 			<beans:ref bean="authInterceptor"/>
 		</interceptor>		

@@ -20,9 +20,9 @@
 	<!-- 피드 등록 -->
 	<insert id="register">
 	insert into tbl_feed
-		(user_id_fk,user_name_fk,content,file_name)	
+		(user_no_fk,user_id_fk,content,file_name)	
 	values
-		(#{user_id_fk}, #{user_name_fk}, #{content},#{file_name})	
+		(#{user_no_fk}, #{user_id_fk}, #{content},#{file_name})	
 	</insert>
 	
 	<!-- 조회 ( by feed_no) -->

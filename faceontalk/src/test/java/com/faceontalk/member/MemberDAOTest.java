@@ -11,8 +11,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
-import com.faceontalk.member.domain.MemberVO;
-import com.faceontalk.member.persistence.MemberDAO;
+import com.faceontalk.domain.member.MemberVO;
+import com.faceontalk.persistence.member.MemberDAO;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebAppConfiguration

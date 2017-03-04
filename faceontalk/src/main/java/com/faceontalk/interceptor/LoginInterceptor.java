@@ -16,7 +16,7 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
 	private static final String LOGIN = "login";
 	private static final Logger logger = LoggerFactory.getLogger(LoginInterceptor.class);
 	
-	/* intercept before execution of method /user/login */
+	/*	 intercept before execution of method /user/login 	*/
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
 			throws Exception {
@@ -55,7 +55,7 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
 			/*	test code	*/
 			if(dest != null)
 				logger.info("dest : "+dest.toString());
-			response.sendRedirect(dest != null ? (String)dest:"/index");			
+			response.sendRedirect(dest != null ? (String)dest:"/");			
 		}
 	}
 }

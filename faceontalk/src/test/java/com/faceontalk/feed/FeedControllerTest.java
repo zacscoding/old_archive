@@ -17,10 +17,10 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.faceontalk.feed.domain.FeedVO;
-import com.faceontalk.feed.domain.HashTagVO;
-import com.faceontalk.feed.service.FeedService;
-import com.faceontalk.feed.util.HashTagHelper;
+import com.faceontalk.domain.feed.FeedVO;
+import com.faceontalk.domain.feed.HashTagVO;
+import com.faceontalk.service.feed.FeedService;
+import com.faceontalk.util.HashTagHelper;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebAppConfiguration
@@ -103,8 +103,8 @@ public class FeedControllerTest {
 	public void modifyFeedTest() throws Exception {
 		FeedVO vo = new FeedVO();
 		vo.setFeed_no(1);
-		vo.setUser_id_fk(1);
-		vo.setUser_name_fk("hiva1");
+		vo.setUser_no_fk(1);
+		vo.setUser_id_fk("hiva1");
 		vo.setContent(modifiedContent);
 		vo.setFile_name("none");
 		//tags

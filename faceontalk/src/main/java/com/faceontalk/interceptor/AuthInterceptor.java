@@ -11,20 +11,18 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import org.springframework.web.util.WebUtils;
 
-import com.faceontalk.member.domain.MemberVO;
-import com.faceontalk.member.service.LoginService;
+import com.faceontalk.domain.member.MemberVO;
+import com.faceontalk.service.member.LoginService;
 
 public class AuthInterceptor extends HandlerInterceptorAdapter {
 	private static final Logger logger = LoggerFactory.getLogger(AuthInterceptor.class);
 	
 	@Inject
 	private LoginService loginService;
-	
-	
+		
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
-			throws Exception {
-		
+			throws Exception {		
 		HttpSession session = request.getSession();
 		if(session.getAttribute("login") == null) {
 			logger.info("current user is not logined");
@@ -40,8 +38,10 @@ public class AuthInterceptor extends HandlerInterceptorAdapter {
 					return true;
 				}
 			}
-			response.sendRedirect("/index");
+			response.sendRedirect("/user/login");
 			return false;
+		} else {
+			logger.info("current user is logined");
 		}
 		return true;
 	}
@@ -54,8 +54,7 @@ public class AuthInterceptor extends HandlerInterceptorAdapter {
 			query = "";
 		} else {
 			query = "?"+query;
-		}
-		
+		}		
 		if(req.getMethod().equals("GET")) {
 			logger.info("dest : "+(uri+query));
 			req.getSession().setAttribute("dest",uri+query);

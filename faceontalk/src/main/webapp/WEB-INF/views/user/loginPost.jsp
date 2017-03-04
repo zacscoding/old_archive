@@ -7,8 +7,10 @@
 <title>Insert title here</title>
 </head>
 <body>
-	<script type="text/javascript">
-		self.location="/index";
+	
+	<script>
+		self.location="/feed/list";	
 	</script>
+	
 </body>
 </html>

@@ -42,16 +42,16 @@ create table tbl_email_auth (
 
 create table tbl_feed(
 	feed_no int not null auto_increment,
-    user_id_fk int not null,
-    user_name_fk varchar(20) not null,	
+    user_no_fk int not null,
+    user_id_fk varchar(20) not null,	
     content text not null,
     regdate timestamp default now(),
     moddate timestamp default now(),
     like_count int default 0,
     file_name varchar(150) not null,
     primary key(feed_no),
-    foreign key (user_id_fk) references tbl_member(user_id) ON UPDATE CASCADE ON DELETE CASCADE,
-    foreign key (user_name_fk) references tbl_member(user_name)
+    foreign key (user_no_fk) references tbl_member(user_no) ON UPDATE CASCADE ON DELETE CASCADE,
+    foreign key (user_id_fk) references tbl_member(user_id)
     ON UPDATE CASCADE ON DELETE CASCADE    
 );
 

@@ -11,8 +11,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.faceontalk.feed.domain.FeedVO;
-import com.faceontalk.feed.persistence.FeedDAO;
+import com.faceontalk.domain.feed.FeedVO;
+import com.faceontalk.persistence.feed.FeedDAO;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebAppConfiguration
@@ -87,8 +87,8 @@ public class FeedDAOTest {
 	public void lastInsertedFeedNumTest() throws Exception {
 		try {
 			FeedVO vo = new FeedVO();
-			vo.setUser_id_fk(1);
-			vo.setUser_name_fk("hiva1");
+			vo.setUser_no_fk(1);
+			vo.setUser_id_fk("hiva1");
 			vo.setContent("test111");
 			vo.setFile_name("none");			
 			dao.register(vo); //insert feed

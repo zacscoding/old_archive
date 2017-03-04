@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import com.faceontalk.member.service.MemberService;
+import com.faceontalk.service.member.MemberService;
 
 /*
  * 1)인증 기간 지난 것, tbl_member, tbl_email_auth 삭제.

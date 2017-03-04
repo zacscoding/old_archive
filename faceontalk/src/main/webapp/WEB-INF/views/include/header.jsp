@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-    
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>    
 <!DOCTYPE html>
 <html>
 <head>
@@ -53,14 +53,14 @@
 	          <span class="icon-bar"></span>
 	        </button>
 	        
-	      <a class="navbar-brand" href="#"> FACE ON TALK </a>
+	      <a class="navbar-brand" href='#' onclick='return false;'> FACE ON TALK </a>
 	    </div>
 	    	    
 	    <div class="collapse navbar-collapse navbar-ex1-collapse">
 		    <!--<ul class="nav  nav-justified nav-back collapse navbar-collapse navbar-ex1-collapse">-->
 		     <ul class="nav navbar-nav">   
 		    	<!-- 홈버튼  <li class="active"> -->
-		      <li class="topMenu"><a href="#">
+		      <li class="topMenu"><a href="/feed/list">
 		      	<i class="glyphicon glyphicon-home"></i></a></li>
 		      
 		      	<!-- 검색 버튼 -->		      
@@ -68,7 +68,7 @@
 		      	<i class="glyphicon glyphicon-search"></i></a></li>
 		      	
 		      	<!-- 업로드 -->
-		      <li class="topMenu"><a href="#">
+		      <li class="topMenu"><a href="/feed/register">
 		      	<i class="glyphicon glyphicon-camera"></i></a></li>
 		      	
 		      	<!-- 히스토리 -->		      	
@@ -84,129 +84,5 @@
 	  </div>
 	</nav>
 </div> <!-- container 끝 -->
+<br/><br/><br/><br/><br/><br/>
 
-
-aaaaaaaaaaaaa<br/>
-aaaaaaaaaaaaa<br/>
-aaaaaaaaaaaaa<br/>
-aaaaaaaaaaaaa<br/>
-aaaaaaaaaaaaa<br/>
-aaaaaaaaaaaaa<br/>
-aaaaaaaaaaaaa<br/>
-aaaaaaaaaaaaa<br/>
-aaaaaaaaaaaaa<br/>
-aaaaaaaaaaaaa<br/>
-aaaaaaaaaaaaa<br/>
-aaaaaaaaaaaaa<br/>
-aaaaaaaaaaaaa<br/>
-
-
-aaaaaaaaaaaaa<br/>
-aaaaaaaaaaaaa<br/>
-aaaaaaaaaaaaa<br/>
-aaaaaaaaaaaaa<br/>
-aaaaaaaaaaaaa<br/>
-aaaaaaaaaaaaa<br/>
-aaaaaaaaaaaaa<br/>
-aaaaaaaaaaaaa<br/>
-aaaaaaaaaaaaa<br/>
-aaaaaaaaaaaaa<br/>
-aaaaaaaaaaaaa<br/>
-aaaaaaaaaaaaa<br/>
-aaaaaaaaaaaaa<br/>
-aaaaaaaaaaaaa<br/>
-aaaaaaaaaaaaa<br/>
-aaaaaaaaaaaaa<br/>
-aaaaaaaaaaaaa<br/>
-aaaaaaaaaaaaa<br/>
-aaaaaaaaaaaaa<br/>
-aaaaaaaaaaaaa<br/>
-aaaaaaaaaaaaa<br/>
-aaaaaaaaaaaaa<br/>
-aaaaaaaaaaaaa<br/>
-aaaaaaaaaaaaa<br/>
-aaaaaaaaaaaaa<br/>
-aaaaaaaaaaaaa<br/>
-
-aaaaaaaaaaaaa<br/>
-aaaaaaaaaaaaa<br/>
-aaaaaaaaaaaaa<br/>
-aaaaaaaaaaaaa<br/>
-aaaaaaaaaaaaa<br/>
-aaaaaaaaaaaaa<br/>
-aaaaaaaaaaaaa<br/>
-aaaaaaaaaaaaa<br/>
-aaaaaaaaaaaaa<br/>
-aaaaaaaaaaaaa<br/>
-aaaaaaaaaaaaa<br/>
-aaaaaaaaaaaaa<br/>
-aaaaaaaaaaaaa<br/>
-
-aaaaaaaaaaaaa<br/>
-aaaaaaaaaaaaa<br/>
-aaaaaaaaaaaaa<br/>
-aaaaaaaaaaaaa<br/>
-aaaaaaaaaaaaa<br/>
-aaaaaaaaaaaaa<br/>
-aaaaaaaaaaaaa<br/>
-aaaaaaaaaaaaa<br/>
-aaaaaaaaaaaaa<br/>
-aaaaaaaaaaaaa<br/>
-aaaaaaaaaaaaa<br/>
-aaaaaaaaaaaaa<br/>
-aaaaaaaaaaaaa<br/>
-aaaaaaaaaaaaa<br/>
-aaaaaaaaaaaaa<br/>
-aaaaaaaaaaaaa<br/>
-aaaaaaaaaaaaa<br/>
-aaaaaaaaaaaaa<br/>
-aaaaaaaaaaaaa<br/>
-aaaaaaaaaaaaa<br/>
-aaaaaaaaaaaaa<br/>
-aaaaaaaaaaaaa<br/>
-aaaaaaaaaaaaa<br/>
-aaaaaaaaaaaaa<br/>
-aaaaaaaaaaaaa<br/>
-aaaaaaaaaaaaa<br/>
-aaaaaaaaaaaaa<br/>
-aaaaaaaaaaaaa<br/>
-aaaaaaaaaaaaa<br/>
-aaaaaaaaaaaaa<br/>
-aaaaaaaaaaaaa<br/>
-aaaaaaaaaaaaa<br/>
-aaaaaaaaaaaaa<br/>
-aaaaaaaaaaaaa<br/>
-aaaaaaaaaaaaa<br/>
-aaaaaaaaaaaaa<br/>
-aaaaaaaaaaaaa<br/>
-aaaaaaaaaaaaa<br/>
-aaaaaaaaaaaaa<br/>
-aaaaaaaaaaaaa<br/>
-aaaaaaaaaaaaa<br/>
-aaaaaaaaaaaaa<br/>
-aaaaaaaaaaaaa<br/>
-aaaaaaaaaaaaa<br/>
-aaaaaaaaaaaaa<br/>
-aaaaaaaaaaaaa<br/>
-aaaaaaaaaaaaa<br/>
-aaaaaaaaaaaaa<br/>
-aaaaaaaaaaaaa<br/>
-aaaaaaaaaaaaa<br/>
-aaaaaaaaaaaaa<br/>
-aaaaaaaaaaaaa<br/>
-aaaaaaaaaaaaa<br/>
-aaaaaaaaaaaaa<br/>
-aaaaaaaaaaaaa<br/>
-aaaaaaaaaaaaa<br/>
-aaaaaaaaaaaaa<br/>
-aaaaaaaaaaaaa<br/>
-aaaaaaaaaaaaa<br/>
-aaaaaaaaaaaaa<br/>
-aaaaaaaaaaaaa<br/>
-aaaaaaaaaaaaa<br/>
-aaaaaaaaaaaaa<br/>
-aaaaaaaaaaaaa<br/>
-aaaaaaaaaaaaa<br/>
-
-</body>
-</html>
