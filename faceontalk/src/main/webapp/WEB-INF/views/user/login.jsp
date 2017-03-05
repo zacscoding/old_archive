@@ -124,7 +124,7 @@
                                         <!-- <a href='/user/join'>회원가입하기</a>  -->  
                                         <a id="signinlink" href='#' onclick="$('#signupbox').show(); $('#loginbox').hide(); return false;">
                                         	Sign up</a>                                      
-                                        </div>
+                                        </div>                                         
                                     </div>
                                 </div>    
                             </form>

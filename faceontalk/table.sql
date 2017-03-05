@@ -135,8 +135,8 @@ create table tbl_follow(
 	follower int not null,
     following int not null,
     primary key(follower,following),
-    foreign key (follower) references tbl_member(user_id),
-    foreign key (following) references tbl_member(user_id)
+    foreign key (follower) references tbl_member(user_no),
+    foreign key (following) references tbl_member(user_no)
 );
 
 #친구 관계
