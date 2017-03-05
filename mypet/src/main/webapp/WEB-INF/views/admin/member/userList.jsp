@@ -9,8 +9,8 @@
   <br/>		
 		<!-- 검색  -->
 		<div>
-			 <form role="form" class="form-inline" action="/admin/users/list"> 
-			 <div class="form-group"> 
+			 <form role="form" class="form-inline" action="/admin/users/list">			 	 
+			 <div class="form-group">			 	 
 			<select class="form-control col-sm-3 col-lg-3" name="searchType">
 				<!-- n : 검색 조건 없음 -->
 				<option value="n"

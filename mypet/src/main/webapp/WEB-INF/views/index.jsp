@@ -20,7 +20,7 @@
        <ol class="carousel-indicators">
        	<c:forEach  var="i" begin="0" end="${carouselSize}" step="1">
     		<li data-target="#carousel-generic" data-slide-to="${i}"
-    			 <c:out value="${i==0?'class = active' : ''}"/> ></li>
+    			 <c:out value="${i==0?'class=active' : ''}"/> ></li>
     	</c:forEach>	
        	 <!-- 	
          <li data-target="#carousel-generic" data-slide-to="0" class="active"></li>
@@ -32,47 +32,16 @@
        </ol>
        
        
-     <!-- Carousel items -->     
+     	<!-- Carousel items -->     
        <div class="carousel-inner">
 		 <c:forEach var="vo" items="${carouselList}" varStatus="status">
-		 	<div <c:out value="${status.index==0?'class=item active':'class=item'}"/> >
+		 	<div class="<c:out value="${status.index==0?'item active':'item'}"/>" >
 		 		<img src="${vo.image}">
-		 		<h1>${vo.content}</h1>
+		 		<div class="carousel-caption">
+		 			${vo.content}
+		 		</div>
 		 	</div>
-    	</c:forEach> 
-    	
-       <!-- 
-          <div class="item active">          	
-             <img src="/resources/bootstrap/imgs/0523_Q9000_MainKV.jpg" alt="First slide">
-               <div class="carousel-caption"> 
-                 <h1>이렇게 또 한번 바람을 일으키다. <br> 삼성 스마트 에어컨 Q9000 </h1> 
-               </div>
-          </div>
-          <div class="item">
-             <img src="/resources/bootstrap/imgs/20140820_UHDTV_Curved_KV.jpg" alt="Second slide">  
-               <div class="carousel-caption"> 
-                 <h1>곡면화질이 만든 압도적 몰입감 <br> 삼성 커브드 UHD TV </h1> 
-               </div>
-          </div>
-          <div class="item">
-             <img src="/resources/bootstrap/imgs/GalaxyS5_LTEA_KV_0623.jpg" alt="Third slide"> 
-               <div class="carousel-caption">
-                  <h1>LTE보다 3배 빠른 세계 최초 광대역 LTE-A폰 <br>
-                      Samsung GALAXY S5</h1>
-                </div>                 
-          </div>
-          <div class="item">
-             <img src="/resources/bootstrap/imgs/M9000_Store_MainKV_140819.jpg" alt="Third slide">               
-          </div>
-          <div class="item">
-             <img src="/resources/bootstrap/imgs/MainKV_Galaxy_Tab_S.jpg" alt="Third slide">  
-                <div class="carousel-caption">
-                  <h1 class="black">S 아몰레드로 세상을 다시 보다 <br>
-                      Samsung GALAXY Tab S</h1>
-                </div>             
-          </div>                            
-        -->
-                            
+    	</c:forEach>        
        </div>
       <!-- Controls -->
         <a class="left carousel-control" href="#carousel-generic" data-slide="prev">
@@ -81,14 +50,15 @@
         <a class="right carousel-control" href="#carousel-generic" data-slide="next">
           <img src="/resources/bootstrap/imgs/right.png" class="control">
         </a>
-      </div>
-    <!--// 캐러셀 부분 끝  -->	
+      </div> <!-- .캐러셀 부분 끝  -->
+    	
     
+    <!-- 상품 컨테이너 -->
      <div class="container">
-
-    <header>
+    <header> <!-- 카테고리 이름 -->
       <h1><i class="fa fa-thumbs-o-up"></i> 추천상품</h1>
     </header>
+    
     <div class="row">
       <div class="col-xs-6 col-sm-3"> 
         <div class="thumbnail">
@@ -111,10 +81,11 @@
                     <dd class="red">759,000 원</dd>
                   </dl>
                </div> 
-   <!--           <div class="zoom"> 자세히 보기 </div> -->
+             <!--  <div class="zoom"> 자세히 보기 </div>  --> 
             </a>    
          </div>  
-        </div>
+        </div>        
+        
         <div class="col-xs-6 col-sm-3">        
           <div class="thumbnail">
              <a href="#">
@@ -189,13 +160,8 @@
               </a>    
            </div>             
         </div>
-      </div>
-   </div>
-    
-    
-
-	<script>
-          $('.carousel').carousel()
-    </script>
+      </div> <!-- .row끝 -->
+   </div> <!-- .상품 컨테이너 끝-->
+	
     
 <%@include file="include/footer.jsp"%>

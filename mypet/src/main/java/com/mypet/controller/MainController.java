@@ -1,6 +1,5 @@
 package com.mypet.controller;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,15 +14,27 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.mypet.domain.CarouselVO;
 import com.mypet.service.TestService;
-import com.mypet.util.FileExtractorUtil;
 
 @Controller
 public class MainController {
-	private static String carouselPath = "c:\\mypet\\Carousels";
-	private static List<CarouselVO> carouselList = new ArrayList<>();
-	
+	/*private static String carouselPath = "/resources/bootstrap/imgs/";
+	private static List<CarouselVO> carouselList = new ArrayList<>();	
 	static {		
-		String[] carousels;
+		String[] carousels = {
+				"0523_Q9000_MainKV.jpg",
+				"20140820_UHDTV_Curved_KV.jpg",
+				"GalaxyS5_LTEA_KV_0623.jpg",
+				"M9000_Store_MainKV_140819.jpg",
+				"",
+				"MainKV_Galaxy_Tab_S.jpg",
+		};
+		String[] content = {
+				"<h1>이렇게 또 한번 바람을 일으키다. <br> 삼성 스마트 에어컨 Q9000 </h1>",
+				"<h1>곡면화질이 만든 압도적 몰입감 <br> 삼성 커브드 UHD TV </h1>",
+				"<h1>LTE보다 3배 빠른 세계 최초 광대역 LTE-A폰 <br>Samsung GALAXY S5</h1>",
+				"",
+				"<h1 class=\"black\">S 아몰레드로 세상을 다시 보다 <br> Samsung GALAXY Tab S</h1>"
+		};		
 		//db로 변경하기		
 		carousels = FileExtractorUtil.getFileNameLists(carouselPath,true);
 		String imgPath = carouselPath.replace(File.separatorChar,'/') + "/";
@@ -34,22 +45,50 @@ public class MainController {
 			vo.setContent(i+"번쨰");
 			carouselList.add(vo);
 		}
-	}
+		
+		for(int i=0;i<carousels.length;i++) {
+			CarouselVO vo = new CarouselVO();
+			vo.setImage(carouselPath+carousels[i]);
+			vo.setContent(content[i]);
+			carouselList.add(vo);
+		}		
+	}*/
 	
 	Logger logger = LoggerFactory.getLogger(MainController.class);
 	
 	@RequestMapping(value="/",method=RequestMethod.GET)	
 	public String mainGET(Model model) {
-		logger.info("MainController...home()");		
-		logger.info(String.valueOf(carouselList.size()) );
-		model.addAttribute("carouselSize",carouselList.size());
-		model.addAttribute("carouselList", carouselList);
-		return "/index";
+		
+		return "redirect:/index";
 	}
 	
 	@RequestMapping(value="/index",method=RequestMethod.GET)
 	public void indexGET(Model model) {
 		logger.info("MainController...indexGET()");
+		
+		String carouselPath = "/resources/bootstrap/imgs/";
+		List<CarouselVO> carouselList = new ArrayList<>();	
+			String[] carousels = {
+					"0523_Q9000_MainKV.jpg",
+					"20140820_UHDTV_Curved_KV.jpg",
+					"GalaxyS5_LTEA_KV_0623.jpg",
+					"M9000_Store_MainKV_140819.jpg",
+					"MainKV_Galaxy_Tab_S.jpg",
+			};
+			String[] content = {
+					"<h1>이렇게 또 한번 바람을 일으키다. <br> 삼성 스마트 에어컨 Q9000 </h1>",
+					"<h1>곡면화질이 만든 압도적 몰입감 <br> 삼성 커브드 UHD TV </h1>",
+					"<h1>LTE보다 3배 빠른 세계 최초 광대역 LTE-A폰 <br>Samsung GALAXY S5</h1>",
+					"",
+					"<h1 class=\"black\">S 아몰레드로 세상을 다시 보다 <br> Samsung GALAXY Tab S</h1>"
+			};		
+			for(int i=0;i<carousels.length;i++) {
+				CarouselVO vo = new CarouselVO();
+				vo.setImage(carouselPath+carousels[i]);
+				vo.setContent(content[i]);
+				carouselList.add(vo);
+			}		
+		
 		model.addAttribute("carouselSize",carouselList.size());
 		model.addAttribute("carouselList", carouselList);
 		
@@ -90,3 +129,4 @@ public class MainController {
 		model.addAttribute("msg","success");		
 	}
 }
+
