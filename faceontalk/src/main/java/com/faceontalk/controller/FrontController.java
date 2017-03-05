@@ -31,6 +31,13 @@ public class FrontController {
 		
 	}
 	
+	@RequestMapping(value="/testFeed",method=RequestMethod.GET)
+	public String testFeed() throws Exception {
+		return "/feed/list2";
+	}
+
+	
+	
 	/*	test header	*/
 	@RequestMapping("/header")
 	public String test() {

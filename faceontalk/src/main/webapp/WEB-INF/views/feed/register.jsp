@@ -97,7 +97,8 @@ $(".fileDrop").on("drop", function(event){
 		  success: function(data){
 			 if(data=='notMatchedTypes') {
 				 
-			 } else {				 
+			 } else {
+				 alert(data);
 				 str="<div><img src='/displayImage?type=f&fileName="+data+"'/>"
 				 	+ "<small id='file_name' data-src="+data+">X</small></div>";
 				 $('#file_name').attr('value',data); //file_name 속성	

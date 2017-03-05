@@ -3,140 +3,239 @@
     
 <%@ include file="../include/header.jsp" %>
 
+
 <style>
-@import url("http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css");
-.panel-image {
-    position: relative;   
-}
-
-.panel-image > h4, p {
-    padding: 5px 10px 0px; 
-}
-
-.panel-image img.panel-image-preview {
-    width: 100%;
-	border-radius: 4px 4px 0px 0px;
-}
-.panel-default {
-	padding : 20px;
-}
-
-.panel-image label {
-    display: block;
-    position: absolute;
-    top: 0px;
-    left: 0px;
-    height: 80%;
-    width: 80%;
-}
-
-.panel-heading > span {
-    background: #ccc;
-    padding: 4px;
-    margin-right: 10px;
-}
-
-.panel-heading ~ .panel-image img.panel-image-preview {
-	border-radius: 0px;
-}
-
-.panel-footer span {
-    cursor: pointer;
-}
-
-.panel-image ~ input[type=checkbox] {
-    position:absolute;
-    top:- 30px;
-    z-index: -1;   
-}
-
 /*
-.panel-image ~ input[type=checkbox] ~ .panel-body {
-	height: 0px;
-	padding: 0px;
-}
-.panel-image ~ input[type=checkbox]:checked ~ .panel-body {
-    height: auto;
-	padding: 15px;
-}
+	url : 
+	http://bootdey.com/snippets/view/Social-network-feed-list
 */
+body{margin-top:20px;}
 
-.panel-image ~ .panel-footer a {
-    padding: 0px 5px;
-	font-size: 14px;
-	/*color: rgb(100, 100, 100);*/
+/* Social feed */
+.social-feed-separated .social-feed-box {
+  margin-left: 80px;
 }
-.btn-hover {
-  font-weight: normal;
-  color: #333333;
-  cursor: pointer;
-  background-color: inherit;
-  border-color: transparent;
+.social-feed-separated .social-avatar {
+  float: left;
+  padding: 0;
 }
-
-.btn-hover-alt {
-  font-weight: normal;
-  color: #ffffff;
-  cursor: pointer;
-  background-color: inherit;
-  border-color: transparent;
+.social-feed-separated .social-avatar img {
+  width: 55px;
+  height: 55px;
+  border: 1px solid #e7eaec;
 }
-
-/**** comment system ****/
-
+.social-feed-separated .social-feed-box .social-avatar {
+  padding: 15px 15px 0 15px;
+  float: none;
+}
+.social-feed-box {
+  /*padding: 15px;*/
+  border: 1px solid #e7eaec;
+  background: #fff;
+  margin-bottom: 15px;
+}
+.article .social-feed-box {
+  margin-bottom: 0;
+  border-bottom: none;
+}
+.article .social-feed-box:last-child {
+  margin-bottom: 0;
+  border-bottom: 1px solid #e7eaec;
+}
+.article .social-feed-box p {
+  font-size: 13px;
+  line-height: 18px;
+}
+.social-action {
+  margin: 15px;
+}
+.social-avatar {
+  padding: 15px 15px 0 15px;
+}
+.social-comment .social-comment {
+  margin-left: 45px;
+}
+.social-avatar img {
+  height: 40px;
+  width: 40px;
+  margin-right: 10px;
+}
+.social-avatar .media-body a {
+  font-size: 14px;
+  display: block;
+}
+.social-body {
+  padding: 15px;
+}
+.social-body img {
+  margin-bottom: 10px;
+}
+.social-footer {
+  border-top: 1px solid #e7eaec;
+  padding: 10px 15px;
+  background: #f9f9f9;
+}
+.social-footer .social-comment img {
+  width: 32px;
+  margin-right: 10px;
+}
+.social-comment:first-child {
+  margin-top: 0;
+}
+.social-comment {
+  margin-top: 15px;
+}
+.social-comment textarea {
+  font-size: 12px;
+}
+.form-control, .single-line {
+    background-color: #FFFFFF;
+    background-image: none;
+    border: 1px solid #e5e6e7;
+    border-radius: 1px;
+    color: inherit;
+    display: block;
+    padding: 6px 12px;
+    transition: border-color 0.15s ease-in-out 0s, box-shadow 0.15s ease-in-out 0s;
+    width: 100%;
+    font-size: 14px;
+}
+.ibox {
+  clear: both;
+  margin-bottom: 25px;
+  margin-top: 0;
+  padding: 0;
+}
+.ibox.collapsed .ibox-content {
+  display: none;
+}
+.ibox.collapsed .fa.fa-chevron-up:before {
+  content: "\f078";
+}
+.ibox.collapsed .fa.fa-chevron-down:before {
+  content: "\f077";
+}
+.ibox:after,
+.ibox:before {
+  display: table;
+}
+.ibox-title {
+  -moz-border-bottom-colors: none;
+  -moz-border-left-colors: none;
+  -moz-border-right-colors: none;
+  -moz-border-top-colors: none;
+  background-color: #ffffff;
+  border-color: #e7eaec;
+  border-image: none;
+  border-style: solid solid none;
+  border-width: 3px 0 0;
+  color: inherit;
+  margin-bottom: 0;
+  padding: 14px 15px 7px;
+  min-height: 48px;
+}
+.ibox-content {
+  background-color: #ffffff;
+  color: inherit;
+  padding: 15px 20px 20px 20px;
+  border-color: #e7eaec;
+  border-image: none;
+  border-style: solid solid none;
+  border-width: 1px 0;
+}
+.ibox-footer {
+  color: inherit;
+  border-top: 1px solid #e7eaec;
+  font-size: 90%;
+  background: #ffffff;
+  padding: 10px 15px;
+}
 </style>
 
-<div class="container" style="margin-top: 50px;">
-	
-	<c:forEach var="vo" items="${feedList}" varStatus="status">
-	<!-- 피드 리스트 시작 -->
-	<div class="row form-group">
-        <div class="col-xs-12 col-md-offset-2 col-lg-offset-2 col-md-8 col-lg-8">
-            <div class="panel panel-default">
-            	<!-- 유저 프로필 사진 + 아이디 -->
-                <div class="panel-heading">
-                	<div class="media">
-                	 <a class="pull-left" href="#" onclick='return false;'>
-                	 	<c:choose>
-            				<c:when test="${empty vo.profile_pic}">
-            					<img class="media-object" src="/resources/bootstrap/images/default_profile.png">	
-            				</c:when>
-            				<c:otherwise>
-            					<img class="media-object" src="/displayImage?type=p&fileName=${vo.profile_pic}">            					
-            				</c:otherwise>            				
-            			</c:choose> 
-  					</a>
-  					<div class="media-body">
-  						<h3><strong>${vo.user_id_fk}</strong></h3>
-  					</div>			  					
-  					</div>  					
-                </div>
-                
-                <!-- image -->
-                <div class="panel-image">
-                	<img src="/displayImage?type=f&fileName=${vo.file_name}"  class="panel-image-preview"/>
-                </div>                
-               	<!-- 내용 -->
-               	<p>${vo.content}</p>
-               	
-                <!-- 댓글 리스트 -->
-                
-				<!-- 댓글 달기 -->				
-				<div class="input-group">
-					<input type="text" class="form-control" placeholder="comment">
-					<span class="input-group-btn">
-						<button type="button" class="btn btn-primary" id="replyAddBtn">ADD</button>
-					</span>
-				</div>				
-            </div>
-        </div>
-	</div>
-	</c:forEach> <!-- feedList 끝 -->
-	
-	<!-- 페이징 처리 -->
+
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+<div class="container" align="center">
+<div class="col-md-7">   
+   	<!-- 피드 박스 -->
+   	<c:forEach var="vo" items="${feedList}" varStatus="status">   	
+	    <div class="social-feed-box">
+	    	
+	    	<!-- 
+	    	<c:if test="${login.user_id == vo.user_id_fk}">
+	    		<div class="pull-right social-action dropdown">
+            		<button data-toggle="dropdown" class="dropdown-toggle btn-default">
+                		<i class="glyphicon glyphicon-option-vertical"></i>
+            		</button>
+	            	<ul class="dropdown-menu m-t-xs">
+	                		<li><a href="#" onclick="return false;">
+	                			<strong class="text-info">MODIFY</strong></a></li>
+	                		<li><a href="#" onclick="return false;">	                			
+	                			<strong class="text-info">REMOVE</strong></a></li>
+	            	</ul>
+        		</div>
+	    	</c:if>	    
+	    	 -->    
+	    	<!-- 상단 : 프로필, 이름 , 등록 일 -->       
+	        <div class="social-avatar">
+	            <a href="#" class="pull-left" onclick ="return false;">
+	            	<!-- 
+	            	<c:choose>
+            				<c:when test="${empty vo.profile_pic}">            				
+	                		<img class="img-rounded img-responsive" src="/resources/bootstrap/images/default_profile.png">
+	                		</c:when>
+	                		<c:otherwise>
+	                		<img class="img-rounded img-responsive" src="/displayImage?type=p&fileName=${vo.profile_pic}">	                		
+	                		</c:otherwise>
+	               	</c:choose>
+	               	 -->
+	               	 <img class="img-rounded img-responsive" src="http://dimg.donga.com/wps/SPORTS/IMAGE/2016/02/01/76251832.2.jpg">
+	            </a>
+	                                    
+	            <div class="media-body">
+	                <a href="#" class="pull-left"><strong>${vo.user_id_fk}</strong></a><br>
+	                <small class="text-muted pull-left">${vo.regdate}</small>
+	            </div>
+	        </div> <!-- 상단 끝 -->
+	        
+	        <!-- content -->
+	        <div class="social-body">
+	        	<!-- 이미지 -->
+	            <img src="/displayImage?type=f&fileName=${vo.file_name}" class="img-responsive">
+	            	            
+	            <!-- 컨텐츠 -->
+	            <p>
+	            	${vo.content}
+	            </p>
+	            
+	            <!-- 버튼 -->			                        
+	            <button class="btn btn-white btn-xs pull-left" id="comment"><i class="fa fa-comments"></i> Comment</button>
+	            <br/>            
+	        </div> <!-- content 끝 -->
+	        
+	        <div class="social-footer" style="display:none" id="commentDisplay">
+	        	<!-- 댓글 시작 -->
+	            <div class="social-comment">
+	                <a href="" class="pull-left">
+	                    <img alt="image" src="http://webapplayers.com/inspinia_admin-v2.5/img/a1.jpg">
+	                </a>
+	                <div class="media-body">
+	                    <a href="#">
+							Andrew Williams
+	                    </a>
+	                    Internet tend to repeat predefined chunks as necessary, making this the first true generator on the Internet. It uses a dictionary of over 200 Latin words.
+	                    <br>
+	                </div>
+	            </div>            
+	        </div>
+	        
+	    </div><!-- .피드 박스 끝 -->
+    </c:forEach>  
+    
+    <!-- 페이징 처리 -->
 	<div class="text-center">
   		<ul class="pagination">  			
 			<!-- 페이징 -->	
+			
 			<!-- prev -->
 			<c:if test="${pageMaker.prev}">
 				<li> <a href="list${pageMaker.makeQuery(pageMaker.startPage-1) }">&laquo;</a></li>
@@ -155,22 +254,22 @@
 			</c:if>
 		</ul>
 	</div>
-			
+      
+</div>
 </div>
 
 <script>
-
-$(function() {
-	$('#replyAddBtn').on('click',function() {
-		
+	$(function(){
+		$('#comment').on('click',function() {
+			var state = $('#commentDisplay').css('display');		
+			var attr;
+			if(state == 'none')
+				attr = 'block';
+			else 
+				attr = 'none';			
+			$('#commentDisplay').css('display',attr);
+		});		
 	});
-	
-	
-	
-	
-		
-});
-
 
 </script>
 

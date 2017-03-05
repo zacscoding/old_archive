@@ -85,11 +85,11 @@ public class FeedController {
 		logger.info("/register...post");
 		logger.info(vo.toString());		
 		
-		String thumbName = vo.getFile_name();
 		
-		vo.setFile_name(thumbName.substring(0, 12) + thumbName.substring(14));		
+		//String thumbName = vo.getFile_name();		
+		//vo.setFile_name(thumbName.substring(0, 12) + thumbName.substring(14));		
 		
-		feedService.register(vo);			
+		feedService.register(vo);		
 		
 		rttr.addFlashAttribute("message", "SUCCESS");		
 		/**temp code */
@@ -152,7 +152,9 @@ public class FeedController {
 		ResponseEntity<String> entity = null;
 		
 		//이미지 타입인지 체크
-		String fileName = file.getOriginalFilename();		
+		String fileName = file.getOriginalFilename();
+		logger.info("/uploadPic  fileName : "+fileName);
+		
 		MediaType mediaType = MediaUtils.getMediaType(fileName.substring(fileName.lastIndexOf('.')+1));
 		
 		if(mediaType == null) { //이미지가 아니면

@@ -85,7 +85,7 @@ public class MemberController {
 			msg = "Exceed Period...";
 		}		
 		rttr.addFlashAttribute("msg",msg);
-		return "redirect:/index";
+		return "redirect:/";
 	}
 	
 	

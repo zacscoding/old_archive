@@ -60,7 +60,8 @@ public class MemberServiceImpl implements MemberService {
 		EmailAuthVO auth = dao.getEmailAuth(dto);
 		if(auth == null)
 			throw new ExceedPeriodException();
-				
+		
+		dao.activate(auth.getUser_id());
 	}
 	
 	//회원 정보 수정

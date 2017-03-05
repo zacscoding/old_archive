@@ -26,28 +26,38 @@ public class UploadFileUtils {
 
 		// 저장 경로 (년/월/일/)
 		String savedPath = calcPath(uploadPath);
-
+		logger.info("UploadFileUtils.uploadFile() : " + uploadPath + savedPath);
 		File target = new File(uploadPath + savedPath, savedName);
 
 		FileCopyUtils.copy(fileData, target);
-        
-		return makeThumbnail(uploadPath, savedPath, savedName);    
+
+		return makeThumbnail(uploadPath, savedPath, savedName);		
 	}
 	
-	/*	썸네일 이미지 생성	*/
+	/*	이미지 크기 조정	*/
 	private static String makeThumbnail(String uploadPath, String path, String fileName) throws Exception {
+		File originalFile = new File(uploadPath + path, fileName);
 		
-		BufferedImage sourceImg = ImageIO.read(new File(uploadPath + path, fileName));		
+		BufferedImage originalImage = ImageIO.read(originalFile);
+				
+		int imgwidth = Math.min(originalImage.getHeight(),  originalImage.getWidth());
 		
-		BufferedImage destImg = Scalr.resize(sourceImg, Scalr.Method.AUTOMATIC, Scalr.Mode.FIT_TO_HEIGHT, 100);
+		int imgheight = imgwidth;
+			
+		BufferedImage scaledImage = Scalr.crop(originalImage, (originalImage.getWidth() - imgwidth)/2, (originalImage.getHeight() - imgheight)/2, imgwidth, imgheight, null);
+			
+		BufferedImage resizedImage = Scalr.resize(scaledImage, 1000, 667, null);
 		
 		String thumbnailName = uploadPath + path + File.separator + "s_" + fileName;
+		
 		
 		File newFile = new File(thumbnailName);
 		
 		String formatName = fileName.substring(fileName.lastIndexOf(".") + 1);
 		
-		ImageIO.write(destImg, formatName.toUpperCase(), newFile);		
+		ImageIO.write(resizedImage, formatName.toUpperCase(), newFile);
+		
+		originalFile.delete();
 		
 		return thumbnailName.substring(uploadPath.length()).replace(File.separatorChar, '/'); //브라우저 경로 인식 위해 '\' -> '/'
 	}
