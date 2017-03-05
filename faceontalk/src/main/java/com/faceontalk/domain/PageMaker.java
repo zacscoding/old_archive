@@ -71,8 +71,7 @@ public class PageMaker {
 		return cri;
 	}
 	
-	public String makeQuery(int page){
-		
+	public String makeQuery(int page){		
 		UriComponents uriComponents =
 	            UriComponentsBuilder.newInstance()
 	            .queryParam("page", page)

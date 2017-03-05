@@ -19,9 +19,10 @@ public class HashTagHelper {
 		while(curIdx < content.length()) {
 			if(content.charAt(curIdx) == '#') {				
 				startIdx = curIdx++;
+				
 				/** have to change statement */
 				while(curIdx < content.length() 
-						&& content.charAt(curIdx) != ' ' && content.charAt(curIdx) != '#' && content.charAt(curIdx) !='\n'){
+						&& content.charAt(curIdx) != ' ' && content.charAt(curIdx) != '#' && content.charAt(curIdx) !='\n') {
 					curIdx++;
 				}				
 				//hashTagQue.offer(content.substring(startIdx+1, curIdx));

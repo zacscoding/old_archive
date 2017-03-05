@@ -11,7 +11,7 @@ public class FrontController {
 	
 	@RequestMapping(value="/",method=RequestMethod.GET)
 	public String getFront(HttpServletRequest request) {
-		return "/feed/list";
+		return "redirect:/feed/list";
 	}
 	
 	/**

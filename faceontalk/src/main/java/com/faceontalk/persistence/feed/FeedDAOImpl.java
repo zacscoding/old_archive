@@ -1,6 +1,7 @@
 package com.faceontalk.persistence.feed;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -8,6 +9,7 @@ import javax.inject.Inject;
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.stereotype.Repository;
 
+import com.faceontalk.domain.Criteria;
 import com.faceontalk.domain.feed.FeedVO;
 import com.faceontalk.domain.feed.HashTagVO;
 
@@ -48,6 +50,36 @@ public class FeedDAOImpl implements FeedDAO {
 	public int getLastInsertedFeedNum() throws Exception {
 		return session.selectOne(namespace+".getLastInsertedFeedNum");
 	}
+	
+	////////////////////
+	// get lists
+	////////////////////	
+
+	//followers
+	@Override
+	public List<FeedVO> listFollowersFeeds(Criteria cri, Integer user_no) throws Exception {
+		Map<String,Object> paramMap = new HashMap<>();
+		paramMap.put("cri",cri);
+		paramMap.put("user_no",user_no);
+		return session.selectList(namespace+".listFollowersFeeds",paramMap);				
+	}
+	//followers feed count
+	@Override
+	public int listFollowersFeedCount(Integer user_no) throws Exception {		
+		return session.selectOne(namespace+".listFollowersFeedCount",user_no);
+	}
+
+	
+	
+	
+	
+	
+//	//search
+//	@Override
+//	public List<FeedVO> listSearch(SearchCriteria cri) throws Exception {
+//		return session.selectList(namespace+".listSearch",cri);
+//	}
+//	
 
 
 
@@ -94,28 +126,6 @@ public class FeedDAOImpl implements FeedDAO {
 //		}
 	}
 
-	
-
-	
-//	////////////////////
-//	// get lists
-//	////////////////////	
-//	//search
-//	@Override
-//	public List<FeedVO> listSearch(SearchCriteria cri) throws Exception {
-//		return session.selectList(namespace+".listSearch",cri);
-//	}
-//	
-//	//followers
-//	@Override
-//	public List<FeedVO> listFollower(Criteria cri) throws Exception {
-//	
-//		return null;
-//	}
-	
-	////////////////////
-	// get lists
-	////////////////////	
 
 	
 	

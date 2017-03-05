@@ -14,6 +14,9 @@
 	${message}
 </c:if>
 
+<a href="/feed/list">go list</a>
+
+
 <c:if test="${empty message}">
 	message가 없습니다.
 </c:if>

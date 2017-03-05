@@ -1,13 +1,17 @@
 package com.faceontalk.persistence.feed;
 
+import java.util.List;
 import java.util.Map;
 
+import com.faceontalk.domain.Criteria;
 import com.faceontalk.domain.feed.FeedVO;
 import com.faceontalk.domain.feed.HashTagVO;
 
 public interface FeedDAO {
 	//feed
-//	public List<FeedVO> listFollower(Criteria cri) throws Exception;
+	public List<FeedVO> listFollowersFeeds(Criteria cri,Integer user_no) throws Exception;
+	public int listFollowersFeedCount(Integer user_no) throws Exception;
+	
 //	public List<FeedVO> listSearch(SearchCriteria cri) throws Exception;
 	public void register(FeedVO vo) throws Exception;	
 	public FeedVO selectByFeedNo(Integer feed_no) throws Exception;

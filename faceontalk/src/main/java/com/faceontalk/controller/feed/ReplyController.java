@@ -27,8 +27,6 @@ public class ReplyController {
 	// have to do pagination
 	////////////////////////
 	
-	
-	
 	/**		register	*/	
 	@RequestMapping(value="", method=RequestMethod.POST)
 	public ResponseEntity<String> register(@RequestBody ReplyVO vo) {

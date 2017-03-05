@@ -5,6 +5,8 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -23,8 +25,10 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.faceontalk.domain.Criteria;
+import com.faceontalk.domain.PageMaker;
 import com.faceontalk.domain.SearchCriteria;
 import com.faceontalk.domain.feed.FeedVO;
+import com.faceontalk.domain.member.MemberVO;
 import com.faceontalk.service.feed.FeedService;
 import com.faceontalk.util.MediaUtils;
 import com.faceontalk.util.UploadFileUtils;
@@ -47,12 +51,28 @@ public class FeedController {
 		logger.info(cri.toString());
 		//not yet implement
 	}	
-	//followers
+	
+	
+	//get followers + mine feed lists
 	@RequestMapping(value="/list", method=RequestMethod.GET)
-	public void listFollowerPage(@ModelAttribute("cri") Criteria cri,Model model) throws Exception {
+	public void listFollowerPage(@ModelAttribute("cri") Criteria cri, Model model, HttpServletRequest request) throws Exception {		
+		
 		logger.info(cri.toString());
-		//not yet implement		
-	}
+		
+		//get loggined user 
+		HttpSession session = request.getSession();
+		MemberVO vo = (MemberVO)session.getAttribute("login");
+				
+		//get feed list
+		model.addAttribute("feedList",feedService.listFollowersFeeds(cri,vo.getUser_no()));
+		
+		//calc pageMaker
+		PageMaker pageMaker = new PageMaker();
+		pageMaker.setCri(cri);
+		pageMaker.setTotalCount(feedService.listFollowersFeedCount(vo.getUser_no()));		
+		model.addAttribute("pageMaker",pageMaker);
+		
+	}	
 	
 	/**		register 	*/		
 	@RequestMapping(value="/register", method=RequestMethod.GET)
@@ -66,10 +86,11 @@ public class FeedController {
 		logger.info(vo.toString());		
 		
 		String thumbName = vo.getFile_name();
-		vo.setFile_name(thumbName.substring(0, 12) + thumbName.substring(14));
+		
+		vo.setFile_name(thumbName.substring(0, 12) + thumbName.substring(14));		
 		
 		feedService.register(vo);			
-						
+		
 		rttr.addFlashAttribute("message", "SUCCESS");		
 		/**temp code */
 		return "redirect:/feed/result";				
@@ -123,8 +144,7 @@ public class FeedController {
 	
 	
 	
-	/**		Ajax		*/
-	
+	/**		Ajax		*/	
 	/**		ajax register pic	*/
 	@ResponseBody
 	@RequestMapping(value="/uploadPic",method=RequestMethod.POST, produces="test/plain;charset=UTF-8")
@@ -145,29 +165,9 @@ public class FeedController {
 		return entity;
 	}	
 	
-	/**		display in view page	*/
-	@ResponseBody
-	@RequestMapping("/displayFile")
-	public ResponseEntity<byte[]> displayFile(String fileName) throws Exception {		
-		ResponseEntity<byte[]> entity = null;
-		
-		String formatName = fileName.substring(fileName.lastIndexOf('.')+1);
-		MediaType mediaType = MediaUtils.getMediaType(formatName);
-		HttpHeaders headers = new HttpHeaders();
-		
-		try(InputStream in = new FileInputStream(uploadPath+fileName)) {
-			headers.setContentType(mediaType); // MIME 타입을 이미지 타입으로 생성
-			entity = new ResponseEntity<byte[]>(IOUtils.toByteArray(in),headers,HttpStatus.CREATED);			
-		} catch(Exception e) {
-			e.printStackTrace();
-			entity = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-		}		
-		return entity;
-	}
-	
 	/**		delete pic		*/
 	@ResponseBody
-	@RequestMapping(value="/deleteFile",method=RequestMethod.POST)
+	@RequestMapping(value="/deleteImage",method=RequestMethod.POST)
 	public ResponseEntity<String> deleteFile(String fileName) {
 		logger.info("delete file : "+fileName);
 		

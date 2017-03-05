@@ -24,6 +24,7 @@ public class AuthInterceptor extends HandlerInterceptorAdapter {
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
 			throws Exception {		
 		HttpSession session = request.getSession();
+				
 		if(session.getAttribute("login") == null) {
 			logger.info("current user is not logined");
 			//기존 요청 경로 저장
@@ -42,8 +43,8 @@ public class AuthInterceptor extends HandlerInterceptorAdapter {
 			return false;
 		} else {
 			logger.info("current user is logined");
+			return true;
 		}
-		return true;
 	}
 	
 	public void saveDest(HttpServletRequest req) {

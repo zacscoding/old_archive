@@ -3,6 +3,7 @@ package com.faceontalk.service.feed;
 import java.util.List;
 import java.util.Map;
 
+import com.faceontalk.domain.Criteria;
 import com.faceontalk.domain.SearchCriteria;
 import com.faceontalk.domain.feed.FeedVO;
 import com.faceontalk.domain.feed.HashTagVO;
@@ -16,7 +17,8 @@ public interface FeedService {
 	public FeedVO getLastInsertedFeed() throws Exception;
 	public int getLastInsertedFeedNum() throws Exception;
 	public FeedVO selectFeedByNum(Integer feed_no) throws Exception;
-	
+	public List<FeedVO> listFollowersFeeds(Criteria cri,Integer user_no) throws Exception;
+	public int listFollowersFeedCount(Integer user_no) throws Exception;
 	
 	//tag	
 	public void registerTags(String tag) throws Exception;

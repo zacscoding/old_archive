@@ -17,6 +17,7 @@
 
 <div class="container">	
 	<h1>Regist Feed</h1>
+	<hr>
 	<!-- profile pic , user_id -->
 	<div class="row">	
 		<div class="media">
@@ -31,7 +32,7 @@
             			</c:choose>            			
             		</a>
             		<div class="media-body">
-            			<h4 class="media-heading">${login.user_id}</h4>
+            			<h3>${login.user_id}</h3>
             		</div>
         </div>
 	</div>
@@ -55,6 +56,10 @@
 			<input type="submit" class="btn btn-primary" value="Regist" id="btnRegister">                
 			<input type="reset" class="btn btn-warning" value="Clear">
 	</form>	
+	<br/><br/>
+	<div class="alert alert-danger" id="errorMessage" style="display:none">
+		<strong>Please</strong> &nbsp; upload one picture.
+	</div>	
 </div>
 
 
@@ -93,12 +98,13 @@ $(".fileDrop").on("drop", function(event){
 			 if(data=='notMatchedTypes') {
 				 
 			 } else {				 
-				 str="<div><img src='displayFile?fileName="+data+"'/>"
+				 str="<div><img src='/displayImage?type=f&fileName="+data+"'/>"
 				 	+ "<small id='file_name' data-src="+data+">X</small></div>";
 				 $('#file_name').attr('value',data); //file_name 속성	
 				 $('.fileDrop').css('display','none'); // 드랍창 숨기기				 
 				 $('.uploadedPic').append(str); // 썸네일 이미지 보이기
 				 $('.uploadedPic').css('display','block');
+				 $('#errorMessage').css('display','none'); //경고창 있어으면 가리기
 			 }
 		  }
 	});	
@@ -108,7 +114,7 @@ $(".fileDrop").on("drop", function(event){
 $('.uploadedPic').on('click','small',function(event) {
 	var that = $(this);	
 	$.ajax({
-		url: '/feed/deleteFile',
+		url: '/feed/deleteImage',
 		type: 'post',
 		data: {fileName:$(this).attr("data-src")},
 		dataType: 'text',
@@ -121,6 +127,18 @@ $('.uploadedPic').on('click','small',function(event) {
 			}
 		}		
 	});	
+});
+
+//등록 submit
+$('#registerForm').submit(function(event){
+	event.preventDefault();
+	//이미지 업로드 안했으면 경고창 + 리턴
+	if($('.fileDrop').css('display') == 'block') {
+		$('#errorMessage').css('display','block');
+		return;
+	}
+	
+	$(this).get(0).submit();
 });
 
 	

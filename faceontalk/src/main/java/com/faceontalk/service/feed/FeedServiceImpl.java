@@ -10,6 +10,7 @@ import javax.inject.Inject;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.faceontalk.domain.Criteria;
 import com.faceontalk.domain.SearchCriteria;
 import com.faceontalk.domain.feed.FeedVO;
 import com.faceontalk.domain.feed.HashTagVO;
@@ -31,8 +32,20 @@ public class FeedServiceImpl implements FeedService {
 	public List<FeedVO> listSearchCriteria(SearchCriteria cri) throws Exception {
 		//not yet implement
 		 return null;
+	}	
+	
+	@Override
+	public List<FeedVO> listFollowersFeeds(Criteria cri, Integer user_no) throws Exception {
+		return feedDAO.listFollowersFeeds(cri, user_no);
+	}
+	@Override
+	public int listFollowersFeedCount(Integer user_no) throws Exception {
+		return feedDAO.listFollowersFeedCount(user_no);
 	}
 
+	
+	
+	
 	@Transactional
 	@Override
 	public void register(FeedVO vo) throws Exception {
@@ -180,6 +193,9 @@ public class FeedServiceImpl implements FeedService {
 		}				
 		registerRelation(feed_no,tag.getTag_id());
 	}
+
+
+	
 
 	
 }

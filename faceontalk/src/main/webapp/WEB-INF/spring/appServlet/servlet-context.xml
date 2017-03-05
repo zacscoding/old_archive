@@ -47,8 +47,8 @@
 			pre : 세션 및 쿠키로 로그인 체크 > request에 요청 경로 저장 
 		 -->
 		<interceptor>
-			<mapping path="/"/>
-			<mapping path="/feed/register"/>			
+			<mapping path="/"/>			
+			<mapping path="/feed/*"/>			
 			<beans:ref bean="authInterceptor"/>
 		</interceptor>		
 	</interceptors>

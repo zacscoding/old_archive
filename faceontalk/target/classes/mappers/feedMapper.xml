@@ -16,6 +16,22 @@
 		order by feed_no desc,regdate desc
 		limit #{pageStart},#{perPageNum}
 	</select>
+
+	<!-- tbl_feed left join tbl_member (feed.* + member.profile_pic) -->	
+	<select id="listFollowersFeeds" resultType="FeedVO">
+		select A.*,B.profile_pic from tbl_feed as A left join tbl_member as B on A.user_no_fk = B.user_no  
+		where (A.user_no_fk = #{user_no}) 
+		or (A.user_no_fk in (select following from tbl_follow where follower = #{user_no} ))
+		order by feed_no desc
+		limit #{cri.pageStart},#{cri.perPageNum}
+	</select>	
+	
+	<select id="listFollowersFeedCount" resultType="int">
+		select count(feed_no) from tbl_feed where (user_no_fk = #{user_no} ) 
+		or (user_no_fk in (select following from tbl_follow where follower = #{user_no} ))
+		order by feed_no desc	
+	</select>
+	
 		
 	<!-- 피드 등록 -->
 	<insert id="register">

@@ -8,8 +8,7 @@ public class ReplyVO {
 	private String replytext;
 	private String user_name_fk;
 	private Date regdate;
-	private Date moddate;
-	
+	private Date moddate;	
 	
 	//getter,setter,toString
 	public Integer getRno() {
