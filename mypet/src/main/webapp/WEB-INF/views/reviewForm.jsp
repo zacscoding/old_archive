@@ -3,13 +3,13 @@
 <%@ include file="include/header.jsp" %>
 
 <style>
-.span4 img .fileDrop {
+.span4 img{
     margin-right: 10px;
 }
-.span4 .img-left .fileDrop{
+.span4 .img-left{
     float: left;
 }
-.span4 .img-right .fileDrop{
+.span4 .img-right{
     float: right;
 }
 .fileDrop {
@@ -29,7 +29,9 @@
 	<div class="modal fade" id="myModal" tabindex="-1" role="dialog"
 		aria-labelledby="myModalLabel" aria-hidden="true">
 		<div class="modal-dialog">
-			<form role="form">  
+			<!-- 폼 -->
+			<form role="form">			
+			<input type="hidden" name="review_image" id="review_image">  
 				<div class="modal-content">
 					<!-- 상단(타이틀 + x) -->
 					<div class="form-group">
@@ -45,14 +47,17 @@
 						<div class="modal-body">					
 							<div class="block">
 								<div class="row">
-									<div class="span4">									
-										
-										<!-- 이미지 드랍 -->
-										<div class="fileDrop" style="display:block">&nbsp;<Strong>Drag and drop</Strong> image here</div>
-																					
-										<img class="img-left" style="display:none;" id="viewImage"
-												src="http://assets.barcroftmedia.com.s3-website-eu-west-1.amazonaws.com/assets/images/recent-images-11.jpg" />
-										<br/><br/>														
+									<!-- 이미지 드랍 -->
+									<div class="fileDrop" style="display:block;">&nbsp;<Strong>Drag and drop</Strong> image here</div>										
+								</div>
+								<div class="row">								
+									<div class="span4" id="uploadedPic">
+										<!-- 드랍 이미지 뷰 (466 x 320 px) -->
+										<img class="img-left" id="viewImage"> 
+									</div>	
+								</div>
+								<br/><br/>
+								<div class="row">																				
 										<!-- 제목 인풋 -->										
 										<div class="row">
 											<div class="col-sm-4  col-lg-4">																													
@@ -70,7 +75,6 @@
 								<br />
 							</div>
 							<div class="social-comment">
-	            </div> 
 						</div> <!-- .내용 끝 -->						
 					</div>
 					<!-- 하단 버튼 -->
@@ -98,12 +102,12 @@ $(".fileDrop").on("drop", function(event){
 	event.preventDefault();	
 	var files = event.originalEvent.dataTransfer.files;	
 	var file = files[0];
-		
+	
 	var formData = new FormData();
 	formData.append("file", file);
 	
 	$.ajax({
-		  url: '/feed/uploadPic',
+		  url: '/reviews/uploadPic',
 		  data: formData,
 		  dataType:'text',
 		  processData: false,
@@ -113,15 +117,15 @@ $(".fileDrop").on("drop", function(event){
 			 if(data=='notMatchedTypes') {
 				 
 			 } else {
-				 alert(data);
-				 str="<div><img src='/displayImage?type=f&fileName="+data+"'/>"
-				 	+ "<small id='file_name' data-src="+data+">X</small></div>";
-				 $('#file_name').attr('value',data); //file_name 속성	
-				 $('.fileDrop').css('display','none'); // 드랍창 숨기기				 
-				 $('.uploadedPic').append(str); // 썸네일 이미지 보이기
-				 $('.uploadedPic').css('display','block');
-				 $('#errorMessage').css('display','none'); //경고창 있어으면 가리기
-			 }
+				 str = "/displayImage?type=r&fileName="+data;
+				 alert(str);
+				 //str="<img class='img-left' src='/displayImage?type=r&fileName="+data+"'/>"
+				 //	+ "<small id='file_name' data-src="+data+">X</small>";				 	
+				 $('#review_image').attr('value',data); //file_name 속성	
+				 $('.fileDrop').css('display','none'); // 드랍창 숨기기	
+				 //$('#uploadedPic').append(str); // 썸네일 이미지 보이기
+				 $('#viewImage').attr('src',str);				 
+			}
 		  }
 	});	
 });	
@@ -130,7 +134,7 @@ $(".fileDrop").on("drop", function(event){
 $('.uploadedPic').on('click','small',function(event) {
 	var that = $(this);	
 	$.ajax({
-		url: '/feed/deleteImage',
+		url: '/reviews/deleteImage',
 		type: 'post',
 		data: {fileName:$(this).attr("data-src")},
 		dataType: 'text',
@@ -138,22 +142,15 @@ $('.uploadedPic').on('click','small',function(event) {
 			if(result == 'deleted') {				
 				$('#file_name').attr('value',''); //file_name ''으로 바꾸기
 				$('.fileDrop').css('display','block'); //드랍창 보이기
-				$('.uploadedPic').css('display','none'); //기존 이미지 창 숨기기
-				that.parent("div").remove();
+				$('#viewImage').attr('src','');
 			}
 		}		
 	});	
 });
 
 //등록 submit
-$('#registerForm').submit(function(event){
-	event.preventDefault();
-	//이미지 업로드 안했으면 경고창 + 리턴
-	if($('.fileDrop').css('display') == 'block') {
-		$('#errorMessage').css('display','block');
-		return;
-	}
-	
+$('#registerForm').submit(function(event) {
+	event.preventDefault();	
 	$(this).get(0).submit();
 });
 

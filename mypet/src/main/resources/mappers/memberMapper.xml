@@ -83,8 +83,7 @@
 		where user_no > 0		
 		]]>
 		<include refid="search"/>
-	</select>
-	
+	</select>	
 	
 	<!-- search sql -->
 	<sql id="search">

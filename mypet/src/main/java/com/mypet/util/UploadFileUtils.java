@@ -15,82 +15,84 @@ import org.springframework.util.FileCopyUtils;
 
 public class UploadFileUtils {
 	
-	private static final Logger logger = LoggerFactory.getLogger(UploadFileUtils.class);	
-	
-	/**			*/
-	public static String uploadFile(String uploadPath,String originalName,byte[] fileData) throws Exception {
+	private static final Logger logger = LoggerFactory.getLogger(UploadFileUtils.class);
+
+	/*	thumbnail 생성 파일(경로포함)	 반환		*/
+	public static String uploadFile(String uploadPath, String originalName, byte[] fileData) throws Exception {
+		// 파일 고유 아이디
 		UUID uid = UUID.randomUUID();
+
+		// uid_파일이름
 		String savedName = uid.toString() + "_" + originalName;
-		
+
+		// 저장 경로 (년/월/일/)
 		String savedPath = calcPath(uploadPath);
-		
+		logger.info("UploadFileUtils.uploadFile() : " + uploadPath + savedPath);
 		File target = new File(uploadPath + savedPath, savedName);
-		
+
 		FileCopyUtils.copy(fileData, target);
-		
-		String formatName = originalName.substring(originalName.lastIndexOf(".")+1);		
-		String uploadedFileName = null;		
-		if(MediaUtils.getMediaType(formatName) != null) { //이미지 타입이면
-			uploadedFileName = makeThumbnail(uploadPath,savedPath,savedName); //썸네일 이미지 생성
-		} else { //일반 파일이면
-			uploadedFileName = makeIcon(uploadPath,savedPath,savedName); //생성된 파일 이름 반환
-		}		
-		return uploadedFileName;
+
+		return makeThumbnail(uploadPath, savedPath, savedName);		
 	}
 	
-	private static String makeIcon(String uploadPath,String path,String fileName) throws Exception {
-		String iconName = uploadPath + path + File.separator + fileName;
+	/*	이미지 크기 조정	*/
+	private static String makeThumbnail(String uploadPath, String path, String fileName) throws Exception {
+		File originalFile = new File(uploadPath + path, fileName);
 		
-		return iconName.substring(uploadPath.length()).replace(File.separatorChar,'/');
-	}
-	
-	// uploadPath/년/월/일 path얻기
-	private static String calcPath(String uploadPath) {
-		Calendar cal = Calendar.getInstance();
+		BufferedImage originalImage = ImageIO.read(originalFile);
+				
+		int imgwidth = Math.min(originalImage.getHeight(),  originalImage.getWidth());
 		
-		String yearPath = File.separator+cal.get(Calendar.YEAR);
-		String monthPath = yearPath + File.separator + new DecimalFormat("00").format(cal.get(Calendar.MONTH)+1);
-		String datePath = monthPath + File.separator + new DecimalFormat("00").format(cal.get(Calendar.DATE));
-		
-		makeDir(uploadPath,yearPath,monthPath,datePath);
-		
-		logger.info(datePath);
-		
-		return datePath;
-	}
-	
-	// uploadPath/year/month/date 디렉터리 생성
-	private static void makeDir(String uploadPath, String... paths) {
-		if(new File(paths[paths.length-1]).exists()) { //date폴더까지 있으면 리턴
-			return;
-		}
-		
-		for (String path : paths ) {
-			File dirPath = new File(uploadPath+path);
-			if(!dirPath.exists())
-				dirPath.mkdir();
-		}
-	}
-	
-	private static String makeThumbnail (String uploadPath,String path,String fileName) throws Exception {
-		BufferedImage sourceImg = ImageIO.read(new File(uploadPath+path,fileName)); 
-		//BufferedImage는 실제 이미지가 아닌 메모상의 이미지
-		//=>원본 파일을 메모리상으로 로딩 & 정해진 크기에 맞게 작은 이미지 파일에 원본 이미지 복사
-		
-		BufferedImage destImg = Scalr.resize(sourceImg,Scalr.Method.AUTOMATIC,Scalr.Mode.FIT_TO_HEIGHT,100);
-		//Scalr.Mode.FIT_TO_HEIGHT => 썸네일 이미지 파일의 높이를 뒤에 지정된 100px로 동일하게 만들어줌
+		int imgheight = imgwidth;
+			
+		BufferedImage scaledImage = Scalr.crop(originalImage, (originalImage.getWidth() - imgwidth)/2, (originalImage.getHeight() - imgheight)/2, imgwidth, imgheight, null);
+			
+		BufferedImage resizedImage = Scalr.resize(scaledImage, 466,320, null);
 		
 		String thumbnailName = uploadPath + path + File.separator + "s_" + fileName;
-		//thumbnailName = 경로/s_파일이름
-		//'s_'는 썸네일 이미지, 's_'를 제외하면 원본 이미지
+		
 		
 		File newFile = new File(thumbnailName);
-		String formatName = fileName.substring(fileName.lastIndexOf(".")+1); //format이름
 		
-		ImageIO.write(destImg, formatName, newFile);//thumbnail로 복사
-		return thumbnailName.substring(uploadPath.length()).replace(File.separatorChar,'/');
-		// 브라우저에서 윈도으의 경로로 사용하는 '\' 문자가 정상적이 ㄴ경로로 인식되지 않기 때문에 /로 치환
+		String formatName = fileName.substring(fileName.lastIndexOf(".") + 1);
+		
+		ImageIO.write(resizedImage, formatName.toUpperCase(), newFile);
+		
+		originalFile.delete();
+		
+		return thumbnailName.substring(uploadPath.length()).replace(File.separatorChar, '/'); //브라우저 경로 인식 위해 '\' -> '/'
 	}
+  
+	
+	/*	/년/월/일 경로 계산 & 생성	*/
+	private static String calcPath(String uploadPath) {
+		
+		Calendar cal = Calendar.getInstance();
+		String yearPath = File.separator + cal.get(Calendar.YEAR);
+		String monthPath = yearPath + File.separator + new DecimalFormat("00").format(cal.get(Calendar.MONTH) + 1);
+		String datePath = monthPath + File.separator + new DecimalFormat("00").format(cal.get(Calendar.DATE));
+		makeDir(uploadPath, yearPath, monthPath, datePath);
+
+		logger.info(datePath);
+
+		return datePath;
+	}
+  
+	/*	/년/월/일 dir생성	*/
+	private static void makeDir(String uploadPath, String... paths) {
+		if (new File(paths[paths.length - 1]).exists()) {
+			return;
+		}
+		for (String path : paths) {
+			File dirPath = new File(uploadPath + path);
+
+			if (!dirPath.exists()) {
+				dirPath.mkdir();
+			}
+		}
+	}
+	
+	
 }
 
 
