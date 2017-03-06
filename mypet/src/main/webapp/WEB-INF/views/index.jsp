@@ -4,16 +4,13 @@
 
 <%@ include file="include/header.jsp" %>
 	
-	
-	
 	<!-- 
 	<c:forEach var="vo" items="${carouselList}" varStatus = "status">
 		<c:if test="${stats==1}">
 			<img src="${vo.image}">	
 		</c:if>		
 	</c:forEach>
-	 -->
-	
+	 -->	
 	<!-- 캐러셀 부분 시작 -->
     <div id="carousel-generic" class="carousel slide">
       <!-- Indicators -->
@@ -29,8 +26,7 @@
          <li data-target="#carousel-generic" data-slide-to="3"></li>
          <li data-target="#carousel-generic" data-slide-to="4"></li>
           -->             
-       </ol>
-       
+       </ol>      
        
      	<!-- Carousel items -->     
        <div class="carousel-inner">

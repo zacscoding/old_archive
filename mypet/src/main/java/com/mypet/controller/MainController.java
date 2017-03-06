@@ -113,20 +113,31 @@ public class MainController {
 	}
 	
 	
-	
-	@Inject
-	TestService testService;
-	
+	/*	Transaction Test	 */
+	/*@Inject
+	TestService testService;	
 	@RequestMapping(value="/test",method=RequestMethod.GET)
 	public void test() throws Exception {
 		logger.info("test.get()...");
-	}
-	
+	}	
 	@RequestMapping(value="/test",method=RequestMethod.POST)
 	public void testPOST(Model model) throws Exception {
 		logger.info("test..post()..");
 		testService.transTest();
 		model.addAttribute("msg","success");		
+	}*/
+	
+	/*	Review Modal Test	*/
+	@RequestMapping(value="/reviewForm",method=RequestMethod.GET)
+	public void reviewTest() throws Exception {		
 	}
+	
+	@RequestMapping(value="/reviewRead",method=RequestMethod.GET)
+	public void reviewViewTest() throws Exception {		
+	}
+	
+	
+	
+	
 }
 
