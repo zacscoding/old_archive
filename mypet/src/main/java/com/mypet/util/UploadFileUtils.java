@@ -85,7 +85,6 @@ public class UploadFileUtils {
 		}
 		for (String path : paths) {
 			File dirPath = new File(uploadPath + path);
-
 			if (!dirPath.exists()) {
 				dirPath.mkdir();
 			}

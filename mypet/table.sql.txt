@@ -66,6 +66,8 @@ create table tbl_product (
 	reg_date date default sysdate,
 	foreign key (category_no_fk) references tbl_product_category(category_no)
 );
+create sequence product_seq;
+
 
 --상품 상세(콘텐츠)
 create table tbl_product_content (
@@ -83,6 +85,7 @@ create table tbl_cart(
 	is_complete char(1) default '0', --0 : 미처리, 1 : 처리  
 	reg_date date default sysdate
 );
+
 create sequence cart_seq;
 
 
@@ -164,18 +167,10 @@ create table tbl_carousel(
 
 
 
-
-
-	
-
-
-	
-	
-	
-	
-
-create table tbl_qna_category (
-	
+--카테고리 + 상품 레프트 아웃터 조인
+select A.*,B.image,B.product_name,B.selling_price 
+	from tbl_cart A LEFT OUTER JOIN tbl_product B on A.product_seq_fk = B.product_no 
+where A.user_seq_fk=#{user_seq_fk}
 
 
 

@@ -38,7 +38,7 @@
     .thumbnail:hover img{   position: relative; top: -4px; }
      /*네브바 부분*/
     .nav-top{ font-size: 12px;}
-    .nav-top >li > a { padding:0 10px;  margin:7px 0; color: #000; background: url(/views/imgs/vline.jpg) no-repeat left center;  }
+    .nav-top >li > a { padding:0 10px;  margin:7px 0; color: #000; background: url(/resources/bootstrap/imgs/vline.jpg) no-repeat left center;  }
     .nav-top >li:first-child > a { background: none}
     .nav-main > li > a{ font-size: 16px; font-weight: bold; }
     .navbar-toggle { border: 1px solid #ccc;}

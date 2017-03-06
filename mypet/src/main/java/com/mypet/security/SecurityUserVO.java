@@ -20,6 +20,12 @@ public class SecurityUserVO implements UserDetails {
 		this.role = new UserRole("ROLE_"+vo.getRole().toUpperCase());
 	}	
 	
+	/**	Get MemberVO	*/
+	public MemberVO getMemberVO() {
+		return vo;
+	}
+	
+	/**		Override	*/
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		List<GrantedAuthority> authorities = new ArrayList<>();

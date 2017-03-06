@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,6 +21,7 @@ import com.mypet.domain.MemberVO;
 import com.mypet.dto.EmailAuthDTO;
 import com.mypet.error.DuplicateIdException;
 import com.mypet.error.ExceedPeriodException;
+import com.mypet.security.SecurityUserVO;
 import com.mypet.service.JoinService;
 import com.mypet.service.MemberService;
 import com.mypet.util.EmailSenderUtil;
@@ -118,7 +120,7 @@ public class MemberController {
 	
 	
 	/** 	modify	*/
-	@RequestMapping(value="modify",method=RequestMethod.GET)
+	@RequestMapping(value="/modify",method=RequestMethod.GET)
 	public void modifyGET(Model model,Principal principal) throws Exception  {
 		// 인증 유저 얻기 1) 
 //		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -127,10 +129,17 @@ public class MemberController {
 //		// 인증 유저 얻기 2)
 //		UserDetails user = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 //		String user_id = user.getUsername();
-		
-		
+					
 		// 인증 유저 얻기 3)
-		String user_id = principal.getName();
+//		String user_id = principal.getName();
+		
+		// 인증 유저 얻기 4)
+		SecurityUserVO user = (SecurityUserVO)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		String user_id = user.getUsername();
+		
+		//user.getMemberVO()로 로그인 유저 정보를 얻을 수 있음
+		logger.info("로그인 정보 : "+user.getMemberVO().toString());
+		
 		model.addAttribute("vo",memberService.selectById(user_id));
 	}
 	

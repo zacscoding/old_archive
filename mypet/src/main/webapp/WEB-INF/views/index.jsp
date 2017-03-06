@@ -51,11 +51,13 @@
     
     <!-- 상품 컨테이너 -->
      <div class="container">
+     <!-- 헤더 -->
     <header> <!-- 카테고리 이름 -->
       <h1><i class="fa fa-thumbs-o-up"></i> 추천상품</h1>
-    </header>
+    </header><!-- .헤더 끝 -->    
     
     <div class="row">
+    	<!-- 한개의 상품 -->
       <div class="col-xs-6 col-sm-3"> 
         <div class="thumbnail">
            <a href="#">
@@ -77,10 +79,9 @@
                     <dd class="red">759,000 원</dd>
                   </dl>
                </div> 
-             <!--  <div class="zoom"> 자세히 보기 </div>  --> 
             </a>    
          </div>  
-        </div>        
+        </div><!-- .한개의 상품 끝 -->
         
         <div class="col-xs-6 col-sm-3">        
           <div class="thumbnail">
@@ -128,7 +129,6 @@
                       <dd class="red"> 249,000 원</dd>
                     </dl>
                  </div> 
-<!--                <div class="zoom"> 자세히 보기 </div> -->
               </a>    
            </div>             
         </div>
@@ -152,7 +152,6 @@
                       <dd class="red">99,000 원</dd>
                     </dl>
                  </div> 
-<!--                 <div class="zoom"> 자세히 보기 </div>  -->
               </a>    
            </div>             
         </div>

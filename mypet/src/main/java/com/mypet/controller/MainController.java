@@ -124,17 +124,24 @@ public class MainController {
 		model.addAttribute("msg","success");		
 	}*/
 	
+	
 	/*	Review Modal Test	*/
 	@RequestMapping(value="/reviewForm",method=RequestMethod.GET)
-	public void reviewTest() throws Exception {		
+	public void reviewTest() throws Exception {
+		
 	}
 	
 	@RequestMapping(value="/reviewRead",method=RequestMethod.GET)
-	public void reviewViewTest() throws Exception {		
+	public void reviewViewTest() throws Exception {
+		
 	}
 	
 	
-	
+	/*	Cart List Test*/
+	@RequestMapping(value="/cartList",method=RequestMethod.GET)
+	public void cartListTest() throws Exception {
+		
+	}
 	
 	
 	
