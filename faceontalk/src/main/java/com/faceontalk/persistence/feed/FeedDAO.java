@@ -19,6 +19,8 @@ public interface FeedDAO {
 	public void update(FeedVO vo) throws Exception;
 	public FeedVO getLastInsertedFeed() throws Exception;
 	public int getLastInsertedFeedNum() throws Exception;
+	public void modifyReplyCount(Integer feed_no,boolean isIncrease) throws Exception;
+	
 	
 	//tag
 	public void registerTag(String tag_name) throws Exception;	

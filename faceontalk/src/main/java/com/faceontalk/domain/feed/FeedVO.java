@@ -11,6 +11,7 @@ public class FeedVO {
 	private Date regdate;
 	private Date moddate;
 	private Integer like_count;
+	private Integer reply_count;
 	private String file_name;
 	
 	//getter,setter,toString	
@@ -69,12 +70,25 @@ public class FeedVO {
 	public void setFile_name(String file_name) {
 		this.file_name = file_name;
 	}
+
+	public Integer getReply_count() {
+		return reply_count;
+	}
+
+	public void setReply_count(Integer reply_count) {
+		this.reply_count = reply_count;
+	}
+
 	@Override
 	public String toString() {
 		return "FeedVO [feed_no=" + feed_no + ", user_no_fk=" + user_no_fk + ", user_id_fk=" + user_id_fk
 				+ ", profile_pic=" + profile_pic + ", content=" + content + ", regdate=" + regdate + ", moddate="
-				+ moddate + ", like_count=" + like_count + ", file_name=" + file_name + "]";
+				+ moddate + ", like_count=" + like_count + ", reply_count=" + reply_count + ", file_name=" + file_name
+				+ "]";
 	}
+	
+	
+	
 	
 		
 }

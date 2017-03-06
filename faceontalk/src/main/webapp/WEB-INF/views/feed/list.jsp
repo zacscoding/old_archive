@@ -158,8 +158,7 @@ body{margin-top:20px;}
 <div class="col-md-7">   
    	<!-- 피드 박스 -->
    	<c:forEach var="vo" items="${feedList}" varStatus="status">   	
-	    <div class="social-feed-box">
-	    	
+	    <div class="social-feed-box">	    	
 	    	<!-- 
 	    	<c:if test="${login.user_id == vo.user_id_fk}">
 	    		<div class="pull-right social-action dropdown">
@@ -190,10 +189,13 @@ body{margin-top:20px;}
 	               	 -->
 	               	 <img class="img-rounded img-responsive" src="http://dimg.donga.com/wps/SPORTS/IMAGE/2016/02/01/76251832.2.jpg">
 	            </a>
-	                                    
+					
+						                                    
 	            <div class="media-body">
 	                <a href="#" class="pull-left"><strong>${vo.user_id_fk}</strong></a><br>
-	                <small class="text-muted pull-left">${vo.regdate}</small>
+	                <small class="text-muted pull-left">	                	
+	                	<fmt:formatDate pattern="yy MM dd HH" value="${vo.regdate}"/> 	
+	                	</small>
 	            </div>
 	        </div> <!-- 상단 끝 -->
 	        
@@ -212,22 +214,34 @@ body{margin-top:20px;}
 	            <br/>            
 	        </div> <!-- content 끝 -->
 	        
-	        <div class="social-footer" style="display:none" id="commentDisplay">
-	        	<!-- 댓글 시작 -->
-	            <div class="social-comment">
-	                <a href="" class="pull-left">
-	                    <img alt="image" src="http://webapplayers.com/inspinia_admin-v2.5/img/a1.jpg">
-	                </a>
-	                <div class="media-body">
-	                    <a href="#">
+	        <div class="social-footer">
+	        	<!-- 댓글 시작 -->	        	
+	            <div class="social-comment"  style="display:none" id="commentDisplay">
+	            		<ul>
+	            		<li>	                
+	                    <a href="#" onclick="return false;">
 							Andrew Williams
 	                    </a>
 	                    Internet tend to repeat predefined chunks as necessary, making this the first true generator on the Internet. It uses a dictionary of over 200 Latin words.
 	                    <br>
-	                </div>
-	            </div>            
-	        </div>
-	        
+	                    </li>
+	                    <li>	                
+	                    <a href="#" onclick="return false;">
+							Andrew Williams
+	                    </a>
+	                    Internet tend to repeat predefined chunks as necessary, making this the first true generator on the Internet. It uses a dictionary of over 200 Latin words.
+	                    <br>
+	                    </li>
+	                    </ul>
+	            </div> 	            
+	            <!-- 댓글쓰기 -->
+	            <!-- http://okky.kr/article/230588 -->
+	            <div class="input-group">
+	            	<input type="hidden" name="feed_no_fk" id="feed_no_fk${status.index}" value="${vo.feed_no}">
+        			<input type="text" class="form-control" name="replyText" id="replyText${status.index}" placeholder="comment">
+         			<span class="input-group-btn"> <input type="button" class="btn btn-primary replyAddBtn" id='${status.index}' value="ADD" ></span>        
+    			</div><!-- .댓글쓰기 끝 -->
+	        </div>	        
 	    </div><!-- .피드 박스 끝 -->
     </c:forEach>  
     
@@ -259,18 +273,50 @@ body{margin-top:20px;}
 </div>
 
 <script>
-	$(function(){
-		$('#comment').on('click',function() {
-			var state = $('#commentDisplay').css('display');		
-			var attr;
-			if(state == 'none')
-				attr = 'block';
-			else 
-				attr = 'none';			
-			$('#commentDisplay').css('display',attr);
-		});		
+
+	//댓글 보기 이벤트 처리
+	$('#comment').on('click', function() {
+		var state = $('#commentDisplay').css('display');
+		var attr;
+		if (state == 'none')
+			attr = 'block';
+		else
+			attr = 'none';
+		$('#commentDisplay').css('display', attr);
 	});
 
+	//댓글 등록의 이벤트처리
+	$('.replyAddBtn').on('click', function(event) {
+		event.preventDefault();
+		var idx = $(this).attr('id');
+		var feed_no_fk = $('#feed_no_fk' + idx).val();
+		var user_id_fk = '${login.user_id}';
+		var replytext = $('#replyText' + idx).val();
+		//alert(feed_no_fk+'\n'+user_name_fk+'\n'+replyText+'\n');
+
+		$.ajax({
+			type : 'post',
+			url : '/replies/',
+			headers : {
+				"Content-Type" : "application/json",
+				"X-HTTP-Method-Override" : "POST"
+			},
+			dataType : 'text',
+			data : JSON.stringify({
+				feed_no_fk : feed_no_fk,
+				user_id_fk : user_id_fk,
+				replytext : replytext
+			}),
+			success : function(result) { //성공시
+				console.log("result: " + result);
+				if (result == 'SUCCESS') {
+					alert("등록 되었습니다.");
+				}
+			}
+		});
+	});
+	
+	
 </script>
 
 

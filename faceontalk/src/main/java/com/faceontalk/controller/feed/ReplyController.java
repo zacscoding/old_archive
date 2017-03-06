@@ -23,9 +23,22 @@ public class ReplyController {
 	private Logger logger = LoggerFactory.getLogger(ReplyController.class);
 	
 	
-	////////////////////////
-	// have to do pagination
-	////////////////////////
+	/**		list all	*/
+	@RequestMapping(value="/all/{feed_no_fk}", method=RequestMethod.GET)
+	public ResponseEntity<String> list(@PathVariable("feed_no_fk") Integer feed_no_fk) {
+		
+		logger.info("/all/"+feed_no_fk);
+		
+		ResponseEntity<String> entity = null;		
+		try {
+			
+			entity = new ResponseEntity<String>("SUCCESS",HttpStatus.OK);
+		} catch(Exception e) {
+			e.printStackTrace();
+			entity = new ResponseEntity<String>(e.getMessage(),HttpStatus.BAD_REQUEST);
+		}
+		return entity;
+	}
 	
 	/**		register	*/	
 	@RequestMapping(value="", method=RequestMethod.POST)

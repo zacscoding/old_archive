@@ -26,14 +26,12 @@ public class FeedServiceImpl implements FeedService {
 	private FeedDAO feedDAO;		
 	
 	/////////////////////////////
-	//feed
-	
+	//feed	
 	@Override	
 	public List<FeedVO> listSearchCriteria(SearchCriteria cri) throws Exception {
 		//not yet implement
 		 return null;
-	}	
-	
+	}		
 	@Override
 	public List<FeedVO> listFollowersFeeds(Criteria cri, Integer user_no) throws Exception {
 		return feedDAO.listFollowersFeeds(cri, user_no);
@@ -41,8 +39,11 @@ public class FeedServiceImpl implements FeedService {
 	@Override
 	public int listFollowersFeedCount(Integer user_no) throws Exception {
 		return feedDAO.listFollowersFeedCount(user_no);
+	}	
+	@Override
+	public void modifyReplyCount(Integer feed_no, boolean isIncrease) throws Exception {
+		feedDAO.modifyReplyCount(feed_no,isIncrease);	
 	}
-
 	
 	
 	
@@ -192,10 +193,5 @@ public class FeedServiceImpl implements FeedService {
 			tag = getLastInsertedTag();
 		}				
 		registerRelation(feed_no,tag.getTag_id());
-	}
-
-
-	
-
-	
+	}	
 }

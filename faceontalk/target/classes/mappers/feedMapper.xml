@@ -75,6 +75,12 @@
 		select feed_no from tbl_feed where feed_no = last_insert_id()
 	</select>
 	
+	<!-- 댓글 수 증감  -->
+	<update id="modifyReplyCount">
+		update tbl_feed set reply_count = reply_count + #{delta} where feed_no = #{feed_no}	
+	</update>
+	
+	
 	<!-- // hash tag // -->	
 	<!-- 해시 태그 등록 -->
 	<insert id="registerTag">

@@ -1,7 +1,7 @@
 package com.faceontalk.controller;
 import org.aspectj.lang.ProceedingJoinPoint;
 
-public class Profiler {	
+public class ProfilerTest {	
 	public Object trace(ProceedingJoinPoint joinPoint) throws Throwable {		
 		String signatureString = joinPoint.getSignature().toShortString();
 		System.out.println(signatureString+" 시작");

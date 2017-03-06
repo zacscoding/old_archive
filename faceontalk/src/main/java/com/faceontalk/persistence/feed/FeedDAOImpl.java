@@ -21,40 +21,63 @@ public class FeedDAOImpl implements FeedDAO {
 	
 	/////////////////////
 	//feed	
+	
+	/*		regist feed		*/
 	@Override
 	public void register(FeedVO vo) throws Exception {
 		session.insert(namespace+".register",vo);
 	}
 	
+	/*		select one by feed_no		*/
 	@Override
 	public FeedVO selectByFeedNo(Integer feed_no) throws Exception {
 		return session.selectOne(namespace+".selectByFeedNum", feed_no);		
 	}
 	
+	/*		select one by last inserted		*/
 	@Override
 	public FeedVO getLastInsertedFeed() throws Exception {		
 		return session.selectOne(namespace+".getLastInsertedFeed");
 	}
 	
+	/*		update feed		*/
 	@Override
 	public void update(FeedVO vo) throws Exception {
 		session.update(namespace+".update", vo);
 	}
 
+	/*		remove feed		*/
 	@Override
 	public void remove(Integer feed_no) throws Exception {
 		session.delete(namespace+".remove",feed_no);
 	}
 	
+	/*		select feed_no with last inserted		*/
 	@Override
 	public int getLastInsertedFeedNum() throws Exception {
 		return session.selectOne(namespace+".getLastInsertedFeedNum");
 	}
 	
+
+	/*		modify reply count		*/
+	@Override
+	public void modifyReplyCount(Integer feed_no, boolean isIncrease) throws Exception {
+		
+		Integer delta = (isIncrease) ? 1 : -1;
+		
+		Map<String,Object> paramMap = new HashMap<>();
+		
+		paramMap.put("feed_no",feed_no);
+		paramMap.put("delta",delta);
+		
+		session.update(namespace+".modifyReplyCount", paramMap);		
+	}
+
+	
+	
 	////////////////////
 	// get lists
-	////////////////////	
-
+	////////////////////
 	//followers
 	@Override
 	public List<FeedVO> listFollowersFeeds(Criteria cri, Integer user_no) throws Exception {
@@ -125,10 +148,6 @@ public class FeedDAOImpl implements FeedDAO {
 			session.delete(namespace+".removeRelation",paramMap);			
 //		}
 	}
-
-
-	
-	
 	
 	
 }

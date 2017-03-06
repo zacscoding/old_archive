@@ -40,7 +40,7 @@ create table tbl_email_auth (
 # - 
 ################################
 
-create table tbl_feed(
+create table tbl_feed (
 	feed_no int not null auto_increment,
     user_no_fk int not null,
     user_id_fk varchar(20) not null,	
@@ -48,6 +48,7 @@ create table tbl_feed(
     regdate timestamp default now(),
     moddate timestamp default now(),
     like_count int default 0,
+	reply_count int default 0,
     file_name varchar(150) not null,
     primary key(feed_no),
     foreign key (user_no_fk) references tbl_member(user_no) ON UPDATE CASCADE ON DELETE CASCADE,
@@ -83,12 +84,12 @@ create table tbl_reply(
 	rno int not null auto_increment,
 	feed_no_fk int not null,
 	replytext varchar(1000) not null,
-	user_name_fk varchar(20) not null,
+	user_id_fk varchar(20) not null,
 	regdate timestamp default now(),
 	moddate timestamp default now(),
 	primary key(rno),
 	foreign key (feed_no_fk) references test_ex.tbl_feed(feed_no) on update cascade on delete cascade,
-	foreign key (user_name_fk) references test_ex.tbl_member(user_name) on update cascade on delete cascade	
+	foreign key (user_id_fk) references test_ex.tbl_member(user_id) on update cascade on delete cascade	
 );
 
 	

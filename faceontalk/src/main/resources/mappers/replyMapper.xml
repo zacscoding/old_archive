@@ -5,10 +5,15 @@
 
 <mapper namespace="com.faceontalk.mapper.ReplyMapper">
 
+	<!-- list -->
+	<select id="list" resultType="ReplyVO">
+		select * from tbl_reply where feed_no_fk = #{feed_no_fk}
+	</select>
+	
 	<!-- register -->
 	<insert id="register">
-		insert into tbl_reply (feed_no_fk,replytext,user_name_fk)
-		values(#{feed_no_fk},#{replytext},#{user_name_fk})
+		insert into tbl_reply (feed_no_fk,replytext,user_id_fk)
+		values(#{feed_no_fk},#{replytext},#{user_id_fk})
 	</insert>
 	
 	<!-- modify -->

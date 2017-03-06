@@ -1,5 +1,7 @@
 package com.faceontalk.persistence.feed;
 
+import java.util.List;
+
 import javax.inject.Inject;
 
 import org.apache.ibatis.session.SqlSession;
@@ -14,6 +16,12 @@ public class ReplyDAOImpl implements ReplyDAO {
 	private SqlSession session;
 	private static String namespace = "com.faceontalk.mapper.ReplyMapper";
 	
+	
+	@Override
+	public List<ReplyVO> list(Integer feed_no_fk) throws Exception {
+		return session.selectList(namespace+".list",feed_no_fk);		
+	}
+	
 	@Override
 	public void register(ReplyVO vo) throws Exception {
 		session.insert(namespace+".register",vo);
@@ -27,6 +35,6 @@ public class ReplyDAOImpl implements ReplyDAO {
 	@Override
 	public void remove(Integer rno) throws Exception {
 		session.delete(namespace+".remove", rno);
-	}
+	}	
 
 }

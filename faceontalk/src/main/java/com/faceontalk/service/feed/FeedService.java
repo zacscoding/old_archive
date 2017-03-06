@@ -19,6 +19,7 @@ public interface FeedService {
 	public FeedVO selectFeedByNum(Integer feed_no) throws Exception;
 	public List<FeedVO> listFollowersFeeds(Criteria cri,Integer user_no) throws Exception;
 	public int listFollowersFeedCount(Integer user_no) throws Exception;
+	public void modifyReplyCount(Integer feed_no,boolean isIncrease) throws Exception;
 	
 	//tag	
 	public void registerTags(String tag) throws Exception;
