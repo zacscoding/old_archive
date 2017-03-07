@@ -3,10 +3,10 @@
 <%@ include file="include/header.jsp" %>
 
 <style>
-.span4 img{
+.span4 img {
     margin-right: 10px;
 }
-.span4 .img-left{
+.span4 .img-left {
     float: left;
 }
 .span4 .img-right {
@@ -15,6 +15,7 @@
 </style>
 
 <div class="container">
+	
 	<button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#reviewModal">
 		리뷰 보기
 	</button>
@@ -55,6 +56,7 @@
 							</div>
 						</div> <!-- .내용 끝 -->						
 					</div>
+					
 					<!-- 하단 버튼 -->
 					<div class="form-group">					
 						<div class="modal-footer">
@@ -68,6 +70,8 @@
 		</div> <!-- 모달 다이얼로그 -->		
 	</div> <!-- 모달 전체 윈도우 -->        
 </div>
+
+
 
 <script>
 
@@ -91,4 +95,9 @@ $('').on('click',function(event) {
 </script>
 
 <%@ include file="include/footer.jsp" %>
+
+
+
+
+
 
