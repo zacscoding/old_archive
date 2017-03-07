@@ -10,8 +10,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.mypet.domain.MemberVO;
 import com.mypet.dto.EmailAuthDTO;
-import com.mypet.error.DuplicateIdException;
-import com.mypet.error.ExceedPeriodException;
+import com.mypet.exception.DuplicateIdException;
+import com.mypet.exception.ExceedPeriodException;
 import com.mypet.persistence.MemberDAO;
 import com.mypet.util.EmailSenderUtil;
 

@@ -1,4 +1,4 @@
-package com.mypet.error;
+package com.mypet.exception;
 
 public class DuplicateIdException extends RuntimeException {
 	

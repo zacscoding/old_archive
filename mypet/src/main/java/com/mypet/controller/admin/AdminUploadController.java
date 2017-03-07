@@ -36,7 +36,7 @@ public class AdminUploadController {
 	private String uploadPath;
 	
 	@RequestMapping(value = "/uploadForm", method = RequestMethod.GET)
-	public void uploadForm(){
+	public void uploadForm() {
 		
 	}
 	

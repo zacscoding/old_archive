@@ -21,16 +21,24 @@ import org.springframework.web.multipart.MultipartFile;
 import com.mypet.util.MediaUtils;
 import com.mypet.util.UploadFileUtils;
 
+/**
+ * 
+ * 서버 컴퓨터에 저장 된 이미지 파일을 
+ * MIME 타입 설정해서 view
+ *  
+*/
+
 @RestController
 public class ImageController {
 	
 	private static Logger logger = LoggerFactory.getLogger(ImageController.class);
 	
 	private static final String uploadReviewPath = "c:\\mypet\\reviews";
+	private static final String uploadProductPath = "c:\\mypet\\";
 
 	
 	/**		display in view page	*/
-	@RequestMapping("/displayImage")
+	@RequestMapping("/displayReviews")
 	public ResponseEntity<byte[]> displayFile(String type,String fileName) throws Exception {		
 		ResponseEntity<byte[]> entity = null;
 		
@@ -41,6 +49,25 @@ public class ImageController {
 		if(type.equals("r")) {
 			path = uploadReviewPath; 
 		}
+		
+		String formatName = fileName.substring(fileName.lastIndexOf('.')+1);
+		MediaType mediaType = MediaUtils.getMediaType(formatName);
+		HttpHeaders headers = new HttpHeaders();
+		
+		try(InputStream in = new FileInputStream(path+fileName)) {
+			headers.setContentType(mediaType); // MIME 타입을 이미지 타입으로 생성
+			entity = new ResponseEntity<byte[]>(IOUtils.toByteArray(in),headers,HttpStatus.CREATED);			
+		} catch(Exception e) {
+			e.printStackTrace();
+			entity = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		}		
+		return entity;
+	}
+	
+	/**		*/
+	private ResponseEntity<byte[]> getFileData(String path,String fileName) throws Exception {
+		
+		ResponseEntity<byte[]> entity = null;
 		
 		String formatName = fileName.substring(fileName.lastIndexOf('.')+1);
 		MediaType mediaType = MediaUtils.getMediaType(formatName);

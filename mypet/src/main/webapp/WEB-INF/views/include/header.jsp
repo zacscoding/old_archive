@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
     
 <!DOCTYPE html>
@@ -16,6 +17,9 @@
     <link href="/resources/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css">
     
     <style>
+    
+    /*	Source from : http://book.naver.com/bookdb/book_detail.nhn?bid=8374274	*/
+    
      @import url(http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css);
      body {  font-family: "Malgun gothic"                                      ,  sans-serif; padding-top: 70px;}
      .control { position: inherit; top: 50%; z-index: 5; display: inline-block; right: 50%;} 
@@ -24,18 +28,21 @@
      dt { float: left;  overflow: hidden;  clear: left;  width: 50px}
      .container { padding:0 5px;}
      .container-fluid { padding-left: 0; padding-right: 0}
-     .logo { background: url(/resources/bootstrap/imgs/comlogo.png) no-repeat; width:250px; height: 85px; }
+     
+     .logo { background: url(/resources/bootstrap/imgs/mypet_logo.jpg) no-repeat; width:250px; height: 85px; }
      .pack { display: block; color: #fff; background-color: #0000A0; font-size: 12px}
      .disc { display: block; color: #fff; background-color: #FF0000; font-size: 12px}
     .carousel-caption { top: 2%; left: 5%; text-align: left;}
      .red { color: #FF0000}
      .black { color: #000}
      ul.block { height: 60px;}
+     
      /* 상품 썸 네일 부분 */
      .thumbnail { border-radius: 0; position: relative; z-index: 1; border: 2px solid #fff; outline: 1px solid #ccc}     
     .thumbnail:hover { border: 2px solid red; outline: 0; }
     .thumbnail a:hover { text-decoration: none}
     .thumbnail:hover img{   position: relative; top: -4px; }
+    
      /*네브바 부분*/
     .nav-top{ font-size: 12px;}
     .nav-top >li > a { padding:0 10px;  margin:7px 0; color: #000; background: url(/resources/bootstrap/imgs/vline.jpg) no-repeat left center;  }
@@ -70,6 +77,9 @@
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="/resources/bootstrap/js/bootstrap.min.js"></script>
     
+    <!-- Include Handlerbars -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/3.0.1/handlebars.js"></script>
+    
 <body>
 <div class="container-fluid">
 <header>
@@ -84,9 +94,9 @@
                 <span class="icon-bar"></span>
               </button>
               
-            <!-- 로고 삽입 -->
-            <a class="navbar-brand" href="/"><img src="/resources/bootstrap/imgs/logo.png" alt="로고"> </a>              
-              
+            <!-- 로고 삽입 -->            
+            <a class="navbar-brand logo" href="/"></a>              
+				              
             </div>
             <div class="collapse navbar-collapse navbar-right">             
               <ul class="nav navbar-nav nav-top">

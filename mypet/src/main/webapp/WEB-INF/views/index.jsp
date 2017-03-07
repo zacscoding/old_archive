@@ -11,28 +11,29 @@
 		</c:if>		
 	</c:forEach>
 	 -->	
-	<!-- 캐러셀 부분 시작 -->
+	 
+	<%--
+	<!-- 캐러셀 부분 시작 -->	
     <div id="carousel-generic" class="carousel slide">
       <!-- Indicators -->
        <ol class="carousel-indicators">
        	<c:forEach  var="i" begin="0" end="${carouselSize}" step="1">
     		<li data-target="#carousel-generic" data-slide-to="${i}"
     			 <c:out value="${i==0?'class=active' : ''}"/> ></li>
-    	</c:forEach>	
+    	</c:forEach>
        	 <!-- 	
          <li data-target="#carousel-generic" data-slide-to="0" class="active"></li>
          <li data-target="#carousel-generic" data-slide-to="1"></li>
          <li data-target="#carousel-generic" data-slide-to="2"></li>
          <li data-target="#carousel-generic" data-slide-to="3"></li>
          <li data-target="#carousel-generic" data-slide-to="4"></li>
-          -->             
-       </ol>      
-       
+           -->
+       </ol>
      	<!-- Carousel items -->     
        <div class="carousel-inner">
 		 <c:forEach var="vo" items="${carouselList}" varStatus="status">
 		 	<div class="<c:out value="${status.index==0?'item active':'item'}"/>" >
-		 		<img src="${vo.image}">
+		 		<img src="${vo.image}" style="width:1200px;height:800;">
 		 		<div class="carousel-caption">
 		 			${vo.content}
 		 		</div>
@@ -47,8 +48,59 @@
           <img src="/resources/bootstrap/imgs/right.png" class="control">
         </a>
       </div> <!-- .캐러셀 부분 끝  -->
-    	
-    
+     --%>	
+     <!-- 캐러셀 부분 시작 -->
+    <div id="carousel-generic" class="carousel slide">
+      <!-- Indicators -->
+       <ol class="carousel-indicators">
+         <li data-target="#carousel-generic" data-slide-to="0" class="active"></li>
+         <li data-target="#carousel-generic" data-slide-to="1"></li>
+         <li data-target="#carousel-generic" data-slide-to="2"></li>
+         <li data-target="#carousel-generic" data-slide-to="3"></li>
+         <li data-target="#carousel-generic" data-slide-to="4"></li>             
+       </ol>
+     <!-- Carousel items -->
+       <div class="carousel-inner">
+          <div class="item active">
+             <img src="/resources/bootstrap/imgs/0523_Q9000_MainKV.jpg" alt="First slide">
+               <div class="carousel-caption"> 
+                 <h1>이렇게 또 한번 바람을 일으키다. <br> 삼성 스마트 에어컨 Q9000 </h1> 
+               </div>
+          </div>
+          <div class="item">
+             <img src="/resources/bootstrap/imgs/20140820_UHDTV_Curved_KV.jpg" alt="Second slide">  
+               <div class="carousel-caption"> 
+                 <h1>곡면화질이 만든 압도적 몰입감 <br> 삼성 커브드 UHD TV </h1> 
+               </div>
+          </div>
+          <div class="item">
+             <img src="/resources/bootstrap/imgs/GalaxyS5_LTEA_KV_0623.jpg" alt="Third slide"> 
+               <div class="carousel-caption">
+                  <h1>LTE보다 3배 빠른 세계 최초 광대역 LTE-A폰 <br>
+                      Samsung GALAXY S5</h1>
+                </div>                 
+          </div>
+          <div class="item">
+             <img src="/resources/bootstrap/imgs/M9000_Store_MainKV_140819.jpg" alt="Third slide">               
+          </div>
+          <div class="item">
+             <img src="/resources/bootstrap/imgs/MainKV_Galaxy_Tab_S.jpg" alt="Third slide">  
+                <div class="carousel-caption">
+                  <h1 class="black">S 아몰레드로 세상을 다시 보다 <br>
+                      Samsung GALAXY Tab S</h1>
+                </div>             
+          </div>                            
+                            
+       </div>
+      <!-- Controls -->
+        <a class="left carousel-control" href="#carousel-generic" data-slide="prev">
+          <img src="/resources/bootstrap/imgs/left.png" class="control">
+        </a>
+        <a class="right carousel-control" href="#carousel-generic" data-slide="next">
+          <img src="/resources/bootstrap/imgs/right.png" class="control">
+        </a>
+      </div>
+    <!--// 캐러셀 부분 끝  -->
     <!-- 상품 컨테이너 -->
      <div class="container">
      <!-- 헤더 -->

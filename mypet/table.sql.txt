@@ -1,3 +1,5 @@
+https://www.mypetwarehouse.com.au/
+
 --집주소 
 create table tbl_address (
 	postcode varchar2(7), --우편번호
@@ -104,7 +106,7 @@ create sequence cart_seq;
 
 
 --주문
-create table tbl_order(
+create table tbl_order (
 	order_no number primary key,
 	user_id_fk varchar2(20) not null,
 	order_date timestamp default sysdate,
@@ -113,7 +115,7 @@ create table tbl_order(
 create sequence order_seq;
 
 --주문상세
-create table tbl_order_detail(
+create table tbl_order_detail (
 	order_detail_no number(10) primary key,
 	order_no_fk number(10) not null,
 	product_no_fk number(5) not null,

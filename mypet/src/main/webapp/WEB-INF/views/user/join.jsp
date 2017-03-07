@@ -129,9 +129,7 @@
 		
 		$('#btnHome').on('click',function(){
 			self.location='/';			
-		});
-		
-		
+		});	
 		
 	});	
 </script>
