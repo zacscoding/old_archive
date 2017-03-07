@@ -1,7 +1,7 @@
 pom.properties
 db.properties
 mail.properties
-target/
+
 # Created by https://www.gitignore.io/api/windows,java,eclipse
 
 ### Eclipse ###

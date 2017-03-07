@@ -13,9 +13,9 @@ import com.faceontalk.domain.member.FollowVO;
 import com.faceontalk.domain.member.MemberVO;
 import com.faceontalk.email.EmailSenderUtil;
 import com.faceontalk.email.RegistrationNotifierService;
+import com.faceontalk.errors.DuplicateIdException;
+import com.faceontalk.errors.ExceedPeriodException;
 import com.faceontalk.persistence.member.MemberDAO;
-import com.facontalk.errors.DuplicateIdException;
-import com.facontalk.errors.ExceedPeriodException;
 
 
 @Service
