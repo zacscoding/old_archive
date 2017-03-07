@@ -15,11 +15,11 @@
 </style>
 
 <div class="container">
-	<button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">
+	<button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#reviewModal">
 		리뷰 보기
 	</button>
 	        
-	<div class="modal fade" id="myModal" tabindex="-1" role="dialog"
+	<div class="modal fade" id="reviewModal" tabindex="-1" role="dialog"
 		aria-labelledby="myModalLabel" aria-hidden="true">
 		<div class="modal-dialog">
 			<div class="modal-content">
@@ -29,7 +29,7 @@
 							<button type="button" class="close" data-dismiss="modal">
 								<span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
 							</button>	
-							<h2 class="modal-title" id="myModalLabel">TITLE</h2>
+							<h2 class="modal-title" id="modalTitle">TITLE</h2>
 						</div><!-- .상단(타이틀 + x) 끝 -->
 					</div>		
 												
@@ -44,7 +44,7 @@
 										<br/><br/>																					
 									</div>
 								</div>
-								<div class="row">
+								<div class="row" id="content">
 									<!-- content -->
 	                				<p>Content...</p>
 	                				<p>Content...</p>
@@ -82,6 +82,11 @@ $('#registerForm').submit(function(event){
 	$(this).get(0).submit(); */
 	alert('submit');
 });
+
+$('').on('click',function(event){
+	$('.modal').modal({remote : 'modal.html'});
+});
+
 	
 </script>
 

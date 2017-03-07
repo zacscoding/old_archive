@@ -51,30 +51,44 @@ create table tbl_product_category(
 );
 create sequence category_seq;
 
-
-
---상품(리스트에 보여지는 것들)
+-상품(리스트에 보여지는 것들)
 create table tbl_product (
-	product_no number primary key,	
-	product_name varchar2(50) not null,
-	category_no_fk number not null,
-	cost_price number default 0,
-	selling_price number default 0,
-	profit number default 0,	
-	image varchar2(50) default 'default.jsp',
-	is_best char(1) default 'n',
-	reg_date date default sysdate,
-	foreign key (category_no_fk) references tbl_product_category(category_no)
+   product_no number primary key,   
+   product_name varchar2(50) not null,
+   category_no_fk number not null,
+   cost_price number default 0,
+   selling_price number default 0,
+   profit number default 0,
+   qty number not null,
+   hit number default 0,   
+   is_best char(1) default 'n',
+   filesMain varchar2(100) not null,
+   reg_date date default sysdate,
+   foreign key (category_no_fk) references tbl_product_category(category_no)
 );
+
+insert into tbl_product (product_no,product_name,category_no_fk,cost_price,qty,filesMain) values(product_seq.nextval,'hotdog',100,10,'test');
+
+   
 create sequence product_seq;
 
-
---상품 상세(콘텐츠)
-create table tbl_product_content (
-	pid_fk number not null,
-	content varchar2(1000),
-	primary key(pid_fk)
+-- 상품(다중파일처리를 위한 테이블)
+create table tbl_product_file(
+   fullName varchar2(150) primary key,
+   pno_fk number not null,
+   reg_date date default sysdate,
+   foreign key (pno_fk) references tbl_product(product_no) on delete cascade
 );
+
+
+-- 상품 상세
+create table tbl_product_content(
+   content varchar(1000) not null,
+   pno_fk number not null,
+   reg_date date default sysdate,
+   foreign key (pno_fk) references tbl_product(product_no) on delete cascade
+);
+
 
 --장바구니
 create table tbl_cart(
@@ -97,7 +111,6 @@ create table tbl_order(
 	foreign key(user_id_fk) references tbl_member(user_id)
 );
 create sequence order_seq;
-
 
 --주문상세
 create table tbl_order_detail(

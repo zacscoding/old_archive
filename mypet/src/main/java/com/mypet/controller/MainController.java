@@ -136,6 +136,11 @@ public class MainController {
 		
 	}
 	
+	@RequestMapping(value="/modalTest", method=RequestMethod.GET)
+	public void modalTest() throws Exception {
+		logger.info("modal test");
+	}
+	
 	
 	/*	Cart List Test*/
 	@RequestMapping(value="/cartList",method=RequestMethod.GET)

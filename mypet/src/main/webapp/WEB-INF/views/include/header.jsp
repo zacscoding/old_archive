@@ -98,8 +98,6 @@
               	</sec:authorize>
               	
               	
-              	
-              	
               	<sec:authorize access="isAuthenticated()">
               		<li><a href="/user/logout">로그아웃</a></li>
               		<li><a href="">마이페이지</a></li>              		
