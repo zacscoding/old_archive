@@ -15,9 +15,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.faceontalk.domain.member.EmailAuthVO;
 import com.faceontalk.domain.member.MemberVO;
+import com.faceontalk.exception.DuplicateIdException;
+import com.faceontalk.exception.ExceedPeriodException;
 import com.faceontalk.service.member.MemberService;
-import com.faceontalk.errors.DuplicateIdException;
-import com.faceontalk.errors.ExceedPeriodException;
 
 @Controller
 @RequestMapping("/accounts")

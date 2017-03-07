@@ -1,4 +1,4 @@
-package com.faceontalk.errors;
+package com.faceontalk.exception;
 
 public class DuplicateIdException extends RuntimeException {
 
