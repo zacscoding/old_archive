@@ -210,29 +210,13 @@ body{margin-top:20px;}
 	            </p>
 	            
 	            <!-- 버튼 -->			                        
-	            <button class="btn btn-white btn-xs pull-left" id="comment"><i class="fa fa-comments"></i> Comment</button>
+	            <button class="btn btn-white btn-xs pull-left comment" id='c${status.index}'><i class="fa fa-comments"></i>Comment</button>
 	            <br/>            
 	        </div> <!-- content 끝 -->
 	        
 	        <div class="social-footer">
-	        	<!-- 댓글 시작 -->	        	
-	            <div class="social-comment"  style="display:none" id="commentDisplay">
-	            		<ul>
-	            		<li>	                
-	                    <a href="#" onclick="return false;">
-							Andrew Williams
-	                    </a>
-	                    Internet tend to repeat predefined chunks as necessary, making this the first true generator on the Internet. It uses a dictionary of over 200 Latin words.
-	                    <br>
-	                    </li>
-	                    <li>	                
-	                    <a href="#" onclick="return false;">
-							Andrew Williams
-	                    </a>
-	                    Internet tend to repeat predefined chunks as necessary, making this the first true generator on the Internet. It uses a dictionary of over 200 Latin words.
-	                    <br>
-	                    </li>
-	                    </ul>
+	        	<!-- 댓글 시작-->  
+	            <div class="social-comment" id="commentDisplay${status.index}">
 	            </div> 	            
 	            <!-- 댓글쓰기 -->
 	            <!-- http://okky.kr/article/230588 -->
@@ -247,34 +231,44 @@ body{margin-top:20px;}
     
     <!-- 페이징 처리 -->
 	<div class="text-center">
-  		<ul class="pagination">  			
-			<!-- 페이징 -->	
-			
-			<!-- prev -->
+  		<ul class="pagination">
 			<c:if test="${pageMaker.prev}">
-				<li> <a href="list${pageMaker.makeQuery(pageMaker.startPage-1) }">&laquo;</a></li>
+				<li> <a href="list${pageMaker.makeQuery(pageMaker.startPage-1)}">«</a></li>
 			</c:if>
 				
-			<!-- page num -->			
 			<c:forEach begin="${pageMaker.startPage}" end="${pageMaker.endPage}" var="idx">
 				<li <c:out value="${pageMaker.cri.page==idx? 'class =active':''}" /> >
 					<a href="list${pageMaker.makeQuery(idx)}">${idx}</a>
 				</li>
 			</c:forEach>
 			
-			<!-- next -->
 			<c:if test="${pageMaker.next && pageMaker.endPage > 0}">
-				<li><a href="list${pageMaker.makeQuery(pageMaker.endPage+1}">&raquo;</a></li>
+				<li><a href="list${pageMaker.makeQuery(pageMaker.endPage +1)}">»</a></li>
 			</c:if>
 		</ul>
-	</div>
-      
+	</div>      
 </div>
 </div>
 
 <script>
 
-	//댓글 보기 이벤트 처리
+	//댓글 보기 이벤트 처리(feed_no가 필요)
+	$('.comment').on('click',function() {
+		var idx = $(this).attr('id').substring(1);
+		var feed_no_fk = $('#feed_no_fk' + idx).val();
+		
+		$.getJSON("/replies/all/"+feed_no_fk,function(data) {
+			var str="<ul>";			
+			$(data).each( function() {
+				str += "<li class='pull-left' data-rno='"+this.rno+"'+><a href='"+ "#"+ "'onclick='return false;'>" +this.user_id_fk + "</a>"+"&nbsp;&nbsp;&nbsp;&nbsp;"
+					+ this.replytext +"</li><br>";					
+			});
+			str+='</ul>'
+			$('#commentDisplay'+idx).html(str);
+		});
+	});
+	
+	/* 
 	$('#comment').on('click', function() {
 		var state = $('#commentDisplay').css('display');
 		var attr;
@@ -283,7 +277,7 @@ body{margin-top:20px;}
 		else
 			attr = 'none';
 		$('#commentDisplay').css('display', attr);
-	});
+	}); */
 
 	//댓글 등록의 이벤트처리
 	$('.replyAddBtn').on('click', function(event) {

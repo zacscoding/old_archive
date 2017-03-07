@@ -9,10 +9,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.faceontalk.domain.feed.FeedVO;
 import com.faceontalk.persistence.feed.FeedDAO;
+import com.faceontalk.service.feed.FeedService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebAppConfiguration
@@ -22,6 +22,8 @@ public class FeedDAOTest {
 	private FeedDAO dao;
 	private Logger logger = LoggerFactory.getLogger(FeedDAOTest.class);
 	
+	@Inject 
+	FeedService feedService;
 	
 //	//test for regist feed , tag 	
 //	@Test
@@ -82,25 +84,25 @@ public class FeedDAOTest {
 //		}		
 //	}
 	
-	@Transactional
-	@Test
-	public void lastInsertedFeedNumTest() throws Exception {
-		try {
-			FeedVO vo = new FeedVO();
-			vo.setUser_no_fk(1);
-			vo.setUser_id_fk("hiva1");
-			vo.setContent("test111");
-			vo.setFile_name("none");			
-			dao.register(vo); //insert feed
-			
-			int feed_no = dao.getLastInsertedFeedNum();
-			logger.info("feed_no : "+feed_no);
-//			FeedVO newVO = dao.getLastInsertedFeed();
-//			logger.info("new feed = "+newVO);
-		} catch(Exception e) {
-			e.printStackTrace();
-		}		
-	}
+//	@Transactional
+//	@Test
+//	public void lastInsertedFeedNumTest() throws Exception {
+//		try {
+//			FeedVO vo = new FeedVO();
+//			vo.setUser_no_fk(1);
+//			vo.setUser_id_fk("hiva1");
+//			vo.setContent("test111");
+//			vo.setFile_name("none");			
+//			dao.register(vo); //insert feed
+//			
+//			int feed_no = dao.getLastInsertedFeedNum();
+//			logger.info("feed_no : "+feed_no);
+////			FeedVO newVO = dao.getLastInsertedFeed();
+////			logger.info("new feed = "+newVO);
+//		} catch(Exception e) {
+//			e.printStackTrace();
+//		}		
+//	}
 	
 	
 	
@@ -112,6 +114,22 @@ public class FeedDAOTest {
 //		Integer feed_no = Integer.valueOf(1);
 //		dao.remove(feed_no);
 //	}
+	
+	@Test
+	public void insertDB() throws Exception {
+		FeedVO vo = new FeedVO();
+		vo.setUser_no_fk(1);
+		vo.setUser_id_fk("testUser1");
+		vo.setContent("#desert #사막 테스트");
+		vo.setFile_name("/2017/03/07/s_d66fd3ef-1c29-4df9-a6fc-12e5a206a20e_Desert.jpg");
+		
+		for(int i=1;i<15;i++) {
+			feedService.register(vo);
+		}
+		
+		
+		
+	}
 	
 	
 }

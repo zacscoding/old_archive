@@ -1,5 +1,7 @@
 package com.faceontalk.controller.feed;
 
+import java.util.List;
+
 import javax.inject.Inject;
 
 import org.slf4j.Logger;
@@ -25,17 +27,16 @@ public class ReplyController {
 	
 	/**		list all	*/
 	@RequestMapping(value="/all/{feed_no_fk}", method=RequestMethod.GET)
-	public ResponseEntity<String> list(@PathVariable("feed_no_fk") Integer feed_no_fk) {
+	public ResponseEntity<List<ReplyVO>> list(@PathVariable("feed_no_fk") Integer feed_no_fk) {
 		
 		logger.info("/all/"+feed_no_fk);
 		
-		ResponseEntity<String> entity = null;		
+		ResponseEntity<List<ReplyVO>> entity = null;		
 		try {
-			
-			entity = new ResponseEntity<String>("SUCCESS",HttpStatus.OK);
+			entity = new ResponseEntity<List<ReplyVO>>(replyService.list(feed_no_fk),HttpStatus.OK);
 		} catch(Exception e) {
 			e.printStackTrace();
-			entity = new ResponseEntity<String>(e.getMessage(),HttpStatus.BAD_REQUEST);
+			entity = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 		return entity;
 	}
