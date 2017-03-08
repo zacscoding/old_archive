@@ -10,7 +10,7 @@ public class LoginUserInfoUtil {
 	
 	/*	MemberVO 인스턴스 얻기	*/
 	public static MemberVO getMemberVO() {		
-		SecurityUserVO user = (SecurityUserVO)SecurityContextHolder.getContext().getAuthentication().getPrincipal();		
+		SecurityUserVO user = (SecurityUserVO)SecurityContextHolder.getContext().getAuthentication();		
 		return user.getMemberVO();
 	}
 	

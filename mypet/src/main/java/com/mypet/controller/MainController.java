@@ -1,22 +1,13 @@
 package com.mypet.controller;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.mypet.domain.CarouselVO;
-import com.mypet.domain.ReviewVO;
+import com.mypet.domain.TestVO;
 
 @Controller
 public class MainController {
@@ -186,11 +177,28 @@ public class MainController {
 	
 	
 	/*	Cart List Test*/
-	@RequestMapping(value="/cartList",method=RequestMethod.GET)
+	@RequestMapping(value="/cart/cartList",method=RequestMethod.GET)
 	public void cartListTest() throws Exception {
 		
 	}
 	
+	/*	EL Test*/
+	@RequestMapping(value="/testView/elTest")
+	public void elTest(Model model) throws Exception {
+		
+		TestVO vo = new TestVO();
+		vo.setNum1(15);
+		vo.setNum2(20);
+		model.addAttribute("vo", vo);
+		
+	}
+	
+	
+	/*	Button test	*/
+	@RequestMapping(value="/testView/buttonTest")
+	public void buttonTest() throws Exception {
+		
+	}
 	
 	
 	

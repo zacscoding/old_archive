@@ -4,7 +4,7 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 
 
-<%@ include file="../include/header.jsp" %>
+<%@ include file="/WEB-INF/views/include/header.jsp" %>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 
@@ -187,4 +187,4 @@
 </script>
 
 
-<%@include file="../include/footer.jsp"%>
+<%@include file="/WEB-INF/views/admin/include/footer.jsp"%>

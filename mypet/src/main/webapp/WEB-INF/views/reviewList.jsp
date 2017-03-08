@@ -1,17 +1,21 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-<%@ include file="include/header.jsp" %>
+    
+<%@ include file="/WEB-INF/views/include/header.jsp" %>
 
 <style>
-.span4 img{
-    margin-right: 10px;
+.span4 img {
+    margin-left : auto;
+    margin-right : auto;
 }
+
 .span4 .img-left{
     float: left;
 }
 .span4 .img-right {
     float: right;
 }
+
 .fileDrop {
   width: 80%;
   height: 100px;
@@ -22,14 +26,18 @@
 </style>
 
 <div class="container">	
-	<!-- product_no hidden -->	
+	<% 
+		//수정해야됨 
+	%>
+	<!-- product_no 수정해야됨! -->
 	<input type="hidden" name="product_no_fk" id="product_no_fk" value="1">
 	
 	<!-- //-------------리뷰 등록 시작-------------------- -->
-	<!-- 리뷰 등록 -->
-	<button class="btn btn-primary" data-toggle="modal" data-target="#reviewAddModal">
-		리뷰 등록
-	</button>
+	<!-- 로그인 시에만 보여줌 -->
+	<sec:authorize access="isAuthenticated()">
+		<button class="btn btn-primary" data-toggle="modal" data-target="#reviewAddModal">리뷰 등록</button>
+    </sec:authorize>
+	<!-- 리뷰 등록 -->	
 	<div class="modal fade" id="reviewAddModal" tabindex="-1" role="dialog"
 		aria-labelledby="reviewAddModalLabel" aria-hidden="true">
 		<div class="modal-dialog">
@@ -55,7 +63,7 @@
 								<div class="row">								
 									<div class="span4" id="uploadedPic">
 										<!-- 드랍 이미지 뷰 (466 x 320 px) -->
-										<img class="img-left" id="viewImage"> 
+										<img id="viewImage"> 
 									</div>	
 								</div>
 								<br/><br/>
@@ -92,45 +100,40 @@
 	<!-- //-------------리뷰 등록 끝-------------------- -->	
 	
 	
-	<!-- 리뷰 리스트 -->	 			
-	<!-- 제목 리스트 -->
-	<button type="button" class="btn btn-primary" id="displayReviewBtn">리뷰 보기</button>
-	<input type="hidden" id="review_no">	
-	
-	<div class="list-group">
-		<div class="reviewsDiv">
-		</div>
-   	</div> <!-- //. 제목 리스트 끝 -->
-   	
-   	<!-- 댓글 리스트 페이징  -->
-   	<div class='text-center'>
-				<ul id="pagination" class="pagination pagination-sm no-margin ">
-				</ul>
-	</div> <!-- // 댓글 리스트 페이징 끝. -->
-   	   	       
-	<div class="modal fade" id="reviewModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">				
-	</div>
+	<!-- 리뷰 리스트 -->		 			
+		<!-- 제목 리스트 -->
+		<button type="button" class="btn btn-primary" id="displayReviewBtn">리뷰 보기</button>
+		<input type="hidden" id="review_no">	
+		
+		<div class="list-group">
+			<div class="reviewsDiv">
+			</div>
+	   	</div> <!-- //. 제목 리스트 끝 -->
+	   	
+	   	<!-- 댓글 리스트 페이징  -->
+	   	<div class='text-center'>
+			<ul id="reviewPagination" class="pagination pagination-sm no-margin "></ul>			
+		</div> <!-- // 댓글 리스트 페이징 끝. -->   	   	       
+						
+		
+		<!-- 리뷰 등록 모달 -->			
+		<div class="modal fade" id="reviewModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">				
+		</div><!-- // 리뷰 등록 모달 끝-->
 	<!-- // 리뷰 뷰 끝-->           
 </div>
-<!-- 
-{{review_no}}.&nbsp;&nbsp;&nbsp;&nbsp;
-<a href='#' class='list-group-item' data-src='{{review_no}}' onclick='getReview();'> {{review_title}} </a>
- -->
  
-<!-- 리스트를 보여주기 위한 탬플릿 --> 
+<!-- 리스트(제목 + 타이틀)을 보여주기 위한 탬플릿 --> 
 <script id="listTemplate" type="text/x-handlebars-template">
 <div class="reviewsDiv">
-{{#each .}}
-	 <a href="#" class="list-group-item" onclick=" getReview({{ review_no }}); return false;">
-		{{ review_no }} , {{ review_title }}	
-	</a>	
-{{/each}}
+	{{#each .}}
+	 	<a href="#" class="list-group-item" onclick=" getReview({{ review_no }}); return false;">
+			{{ review_no }} , {{ review_title }}	
+		</a>	
+	{{/each}}
 </div>
 </script>
 
-
-
-
+<!-- 리뷰 보기 모달창 템플릿 -->
 <script id="viewTemplate" type="text/x-handlebars-template">
 <div class="modal-dialog">
 			<div class="modal-content">
@@ -139,6 +142,7 @@
 						<div class="modal-header">
 							<div class="media">
 							  <a class="pull-left" href="#">
+								<!-- 왼쪽 이미지 -->
 							    <img class="media-object" src="/resources/bootstrap/imgs/logo.png" onclick="return false;" alt="...">
 							    
 							  </a>
@@ -158,8 +162,7 @@
 							<div class="block">
 								<div class="row">
 									<div class="span4">											
-										<img class="img-left"
-												src="/displayReviews?fileName={{ review_image }}" />
+										<img src="/displayReviews?fileName={{ review_image }}" />
 										<br/><br/>																					
 									</div>
 								</div>
@@ -173,10 +176,11 @@
 					<!-- 하단 버튼 -->
 					<div class="form-group">					
 						<div class="modal-footer">
-							<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-							<!-- 
-							<button type="submit" class="btn btn-primary" id="registerForm">Regist</button>
-							 -->
+							{{#eqReviewer review_writer}}
+								<input type="hidden" id="curReview">
+								<button type="button" class="btn btn-default" id="reviewDelBtn">Remove</button>
+							{{/eqReviewer}}
+							<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>							
 						</div> <!-- .하단 버튼 끝 -->
 					</div>
 				</div> <!-- 모달 콘텐츠 -->
@@ -185,11 +189,23 @@
 
 
 <script>
-var product_no_fk = $('#product_no_fk').val();	
+
+var product_no_fk = $('#product_no_fk').val();
+
+//if('${user}' != 'anonymousUser') {
+//Handlebars의 if문 조건을 위한 헬퍼
+Handlebars.registerHelper('eqReviewer', function(review_writer,block) {
+  var accum='';
+  if(review_writer == '${user}')
+	  accum += block.fn();
+  return accum;
+});
+
 
 /*	
  * 리뷰 등록
  */
+ 
 //드래그진입,오버 이벤트 제거
 $(".fileDrop").on("dragenter dragover", function(event){
 	event.preventDefault();
@@ -252,8 +268,7 @@ $('#reviewAddBtn').on('click',function() {
 	var product_no_fk = $('#product_no_fk').val();
 	var review_title = $('#review_title').val();
 	var review_content = $('#review_content').val();
-	var review_image = $('#review_image').val();
-	
+	var review_image = $('#review_image').val();	
 	$.ajax({
 		type : 'post',
 		url : '/reviews/',
@@ -269,15 +284,14 @@ $('#reviewAddBtn').on('click',function() {
 			review_image : review_image
 		}),
 		success : function(result) {
-			console.log("result: " + result);
 			if (result == 'SUCCESS') {
 				//등록 성공
-				alert("등록 되었습니다.");
+				alert("등록 되었습니다.");				
 				$('#reviewModal').hide();
-				$('#product_no_fk').val("");
+				
 				$('#review_title').val("");
 				$('#review_content').val("");
-				$('#review_image').val("");
+				$('#review_image').val("");				
 				
 				//리뷰 1페이지 보이기
 				var product_no_fk = $('#product_no_fk').val();
@@ -303,8 +317,8 @@ $('#displayReviewBtn').on('click',function() {
 //리뷰 리스트 -  가져오기
 function getReviewList(pageInfo) {
 	$.getJSON(pageInfo, function(data) {
-		printData(data.reviewList, $('.list-group'), $('#listTemplate')); //리뷰 리스트 출력
-		printPaging(data.pageMaker,$('.reviewPagination')); //페이징 출력
+		printData(data.reviewList, $('.list-group'), $('#listTemplate')); //리뷰 리스트 출력		
+		printPaging(data.pageMaker,$('#reviewPagination')); //페이징 출력
 	});	
 }
 
@@ -341,33 +355,37 @@ var printPaging = function(pageMaker, target) {
 	target.html(str);
 };
 
+
+var replyPage = 1;
+
+
 // 리뷰 리스트 - 페이징 번호 출력
 $(".pagination").on("click", "li a", function(event) {
 	event.preventDefault();
 	
 	replyPage = $(this).attr("href");
 	
-	getReviewList("/reviews/" + product_no_fk + "/" +  + replyPage);
+	getReviewList("/reviews/" + product_no_fk + "/" + replyPage);
 });
 
 //리뷰 리스트 - 페이징 출력
 var printPaging = function(pageMaker,target) {
 	var str="";
-	if(pageMaker.prev) { //이전 페이지가 존재하면
+	if(pageMaker.prev) {
 		str += "<li><a href='" + (pageMaker.startPage -1)
-				+"'> << </a></li>";
+				+"'> « </a></li>";
 	}
 	
 	for(var i=pageMaker.startPage, len = pageMaker.endPage; i <= len; i++) {
-		var strClass = pageMaker.cri.page == i ? 'class=active' : ''; //현재 페이지 엑티브 효과
+		var strClass = pageMaker.cri.page == i ? 'class=active' : '';
 		str += "<li " + strClass + "><a href='" + i + "'>" + i + "</a></li>";
-	}
-	
+	}	
 	
 	if(pageMaker.next) { //다음 페이지가 존재하면
-		str += "<li><a href='" + (pageMaker.endPage -1)
-				+"'> >> </a></li>";
+		str += "<li><a href='" + (pageMaker.endPage +1)
+				+"'> » </a></li>";
 	}
+	target.empty();
 	target.html(str);
 }
 
@@ -386,11 +404,39 @@ function getReview(review_no) {
 		var template = Handlebars.compile(source);
 		$('#reviewModal').html(template(data));
 		$('#reviewModal').modal();
+		$('#curReview').attr('value',data.review_no);
 	});
 };
 
+/**
+ * 
+ * 리뷰 삭제
+ *
+ */
+ 
+$('#reviewDelBtn').on('click',function(event) {	
+	event.preventDefault();
+	var review_no = $('#curReview').val();	
+	alert(review_no);
+	 $.ajax({
+		type:'delete',
+		url:'/reviews/'+review_no,
+		headers: { 
+		      "Content-Type": "application/json",
+		      "X-HTTP-Method-Override": "DELETE" },
+		dataType:'text', 
+		success:function(result){
+			console.log("result: " + result);
+			if(result == 'SUCCESS'){
+				alert("삭제 되었습니다.");
+				getPage("/reviews/"+ product_no_fk +"/"+replyPage );
+			}
+		}});	
+});
+ 
+ 
 
 </script>
 
-<%@ include file="include/footer.jsp" %>
+<%@ include file="/WEB-INF/views/include/footer.jsp" %>
 

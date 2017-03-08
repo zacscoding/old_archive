@@ -83,6 +83,8 @@ create table tbl_product_file(
 );
 
 
+
+
 -- 상품 상세
 create table tbl_product_content(
    content varchar(1000) not null,
@@ -147,7 +149,7 @@ create table tbl_review(
 	foreign key(review_writer) references tbl_member(user_id),
 	foreign key(product_no_fk) references tbl_product(product_no)
 );
-create sequence tbl_revive_seq;
+create sequence review_seq;
 
 
 

@@ -1,5 +1,6 @@
 package com.mypet.domain;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /*
@@ -18,7 +19,10 @@ create table tbl_member (
 );
 create sequence member_seq;
  */
-public class MemberVO {
+public class MemberVO implements Serializable {
+	//default UID
+	private static final long serialVersionUID = 1L;
+	
 	private Integer user_no;
 	private String user_id;
 	private String user_password;

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- cartMapper.xml -->
+<!--  다른 mapper와 중복되지 않는 네임스페이스 기재 -->
+<mapper namespace="com.mypet.mapper.CartMapper">
+<!--  <mapper namespace="cart"> -->
+<!-- 장바구니 검색 -->
+	<select id="selectCart" resultType="CartVO">
+		select * from tbl_cart where user_seq_fk=#{user_seq_fk} and product_no_fk=#{product_no_fk}
+	</select>
+
+<!--  장바구니에 추가 -->
+	<insert id="cartAdd">
+		insert into tbl_cart
+		  (cart_seq , user_seq_fk, product_no_fk, count)
+		 values 
+		(cart_seq.nextval , #{user_seq_fk}, #{product_no_fk}, #{count} )
+	</insert>
+		
+<!-- 장바구니에서 삭제 -->
+	<delete id="cartDel">
+		delete from tbl_cart where cart_seq=#{cart_seq}
+	</delete>
+
+<!-- 장바구니 비우기 -->
+	<delete id="cartDelAll">
+		delete from tbl_cart where user_seq_fk=#{user_seq_fk}
+	</delete>
+	
+<!-- 장바구니 목록 -->
+	<!-- CartVO 클래스의 alias를 mybatis-config.xml 에 설정해야 함... resultType을 mybatis에 alias로. 등록 -->
+<!-- 	<select id="cartList" resultType="CartVO">
+		select  
+			A.*,B.image,B.product_name,B.selling_price 
+   		from 
+   			tbl_cart A LEFT OUTER JOIN tbl_product B 
+   			on A.product_seq_fk = B.product_no 
+		where 
+			A.user_seq_fk=#{user_seq_fk}
+	</select> -->
+	
+	<select id="cartList" resultType="CartVO">
+		select  
+			A.*,B.filesMain,B.selling_price,B.product_name
+   		from 
+   			tbl_cart A LEFT OUTER JOIN tbl_product B 
+   			on A.product_no_fk = B.product_no 
+		where 
+			A.user_seq_fk = #{user_seq_fk}
+	</select>
+	
+<!-- 장바구니 수정 -->
+	<update id="cartModify">
+		update tbl_cart set count = count + #{delta} where cart_seq=#{cart_seq}
+	</update>
+	
+	
+</mapper>

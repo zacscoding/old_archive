@@ -9,7 +9,7 @@
 		insert into tbl_review
 			(review_no,review_title,review_writer,review_content,product_no_fk,review_image)
 		values
-			(tbl_revive_seq.nextval,#{review_title},#{review_writer},#{review_content},#{product_no_fk},
+			(review_seq.nextval,#{review_title},#{review_writer},#{review_content},#{product_no_fk},
 			#{review_image, jdbcType=VARCHAR})			
 	</insert>
 	

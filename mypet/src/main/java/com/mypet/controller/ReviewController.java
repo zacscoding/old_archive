@@ -41,8 +41,7 @@ public class ReviewController {
 	 * 
 	 * Ajax
 	 * 
-	 */	
-	
+	 */		
 	//리뷰 쓰기
 	@RequestMapping(value = "/", method = RequestMethod.POST)
 	public ResponseEntity<String> registPOST(@RequestBody ReviewVO vo) throws Exception {
@@ -148,6 +147,7 @@ public class ReviewController {
 	 * 페이지 이동
 	 * 
 	 */
+	/*
 	// 리뷰 리스트
 	@RequestMapping(value = "/reviews/listAllReview", method = RequestMethod.GET)
 	public void listAllReview(Model model) throws Exception {
@@ -243,7 +243,7 @@ public class ReviewController {
 
 		return "redirect:/reviews/listPageReview";
 	}
-		
+	*/	
 }
 
 

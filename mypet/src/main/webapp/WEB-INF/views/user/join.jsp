@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 	
-<%@ include file="../include/header.jsp" %>
+<%@ include file="/WEB-INF/views/include/header.jsp" %>
 
 <c:if test="${not empty msg}">
 		Reason : ${msg}		
@@ -135,7 +135,7 @@
 </script>
 
 
-<%@ include file="../include/footer.jsp" %>
+<%@ include file="/WEB-INF/views/include/footer.jsp" %>
 
 
 

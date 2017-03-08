@@ -1,53 +1,35 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-<%@ include file="include/header.jsp" %>
+<%@ include file="/WEB-INF/views/include/header.jsp" %>
 
 <style>
-.span4 img {
+.span4 img{
     margin-right: 10px;
 }
-.span4 .img-left {
+.span4 .img-left{
     float: left;
 }
 .span4 .img-right {
     float: right;
 }
-
-.media-object {
-	width : 50px;
-	height : auto;
-}
 </style>
 
 <div class="container">	
-
-	<a href='#' onclick="$('#idx').attr('value','1'); getReview(); ">리뷰1</a>
-	<a href='#' onclick="$('#idx').attr('value','2'); getReview(); ">리뷰2</a>
-	
-	<input type="hidden" id="idx">	
-		        
-	<div class="modal fade" id="reviewModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">				
-	</div>         
-</div>
-
-<script id="template" type="text/x-handlebars-template">
-<div class="modal-dialog">
+	<button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#reviewModal">
+		리뷰 보기
+	</button>
+	        
+	<div class="modal fade" id="reviewModal" tabindex="-1" role="dialog"
+		aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
 			<div class="modal-content">
 					<!-- 상단(타이틀 + x) -->
 					<div class="form-group">
 						<div class="modal-header">
-							<div class="media">
-							  <a class="pull-left" href="#">
-							    <img class="media-object" src="/resources/bootstrap/imgs/mypet_logo.png" onclick="return false;" alt="...">
-							    
-							  </a>
-							  <div class="media-body">
-							  	<button type="button" class="close" data-dismiss="modal">
+							<button type="button" class="close" data-dismiss="modal">
 								<span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
-								</button>	
-							    <h4 class="media-heading"> {{ review_title }} </h4>
-							  </div>
-							</div>
+							</button>	
+							<h2 class="modal-title" id="modalTitle">TITLE</h2>
 						</div><!-- .상단(타이틀 + x) 끝 -->
 					</div>		
 												
@@ -58,17 +40,21 @@
 								<div class="row">
 									<div class="span4">											
 										<img class="img-left"
-												src=" {{ review_image }}" />
+												src="http://assets.barcroftmedia.com.s3-website-eu-west-1.amazonaws.com/assets/images/recent-images-11.jpg" />
 										<br/><br/>																					
 									</div>
 								</div>
 								<div class="row" id="content">
-									{{ content }}
+									<!-- content -->
+	                				<p>Content...</p>
+	                				<p>Content...</p>
+	                				<p>Content...</p>
+	                				<p>Content...</p>
 								</div>
 								<br />
 							</div>
 						</div> <!-- .내용 끝 -->						
-					</div>					
+					</div>
 					<!-- 하단 버튼 -->
 					<div class="form-group">					
 						<div class="modal-footer">
@@ -79,21 +65,11 @@
 						</div> <!-- .하단 버튼 끝 -->
 					</div>
 				</div> <!-- 모달 콘텐츠 -->
-		</div> <!-- 모달 다이얼로그 -->	
-</script>
+		</div> <!-- 모달 다이얼로그 -->		
+	</div> <!-- 모달 전체 윈도우 -->        
+</div>
 
 <script>
-
-//리뷰 제목 클릭시
-function getReview() {
-	var idx = $('#idx').val();	
-	$.getJSON("/reviews/"+idx+"/1", function(data) {
-		var source = $('#template').html();
-		var template = Handlebars.compile(source);
-		$('#reviewModal').html(template(data));
-		$('#reviewModal').modal();
-	});
-}
 
 //등록 submit
 $('#registerForm').submit(function(event) {
@@ -107,11 +83,12 @@ $('#registerForm').submit(function(event) {
 	alert('submit');
 });
 
+$('').on('click',function(event) {
+	$('.modal').modal({remote : 'modal.html'});
+});
+
+	
 </script>
-<%@ include file="include/footer.jsp" %>
 
-
-
-
-
+<%@ include file="/WEB-INF/views/include/footer.jsp" %>
 

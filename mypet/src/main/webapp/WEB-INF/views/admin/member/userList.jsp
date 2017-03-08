@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
     
-<%@ include file="../include/header.jsp" %>
+<%@ include file="/WEB-INF/views/admin/include/header.jsp" %>
 <br/><br/><br/><br/><br/><br/><br/>
 
 <div class="container">
@@ -84,7 +84,7 @@
 			<!-- 페이징 -->	
 			<!-- prev -->
 			<c:if test="${pageMaker.prev}">
-				<li> <a href="list${pageMaker.makeSearch(pageMaker.startPage-1) }">&laquo;</a></li>
+				<li> <a href="list${pageMaker.makeSearch(pageMaker.startPage-1) }">«</a></li>
 			</c:if>
 				
 			<!-- page num -->			
@@ -96,7 +96,7 @@
 			
 			<!-- next -->
 			<c:if test="${pageMaker.next && pageMaker.endPage > 0}">
-				<li><a href="list${pageMaker.makeSearch(pageMaker.endPage+1}">&raquo;</a></li>
+				<li><a href="list${pageMaker.makeSearch(pageMaker.endPage+1}">»</a></li>
 			</c:if>
 		</ul>
 	</div>
@@ -118,3 +118,4 @@
 </body>
 </html>
 
+<%@ include file="/WEB-INF/views/admin/include/footer.jsp" %>

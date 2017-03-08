@@ -1,24 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@ include file="/WEB-INF/views/admin/include/header.jsp" %>
+<br/><br/><br/><br/>
 
-
-
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html>
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport'>
-    <!-- Font Awesome Icons -->
-    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
-    <link href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css" rel="stylesheet" type="text/css" />
-   <!-- AdminLTE Skins. Choose a skin from the css/skins 
-         folder instead of downloading all of them to reduce the load. -->
-<script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
-<title>Insert title here</title>
-</head>
-<body>
 
 			<div class="box">
 				<div class="box-header with-border">
@@ -80,7 +64,7 @@
 								<td><span class="badge bg-red">${productVO.hit }</span></td>
 								<td>${productVO.is_best }</td>
 								<td><fmt:formatDate pattern="yyyy-MM-dd HH:mm"
-										value="${productVO.reg_date}" /></td>
+									value="${productVO.reg_date}" /></td>
 							</tr>
 
 						</c:forEach>
@@ -147,4 +131,4 @@
 			});
 </script>
 
-</html>
+<%@ include file="/WEB-INF/views/admin/include/footer.jsp" %>

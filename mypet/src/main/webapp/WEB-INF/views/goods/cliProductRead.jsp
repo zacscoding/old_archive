@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8" import="java.io.*"%>
-<%@ include file="../include/header.jsp" %>
+<%@ include file="/WEB-INF/views/include/header.jsp" %>
 
 <style>
 .span4 img{
@@ -154,4 +154,4 @@ $(document).ready(function(){
 </script>
 
 
-<%@ include file="../include/footer.jsp" %>
+<%@ include file="/WEB-INF/views/admin/include/footer.jsp" %>

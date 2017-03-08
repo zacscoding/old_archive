@@ -2,7 +2,7 @@
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
-<%@ include file="include/header.jsp" %>
+<%@ include file="/WEB-INF/views/include/header.jsp" %>
 	
 	<!-- 
 	<c:forEach var="vo" items="${carouselList}" varStatus = "status">
@@ -211,4 +211,4 @@
    </div> <!-- .상품 컨테이너 끝-->
 	
     
-<%@include file="include/footer.jsp"%>
+<%@include file="/WEB-INF/views/include/footer.jsp"%>

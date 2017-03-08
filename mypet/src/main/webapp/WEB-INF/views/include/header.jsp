@@ -102,22 +102,29 @@
               <ul class="nav navbar-nav nav-top">
               	
               	<!-- 1단 메뉴 -->
+              	<!-- 로그인 하지 않았으면 -->
               	<sec:authorize access="!isAuthenticated()">
+              		<sec:authentication property="principal" var="user"/>
               		<li><a href="/user/loginform">로그인</a></li>
               		<li><a href="<c:url value='/user/join'/>">회원가입</a></li>
-              	</sec:authorize>
+              	</sec:authorize>              	
               	
-              	
+              	<!-- 로그인 한 경우 -->
               	<sec:authorize access="isAuthenticated()">
+              		<sec:authentication property="principal.username" var="user"/>
               		<li><a href="/user/logout">로그아웃</a></li>
               		<li><a href="">마이페이지</a></li>              		
               	</sec:authorize>
               	
+              	<!-- 어드민 권한을 가졌으면 -->
               	<sec:authorize access="hasRole('ROLE_ADMIN')">
               		<li><a href="/admin/main">관리자페이지</a></li>
               	</sec:authorize>
-              	          	
               	
+              	<!-- 로그인 유저 아이디를 ${user}으로 사용 가능  -->
+              	
+              	
+              					              	
               	<li><a href="">이벤트</a></li>
               	<li><a href="">공지사항</a></li>
               	<li><a href="">회사소개</a></li>
