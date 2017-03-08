@@ -77,7 +77,7 @@ public class ReviewDAOImpl implements ReviewDAO {
 		Map<String,Object> paramMap = new HashMap<>();
 		paramMap.put("product_no_fk",product_no_fk);
 		paramMap.put("cri",cri);
-		return session.selectList(namespace+".listReviewPage",paramMap);
+		return session.selectList(namespace+".listReview",paramMap);
 	}
 	
 

@@ -44,8 +44,8 @@
 	<select id="listReview" resultType="ReviewVO">
 	select * from (
 			select tbl_review.review_no,tbl_review.review_title,row_number() over (order by review_no desc)R
-			from tbl_review where review_no > 0 
-	) where R between #{pageStart} and #{pageLast}
+			from tbl_review where review_no > 0 and product_no_fk = #{product_no_fk}
+	) where R between #{cri.pageStart} and #{cri.pageLast}
 	</select>
 	
 	

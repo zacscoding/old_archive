@@ -41,8 +41,8 @@ public class ReviewController {
 	 * 
 	 * Ajax
 	 * 
-	 */
-	//상품별 리뷰 리스트 		
+	 */	
+	
 	//리뷰 쓰기
 	@RequestMapping(value = "/", method = RequestMethod.POST)
 	public ResponseEntity<String> registPOST(@RequestBody ReviewVO vo) throws Exception {
@@ -67,17 +67,26 @@ public class ReviewController {
 	@RequestMapping(value="/{product_no_fk}/{page}",method=RequestMethod.GET)
 	public ResponseEntity<Map<String,Object>> listReviewPage(
 			@PathVariable("product_no_fk") Integer product_no_fk,
-			@PathVariable("page") Integer page )throws Exception {
+			@PathVariable("page") Integer page ) throws Exception {
+		
+		logger.info("listReviewPage.."+product_no_fk+","+page);
 		
 		ResponseEntity<Map<String,Object>> entity = null;
+		
 		try {
 			//뷰페이지에서 사용될 인스턴스를 담는 맵
 			Map<String,Object> map = new HashMap<>();
 			
 			//Criteria 생성 및 설정
 			Criteria cri = new Criteria();
-			cri.setPage(page);						
-			map.put("reviewList",service.listReviewPage(product_no_fk, cri));
+			cri.setPage(page);	
+			List<ReviewVO> list =  service.listReviewPage(product_no_fk, cri);
+			if(list == null)
+				logger.info("list is null");
+			else
+				logger.info("list size : "+list.size());
+			map.put("reviewList",list);
+			//map.put("reviewList",service.listReviewPage(product_no_fk, cri));
 
 			//PageMaker 생성 및 설정
 			PageMaker pageMaker = new PageMaker();
@@ -94,6 +103,25 @@ public class ReviewController {
 		
 		return entity;		
 	}
+	
+	//리뷰 가져 오기
+	@RequestMapping(value="/{review_no}", method=RequestMethod.GET)
+	public ResponseEntity<ReviewVO> getReview(
+			@PathVariable Integer review_no) throws Exception {		
+		
+		logger.info("getReview..."+review_no);
+		
+		ResponseEntity<ReviewVO> entity = null;
+		
+		try {	
+			ReviewVO vo = service.readReview(review_no);
+			entity = new ResponseEntity<>(vo,HttpStatus.OK);
+		} catch(Exception e) {
+			entity = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+			e.printStackTrace();
+		}
+		return entity;
+ 	}
 	
 	//리뷰 삭제
 	@RequestMapping(value = "/{review_no}", method = RequestMethod.DELETE)

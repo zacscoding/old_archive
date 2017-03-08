@@ -63,14 +63,12 @@ public class ReviewServiceImpl implements ReviewService {
 	/**		리뷰 페이징 처리	*/
 	@Override
 	public List<ReviewVO> listReviewPage(Integer product_no_fk, Criteria cri) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+		return dao.listReviewPage(product_no_fk, cri);
 	}
 	
 	@Override
 	public int count(Integer product_no_fk) throws Exception {
-		dao.count(product_no_fk);
-		return 0;
+		return dao.count(product_no_fk);
 	}
 	
 

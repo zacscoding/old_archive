@@ -21,8 +21,7 @@
 }
 </style>
 
-<div class="container">
-	
+<div class="container">	
 	<!-- product_no hidden -->	
 	<input type="hidden" name="product_no_fk" id="product_no_fk" value="1">
 	
@@ -93,20 +92,21 @@
 	<!-- //-------------리뷰 등록 끝-------------------- -->	
 	
 	
-	
-	<!-- 리뷰 뷰 -->
-	<!-- 
-	<a href='#' class="list-group-item" onclick="$('#idx').attr('value','${reviewVO.review_no}'); getReview();">${reviewVO.review_title}</a>
-	 -->
-	 			
+	<!-- 리뷰 리스트 -->	 			
 	<!-- 제목 리스트 -->
 	<button type="button" class="btn btn-primary" id="displayReviewBtn">리뷰 보기</button>
 	<input type="hidden" id="review_no">	
 	
-	<div class="list-group" id="reviewsDiv">
-				
+	<div class="list-group">
+		<div class="reviewsDiv">
+		</div>
    	</div> <!-- //. 제목 리스트 끝 -->
    	
+   	<!-- 댓글 리스트 페이징  -->
+   	<div class='text-center'>
+				<ul id="pagination" class="pagination pagination-sm no-margin ">
+				</ul>
+	</div> <!-- // 댓글 리스트 페이징 끝. -->
    	   	       
 	<div class="modal fade" id="reviewModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">				
 	</div>
@@ -116,12 +116,16 @@
 {{review_no}}.&nbsp;&nbsp;&nbsp;&nbsp;
 <a href='#' class='list-group-item' data-src='{{review_no}}' onclick='getReview();'> {{review_title}} </a>
  -->
-<script id="listTemplate" type="text/x-handlebars-template">	
+ 
+<!-- 리스트를 보여주기 위한 탬플릿 --> 
+<script id="listTemplate" type="text/x-handlebars-template">
+<div class="reviewsDiv">
 {{#each .}}
-	 <a href="#" class="list-group-item" onclick='return false;'>
-		{{review_no}} , {{review_title}}	
-	</a>
+	 <a href="#" class="list-group-item" onclick=" getReview({{ review_no }}); return false;">
+		{{ review_no }} , {{ review_title }}	
+	</a>	
 {{/each}}
+</div>
 </script>
 
 
@@ -135,7 +139,7 @@
 						<div class="modal-header">
 							<div class="media">
 							  <a class="pull-left" href="#">
-							    <img class="media-object" src="/resources/bootstrap/imgs/mypet_logo.png" onclick="return false;" alt="...">
+							    <img class="media-object" src="/resources/bootstrap/imgs/logo.png" onclick="return false;" alt="...">
 							    
 							  </a>
 							  <div class="media-body">
@@ -155,12 +159,12 @@
 								<div class="row">
 									<div class="span4">											
 										<img class="img-left"
-												src=" {{ review_image }}" />
+												src="/displayReviews?fileName={{ review_image }}" />
 										<br/><br/>																					
 									</div>
 								</div>
 								<div class="row" id="content">
-									{{ content }}
+									{{ review_content }}
 								</div>
 								<br />
 							</div>
@@ -181,7 +185,7 @@
 
 
 <script>
-
+var product_no_fk = $('#product_no_fk').val();	
 
 /*	
  * 리뷰 등록
@@ -211,8 +215,7 @@ $(".fileDrop").on("drop", function(event){
 			 if(data=='notMatchedTypes') {
 				 
 			 } else {
-				 str = "/displayReviews?&fileName="+data;				
-				 
+				 str = "/displayReviews?&fileName="+data;	
 				 $('#review_image').attr('value',data); //file_name 속성	
 				 $('.fileDrop').css('display','none'); // 드랍창 숨기기	
 				 $('#viewImage').attr('src',str); //이미지 데이터 가져오기
@@ -241,6 +244,8 @@ $('.uploadedPic').on('click','small',function(event) {
 	});	
 });
 
+
+
 // 리뷰 등록
 $('#reviewAddBtn').on('click',function() {
 	
@@ -266,6 +271,7 @@ $('#reviewAddBtn').on('click',function() {
 		success : function(result) {
 			console.log("result: " + result);
 			if (result == 'SUCCESS') {
+				//등록 성공
 				alert("등록 되었습니다.");
 				$('#reviewModal').hide();
 				$('#product_no_fk').val("");
@@ -273,10 +279,9 @@ $('#reviewAddBtn').on('click',function() {
 				$('#review_content').val("");
 				$('#review_image').val("");
 				
-				/*
-				replyPage = 1;
-				getPage("/replies/" + bno + "/" + replyPage);				
-				*/
+				//리뷰 1페이지 보이기
+				var product_no_fk = $('#product_no_fk').val();
+				getReviewList("/reviews/" + product_no_fk + "/1" );
 			}
 		}
 	});
@@ -289,8 +294,8 @@ $('#reviewAddBtn').on('click',function() {
  *	리뷰 리스트		 
  */
 
-//리뷰 보기 버튼 클릭
-$('#displayReviewBtn').on('click',function(){	
+//리뷰 리스트 - 보기 버튼 클릭
+$('#displayReviewBtn').on('click',function() {	
 	var product_no_fk = $('#product_no_fk').val();	
 	getReviewList("/reviews/" + product_no_fk + "/1" );	
 });
@@ -298,24 +303,52 @@ $('#displayReviewBtn').on('click',function(){
 //리뷰 리스트 -  가져오기
 function getReviewList(pageInfo) {
 	$.getJSON(pageInfo, function(data) {
-		alert(data.reviewList.length);
-		printData(data.reviewList, $('#reviewsDiv'), $('#listTemplate'));
-		//printPaging(data.pageMaker,$('.reviewPagination'));
+		printData(data.reviewList, $('.list-group'), $('#listTemplate')); //리뷰 리스트 출력
+		printPaging(data.pageMaker,$('.reviewPagination')); //페이징 출력
 	});	
 }
 
 // 리뷰리스트 -  no,title 출력
 var printData = function(reviewArr, target, templateObject) { //리뷰리스트,html코드추가할 타깃, 템플릿 
 	
-	
 	var template = Handlebars.compile(templateObject.html());
 	
 	var html = template(reviewArr);
 	
-	$('#reviewsDiv').remove();
+	// reviewDiv를 삭제후
+	$('.list-group').empty(); 
 	
-	target.after(html);
+	// reviewDiv 다시 생성
+	target.append(html);
 }
+
+// 리뷰 리스트 - 페이징 출력
+var printPaging = function(pageMaker, target) {
+	var str = "";
+	if (pageMaker.prev) {
+		str += "<li><a href='" + (pageMaker.startPage - 1)
+				+ "'> << </a></li>";
+	}
+	for (var i = pageMaker.startPage, len = pageMaker.endPage; i <= len; i++) {
+		var strClass = pageMaker.cri.page == i ? 'class=active' : '';
+		str += "<li "+strClass+"><a href='"+i+"'>" + i + "</a></li>";
+	}
+
+	if (pageMaker.next) {
+		str += "<li><a href='" + (pageMaker.endPage + 1)
+				+ "'> >> </a></li>";
+	}
+	target.html(str);
+};
+
+// 리뷰 리스트 - 페이징 번호 출력
+$(".pagination").on("click", "li a", function(event) {
+	event.preventDefault();
+	
+	replyPage = $(this).attr("href");
+	
+	getReviewList("/reviews/" + product_no_fk + "/" +  + replyPage);
+});
 
 //리뷰 리스트 - 페이징 출력
 var printPaging = function(pageMaker,target) {
@@ -347,16 +380,15 @@ var printPaging = function(pageMaker,target) {
  */
  
 //리뷰 제목 클릭시 /reviews/{product_no_fk}/{review_no}로 요청
-function getReview() {
-	var review_no = $('#review_no').val();
-	var product_no_fk = $('#product_no').val();
-	$.getJSON("/reviews/"+product_no_fk+"/"+review_no, function(data) {
+function getReview(review_no) {	
+	$.getJSON("/reviews/"+review_no, function(data) {
 		var source = $('#viewTemplate').html();
 		var template = Handlebars.compile(source);
 		$('#reviewModal').html(template(data));
 		$('#reviewModal').modal();
 	});
-}
+};
+
 
 </script>
 
