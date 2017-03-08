@@ -1,5 +1,9 @@
 package com.mypet.persistence;
 
-public interface OrderDAO {
+import com.mypet.domain.OrderVO;
 
+public interface OrderDAO {	
+	
+	public OrderVO createOrderByOneProduct(int product_no,int quantity);
+	
 }
