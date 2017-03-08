@@ -1,9 +1,8 @@
 package com.mypet.controller;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
-
-import javax.annotation.Resource;
 
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -14,7 +13,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -42,19 +40,14 @@ public class ImageController {
 	public ResponseEntity<byte[]> displayFile(String type,String fileName) throws Exception {		
 		ResponseEntity<byte[]> entity = null;
 		
-		String path = null;
 		
 		logger.info("ImageController.displayFile() fileName = "+fileName);
-		
-		if(type.equals("r")) {
-			path = uploadReviewPath; 
-		}
 		
 		String formatName = fileName.substring(fileName.lastIndexOf('.')+1);
 		MediaType mediaType = MediaUtils.getMediaType(formatName);
 		HttpHeaders headers = new HttpHeaders();
 		
-		try(InputStream in = new FileInputStream(path+fileName)) {
+		try(InputStream in = new FileInputStream(uploadReviewPath+fileName)) {
 			headers.setContentType(mediaType); // MIME 타입을 이미지 타입으로 생성
 			entity = new ResponseEntity<byte[]>(IOUtils.toByteArray(in),headers,HttpStatus.CREATED);			
 		} catch(Exception e) {
@@ -84,10 +77,8 @@ public class ImageController {
 	}
 	
 	
-	
 	/**	리뷰 이미지 관련	*/	
 	//리뷰 이미지 파일 드랍
-	@ResponseBody
 	@RequestMapping(value="/reviews/uploadPic", method=RequestMethod.POST,  produces="test/plain;charset=UTF-8")
 	public ResponseEntity<String> uploadReviewImage(MultipartFile file) throws Exception {
 		
@@ -107,6 +98,18 @@ public class ImageController {
 		}		
 		return entity;
 	}
+	
+	//리뷰 이미지 삭제(x버튼 클릭)
+	@RequestMapping(value="/reviews/deleteImage")
+	public ResponseEntity<String> deleteImage(String fileName) throws Exception {		
+				
+		File file = new File(uploadReviewPath, fileName.replace('/', File.separatorChar));
 		
+		if(file.exists()) { //파일이 존재하면
+			file.delete(); //삭제
+		}   
+		
+		return new ResponseEntity<String>("deleted", HttpStatus.OK);
+	}		
 	
 }

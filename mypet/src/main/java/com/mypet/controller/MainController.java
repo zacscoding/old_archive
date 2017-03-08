@@ -153,32 +153,36 @@ public class MainController {
 	}
 	
 	/*		test get review		*/
-	@ResponseBody
-	@RequestMapping(value="/reviews/{product_no_fk}/{review_no}", method=RequestMethod.GET)
-	public ResponseEntity<ReviewVO> getReview(
-			@PathVariable Integer review_no,
-			@PathVariable Integer product_no_fk ) throws Exception {		
-		ResponseEntity<ReviewVO> entity = null;
-		try {
-			
-			//임시 코드
-			ReviewVO vo = new ReviewVO();
-			vo.setReview_no(review_no);
-			vo.setReview_title("title"+product_no_fk);
-			vo.setReview_writer("Writer");
-			vo.setProduct_no_fk(product_no_fk);
-			vo.setRegdate(new Date());
-			vo.setReview_image("http://assets.barcroftmedia.com.s3-website-eu-west-1.amazonaws.com/assets/images/recent-images-11.jpg");
-			vo.setReiew_content("<p>Content...</p><p>Content...</p><p>Content...</p><p>Content...</p>");
-			//임시 코드 끝.
-			
-			entity = new ResponseEntity<>(vo,HttpStatus.OK);
-		} catch(Exception e) {
-			entity = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-			e.printStackTrace();
-		}
-		return entity;
- 	}
+//	@ResponseBody
+//	@RequestMapping(value="/reviews/{product_no_fk}/{review_no}", method=RequestMethod.GET)
+//	public ResponseEntity<ReviewVO> getReview(
+//			@PathVariable Integer review_no,
+//			@PathVariable Integer product_no_fk ) throws Exception {		
+//		ResponseEntity<ReviewVO> entity = null;
+//		try {			
+//			//임시 코드
+//			ReviewVO vo = new ReviewVO();
+//			vo.setReview_no(review_no);
+//			vo.setReview_title("title"+product_no_fk);
+//			vo.setReview_writer("Writer");
+//			vo.setProduct_no_fk(product_no_fk);
+//			vo.setRegdate(new Date());
+//			vo.setReview_image("http://assets.barcroftmedia.com.s3-website-eu-west-1.amazonaws.com/assets/images/recent-images-11.jpg");
+//			vo.setReview_content("<p>Content...</p><p>Content...</p><p>Content...</p><p>Content...</p>");
+//			//임시 코드 끝.			
+//			entity = new ResponseEntity<>(vo,HttpStatus.OK);
+//		} catch(Exception e) {
+//			entity = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+//			e.printStackTrace();
+//		}
+//		return entity;
+// 	}
+	
+	/*	review test*/
+	@RequestMapping(value="reviewList")
+	public void reviewTest2() {
+		
+	}
 	
 	
 	/*	Cart List Test*/

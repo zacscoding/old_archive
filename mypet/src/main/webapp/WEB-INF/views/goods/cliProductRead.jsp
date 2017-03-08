@@ -1,15 +1,18 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8" import="java.io.*"%>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@ include file="../include/header.jsp" %>
 
- <!-- Font Awesome Icons -->
-    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
-    <link href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css" rel="stylesheet" type="text/css" />
-   <!-- AdminLTE Skins. Choose a skin from the css/skins 
-         folder instead of downloading all of them to reduce the load. -->
-<script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
-	
-<script>
+<style>
+.span4 img{
+    margin-right: 10px;
+}
+.span4 .img-left{
+    float: left;
+}
+.span4 .img-right {
+    float: right;
+}
+</style>
 
 function checkImageType(fileName){
 	
@@ -96,17 +99,16 @@ function getFileInfo(fullName){
 				</div>
 				<!-- /.box-body -->
 
-
-
  <div class="box-footer">
    <button type="submit" class="btn btn-primary" id="goListBtn">GO LIST </button>
- </div>
-
-
-	
+ </div>	
 </section>
 <!-- /.content -->
 
+
+<script>
+	
+</script>
 
 <script id="templateAttach" type="text/x-handlebars-template">
 
@@ -151,3 +153,5 @@ $(document).ready(function(){
 });
 </script>
 
+
+<%@ include file="../include/footer.jsp" %>

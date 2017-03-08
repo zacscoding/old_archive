@@ -68,11 +68,11 @@ create table tbl_product (
    reg_date date default sysdate,
    foreign key (category_no_fk) references tbl_product_category(category_no)
 );
+create sequence product_seq;
 
 insert into tbl_product (product_no,product_name,category_no_fk,cost_price,qty,filesMain) values(product_seq.nextval,'hotdog',100,10,'test');
 
    
-create sequence product_seq;
 
 -- 상품(다중파일처리를 위한 테이블)
 create table tbl_product_file(
@@ -138,6 +138,7 @@ create table tbl_admin(
 --리뷰
 create table tbl_review(
 	review_no number primary key,
+	review_title varchar2(200) not null,
 	review_writer varchar2(20) not null,
 	review_content varchar2(3000) not null,
 	product_no_fk number not null,
@@ -147,6 +148,8 @@ create table tbl_review(
 	foreign key(product_no_fk) references tbl_product(product_no)
 );
 create sequence tbl_revive_seq;
+
+
 
 --리뷰 댓글
 create table tbl_review_reply(

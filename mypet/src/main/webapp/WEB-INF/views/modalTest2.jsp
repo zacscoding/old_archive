@@ -1,6 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+
 <%@ include file="include/header.jsp" %>
+
 
 <style>
 .span4 img{
@@ -15,9 +17,19 @@
 </style>
 
 <div class="container">
+
+	<input type="hidden" name="idx" id="idx">
+		
+	<a href="#" onclick="$('#idx').attr('value',1); viewModal();">view1</a>
+	<a href="#" onclick="$('#idx').attr('value',2); viewModal();">view2</a>
+			
 	<button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#reviewModal">
-		리뷰 보기
+		리뷰 보기1
 	</button>
+	<button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#reviewModal">
+		리뷰 보기1
+	</button>
+	
 	        
 	<div class="modal fade" id="reviewModal" tabindex="-1" role="dialog"
 		aria-labelledby="myModalLabel" aria-hidden="true">
@@ -31,8 +43,7 @@
 							</button>	
 							<h2 class="modal-title" id="modalTitle">TITLE</h2>
 						</div><!-- .상단(타이틀 + x) 끝 -->
-					</div>		
-												
+					</div>														
 					<!-- 내용 -->
 					<div class="form-group">
 						<div class="modal-body">					
@@ -69,10 +80,28 @@
 	</div> <!-- 모달 전체 윈도우 -->        
 </div>
 
-<script>
 
+<!-- 
+참고
+http://jschr.github.io/bootstrap-modal/
+
+ -->
+<script type="text/javascript">
+var $modal = $('#reviewModal');
+
+//리뷰 모달 보기
+function viewModal() {
+	var idx = $('#idx').val();
+	alert(idx);
+	$modal.modal();
+	return false;
+};
+</script>
+
+
+<script>
 //등록 submit
-$('#registerForm').submit(function(event) {
+$('#registerForm').submit(function(event){
 	event.preventDefault();
 	/* //이미지 업로드 안했으면 경고창 + 리턴
 	if($('.fileDrop').css('display') == 'block') {
@@ -83,12 +112,16 @@ $('#registerForm').submit(function(event) {
 	alert('submit');
 });
 
-$('').on('click',function(event) {
+$('').on('click',function(event){
 	$('.modal').modal({remote : 'modal.html'});
+});
+
+$('#reviewModal').on('click',function(event){
+	event.preventDefault();
+	$('#reviewModal').show();	
 });
 
 	
 </script>
 
-<%@ include file="include/footer.jsp" %>
-
+<%@ include file="include/footer.jsp" %>    
