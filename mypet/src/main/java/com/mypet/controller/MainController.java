@@ -198,11 +198,6 @@ public class MainController {
 	@RequestMapping(value="/testView/buttonTest")
 	public void buttonTest() throws Exception {
 		
-	}
-	
-	
-	
-	
-	
+	}	
 }
 
