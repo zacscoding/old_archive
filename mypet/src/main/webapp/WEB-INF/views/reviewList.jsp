@@ -162,10 +162,8 @@
 							<div class="block">
 								<div class="row">
 									<div class="span4">	
-										{{# isNotEmpty review_image }}										
-										<img src="/displayReviews?fileName={{ review_image }}" />
-										{{/isNotEmpty}}
-										<br/><br/>																					
+										<img id="viewImage" src="/displayReviews?fileName={{review_image}}"/>
+									<br/><br/><br/><br/>																					
 									</div>
 								</div>
 								<div class="row" id="content">
@@ -200,13 +198,6 @@ Handlebars.registerHelper('eqReviewer', function(review_writer,block) {
   if(review_writer == '${user}')
 	  accum += block.fn();
   return accum;
-});
-
-Handlebars.registerHelper('isNotEmpty', function(variable,block) {
-	  var accum='';
-	  if(variable != null)
-		  accum += block.fn();
-	  return accum;
 });
 
 
@@ -412,7 +403,10 @@ function getReview(review_no) {
 		var source = $('#viewTemplate').html();
 		var template = Handlebars.compile(source);
 		$('#reviewModal').html(template(data));
-		$('#reviewModal').modal();		
+		if(data.review_image == null)
+			$('#viewImage').remove();
+		
+		$('#reviewModal').modal();
 	});
 };
 

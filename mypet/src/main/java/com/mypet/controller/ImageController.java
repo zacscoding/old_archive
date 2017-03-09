@@ -37,11 +37,11 @@ public class ImageController {
 	
 	/**		display in view page	*/
 	@RequestMapping("/displayReviews")
-	public ResponseEntity<byte[]> displayFile(String type,String fileName) throws Exception {		
-		ResponseEntity<byte[]> entity = null;
-		
-		if(fileName == null) {
-			return new ResponseEntity<>(HttpStatus.OK);
+	public ResponseEntity<byte[]> displayFile(String type,String fileName) throws Exception {
+
+		ResponseEntity<byte[]> entity = null;		
+		if(fileName == null || fileName.isEmpty()) {
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 		
 		logger.info("ImageController.displayFile() fileName = "+fileName);
