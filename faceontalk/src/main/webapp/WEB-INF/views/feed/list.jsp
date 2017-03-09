@@ -221,7 +221,7 @@ body{margin-top:20px;}
 	            <div class="social-comment" id="commentDisplay${status.index}">
 	            	<c:forEach var="replyVO" items="${vo.replyList}">
 	            		<li class='pull-left' data-rno='${replyVO.rno}'>
-	            			<a href="#" onclick='return false;'>${replyVO.user_id_fk	            			
+	            			<a href="#" onclick='return false;'>${replyVO.user_id_fk}	            			
 	            			&nbsp;&nbsp;&nbsp;&nbsp;
 	            			${replyVO.replytext}</a></li><br>
 	            	</c:forEach>
