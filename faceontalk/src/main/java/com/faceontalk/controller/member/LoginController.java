@@ -8,6 +8,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,7 +22,8 @@ import com.faceontalk.service.member.LoginService;
 
 @Controller
 @RequestMapping("/user")
-public class LoginController {	
+public class LoginController {
+	private Logger logger = LoggerFactory.getLogger(LoginController.class);
 	@Inject
 	private LoginService service;
 	
@@ -31,12 +34,16 @@ public class LoginController {
 	
 	@RequestMapping(value="/loginPost", method=RequestMethod.POST)
 	public void loginPOST(LoginDTO dto,HttpSession session, Model model) throws Exception {
+		logger.info("LoginController.. loginPOST");
+		
 		//check user
 		MemberVO vo = service.login(dto);
 		
-		if(vo == null || !vo.isEnabled()) //login failed			
+		if(vo == null || !vo.isEnabled()) {//login failed
+			logger.info("memberVo.. is null");
 			return;
-		
+		}
+		logger.info("memberVO is not null");
 		model.addAttribute("memberVO",vo);		
 		
 		//check keep login
@@ -46,7 +53,6 @@ public class LoginController {
 			Date sessionLimit = new Date(System.currentTimeMillis() + (1000*amount));	
 			service.keepLogin(vo.getUser_no(), session.getId(),sessionLimit);			
 		}		
-		model.addAttribute("msg","success to login");		
 	}
 	
 	@RequestMapping(value="/logout", method=RequestMethod.GET)

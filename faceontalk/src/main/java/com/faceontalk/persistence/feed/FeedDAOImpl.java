@@ -45,6 +45,17 @@ public class FeedDAOImpl implements FeedDAO {
 	public void update(FeedVO vo) throws Exception {
 		session.update(namespace+".update", vo);
 	}
+	
+	/*		update reply count	*/
+	@Override
+	public void updateReplyCount(Integer feed_no, Integer delta) throws Exception {
+		Map<String,Integer> paramMap = new HashMap<>();
+		paramMap.put("feed_no",feed_no);
+		paramMap.put("delta",delta);
+		
+		session.update(namespace=".updateReplyCount", paramMap);
+	}
+	
 
 	/*		remove feed		*/
 	@Override
@@ -148,6 +159,8 @@ public class FeedDAOImpl implements FeedDAO {
 			session.delete(namespace+".removeRelation",paramMap);			
 //		}
 	}
+
+	
 	
 	
 }

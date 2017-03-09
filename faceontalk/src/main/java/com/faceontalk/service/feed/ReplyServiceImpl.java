@@ -5,6 +5,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.faceontalk.domain.feed.ReplyVO;
 import com.faceontalk.persistence.feed.FeedDAO;
@@ -20,13 +21,18 @@ public class ReplyServiceImpl implements ReplyService {
 
 	
 	@Override
-	public List<ReplyVO> list(Integer feed_no_fk) throws Exception {		
-		return replyDAO.list(feed_no_fk);
+	public List<ReplyVO> listAll(Integer feed_no_fk) throws Exception {		
+		return replyDAO.list(feed_no_fk,null,null);
+	}
+	public List<ReplyVO> listLimit(Integer feed_no_fk,Integer pageStart,Integer perPageNum) throws Exception {
+		return replyDAO.list(feed_no_fk, pageStart, perPageNum);
 	}
 	
-	@Override
+	@Transactional
+	@Override	
 	public void register(ReplyVO vo) throws Exception {
 		replyDAO.register(vo);
+		feedDAO.updateReplyCount(vo.getFeed_no_fk(),1);
 	}
 
 	@Override
@@ -34,8 +40,15 @@ public class ReplyServiceImpl implements ReplyService {
 		replyDAO.modify(vo);
 	}
 
+	@Transactional
 	@Override
-	public void remove(Integer rno) throws Exception {
+	public void remove(Integer feed_no, Integer rno) throws Exception {
 		replyDAO.remove(rno);
+		feedDAO.updateReplyCount(feed_no,-1);
 	}	
+	
+	public void removeAll(Integer feed_no) throws Exception {
+		replyDAO.removeAll(feed_no);
+	}
+	
 }

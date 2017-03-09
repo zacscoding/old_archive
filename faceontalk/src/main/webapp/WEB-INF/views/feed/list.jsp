@@ -209,14 +209,22 @@ body{margin-top:20px;}
 	            	${vo.content}
 	            </p>
 	            
-	            <!-- 버튼 -->			                        
-	            <button class="btn btn-white btn-xs pull-left comment" id='c${status.index}'><i class="fa fa-comments"></i>Comment</button>
+	            <!-- 버튼 -->
+	            <c:if test="${vo.reply_count > 3}">			                        
+	            	<button class="btn btn-white btn-xs pull-left comment" id='c${status.index}'><i class="fa fa-comments"></i>${vo.reply_count}개의 댓글 모두 보기</button>
+	            </c:if>
 	            <br/>            
 	        </div> <!-- content 끝 -->
 	        
 	        <div class="social-footer">
 	        	<!-- 댓글 시작-->  
 	            <div class="social-comment" id="commentDisplay${status.index}">
+	            	<c:forEach var="replyVO" items="${vo.replyList}">
+	            		<li class='pull-left' data-rno='${replyVO.rno}'>
+	            			<a href="#" onclick='return false;'>${replyVO.user_id_fk	            			
+	            			&nbsp;&nbsp;&nbsp;&nbsp;
+	            			${replyVO.replytext}</a></li><br>
+	            	</c:forEach>
 	            </div> 	            
 	            <!-- 댓글쓰기 -->
 	            <!-- http://okky.kr/article/230588 -->
@@ -251,7 +259,6 @@ body{margin-top:20px;}
 </div>
 
 <script>
-
 	//댓글 보기 이벤트 처리(feed_no가 필요)
 	$('.comment').on('click',function() {
 		var idx = $(this).attr('id').substring(1);
@@ -264,6 +271,7 @@ body{margin-top:20px;}
 					+ this.replytext +"</li><br>";					
 			});
 			str+='</ul>'
+			$('#commentDisplay'+idx).empty();
 			$('#commentDisplay'+idx).html(str);
 		});
 	});
