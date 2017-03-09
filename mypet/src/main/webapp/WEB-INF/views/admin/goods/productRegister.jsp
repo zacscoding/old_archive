@@ -21,6 +21,7 @@
 }
 </style>
 
+<div class="container">
 <form id='registerForm' role="form" method="post">
 	<div>
 		<div>
@@ -84,7 +85,7 @@
 
 	</div>
 </form>
-
+</div>
 
 
 <!-- <script type="text/javascript" src="/resources/js/upload.js"></script> -->
