@@ -126,7 +126,7 @@
 <script id="listTemplate" type="text/x-handlebars-template">
 <div class="reviewsDiv">
 	{{#each .}}
-	 	<a href="#" class="list-group-item" onclick=" getReview({{ review_no }}); return false;">
+	 	<a href="#" class="list-group-item" onclick="$('#review_no').val('{{review_no}}'); getReview({{ review_no }}); return false;">
 			{{ review_no }} , {{ review_title }}	
 		</a>	
 	{{/each}}
@@ -135,7 +135,7 @@
 
 <!-- 리뷰 보기 모달창 템플릿 -->
 <script id="viewTemplate" type="text/x-handlebars-template">
-<div class="modal-dialog">
+<div class="modal-dialog viewModal">
 			<div class="modal-content">
 					<!-- 상단(타이틀 + x) -->
 					<div class="form-group">
@@ -143,7 +143,7 @@
 							<div class="media">
 							  <a class="pull-left" href="#">
 								<!-- 왼쪽 이미지 -->
-							    <img class="media-object" src="/resources/bootstrap/imgs/logo.png" onclick="return false;" alt="...">
+							    <img class="media-object" src="/resources/bootstrap/imgs/logo.png" alt="img">
 							    
 							  </a>
 							  <div class="media-body">
@@ -161,8 +161,10 @@
 						<div class="modal-body">					
 							<div class="block">
 								<div class="row">
-									<div class="span4">											
+									<div class="span4">	
+										{{# isNotEmpty review_image }}										
 										<img src="/displayReviews?fileName={{ review_image }}" />
+										{{/isNotEmpty}}
 										<br/><br/>																					
 									</div>
 								</div>
@@ -177,8 +179,8 @@
 					<div class="form-group">					
 						<div class="modal-footer">
 							{{#eqReviewer review_writer}}
-								<input type="hidden" id="curReview">
-								<button type="button" class="btn btn-default" id="reviewDelBtn">Remove</button>
+								<input type="hidden" id="curReview" value="{{ review_no }}">
+								<button type="button" class="btn btn-default removeBtn" onclick="removeReview({{ review_no }});">Remove</button>
 							{{/eqReviewer}}
 							<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>							
 						</div> <!-- .하단 버튼 끝 -->
@@ -192,13 +194,19 @@
 
 var product_no_fk = $('#product_no_fk').val();
 
-//if('${user}' != 'anonymousUser') {
 //Handlebars의 if문 조건을 위한 헬퍼
 Handlebars.registerHelper('eqReviewer', function(review_writer,block) {
   var accum='';
   if(review_writer == '${user}')
 	  accum += block.fn();
   return accum;
+});
+
+Handlebars.registerHelper('isNotEmpty', function(variable,block) {
+	  var accum='';
+	  if(variable != null)
+		  accum += block.fn();
+	  return accum;
 });
 
 
@@ -352,7 +360,8 @@ var printPaging = function(pageMaker, target) {
 		str += "<li><a href='" + (pageMaker.endPage + 1)
 				+ "'> >> </a></li>";
 	}
-	target.html(str);
+	target.empty();
+	target.append(str);
 };
 
 
@@ -403,8 +412,7 @@ function getReview(review_no) {
 		var source = $('#viewTemplate').html();
 		var template = Handlebars.compile(source);
 		$('#reviewModal').html(template(data));
-		$('#reviewModal').modal();
-		$('#curReview').attr('value',data.review_no);
+		$('#reviewModal').modal();		
 	});
 };
 
@@ -412,27 +420,30 @@ function getReview(review_no) {
  * 
  * 리뷰 삭제
  *
- */
- 
-$('#reviewDelBtn').on('click',function(event) {	
-	event.preventDefault();
-	var review_no = $('#curReview').val();	
-	alert(review_no);
+ */ 
+function removeReview(review_no) {
+	var review_no = $('#review_no').val();	
 	 $.ajax({
 		type:'delete',
 		url:'/reviews/'+review_no,
 		headers: { 
 		      "Content-Type": "application/json",
 		      "X-HTTP-Method-Override": "DELETE" },
-		dataType:'text', 
+		dataType:'text',
 		success:function(result){
 			console.log("result: " + result);
-			if(result == 'SUCCESS'){
+			if(result == 'SUCCESS'){				
 				alert("삭제 되었습니다.");
-				getPage("/reviews/"+ product_no_fk +"/"+replyPage );
+				getReviewList("/reviews/"+ product_no_fk +"/"+1);
+				$('#reviewModal').modal('hide');
 			}
 		}});	
+} 
+/*
+$('#reviewDelBtn').on('click',function(event) {	
 });
+*/ 
+ 
  
  
 

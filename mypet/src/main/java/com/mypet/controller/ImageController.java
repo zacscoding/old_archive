@@ -40,6 +40,9 @@ public class ImageController {
 	public ResponseEntity<byte[]> displayFile(String type,String fileName) throws Exception {		
 		ResponseEntity<byte[]> entity = null;
 		
+		if(fileName == null) {
+			return new ResponseEntity<>(HttpStatus.OK);
+		}
 		
 		logger.info("ImageController.displayFile() fileName = "+fileName);
 		

@@ -25,7 +25,7 @@ public class DBInsertTest {
 	
 	@Test
 	public void insertReviews() throws Exception {
-		ReviewVO vo = dao.readReview(5);
+		ReviewVO vo = dao.readReview(2);
 		
 		for(int i=1;i<255;i++) {
 			vo.setReview_title("review test"+i);
