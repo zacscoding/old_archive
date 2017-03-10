@@ -277,7 +277,10 @@ body{margin-top:20px;}
 	</div>
 </div>
 
-<!-- setFeedNumer('{{feed_no_fk}}' ); removeReply( '{{ rno }}' ); -->
+<!-- setFeedNumer('{{feed_no_fk}}' ); removeReply( '{{ rno }}' );
+<button type="button" class="btn btn-danger btn-xs replyDelBtn" 
+			         value={{ rno }} >Remove</button>
+-->
 <!--  댓글 보기 탬플릿 -->
 <script id="replyTemplate" type="text/x-handlebars-template">		
 	{{#each .}}		
@@ -286,9 +289,8 @@ body{margin-top:20px;}
 			&nbsp;&nbsp;&nbsp;&nbsp; {{ replytext }}
 			{{#eqReplyWriter user_id_fk}}
 					<button type="button" class="btn btn-primary btn-xs" onclick="return false;" 
-			         value="{{ rno }}">Modify</button>
-					<button type="button" class="btn btn-danger btn-xs replyDelBtn" 
-			         value=" {{ rno }} " >Remove</button>
+			         value={{ rno }}>Modify</button>
+					{{#makeDelBtn rno}}
 			{{/eqReplyWriter}}						        	
 		</li> <br/><br/>
 	{{/each}}
@@ -303,6 +305,14 @@ body{margin-top:20px;}
 	  return accum;
 	});	
 	
+	Handlebars.registerHelper('makeDelBtn', function(rno) {
+		rno = Handlebars.Utils.escapeExpression(rno);
+		var result = "<button type='button' class='btn btn-danger btn-xs replyDelBtn value='" 
+	         + rno + " >Remove</button>";
+		 return new Handlebars.SafeString(result);
+	});
+	
+	/*
 	Handlebars.registerHelper('makeDelBtn', function(feed_no_fk , rno) {
 		alert(feed_no_fk+","+rno);
 		var result = "<button type='button' class='btn btn-danger btn-xs replyDelBtn' onclick='setFeedNumer(" + feed_no_fk + "); remove("
@@ -314,7 +324,7 @@ body{margin-top:20px;}
 	function setFeedNumer(feed_no_fk) {
 		$('#feed_no_fk').val(feed_no_fk);
 	}
-	
+	*/
 	
 	
 	//댓글보기 이벤트 처리 (서버로 부터 댓글 리스트 받음) 
@@ -322,7 +332,7 @@ body{margin-top:20px;}
 		//get reply data from server
 		$.getJSON("/replies/all/"+feed_no_fk, function(data) {
 			//display reply list 
-			printData(data,$('#commentDisplay'+feed_no_fk), $('#replyTemplate'));
+			printData(data ,$('#commentDisplay'+feed_no_fk), $('#replyTemplate'));
 			$('#commentBtn'+feed_no_fk).remove();
 		});		
 	}
