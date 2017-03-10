@@ -7,7 +7,11 @@
 
 	<!-- list -->
 	<select id="list" resultType="ReplyVO">
-		select * from tbl_reply where feed_no_fk = #{feed_no_fk}
+		select * from tbl_reply where feed_no_fk = #{feed_no_fk}		
+		order by feed_no_fk desc
+		<if test="pageStart != null">
+			limit #{pageStart} , #{perPageNum}
+		</if>		
 	</select>
 	
 	<!-- register -->
@@ -24,5 +28,10 @@
 	<!-- remove -->
 	<delete id="remove">
 		delete from tbl_reply where rno = #{rno}
+	</delete>
+	
+	<!--  remove All -->
+	<delete id="removeAll">
+		delete from tbl_reply where feed_no_fk = #{feed_no}
 	</delete>
 </mapper>

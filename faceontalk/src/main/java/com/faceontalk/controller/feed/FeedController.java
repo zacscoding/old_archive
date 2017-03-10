@@ -1,17 +1,14 @@
 package com.faceontalk.controller.feed;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
+import java.util.List;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -64,7 +61,13 @@ public class FeedController {
 		MemberVO vo = (MemberVO)session.getAttribute("login");
 				
 		//get feed list
-		model.addAttribute("feedList",feedService.listFollowersFeeds(cri,vo.getUser_no()));
+		List<FeedVO> feedList = feedService.listFollowersFeeds(cri,vo.getUser_no());
+		//get reply list at first 
+		for(FeedVO feedVO : feedList) {
+			//vo.setReplyVO();
+		}
+		
+		model.addAttribute("feedList",feedList);
 		
 		//calc pageMaker
 		PageMaker pageMaker = new PageMaker();

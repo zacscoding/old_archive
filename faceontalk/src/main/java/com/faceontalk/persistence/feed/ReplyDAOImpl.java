@@ -1,6 +1,8 @@
 package com.faceontalk.persistence.feed;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -18,8 +20,12 @@ public class ReplyDAOImpl implements ReplyDAO {
 	
 	
 	@Override
-	public List<ReplyVO> list(Integer feed_no_fk) throws Exception {
-		return session.selectList(namespace+".list",feed_no_fk);		
+	public List<ReplyVO> list(Integer feed_no_fk,Integer pageStart,Integer perPageNum) throws Exception {
+		Map<String,Integer> paramMap = new HashMap<>();
+		paramMap.put("feed_no_fk",feed_no_fk);
+		paramMap.put("pageStart",pageStart);
+		paramMap.put("perPageNum",perPageNum);
+		return session.selectList(namespace+".list",paramMap);		
 	}
 	
 	@Override
@@ -35,6 +41,11 @@ public class ReplyDAOImpl implements ReplyDAO {
 	@Override
 	public void remove(Integer rno) throws Exception {
 		session.delete(namespace+".remove", rno);
+	}
+
+	@Override
+	public void removeAll(Integer feed_no) throws Exception {
+		session.delete(namespace+".removeAll", feed_no);
 	}	
 
 }

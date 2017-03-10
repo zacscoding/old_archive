@@ -15,6 +15,7 @@ import com.faceontalk.domain.SearchCriteria;
 import com.faceontalk.domain.feed.FeedVO;
 import com.faceontalk.domain.feed.HashTagVO;
 import com.faceontalk.persistence.feed.FeedDAO;
+import com.faceontalk.persistence.feed.ReplyDAO;
 import com.faceontalk.util.HashTagHelper;
 
 /*
@@ -22,8 +23,11 @@ import com.faceontalk.util.HashTagHelper;
  */
 @Service
 public class FeedServiceImpl implements FeedService {	
+	private final int REPLY_LIMIT_SIZE = 3;
 	@Inject
-	private FeedDAO feedDAO;		
+	private FeedDAO feedDAO;
+	@Inject
+	private ReplyDAO replyDAO;
 	
 	/////////////////////////////
 	//feed	
@@ -31,11 +35,18 @@ public class FeedServiceImpl implements FeedService {
 	public List<FeedVO> listSearchCriteria(SearchCriteria cri) throws Exception {
 		//not yet implement
 		 return null;
-	}		
+	}	
+	
 	@Override
 	public List<FeedVO> listFollowersFeeds(Criteria cri, Integer user_no) throws Exception {
-		return feedDAO.listFollowersFeeds(cri, user_no);
+		List<FeedVO> feedList = feedDAO.listFollowersFeeds(cri, user_no); 
+		//get reply list at first 
+		for(FeedVO vo : feedList) {
+			vo.setReplyList(replyDAO.list(vo.getFeed_no(), 1, REPLY_LIMIT_SIZE ));
+		}
+		return feedList;
 	}
+	
 	@Override
 	public int listFollowersFeedCount(Integer user_no) throws Exception {
 		return feedDAO.listFollowersFeedCount(user_no);
@@ -147,6 +158,7 @@ public class FeedServiceImpl implements FeedService {
 	public void remove(Integer feed_no) throws Exception {
 		feedDAO.remove(feed_no);
 		feedDAO.removeRelation(feed_no,null);
+		replyDAO.removeAll(feed_no);
 	}
 
 	

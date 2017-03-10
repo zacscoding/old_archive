@@ -1,6 +1,7 @@
 package com.faceontalk.domain.feed;
 
 import java.util.Date;
+import java.util.List;
 
 public class FeedVO {
 	private Integer feed_no;
@@ -14,6 +15,18 @@ public class FeedVO {
 	private Integer reply_count;
 	private String file_name;
 	
+	//reply list for view at first
+	private List<ReplyVO> replyList;
+	
+	
+	public List<ReplyVO> getReplyList() {
+		return replyList;
+	}
+
+	public void setReplyList(List<ReplyVO> replyList) {
+		this.replyList = replyList;
+	}
+
 	//getter,setter,toString	
 	public Integer getFeed_no() {
 		return feed_no;

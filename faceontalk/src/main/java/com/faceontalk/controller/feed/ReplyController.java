@@ -33,7 +33,7 @@ public class ReplyController {
 		
 		ResponseEntity<List<ReplyVO>> entity = null;		
 		try {
-			entity = new ResponseEntity<List<ReplyVO>>(replyService.list(feed_no_fk),HttpStatus.OK);
+			entity = new ResponseEntity<List<ReplyVO>>(replyService.listAll(feed_no_fk),HttpStatus.OK);
 		} catch(Exception e) {
 			e.printStackTrace();
 			entity = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -57,12 +57,12 @@ public class ReplyController {
 	}
 	
 	/**		modify		*/
-	@RequestMapping(value="/{rno}", method={RequestMethod.PUT,RequestMethod.PATCH})
-	public ResponseEntity<String> modify(@PathVariable("rno") Integer rno,@RequestBody ReplyVO vo) {
+	@RequestMapping(value="", method={RequestMethod.PUT,RequestMethod.PATCH})
+	public ResponseEntity<String> modify(@RequestBody ReplyVO vo) {
 		logger.info("/replies/{rno} ...PUT OR PATCH");
 		ResponseEntity<String> entity = null;		
 		try {
-			vo.setRno(rno);
+			//vo.setRno(rno);
 			replyService.modify(vo);
 			entity = new ResponseEntity<String>("SUCCESS",HttpStatus.OK);
 		} catch(Exception e) {
@@ -74,12 +74,15 @@ public class ReplyController {
 	
 	
 	/**		remove		*/
-	@RequestMapping(value="/{rno}", method=RequestMethod.DELETE)
-	public ResponseEntity<String> remove(@PathVariable("rno") Integer rno) {
+	@RequestMapping(value="/{feed_no}/{rno}", method=RequestMethod.DELETE)
+	public ResponseEntity<String> remove(
+			@PathVariable("feed_no") Integer feed_no,
+			@PathVariable("rno") Integer rno) {
+		
 		logger.info("/replies/{rno} ...DELETE");
 		ResponseEntity<String> entity = null;		
 		try {			
-			replyService.remove(rno);
+			replyService.remove(feed_no,rno);
 			entity = new ResponseEntity<String>("SUCCESS",HttpStatus.OK);
 		} catch(Exception e) {
 			e.printStackTrace();

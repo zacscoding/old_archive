@@ -4,6 +4,8 @@ import java.util.Date;
 
 import javax.inject.Inject;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -13,19 +15,24 @@ import com.faceontalk.persistence.member.MemberDAO;
 
 @Service
 public class LoginServiceImpl implements LoginService {
-	
+	private Logger logger = LoggerFactory.getLogger(LoginServiceImpl.class);
 	@Inject
-	MemberDAO dao;
+	MemberDAO dao;	
 	@Inject
 	private BCryptPasswordEncoder passwordEncoder;
 	
 	
 	@Override
 	public MemberVO login(LoginDTO dto) throws Exception {
-		MemberVO vo = dao.searchById(dto.getUser_id());				
+		
+		MemberVO vo = dao.searchById(dto.getUser_id());
+		logger.info(vo.toString());
+		System.out.println(dto.getPassword());
 		//mismatch id or password
-		if(vo == null || !passwordEncoder.matches(dto.getPassword(),vo.getPassword()))
-			vo = null;		
+		if(vo == null || !passwordEncoder.matches(dto.getPassword(),vo.getPassword())) {
+			System.out.println("not match password");
+			vo = null;
+		}
 		return vo;
 	}
 
