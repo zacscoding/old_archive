@@ -457,8 +457,6 @@ body{margin-top:20px;}
 			}
 		});
 	}
-	
-	
 </script>
 
 

@@ -54,6 +54,11 @@ public class FrontController {
 		
 	}
 	
+	/*	search page test*/
+	@RequestMapping("/search")
+	public void searchTest() {
+		
+	}
 	
 
 }
