@@ -1,7 +1,6 @@
 package com.faceontalk.controller.feed;
 
 import java.io.File;
-import java.util.List;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
@@ -42,32 +41,35 @@ public class FeedController {
 	////////////////////////
 	// get feed lists
 	///////////////////////		
+	
 	/** 	search		*/
-	@RequestMapping(value="/explore/tags",method=RequestMethod.GET)	
+	@RequestMapping(value="/explore",method=RequestMethod.GET)	
 	public void listPage(@ModelAttribute("cri") SearchCriteria cri,Model model) throws Exception {
 		logger.info(cri.toString());
-		//not yet implement
+		
+		
 	}	
 	
 	
+	/**		Followers and Login users Feed	*/
 	//get followers + mine feed lists
 	@RequestMapping(value="/list", method=RequestMethod.GET)
-	public void listFollowerPage(@ModelAttribute("cri") Criteria cri, Model model, HttpServletRequest request) throws Exception {		
+	public void listFollowerPage(@ModelAttribute("cri") Criteria cri, Model model, HttpServletRequest request) throws Exception {				
 		
 		logger.info(cri.toString());
 		
-		//get loggined user 
+		// get loggined user
 		HttpSession session = request.getSession();
-		MemberVO vo = (MemberVO)session.getAttribute("login");
-				
-		//get feed list
-		model.addAttribute("feedList",feedService.listFollowersFeeds(cri,vo.getUser_no()));
-		
-		//calc pageMaker
+		MemberVO vo = (MemberVO) session.getAttribute("login");
+
+		// get feed list
+		model.addAttribute("feedList", feedService.listFollowersFeeds(cri, vo.getUser_no()));
+
+		// calc pageMaker
 		PageMaker pageMaker = new PageMaker();
 		pageMaker.setCri(cri);
-		pageMaker.setTotalCount(feedService.listFollowersFeedCount(vo.getUser_no()));		
-		model.addAttribute("pageMaker",pageMaker);
+		pageMaker.setTotalCount(feedService.listFollowersFeedCount(vo.getUser_no()));
+		model.addAttribute("pageMaker", pageMaker);
 		
 	}	
 	
@@ -87,8 +89,9 @@ public class FeedController {
 		
 		feedService.register(vo);		
 		
-		rttr.addFlashAttribute("message", "SUCCESS");		
-		/**temp code */
+		rttr.addFlashAttribute("message", "SUCCESS");
+		
+		/**		temp code 	*/
 		return "redirect:/feed/result";				
 	}
 	

@@ -27,8 +27,7 @@
   </head>
 <head>
 
-<body>
-	
+<body>	
 	<div class="container">		
 		<div class="row">
 		<!-- 가입 폼 시작 -->
@@ -109,34 +108,39 @@
                                         <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
                                         <input id="password" type="password" class="form-control" name="password" placeholder="암호">
                                     </div>
-                            	
-                                <div style="margin-top:10px" class="form-group">
-                                    <!-- Button -->
-                                    <div class="col-sm-12 controls">
-                                	<p class="text-primary pull-left">	    
-	    								<a href='/'>ID 또는 암호를 잊으셨습니까?</a></p>
-                                    <button type="submit" class="btn btn-primary btn-lg pull-right" id="btnSignIn">Sign in</button>
-                                    </div>
-                                </div>
-
-                                <div class="form-group">
-                                    <div class="col-md-12 control">
-                                        <div style="border-top: 1px solid#888; padding-top:15px; font-size:95%" >
-                                        <!-- <a href='/user/join'>회원가입하기</a>  -->  
-                                        <a id="signinlink" href='#' onclick="$('#signupbox').show(); $('#loginbox').hide(); return false;">
-                                        	Sign up</a>                                      
-                                        </div>                                         
-                                    </div>
-                                </div>    
-                            </form>
-                        </div>                     
-                    </div>  
+	
+							<!-- 아이디 찾기 -->
+							<div style="margin-top: 10px" class="form-group">
+								<!-- Button -->
+								<div class="col-sm-12 controls">
+									<p class="text-primary pull-left">
+										<a href='/'>ID 또는 암호를 잊으셨습니까?</a>
+									</p>
+									<button type="submit" class="btn btn-primary btn-lg pull-right"
+										id="btnSignIn">Sign in</button>
+								</div>
+							</div>
+							
+							<!-- 가입 하기 -->
+							<div class="form-group">
+								<div class="col-md-12 control">
+									<div
+										style="border-top: 1px solid #888; padding-top: 15px; font-size: 95%">
+										<a id="signinlink" href='#'
+											onclick="$('#signupbox').show(); $('#loginbox').hide(); return false;">
+											Sign up</a>
+									</div>
+								</div>
+							</div>
+						</form>
+                	</div>                     
+				</div>  
         </div><!-- loggin div 끝. -->
-        </div>
-        
-        <br/>
-        <!-- 성공 메시지 -->
+        </div>        
+        <br/> 
+        <!-- 메시지 -->
         <div class="row">
+        	<!-- 성공 메시지 -->
 	        <div class="alert alert-success" style="display:none" id="successAlert">
 	  			<div class="text primary">
 	  			<strong>Success to join.</strong><br/>
@@ -155,11 +159,20 @@
 			<div class="alert alert-danger" style="display:none" id="failAlert">
 				<strong>Failed to join</strong>
 			</div>
+			
+			<!-- 이메일 인증 성공, 등의 메시지 -->
+			<c:if test="${not empty msg}">
+				<div class="alert alert-info">
+					<div class="text primary">
+						<strong>${msg}</strong>
+					</div>
+				</div>
+			</c:if>	
+					
 		</div>		
 	</div><!-- container.끝 -->
         
-<script>
-	
+<script>	
 	$(document).ready(function() {				
 		/*		회원 가입 (데이터가 적어서 JSON 처리)		*/
 		$('#btnSignUp').on('click',function() {

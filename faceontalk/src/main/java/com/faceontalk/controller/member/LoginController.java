@@ -14,6 +14,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.util.WebUtils;
 
 import com.faceontalk.domain.member.MemberVO;
@@ -33,18 +34,20 @@ public class LoginController {
 	}
 	
 	@RequestMapping(value="/loginPost", method=RequestMethod.POST)
-	public void loginPOST(LoginDTO dto,HttpSession session, Model model) throws Exception {
+	public String loginPOST(LoginDTO dto,HttpSession session,Model model) throws Exception {
+		
 		logger.info("LoginController.. loginPOST");
 		
-		//check user
-		MemberVO vo = service.login(dto);
-		
-		if(vo == null || !vo.isEnabled()) {//login failed
+		//check users id and password
+		MemberVO vo = service.login(dto);		
+		if(vo == null || !vo.isEnabled()) {//check email auth
 			logger.info("memberVo.. is null");
-			return;
-		}
+			model.addAttribute("msg","Please confirm user id");
+			return "/user/login";
+		}		
+		
 		logger.info("memberVO is not null");
-		model.addAttribute("memberVO",vo);		
+		model.addAttribute("memberVO",vo);
 		
 		//check keep login
 		if(dto.isUserCookie()) {
@@ -52,7 +55,10 @@ public class LoginController {
 			int amount = 60*60*24*7; //1week
 			Date sessionLimit = new Date(System.currentTimeMillis() + (1000*amount));	
 			service.keepLogin(vo.getUser_no(), session.getId(),sessionLimit);			
-		}		
+		}
+		
+		return "/user/loginPost";
+		
 	}
 	
 	@RequestMapping(value="/logout", method=RequestMethod.GET)

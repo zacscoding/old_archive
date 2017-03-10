@@ -13,10 +13,11 @@ public interface FeedService {
 	public void register(FeedVO vo) throws Exception;
 	public void modify(FeedVO vo) throws Exception;
 	public void remove(Integer feed_no) throws Exception;
-	public List<FeedVO> listSearchCriteria(SearchCriteria cri) throws Exception;
 	public FeedVO getLastInsertedFeed() throws Exception;
 	public int getLastInsertedFeedNum() throws Exception;
-	public FeedVO selectFeedByNum(Integer feed_no) throws Exception;
+	
+	public FeedVO selectFeedByNum(Integer feed_no) throws Exception;	
+	public List<FeedVO> listSearchCriteria(SearchCriteria cri) throws Exception;
 	public List<FeedVO> listFollowersFeeds(Criteria cri,Integer user_no) throws Exception;
 	public int listFollowersFeedCount(Integer user_no) throws Exception;
 	public void modifyReplyCount(Integer feed_no,boolean isIncrease) throws Exception;

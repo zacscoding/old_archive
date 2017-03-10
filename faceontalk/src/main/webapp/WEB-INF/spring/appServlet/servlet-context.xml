@@ -34,8 +34,8 @@
 	
 	<interceptors>
 		<!-- 
-		login post시
-		 pre 
+			login post시
+		 	pre 
 		 -->
 		<interceptor>
 			<mapping path="/user/loginPost"/>
@@ -51,9 +51,6 @@
 			<mapping path="/feed/*"/>			
 			<beans:ref bean="authInterceptor"/>
 		</interceptor>		
-	</interceptors>
-	
-	
-	
+	</interceptors>	
 	
 </beans:beans>

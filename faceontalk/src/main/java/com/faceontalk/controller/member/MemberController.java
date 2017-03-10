@@ -29,8 +29,7 @@ public class MemberController {
 	private static final Logger logger = LoggerFactory.getLogger(MemberController.class);
 	
 	@Inject
-	private MemberService service;	
-	
+	private MemberService service;		
 	
 	/** Join us (AJAX)  */	
 	//POST
@@ -94,6 +93,9 @@ public class MemberController {
 		rttr.addFlashAttribute("msg",msg);
 		return "redirect:/";
 	}
+	
+	/**		Confirm user id		*/
+	
 	
 	
 	

@@ -158,101 +158,113 @@ body{margin-top:20px;}
 
 <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
 <div class="container" align="center">
-<div class="col-md-7">   
-   	<!-- 피드 박스 -->
-   	<c:forEach var="vo" items="${feedList}" varStatus="status">   
-   		<input type="hidden" id="feed_no_fk">	
-	    <div class="social-feed-box">
-	    	<!-- 상단 : 프로필, 이름 , 등록 일 -->       
-	        <div class="social-avatar">
-	            <a href="#" class="pull-left" onclick ="return false;">	            	
-	               	 <img class="img-rounded img-responsive" src="http://dimg.donga.com/wps/SPORTS/IMAGE/2016/02/01/76251832.2.jpg">
-	            </a>
-	            	                                    
-	            <div class="media-body">
-	                <a href="#" class="pull-left"><strong>${vo.user_id_fk}</strong></a><br>
-	                <small class="text-muted pull-left">
-	                	${vo.displayTime }
-	                	<!-- 
+	<div class="col-md-7">
+
+		<!-- 피드 박스 -->
+		<c:forEach var="vo" items="${feedList}" varStatus="status">
+			<input type="hidden" id="feed_no_fk">
+			<div class="social-feed-box">
+				<!-- 상단 : 프로필, 이름 , 등록 일 -->
+				<div class="social-avatar">
+					<a href="#" class="pull-left" onclick="return false;"> <img
+						class="img-rounded img-responsive"
+						src="http://dimg.donga.com/wps/SPORTS/IMAGE/2016/02/01/76251832.2.jpg">
+					</a>
+
+					<div class="media-body">
+						<a href="#" class="pull-left"><strong>${vo.user_id_fk}</strong></a><br>
+						<small class="text-muted pull-left"> ${vo.displayTime } <!-- 
 	                	<fmt:formatDate pattern="yy MM dd HH" value="${vo.regdate}"/>
-	                	 --> 	
-	                </small>
-	            </div>
-	        </div> <!-- 상단 끝 -->
-	        
-	        <!-- content -->
-	        <div class="social-body">
-	        	<!-- 이미지 -->
-	            <img src="/displayImage?type=f&fileName=${vo.file_name}" class="img-responsive">
-	            	            
-	            <!-- 컨텐츠 -->
-	            <p>
-	            	${vo.content}
-	            </p>
-	            
-	            <!-- 버튼 -->
-	            <c:if test="${vo.reply_count > 3}">			                        
-	            	<button class="btn btn-white btn-xs pull-left" id="commentBtn${feed_no_fk}" onclick="displayAllReply(${vo.feed_no});$(this).remove();">
-	            		<i class="fa fa-comments"></i>&nbsp;${vo.reply_count}개의 댓글 모두 보기 </button>
-	            </c:if>
-	            <br/>            
-	        </div> <!-- content 끝 -->
-	        
-	        <div class="social-footer">
-	        	<!-- 댓글 시작-->  
-	            <div class="social-comment" id="commentDisplay${vo.feed_no}">	            	
-	            	<c:forEach var="replyVO" items="${vo.replyList}">	           
-	            			<li class='pull-left'>
-		            			<a href="#" onclick='return false;'>${replyVO.user_id_fk}</a>	            			
-		            			&nbsp;&nbsp;&nbsp;&nbsp;
-		            			${replyVO.replytext}
-		            			<!-- 댓글 수정 ,삭제  -->		            			
-		            			<c:if test="${replyVO.user_id_fk == login.user_id}">
-			            				<button type="button" class="btn btn-primary btn-xs" onclick="modifyReply(${vo.feed_no},${status.index},${replyVO.rno})" 
-			            					value="${replyVO.rno}">Modify</button>
-			            				<button type="button" class="btn btn-danger btn-xs replyDelBtn" 
-			            					onclick="setFeedNumer(${replyVO.feed_no_fk}); removeReply(${replyVO.rno});" 
-			            					>Remove</button>
-			            					
-										<!-- 
+	                	 -->
+						</small>
+					</div>
+				</div>
+				<!-- 상단 끝 -->
+
+				<!-- content -->
+				<div class="social-body">
+					<!-- 이미지 -->
+					<img src="/displayImage?type=f&fileName=${vo.file_name}"
+						class="img-responsive">
+
+					<!-- 컨텐츠 -->
+					<p>${vo.content}</p>
+
+					<!-- 버튼 -->
+					<c:if test="${vo.reply_count > 3}">
+						<button class="btn btn-white btn-xs pull-left"
+							id="commentBtn${feed_no_fk}"
+							onclick="displayAllReply(${vo.feed_no});$(this).remove();">
+							<i class="fa fa-comments"></i>&nbsp;${vo.reply_count}개의 댓글 모두 보기
+						</button>
+					</c:if>
+					<br />
+				</div>
+				<!-- content 끝 -->
+
+				<div class="social-footer">
+					<!-- 댓글 시작-->
+					<div class="social-comment" id="commentDisplay${vo.feed_no}">
+						<c:forEach var="replyVO" items="${vo.replyList}">
+							<li class='pull-left'><a href="#" onclick='return false;'>${replyVO.user_id_fk}</a>
+								&nbsp;&nbsp;&nbsp;&nbsp; ${replyVO.replytext} <!-- 댓글 수정 ,삭제  -->
+								<c:if test="${replyVO.user_id_fk == login.user_id}">
+									<button type="button" class="btn btn-primary btn-xs"
+										onclick="modifyReply(${vo.feed_no},${status.index},${replyVO.rno})"
+										value="${replyVO.rno}">Modify</button>
+									<button type="button" class="btn btn-danger btn-xs replyDelBtn"
+										onclick="setFeedNumer(${replyVO.feed_no_fk}); removeReply(${replyVO.rno});">Remove</button>
+
+									<!-- 
 			            				<button class="btn btn-default replyDelBtn" ">Remove</button>
-			            				-->	
-		            			</c:if>		            			 
-	            			</li>
-	            			<br/><br/>
-	            	</c:forEach>
-	            </div> 	            
-	            <!-- 댓글쓰기 -->
-	            <!-- http://okky.kr/article/230588 -->
-	            <div class="input-group">
-	            	<input type="hidden" name="feed_no_fk" id="feed_no_fk${status.index}" value="${vo.feed_no}">
-        			<input type="text" class="form-control" name="replyText" id="replyText${status.index}" placeholder="comment">
-         			<span class="input-group-btn"> <input type="button" class="btn btn-primary replyAddBtn" id='${status.index}' value="ADD" ></span>        
-    			</div><!-- .댓글쓰기 끝 -->
-	        </div>	        
-	    </div><!-- .피드 박스 끝 -->
-    </c:forEach>
-    
-    <!-- 페이징 처리 -->
-	<div class="text-center">
-  		<ul class="pagination">
-			<c:if test="${pageMaker.prev}">
-				<li> <a href="list${pageMaker.makeQuery(pageMaker.startPage-1)}">«</a></li>
-			</c:if>
-				
-			<c:forEach begin="${pageMaker.startPage}" end="${pageMaker.endPage}" var="idx">
-				<li <c:out value="${pageMaker.cri.page==idx? 'class =active':''}" /> >
-					<a href="list${pageMaker.makeQuery(idx)}">${idx}</a>
-				</li>
-			</c:forEach>
-			
-			<c:if test="${pageMaker.next && pageMaker.endPage > 0}">
-				<li><a href="list${pageMaker.makeQuery(pageMaker.endPage +1)}">»</a></li>
-			</c:if>
-		</ul>
-	</div>
-	</div>
+			            				-->
+								</c:if></li>
+							<br />
+							<br />
+						</c:forEach>
+					</div>
+					<!-- 댓글쓰기 -->
+					<!-- http://okky.kr/article/230588 -->
+					<div class="input-group">
+						<input type="hidden" name="feed_no_fk"
+							id="feed_no_fk${status.index}" value="${vo.feed_no}"> <input
+							type="text" class="form-control" name="replyText"
+							id="replyText${status.index}" placeholder="comment"> <span
+							class="input-group-btn"> <input type="button"
+							class="btn btn-primary replyAddBtn" id='${status.index}'
+							value="ADD"></span>
+					</div>
+					<!-- .댓글쓰기 끝 -->
+				</div>
+			</div>
+			<!-- .피드 박스 끝 -->
+		</c:forEach>
+
+		<!-- 페이징 처리 -->
+		<div class="text-center">
+			<ul class="pagination">
+				<c:if test="${pageMaker.prev}">
+					<li><a
+						href="list${pageMaker.makeQuery(pageMaker.startPage-1)}">«</a></li>
+				</c:if>
+
+				<c:forEach begin="${pageMaker.startPage}" end="${pageMaker.endPage}"
+					var="idx">
+					<li
+						<c:out value="${pageMaker.cri.page==idx? 'class =active':''}" />>
+						<a href="list${pageMaker.makeQuery(idx)}">${idx}</a>
+					</li>
+				</c:forEach>
+
+				<c:if test="${pageMaker.next && pageMaker.endPage > 0}">
+					<li><a href="list${pageMaker.makeQuery(pageMaker.endPage +1)}">»</a></li>
+				</c:if>
+			</ul>
+		</div>
+	</div><!-- .//페이징 처리 끝-->
 	
+
+
 	<a class="btn btn-primary btn-xs" 
 	    data-toggle="modal" data-target="#modifyModal">Modify</a>
 		    
@@ -398,8 +410,7 @@ body{margin-top:20px;}
 					alert("수정 되었습니다.");
 				}
 		}});		
-	}
-	
+	}	
 	//댓글 삭제 이벤트 처리1)
 	/* function removeReply(feed_no_fk,rno) {
 		$.ajax({
@@ -437,8 +448,7 @@ body{margin-top:20px;}
 				}
 			}
 		});
-	}); */
-	
+	}); */	
 	//댓글 삭제 이벤트 처리3)
 	function removeReply(rno) {
 		var feed_no_fk = $('#feed_no_fk').val();
