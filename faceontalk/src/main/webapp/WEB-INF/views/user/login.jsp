@@ -30,6 +30,7 @@
 <body>
 	
 	<div class="container">		
+		<div class="row">
 		<!-- 가입 폼 시작 -->
 		<div id="signupbox" style="display:none; margin-top:50px" class="mainbox col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">
                     <div class="panel panel-info">
@@ -131,29 +132,35 @@
                         </div>                     
                     </div>  
         </div><!-- loggin div 끝. -->
+        </div>
         
+        <br/>
         <!-- 성공 메시지 -->
-        <div class="alert alert-success" style="display:none" id="successAlert">
-  			<div class="text primary">
-  			<strong>Success to join</strong>Please check ur email authentication.
-  				<h4><a href='/index'>HOME</a></h4>
-  			</div>
-		</div>
-		
-		<!-- 아이디 중복 -->
-		<div class="alert alert-warning" style="display:none" id="duplicateIdAlert">
-  			<strong>Duplicate id.</strong> Please write another id.
-		</div>
-		
-		<!-- 런타임 에러 -->
-		<div class="alert alert-danger" style="display:none" id="failAlert">
-			<strong>Failed to join</strong>
+        <div class="row">
+	        <div class="alert alert-success" style="display:none" id="successAlert">
+	  			<div class="text primary">
+	  			<strong>Success to join.</strong><br/>
+	  				Please check ur email authentication.<br/>
+	  				<h4><a id="gotoEmail">Confirm Email</a></h4><br/>
+	  				<h4><a href='/'>HOME</a></h4>
+	  			</div>
+			</div>
+			
+			<!-- 아이디 중복 -->
+			<div class="alert alert-warning" style="display:none" id="duplicateIdAlert">
+	  			<strong>Duplicate id.</strong> Please write another id.
+			</div>
+			
+			<!-- 런타임 에러 -->
+			<div class="alert alert-danger" style="display:none" id="failAlert">
+				<strong>Failed to join</strong>
+			</div>
 		</div>
 		
 	</div><!-- container.끝 -->
         
 <script>
-	$(document).ready(function(){
+	$(document).ready(function() {		
 		
 		/*		회원 가입 (데이터가 적어서 JSON 처리)		*/
 		$('#btnSignUp').on('click',function() {
@@ -173,22 +180,25 @@
 				      "X-HTTP-Method-Override": "POST" },
 				dataType:'text',
 				data: JSON.stringify({user_email:user_email, user_id:user_id, phone:phone, password:password}),
-				success:function(result){ //성공시
-					console.log("result: " + result);
-					if(result == 'SUCCESS') {						
+				success:function(ret){ //성공시
+					alert(ret.result);
+					//alert(ret.RESULT);
+					//alert(ret.MAIL);					
+					if(ret.RESULT == 'SUCCESS') {						
 						$('#successAlert').css('display','block');
 						$('#duplicateIdAlert').css('display','none');
 						$('#failAlert').css('display','none');
-					} else if(result == 'DUPLICATED_ID') {
+						$('#gotoEmail').attr('href',ret.MAIL);
+						
+					} else if(ret.RESULT == 'DUPLICATED_ID') {
 						$('#successAlert').css('display','none');
 						$('#failAlert').css('display','none');
 						$('#duplicateIdAlert').css('display','block');	
 					}						
 				},
-				error:function(result) {
-					alert(result);
-					$('#failAlert').css('display','block');
-					
+				error:function() {
+					alert("Please try again after a few sconds");
+					$('#failAlert').css('display','block');					
 					$('#successAlert').css('display','none');
 					$('#duplicateIdAlert').css('display','none');					 					
 				}

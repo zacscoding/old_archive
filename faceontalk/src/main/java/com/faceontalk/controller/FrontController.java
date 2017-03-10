@@ -42,5 +42,11 @@ public class FrontController {
 		return "/include/header";
 	}
 	
+	/*	test user detail*/
+	@RequestMapping("/viewTest/user")
+	public void userDetail() {
+		
+	}
+	
 
 }

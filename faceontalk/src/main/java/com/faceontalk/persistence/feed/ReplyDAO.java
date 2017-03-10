@@ -21,4 +21,7 @@ public interface ReplyDAO {
 	//remove all
 	public void removeAll(Integer feed_no) throws Exception;
 	
+	//get feed_no
+	public int getFeedNumber(Integer rno)throws Exception;
+	
 }

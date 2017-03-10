@@ -34,4 +34,9 @@
 	<delete id="removeAll">
 		delete from tbl_reply where feed_no_fk = #{feed_no}
 	</delete>
+	
+	<!-- select feed_no by rno -->
+	<select id="getFeedNumber" resultType="int">
+		select feed_no_fk from tbl_reply where rno = #{rno}
+	</select>
 </mapper>

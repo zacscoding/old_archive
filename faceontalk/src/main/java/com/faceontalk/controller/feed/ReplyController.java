@@ -74,15 +74,13 @@ public class ReplyController {
 	
 	
 	/**		remove		*/
-	@RequestMapping(value="/{feed_no}/{rno}", method=RequestMethod.DELETE)
-	public ResponseEntity<String> remove(
-			@PathVariable("feed_no") Integer feed_no,
-			@PathVariable("rno") Integer rno) {
+	@RequestMapping(value="/{rno}", method=RequestMethod.DELETE)
+	public ResponseEntity<String> remove(@PathVariable("rno") Integer rno) {
 		
 		logger.info("/replies/{rno} ...DELETE");
 		ResponseEntity<String> entity = null;		
 		try {			
-			replyService.remove(feed_no,rno);
+			replyService.remove(rno);
 			entity = new ResponseEntity<String>("SUCCESS",HttpStatus.OK);
 		} catch(Exception e) {
 			e.printStackTrace();

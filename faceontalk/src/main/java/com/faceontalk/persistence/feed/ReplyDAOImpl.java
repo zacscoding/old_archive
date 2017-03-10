@@ -46,6 +46,11 @@ public class ReplyDAOImpl implements ReplyDAO {
 	@Override
 	public void removeAll(Integer feed_no) throws Exception {
 		session.delete(namespace+".removeAll", feed_no);
+	}
+
+	@Override
+	public int getFeedNumber(Integer rno) throws Exception {
+		return session.selectOne(namespace+".getFeedNumber",rno);
 	}	
 
 }

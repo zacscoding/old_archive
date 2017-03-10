@@ -60,7 +60,7 @@
 	</update>
 	
 	<!-- 수정(댓글 수 증가) -->
-	<update id="">
+	<update id="updateReplyCount">
 		update tbl_feed set
 			reply_count = reply_count + #{delta}
 		where

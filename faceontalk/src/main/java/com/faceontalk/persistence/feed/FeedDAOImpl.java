@@ -53,7 +53,7 @@ public class FeedDAOImpl implements FeedDAO {
 		paramMap.put("feed_no",feed_no);
 		paramMap.put("delta",delta);
 		
-		session.update(namespace=".updateReplyCount", paramMap);
+		session.update(namespace+".updateReplyCount", paramMap);
 	}
 	
 

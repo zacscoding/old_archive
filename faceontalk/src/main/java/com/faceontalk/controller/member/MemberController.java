@@ -1,5 +1,8 @@
 package com.faceontalk.controller.member;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.inject.Inject;
 
 import org.slf4j.Logger;
@@ -32,19 +35,22 @@ public class MemberController {
 	//POST
 	@ResponseBody
 	@RequestMapping(value="/join", method=RequestMethod.POST)	
-	public ResponseEntity<String> registPOST(@RequestBody MemberVO vo) throws Exception {
+	public ResponseEntity<Map<String,String>> registPOST(@RequestBody MemberVO vo) throws Exception {
 		logger.info("/accounts/join (POST)");
 		logger.info(vo.toString());		
-		ResponseEntity<String> entity = null;
-		
-		try {			
+		ResponseEntity<Map<String,String>> entity = null;				
+		Map<String,String> retMap = new HashMap<>();
+		try {
 			service.regist(vo);
-			entity = new ResponseEntity<String>("SUCCESS",HttpStatus.OK);
+			retMap.put("result","SUCCESS");
+			retMap.put("mail","www.naver.com");
+			entity = new ResponseEntity<>(retMap,HttpStatus.OK);
 		} catch(DuplicateIdException ex) {
-			entity = new ResponseEntity<String>("DUPLICATED_ID",HttpStatus.OK);
+			retMap.put("result","DUPLICATED_ID");
+			entity = new ResponseEntity<>(retMap,HttpStatus.OK);
 		} catch(Exception ex) {
 			ex.printStackTrace();
-			entity = new ResponseEntity<String>(ex.getMessage(),HttpStatus.BAD_REQUEST);
+			entity = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}		
 		return entity;		
 	}	

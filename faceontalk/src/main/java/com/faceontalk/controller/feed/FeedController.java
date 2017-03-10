@@ -61,13 +61,7 @@ public class FeedController {
 		MemberVO vo = (MemberVO)session.getAttribute("login");
 				
 		//get feed list
-		List<FeedVO> feedList = feedService.listFollowersFeeds(cri,vo.getUser_no());
-		//get reply list at first 
-		for(FeedVO feedVO : feedList) {
-			//vo.setReplyVO();
-		}
-		
-		model.addAttribute("feedList",feedList);
+		model.addAttribute("feedList",feedService.listFollowersFeeds(cri,vo.getUser_no()));
 		
 		//calc pageMaker
 		PageMaker pageMaker = new PageMaker();
@@ -86,8 +80,7 @@ public class FeedController {
 	@RequestMapping(value="/register",method=RequestMethod.POST)
 	public String registerPOST(FeedVO vo,RedirectAttributes rttr) throws Exception {
 		logger.info("/register...post");
-		logger.info(vo.toString());		
-		
+		logger.info(vo.toString());				
 		
 		//String thumbName = vo.getFile_name();		
 		//vo.setFile_name(thumbName.substring(0, 12) + thumbName.substring(14));		

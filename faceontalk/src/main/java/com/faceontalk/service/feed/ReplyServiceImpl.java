@@ -42,7 +42,8 @@ public class ReplyServiceImpl implements ReplyService {
 
 	@Transactional
 	@Override
-	public void remove(Integer feed_no, Integer rno) throws Exception {
+	public void remove(Integer rno) throws Exception {
+		int feed_no = replyDAO.getFeedNumber(rno);
 		replyDAO.remove(rno);
 		feedDAO.updateReplyCount(feed_no,-1);
 	}	
