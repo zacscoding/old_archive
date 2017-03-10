@@ -18,6 +18,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.faceontalk.domain.member.EmailAuthVO;
 import com.faceontalk.domain.member.MemberVO;
+import com.faceontalk.email.EmailSenderUtil;
 import com.faceontalk.exception.DuplicateIdException;
 import com.faceontalk.exception.ExceedPeriodException;
 import com.faceontalk.service.member.MemberService;
@@ -43,7 +44,7 @@ public class MemberController {
 		try {
 			service.regist(vo);
 			retMap.put("result","SUCCESS");
-			retMap.put("mail","www.naver.com");
+			retMap.put("mail",EmailSenderUtil.getEmailAddr(vo.getUser_email()));
 			entity = new ResponseEntity<>(retMap,HttpStatus.OK);
 		} catch(DuplicateIdException ex) {
 			retMap.put("result","DUPLICATED_ID");

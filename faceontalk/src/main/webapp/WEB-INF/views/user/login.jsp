@@ -141,8 +141,8 @@
 	  			<div class="text primary">
 	  			<strong>Success to join.</strong><br/>
 	  				Please check ur email authentication.<br/>
-	  				<h4><a id="gotoEmail">Confirm Email</a></h4><br/>
-	  				<h4><a href='/'>HOME</a></h4>
+	  				<a id="gotoEmail">Confirm Email</a><br/>
+	  				<a href='/'>HOME</a>
 	  			</div>
 			</div>
 			
@@ -155,13 +155,12 @@
 			<div class="alert alert-danger" style="display:none" id="failAlert">
 				<strong>Failed to join</strong>
 			</div>
-		</div>
-		
+		</div>		
 	</div><!-- container.끝 -->
         
 <script>
-	$(document).ready(function() {		
-		
+	
+	$(document).ready(function() {				
 		/*		회원 가입 (데이터가 적어서 JSON 처리)		*/
 		$('#btnSignUp').on('click',function() {
 			
@@ -178,19 +177,19 @@
 				headers: { 
 				      "Content-Type": "application/json",
 				      "X-HTTP-Method-Override": "POST" },
-				dataType:'text',
+				dataType:'json',
 				data: JSON.stringify({user_email:user_email, user_id:user_id, phone:phone, password:password}),
 				success:function(ret){ //성공시
-					alert(ret.result);
+					//alert(ret.result);
 					//alert(ret.RESULT);
 					//alert(ret.MAIL);					
-					if(ret.RESULT == 'SUCCESS') {						
+					if(ret.result == 'SUCCESS') {						
 						$('#successAlert').css('display','block');
 						$('#duplicateIdAlert').css('display','none');
 						$('#failAlert').css('display','none');
-						$('#gotoEmail').attr('href',ret.MAIL);
-						
-					} else if(ret.RESULT == 'DUPLICATED_ID') {
+						$('#gotoEmail').attr('href','//'+ret.mail);
+						// <a href='//www.naver.com'></a> 해야지 local host 안뜸 
+					} else if(ret.result == 'DUPLICATED_ID') {
 						$('#successAlert').css('display','none');
 						$('#failAlert').css('display','none');
 						$('#duplicateIdAlert').css('display','block');	
@@ -203,7 +202,7 @@
 					$('#duplicateIdAlert').css('display','none');					 					
 				}
 			});			
-		});
+		});		
 	});
 
 </script>

@@ -1,5 +1,11 @@
 package com.faceontalk.domain;
 
+
+/**
+ * 
+ * 검색 정보도 함께 보관하는 Entity
+ * 
+ */
 public class SearchCriteria extends Criteria{
 	private String searchType;
 	private String keyword;

@@ -45,8 +45,8 @@ public class UploadFileUtils {
 		int imgheight = imgwidth;
 			
 		BufferedImage scaledImage = Scalr.crop(originalImage, (originalImage.getWidth() - imgwidth)/2, (originalImage.getHeight() - imgheight)/2, imgwidth, imgheight, null);
-			
-		BufferedImage resizedImage = Scalr.resize(scaledImage, 1000, 667, null);
+		
+		BufferedImage resizedImage = Scalr.resize(scaledImage, 640,640, null);
 		
 		String thumbnailName = uploadPath + path + File.separator + "s_" + fileName;
 		

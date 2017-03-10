@@ -3,6 +3,12 @@ package com.faceontalk.domain;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
+
+/**
+ * 
+ * 페이지번호( << 1 2 3 4 5 6 .. >>)를 계산하기 위한 클래스
+ * 
+ */
 public class PageMaker {
 	private int totalCount;
 	private int startPage;

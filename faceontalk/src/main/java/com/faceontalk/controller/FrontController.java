@@ -48,5 +48,17 @@ public class FrontController {
 		
 	}
 	
+	/*	account page test	*/
+	@RequestMapping("/accounts")
+	public void accountTest() {
+		
+	}
+	
+	/*	search page test*/
+	@RequestMapping("/search")
+	public void searchTest() {
+		
+	}
+	
 
 }

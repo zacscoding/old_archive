@@ -162,44 +162,21 @@ body{margin-top:20px;}
    	<!-- 피드 박스 -->
    	<c:forEach var="vo" items="${feedList}" varStatus="status">   
    		<input type="hidden" id="feed_no_fk">	
-	    <div class="social-feed-box">	    	
-	    	<!-- 
-	    	<c:if test="${login.user_id == vo.user_id_fk}">
-	    		<div class="pull-right social-action dropdown">
-            		<button data-toggle="dropdown" class="dropdown-toggle btn-default">
-                		<i class="glyphicon glyphicon-option-vertical"></i>
-            		</button>
-	            	<ul class="dropdown-menu m-t-xs">
-	                		<li><a href="#" onclick="return false;">
-	                			<strong class="text-info">MODIFY</strong></a></li>
-	                		<li><a href="#" onclick="return false;">	                			
-	                			<strong class="text-info">REMOVE</strong></a></li>
-	            	</ul>
-        		</div>
-	    	</c:if>	    
-	    	 -->    
+	    <div class="social-feed-box">
 	    	<!-- 상단 : 프로필, 이름 , 등록 일 -->       
 	        <div class="social-avatar">
-	            <a href="#" class="pull-left" onclick ="return false;">
-	            	<!-- 
-	            	<c:choose>
-            				<c:when test="${empty vo.profile_pic}">            				
-	                		<img class="img-rounded img-responsive" src="/resources/bootstrap/images/default_profile.png">
-	                		</c:when>
-	                		<c:otherwise>
-	                		<img class="img-rounded img-responsive" src="/displayImage?type=p&fileName=${vo.profile_pic}">	                		
-	                		</c:otherwise>
-	               	</c:choose>
-	               	 -->
+	            <a href="#" class="pull-left" onclick ="return false;">	            	
 	               	 <img class="img-rounded img-responsive" src="http://dimg.donga.com/wps/SPORTS/IMAGE/2016/02/01/76251832.2.jpg">
 	            </a>
-					
-						                                    
+	            	                                    
 	            <div class="media-body">
 	                <a href="#" class="pull-left"><strong>${vo.user_id_fk}</strong></a><br>
-	                <small class="text-muted pull-left">	                	
-	                	<fmt:formatDate pattern="yy MM dd HH" value="${vo.regdate}"/> 	
-	                	</small>
+	                <small class="text-muted pull-left">
+	                	${vo.displayTime }
+	                	<!-- 
+	                	<fmt:formatDate pattern="yy MM dd HH" value="${vo.regdate}"/>
+	                	 --> 	
+	                </small>
 	            </div>
 	        </div> <!-- 상단 끝 -->
 	        
@@ -225,7 +202,7 @@ body{margin-top:20px;}
 	        	<!-- 댓글 시작-->  
 	            <div class="social-comment" id="commentDisplay${vo.feed_no}">	            	
 	            	<c:forEach var="replyVO" items="${vo.replyList}">	           
-	            			<li class='pull-left' data-rno='${replyVO.rno}'>
+	            			<li class='pull-left'>
 		            			<a href="#" onclick='return false;'>${replyVO.user_id_fk}</a>	            			
 		            			&nbsp;&nbsp;&nbsp;&nbsp;
 		            			${replyVO.replytext}
@@ -233,9 +210,11 @@ body{margin-top:20px;}
 		            			<c:if test="${replyVO.user_id_fk == login.user_id}">
 			            				<button type="button" class="btn btn-primary btn-xs" onclick="modifyReply(${vo.feed_no},${status.index},${replyVO.rno})" 
 			            					value="${replyVO.rno}">Modify</button>
-			            				<button type="button" class="btn btn-danger btn-xs replyDelBtn" onclick=" $('#feed_no_fk').val('${vo.feed_no}'); " 
-			            					value="${replyVO.rno}">Remove</button>
-				           				<!-- 
+			            				<button type="button" class="btn btn-danger btn-xs replyDelBtn" 
+			            					onclick="setFeedNumer(${replyVO.feed_no_fk}); removeReply(${replyVO.rno});" 
+			            					>Remove</button>
+			            					
+										<!-- 
 			            				<button class="btn btn-default replyDelBtn" ">Remove</button>
 			            				-->	
 		            			</c:if>		            			 
@@ -252,7 +231,7 @@ body{margin-top:20px;}
     			</div><!-- .댓글쓰기 끝 -->
 	        </div>	        
 	    </div><!-- .피드 박스 끝 -->
-    </c:forEach>  
+    </c:forEach>
     
     <!-- 페이징 처리 -->
 	<div class="text-center">
@@ -298,20 +277,24 @@ body{margin-top:20px;}
 	</div>
 </div>
 
+<!-- setFeedNumer('{{feed_no_fk}}' ); removeReply( '{{ rno }}' );
+<button type="button" class="btn btn-danger btn-xs replyDelBtn" 
+			         value={{ rno }} >Remove</button>
+-->
 <!--  댓글 보기 탬플릿 -->
 <script id="replyTemplate" type="text/x-handlebars-template">		
 	{{#each .}}		
-		<li class='pull-left' data-rno='{{ rno }}'><a href="#"
+		<li class='pull-left' data-rno={{ rno }} ><a href="#"
 			onclick='return false;'> {{user_id_fk}} </a>
 			&nbsp;&nbsp;&nbsp;&nbsp; {{ replytext }}
 			{{#eqReplyWriter user_id_fk}}
 					<button type="button" class="btn btn-primary btn-xs" onclick="return false;" 
-			            					value="${replyVO.rno}">Modify</button>					
+			         value={{ rno }}>Modify</button>
+					{{#makeDelBtn rno}}
 			{{/eqReplyWriter}}						        	
-			 </li> <br/><br/>
+		</li> <br/><br/>
 	{{/each}}
 </script>
-
 <script>		
 	
 	//Handlebars의 if문 조건을 위한 헬퍼
@@ -320,15 +303,36 @@ body{margin-top:20px;}
 	  if(reply_writer == '${login.user_id}')
 		  accum += block.fn();
 	  return accum;
+	});	
+	
+	Handlebars.registerHelper('makeDelBtn', function(rno) {
+		rno = Handlebars.Utils.escapeExpression(rno);
+		var result = "<button type='button' class='btn btn-danger btn-xs replyDelBtn value='" 
+	         + rno + " >Remove</button>";
+		 return new Handlebars.SafeString(result);
 	});
-		
+	
+	/*
+	Handlebars.registerHelper('makeDelBtn', function(feed_no_fk , rno) {
+		alert(feed_no_fk+","+rno);
+		var result = "<button type='button' class='btn btn-danger btn-xs replyDelBtn' onclick='setFeedNumer(" + feed_no_fk + "); remove("
+				rno +")'>Remove</button>";
+		return new Handlebars.SafeString(result);
+	});
+	
+	// feed_no를 담기 위한 함수
+	function setFeedNumer(feed_no_fk) {
+		$('#feed_no_fk').val(feed_no_fk);
+	}
+	*/
+	
 	
 	//댓글보기 이벤트 처리 (서버로 부터 댓글 리스트 받음) 
 	function displayAllReply(feed_no_fk) {		
 		//get reply data from server
 		$.getJSON("/replies/all/"+feed_no_fk, function(data) {
 			//display reply list 
-			printData(data,$('#commentDisplay'+feed_no_fk), $('#replyTemplate'));
+			printData(data ,$('#commentDisplay'+feed_no_fk), $('#replyTemplate'));
 			$('#commentBtn'+feed_no_fk).remove();
 		});		
 	}
@@ -396,7 +400,7 @@ body{margin-top:20px;}
 		}});		
 	}
 	
-	//댓글 삭제 이벤트 처리
+	//댓글 삭제 이벤트 처리1)
 	/* function removeReply(feed_no_fk,rno) {
 		$.ajax({
 			type : 'delete',
@@ -415,7 +419,8 @@ body{margin-top:20px;}
 		});
 	} */
 		
-	$('.replyDelBtn').on('click', function(event){
+	//댓글 삭제 이벤트 처리2)
+	/* $('.replyDelBtn').on('click', function(event){
 		var feed_no_fk = $('#feed_no_fk').val();
 		var rno = $(this).attr('value');
 		$.ajax({
@@ -432,10 +437,26 @@ body{margin-top:20px;}
 				}
 			}
 		});
-	});
+	}); */
 	
-	
-	
+	//댓글 삭제 이벤트 처리3)
+	function removeReply(rno) {
+		var feed_no_fk = $('#feed_no_fk').val();
+		$.ajax({
+			type : 'delete',
+			url : '/replies/'+ rno,
+			headers : {
+				"Content-Type" : "application/json",
+				"X-HTTP-Method-Override" : "DELETE"
+			},
+			dataType : 'text',			
+			success : function(result) { //성공시
+				if (result == 'SUCCESS') {
+					displayAllReply(feed_no_fk);
+				}
+			}
+		});
+	}
 </script>
 
 
