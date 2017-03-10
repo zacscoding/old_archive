@@ -48,5 +48,12 @@ public class FrontController {
 		
 	}
 	
+	/*	account page test	*/
+	@RequestMapping("/accounts")
+	public void accountTest() {
+		
+	}
+	
+	
 
 }

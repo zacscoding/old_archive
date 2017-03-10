@@ -3,6 +3,8 @@ package com.faceontalk.domain.feed;
 import java.util.Date;
 import java.util.List;
 
+import com.faceontalk.util.DateDisplayHelper;
+
 public class FeedVO {
 	private Integer feed_no;
 	private Integer user_no_fk;
@@ -16,8 +18,7 @@ public class FeedVO {
 	private String file_name;
 	
 	//reply list for view at first
-	private List<ReplyVO> replyList;
-	
+	private List<ReplyVO> replyList;	
 	
 	public List<ReplyVO> getReplyList() {
 		return replyList;
@@ -27,6 +28,10 @@ public class FeedVO {
 		this.replyList = replyList;
 	}
 
+	//get display time format
+	public String getDisplayTime() {		
+		return DateDisplayHelper.getDisplayDate(regdate);
+	}
 	//getter,setter,toString	
 	public Integer getFeed_no() {
 		return feed_no;

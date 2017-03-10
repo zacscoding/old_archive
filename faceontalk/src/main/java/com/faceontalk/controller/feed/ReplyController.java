@@ -31,7 +31,8 @@ public class ReplyController {
 		
 		logger.info("/all/"+feed_no_fk);
 		
-		ResponseEntity<List<ReplyVO>> entity = null;		
+		ResponseEntity<List<ReplyVO>> entity = null;	
+		
 		try {
 			entity = new ResponseEntity<List<ReplyVO>>(replyService.listAll(feed_no_fk),HttpStatus.OK);
 		} catch(Exception e) {

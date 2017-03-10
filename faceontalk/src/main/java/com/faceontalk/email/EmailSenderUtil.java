@@ -20,7 +20,7 @@ public class EmailSenderUtil {
 	}		
 	public static String getEmailAddr(String user_email) {
 		int atIdx = user_email.lastIndexOf('@');
-		return "www."+user_email.substring(atIdx);
+		return "www."+user_email.substring(atIdx+1);
 	}
 	
 }
