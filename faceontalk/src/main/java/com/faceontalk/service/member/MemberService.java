@@ -20,6 +20,8 @@ public interface MemberService {
 	public void regist(FollowVO vo) throws Exception;
 	// remove
 	public void remove(FollowVO vo) throws Exception;
+	// check
+	public Boolean isFollow(FollowVO vo) throws Exception;
 	
 	/*	Confirm Auth	*/
 	public void confirmAuth(EmailAuthVO dto) throws Exception;

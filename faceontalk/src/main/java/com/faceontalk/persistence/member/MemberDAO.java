@@ -20,6 +20,7 @@ public interface MemberDAO {
 	//follower
 	public void registFollower(FollowVO vo) throws Exception;
 	public void removeFollower(FollowVO vo) throws Exception;
+	public Boolean isFollow(FollowVO vo) throws Exception ;
 	
 	//auth
 	public void registerAuthToken(String user_id,String auth_token,Date auth_limit) throws Exception;

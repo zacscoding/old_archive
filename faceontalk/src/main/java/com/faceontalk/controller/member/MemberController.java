@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,7 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -21,6 +22,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.faceontalk.domain.SearchCriteria;
 import com.faceontalk.domain.member.EmailAuthVO;
+import com.faceontalk.domain.member.FollowVO;
 import com.faceontalk.domain.member.MemberVO;
 import com.faceontalk.email.EmailSenderUtil;
 import com.faceontalk.exception.DuplicateIdException;
@@ -104,15 +106,31 @@ public class MemberController {
 	
 	/**	Search Member	*/	
 	@RequestMapping(value="/detail",method=RequestMethod.GET)
-	public String getUserDetail(String user_id, Model model) throws Exception {
+	public String getUserDetail(String user_id,HttpServletRequest request, Model model) throws Exception {
 		logger.info("getUserDetail..get user_id = "+user_id);
+		
+		HttpSession session = request.getSession();
+		
+		MemberVO loginUser = (MemberVO)session.getAttribute("login");
+		
+		if(loginUser!=null && user_id.equals(loginUser.getUser_id())) { //본인 페이지 를 클릭했을 경우
+			return "redirect:/accounts/mypage";
+		}
 		
 		MemberVO vo = memberService.searchById(user_id);
 		
-		//유저가 없으면 db에서 %연산으로 유저 리스트로 보냄
+		//유저가 없으면 db에서  like 연산으로 유저 리스트로 보냄
 		if(vo == null) {
 			return "redirect:/user/list?keyword="+user_id;
 		}		
+		
+		if(loginUser!=null) { //check follow
+			FollowVO follower= new FollowVO();
+			follower.setFollower(loginUser.getUser_no());
+			follower.setFollowing(vo.getUser_no());
+			model.addAttribute("isFollower",memberService.isFollow(follower));
+		}
+		
 		model.addAttribute("memberVO",vo);
 		model.addAttribute("feedList",feedService.listUsersFeedPics(vo.getUser_no()));
 		return "/user/detail";

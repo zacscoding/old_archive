@@ -42,12 +42,16 @@
 	
 	<!-- follower -->
 	<insert id="registFollower">
-	insert into tbl_follow (follower,following) values(#{follower},#{following})
+		insert into tbl_follow (follower,following) values(#{follower},#{following})
 	</insert>
 	
 	<delete id="removeFollower">
-	delete from tbl_follow where follower = #{follower} and following = #{following}
+		delete from tbl_follow where follower = #{follower} and following = #{following}
 	</delete>
+	
+	<select id="isFollow" resultType="int">
+		select count(*) from tbl_follower where follower = #{follower} and following = #{following}
+	</select>
 	
 	
 	<!-- 이메일 인증 등록 -->

@@ -65,7 +65,11 @@ public class MemberDAOImpl implements MemberDAO {
 	public void removeFollower(FollowVO vo) throws Exception {
 		session.insert(namespace+".removeFollower",vo);
 	}
-
+	@Override
+	public Boolean isFollow(FollowVO vo) throws Exception {
+		int result = session.selectOne(".isFollow",vo);
+		return (result>0) ? Boolean.TRUE : Boolean.FALSE;
+	}
 	
 	/**		Email Auth register*/
 	@Override
@@ -90,17 +94,11 @@ public class MemberDAOImpl implements MemberDAO {
 	/**		Remove Expired	Auth 	*/	
 	@Override
 	public void removeExpiredAuthEmail() throws Exception {
-		session.delete(namespace+".removeExpiredAuthEmail");
-		
+		session.delete(namespace+".removeExpiredAuthEmail");		
 	}
 
 	@Override
 	public void removeExpiredAuthMember() throws Exception {
 		session.delete(namespace+".removeExpiredAuthMember");		
 	}
-	
-	
-	
-
-
 }
