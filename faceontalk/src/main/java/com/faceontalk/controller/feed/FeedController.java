@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -133,23 +134,22 @@ public class FeedController {
 		return "redirect:/feed/result";	
 	}	
 	
-	/**	remove	*/	
-	@RequestMapping(value="/removeFeed",method=RequestMethod.GET)
-	public void removeFeedGET(Integer feed_no, RedirectAttributes rttr) throws Exception {
-		//empty
-	}	
+	/**	remove	*/
 	// 게시글 삭제 -> tbl_tag에서 참조하는 피드가 0개이면 tag도 삭제할지 고민
-	@RequestMapping(value="/removeFeed",method=RequestMethod.POST)
-	public String removeFeedPOST(Integer feed_no, RedirectAttributes rttr) throws Exception {
-		logger.info("/removeFeed...POST");
-		logger.info("in FeedController feed_no : "+feed_no);
+	@ResponseBody
+	@RequestMapping(value="/{feed_no}",method=RequestMethod.DELETE)
+	public ResponseEntity<String> removeFeed(@PathVariable("feed_no") Integer feed_no) throws Exception {
 		
-		feedService.remove(feed_no);	
+		logger.info("remove feed.. in FeedController feed_no : "+feed_no);
 		
-		rttr.addFlashAttribute("message", "SUCCESS");
-		
-		/**temp code */
-		return "redirect:/feed/result";	
+		ResponseEntity<String> entity = null;
+		try {
+			feedService.remove(feed_no);
+			entity = new ResponseEntity<String>("SUCCESS",HttpStatus.OK);
+		} catch(Exception e) {
+			entity = new ResponseEntity<String>(e.getMessage(),HttpStatus.BAD_REQUEST);
+		}		
+		return entity;
 	}	
 	
 	@RequestMapping(value="/result",method=RequestMethod.GET)

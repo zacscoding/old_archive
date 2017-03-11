@@ -16,21 +16,32 @@
 		<!-- 피드 박스 -->
 		<c:forEach var="vo" items="${feedList}" varStatus="status">
 			<input type="hidden" id="feed_no_fk">
-			<div class="social-feed-box">
+			<div class="social-feed-box" id="feedbox${vo.feed_no}">
 				<!-- 상단 : 프로필, 이름 , 등록 일 -->
 				<div class="social-avatar">
 					<a href="/accounts/detail?user_id=${vo.user_id_fk}" class="pull-left"> <img
-						class="img-rounded img-responsive"
+						class="img-circle img-responsive"
 						src="http://dimg.donga.com/wps/SPORTS/IMAGE/2016/02/01/76251832.2.jpg">
 					</a>
-
 					<div class="media-body">
-						<a href="/accounts/detail?user_id=${vo.user_id_fk}" class="pull-left"><strong>${vo.user_id_fk}</strong></a><br>
-						<small class="text-muted pull-left"> ${vo.displayTime } <!-- 
-	                	<fmt:formatDate pattern="yy MM dd HH" value="${vo.regdate}"/>
-	                	 -->
-						</small>
+						<div class="pull-left">
+							<a href="/accounts/detail?user_id=${vo.user_id_fk}" class="pull-left"><strong>${vo.user_id_fk}</strong></a><br>
+							<small class="text-muted pull-left"> ${vo.displayTime } <!-- 
+		                	<fmt:formatDate pattern="yy MM dd HH" value="${vo.regdate}"/>
+		                	 -->
+							</small>
+						</div>
+						
+						<c:if test="${vo.user_id_fk == login.user_id}">
+						<div class="pull-right">
+							<button type="button" class="btn btn-primary btn-circle">
+								<i class="glyphicon glyphicon-list"></i></button>
+							<button type="button" class="btn btn-warning btn-circle feedDelBtn" value="${vo.feed_no}">
+								<i class="glyphicon glyphicon-remove"></i></button>
+						</div>
+						</c:if>
 					</div>
+					
 				</div>
 				<!-- 상단 끝 -->
 
@@ -50,7 +61,7 @@
 							onclick="displayAllReply(${vo.feed_no});$(this).remove();">
 							<i class="fa fa-comments"></i>&nbsp;${vo.reply_count}개의 댓글 모두 보기
 						</button>
-					</c:if>
+					</c:if>					
 					<br />
 				</div>
 				<!-- content 끝 -->
@@ -149,6 +160,41 @@
 </div>
 
 <script>
+	/*	피드 관련 script	*/
+	$(document).ready(function() {
+		
+		//피드 삭제 하기 
+		// ajax로 서버 전송 -> 그에 해당하는 <div> remove
+		$(".feedDelBtn").on('click',function(event) {
+			event.preventDefault();
+			var feed_no = $(this).val();
+			
+			$.ajax({
+				type : 'delete',
+				url : '/feed/'+ feed_no,
+				headers : {
+					"Content-Type" : "application/json",
+					"X-HTTP-Method-Override" : "DELETE"
+				},
+				dataType : 'text',
+				success : function(result) {
+					if(result == 'SUCCESS') {
+						$('#feedbox'+feed_no).remove();
+					}
+				}
+			});			
+		});
+		
+		//피드 수정하기
+		//수정 폼으로 넘기기 ->
+		
+		
+	}); 
+
+</script>
+
+<script>
+	/*	댓글 관련 script	*/
 	
 	// feed_no를 담기 위한 함수
 	function setFeedNumer(feed_no_fk) {
@@ -251,8 +297,7 @@
 	
 	//댓글 삭제 이벤트 처리)
 	function removeReply(rno) {
-		var feed_no_fk = $('#feed_no_fk').val();
-		
+		var feed_no_fk = $('#feed_no_fk').val();		
 		$.ajax({
 			type : 'delete',
 			url : '/replies/'+ rno,

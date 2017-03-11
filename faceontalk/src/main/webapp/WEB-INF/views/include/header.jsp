@@ -96,7 +96,7 @@ $('#searchBtn').on('click',function(event) {
 		keyword = keyword.substr(1);				
 		self.location = '/feed/searchList?keyword='+keyword;				
 	} else {
-		alert('유저 검색== '+keyword);
+		self.location = '/accounts/detail?user_id='+keyword;
 	}			
 });
 

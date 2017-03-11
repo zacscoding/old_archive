@@ -72,13 +72,11 @@
 <script>
 	
 //피드 상세 보여주기	
-function displayFeed(feed_no) {
-	
+function displayFeed(feed_no) {	
 	//아작스로 feed detail 얻어옴
 	//받은 데이터로 모달창에 표시	
 	alert(feed_no);
-}	
-	
+}
     
 </script>
 
