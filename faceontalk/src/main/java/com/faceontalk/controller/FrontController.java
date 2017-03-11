@@ -14,6 +14,8 @@ public class FrontController {
 		return "redirect:/feed/list";
 	}
 	
+	
+	
 	/**
 	 *  View Page test methods
 	 */
@@ -39,7 +41,7 @@ public class FrontController {
 	/*	test header	*/
 	@RequestMapping("/header")
 	public String test() {
-		return "/include/header";
+		return "/include/header3";
 	}
 	
 	/*	test user detail*/

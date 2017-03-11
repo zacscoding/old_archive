@@ -1,6 +1,5 @@
 package com.faceontalk.domain;
 
-import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
 
@@ -26,27 +25,22 @@ public class PageMaker {
 	}
 
 	public void setTotalCount(int totalCount) {
-		this.totalCount = totalCount;
 		
+		this.totalCount = totalCount;		
 		calcData();
 	}
 
-	private void calcData() {
+	/*		calc start,end page		*/
+	private void calcData() {		
 		
-		endPage = (int) (Math.ceil(cri.getPage() / (double)displayPageNum ) * displayPageNum);
-		
-		startPage = (endPage - displayPageNum) + 1;
-		
-		int tempEndPage = (int)(Math.ceil(totalCount / (double)cri.getPerPageNum()));
-		
+		endPage = (int) (Math.ceil(cri.getPage() / (double)displayPageNum ) * displayPageNum);		
+		startPage = (endPage - displayPageNum) + 1;		
+		int tempEndPage = (int)(Math.ceil(totalCount / (double)cri.getPerPageNum()));		
 		if(endPage > tempEndPage){
 			endPage = tempEndPage;
-		}
-		
-		prev = startPage ==1 ? false : true;
-		
-		next = endPage * cri.getPerPageNum() >= totalCount ? false : true;
-		
+		}		
+		prev = startPage ==1 ? false : true;		
+		next = endPage * cri.getPerPageNum() >= totalCount ? false : true;		
 	}
 
 	public int getTotalCount() {
@@ -77,27 +71,24 @@ public class PageMaker {
 		return cri;
 	}
 	
-	public String makeQuery(int page){		
-		UriComponents uriComponents =
-	            UriComponentsBuilder.newInstance()
-	            .queryParam("page", page)
-	            .queryParam("perPageNum", cri.getPerPageNum())
-	            .build();	            
-		
-		return uriComponents.toUriString();
+	
+	/*	make query string	*/
+	public String makeQuery(int page) {		
+		return	UriComponentsBuilder.newInstance()
+				.queryParam("page", page)
+				.queryParam("perPageNum", cri.getPerPageNum())
+				.build()
+				.toUriString();
 	}
-
-	public String makeSearch(int page){
-		
-		UriComponents uriComponents =
-	            UriComponentsBuilder.newInstance()
-	            .queryParam("page", page)
-	            .queryParam("perPageNum", cri.getPerPageNum())
-	            .queryParam("searchType", ((SearchCriteria)cri).getSearchType())
-	            .queryParam("keyword", ((SearchCriteria)cri).getKeyword())
-	            .build();	            
-		
-		return uriComponents.toUriString();
+	
+	/*	make search query string	*/
+	public String makeSearch(int page) {		
+		return UriComponentsBuilder.newInstance()
+				.queryParam("page",page)
+				.queryParam("perPageNum",cri.getPerPageNum())
+				.queryParam("keyword",((SearchCriteria)cri).getKeyword())
+				.build()
+				.toUriString();
 	}	
 	
 	@Override

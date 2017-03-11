@@ -24,6 +24,7 @@ import com.faceontalk.domain.Criteria;
 import com.faceontalk.domain.PageMaker;
 import com.faceontalk.domain.SearchCriteria;
 import com.faceontalk.domain.feed.FeedVO;
+import com.faceontalk.domain.feed.HashTagVO;
 import com.faceontalk.domain.member.MemberVO;
 import com.faceontalk.service.feed.FeedService;
 import com.faceontalk.util.MediaUtils;
@@ -38,40 +39,60 @@ public class FeedController {
 	
 	private static final String uploadPath="c:\\faceontalk\\upload\\feed";
 		
-	////////////////////////
-	// get feed lists
-	///////////////////////		
 	
-	/** 	search		*/
-	@RequestMapping(value="/explore",method=RequestMethod.GET)	
-	public void listPage(@ModelAttribute("cri") SearchCriteria cri,Model model) throws Exception {
-		logger.info(cri.toString());
+	/**		feed lists about search				*/
+	@RequestMapping(value="/searchList", method=RequestMethod.GET)
+	public void listSearchPage(@ModelAttribute("cri") SearchCriteria cri, Model model, HttpServletRequest request) throws Exception {
 		
+		String tag_name = cri.getKeyword();
 		
-	}	
+		//해시 태그가 존재하지 않음
+		HashTagVO vo = feedService.selectTagByName(tag_name);
+		
+		String msg = "검색하신 #"+tag_name+ "태그는 존재하지 않습니다.";
+		
+		if(vo == null) {
+			model.addAttribute("msg",msg);
+			return;
+		}		
+		
+		//tag 테이블에 존재하지만, 관련된 피드가 없음(피드 삭제 시 해시태그는 그대로 두어서)
+		int totalCount = feedService.listCountsByTagCount(vo.getTag_id());
+		
+		model.addAttribute("feedList", feedService.listFeedsByTag(cri,vo.getTag_id()));
+		
+		// make pageMaker
+		PageMaker pageMaker = new PageMaker();
+		pageMaker.setCri(cri);		
+		pageMaker.setTotalCount(totalCount);
+		model.addAttribute("pageMaker", pageMaker);		
+	}
 	
 	
-	/**		Followers and Login users Feed	*/
-	//get followers + mine feed lists
+	/**		feed lists about followers and mine		*/
 	@RequestMapping(value="/list", method=RequestMethod.GET)
-	public void listFollowerPage(@ModelAttribute("cri") Criteria cri, Model model, HttpServletRequest request) throws Exception {				
+	public void listFollowersPage(@ModelAttribute("cri") Criteria cri, Model model, HttpServletRequest request) throws Exception {				
 		
 		logger.info(cri.toString());
 		
 		// get loggined user
 		HttpSession session = request.getSession();
 		MemberVO vo = (MemberVO) session.getAttribute("login");
-
+		
 		// get feed list
 		model.addAttribute("feedList", feedService.listFollowersFeeds(cri, vo.getUser_no()));
-
-		// calc pageMaker
+				
+		// make pageMaker
 		PageMaker pageMaker = new PageMaker();
 		pageMaker.setCri(cri);
-		pageMaker.setTotalCount(feedService.listFollowersFeedCount(vo.getUser_no()));
-		model.addAttribute("pageMaker", pageMaker);
-		
+		int totalCount = feedService.listFollowersFeedCount(vo.getUser_no());
+		pageMaker.setTotalCount(totalCount);
+		model.addAttribute("pageMaker", pageMaker);		
+		if(totalCount == 0)
+			model.addAttribute("msg","등록된 피드가 없습니다.");		
 	}	
+	
+	
 	
 	/**		register 	*/		
 	@RequestMapping(value="/register", method=RequestMethod.GET)
@@ -83,9 +104,6 @@ public class FeedController {
 	public String registerPOST(FeedVO vo,RedirectAttributes rttr) throws Exception {
 		logger.info("/register...post");
 		logger.info(vo.toString());				
-		
-		//String thumbName = vo.getFile_name();		
-		//vo.setFile_name(thumbName.substring(0, 12) + thumbName.substring(14));		
 		
 		feedService.register(vo);		
 		
