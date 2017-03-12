@@ -123,6 +123,19 @@ public class FeedDAOImpl implements FeedDAO {
 	public int listCountsByTagCount(Integer tag_id) throws Exception {
 		return session.selectOne(namespace+".listCountsByTagCount",tag_id);
 	}
+	
+
+	// all feeds
+	@Override
+	public List<FeedVO> listAllFeeds(Criteria cri) throws Exception {
+		return session.selectList(namespace+".listAllFeeds",cri);
+	}
+	
+	@Override
+	public int listAllFeedCount() throws Exception {
+		return session.selectOne(namespace+".listAllFeedCount");
+	}
+	
 
 		
 	/////////////////////
@@ -170,6 +183,7 @@ public class FeedDAOImpl implements FeedDAO {
 			session.delete(namespace+".removeRelation",paramMap);			
 //		}
 	}
+
 
 }
 

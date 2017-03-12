@@ -67,7 +67,7 @@ public class MemberDAOImpl implements MemberDAO {
 	}
 	@Override
 	public Boolean isFollow(FollowVO vo) throws Exception {
-		int result = session.selectOne(".isFollow",vo);
+		int result = session.selectOne(namespace+".isFollow",vo);
 		return (result>0) ? Boolean.TRUE : Boolean.FALSE;
 	}
 	

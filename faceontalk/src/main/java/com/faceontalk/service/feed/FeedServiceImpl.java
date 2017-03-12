@@ -58,12 +58,21 @@ public class FeedServiceImpl implements FeedService {
 	@Override
 	public List<FeedVO> listFeedsByTag(Criteria cri,Integer tag_id) throws Exception {
 		return feedDAO.listFeedsByTag(cri,tag_id);
-	}
-	
+	}	
 	@Override
 	public int listCountsByTagCount(Integer tag_id) throws Exception {
 		return feedDAO.listCountsByTagCount(tag_id);
 	}	
+	
+	//read all feed
+	@Override
+	public List<FeedVO> listAllFeeds(Criteria cri) throws Exception {
+		return feedDAO.listAllFeeds(cri);
+	}	
+	@Override
+	public int listAllFeedCount() throws Exception {
+		return feedDAO.listAllFeedCount();
+	}
 	
 		
 	/*	Create	*/
@@ -219,5 +228,6 @@ public class FeedServiceImpl implements FeedService {
 		}				
 		registerRelation(feed_no,tag.getTag_id());
 	}
+	
 	
 }

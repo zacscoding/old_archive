@@ -50,7 +50,7 @@
 	</delete>
 	
 	<select id="isFollow" resultType="int">
-		select count(*) from tbl_follower where follower = #{follower} and following = #{following}
+		select count(*) from tbl_follow where follower = #{follower} and following = #{following}
 	</select>
 	
 	

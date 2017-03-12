@@ -124,11 +124,14 @@ public class MemberController {
 			return "redirect:/user/list?keyword="+user_id;
 		}		
 		
+		//로그인 상태에서 팔로우 체크
 		if(loginUser!=null) { //check follow
 			FollowVO follower= new FollowVO();
 			follower.setFollower(loginUser.getUser_no());
 			follower.setFollowing(vo.getUser_no());
 			model.addAttribute("isFollower",memberService.isFollow(follower));
+		} else {
+			model.addAttribute("isFollower",Boolean.FALSE);
 		}
 		
 		model.addAttribute("memberVO",vo);

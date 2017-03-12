@@ -12,10 +12,12 @@ public class SearchCriteria extends Criteria {
 	
 	
 	public String getKeyword() {
+		/*if(keyword==null || keyword.isEmpty())
+			return " ";*/
 		return keyword;
 	}
 	
-	public void setKeyword(String keyword) {
+	public void setKeyword(String keyword) {		
 		this.keyword = keyword;
 	}
 

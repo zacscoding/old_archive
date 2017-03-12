@@ -90,8 +90,10 @@
 
 <script>	
 $('#searchBtn').on('click',function(event) {
-	event.preventDefault();
+	event.preventDefault();	
 	var keyword = $('#searchText').val();
+	if(keyword.length==0)
+		keyword='# ';
 	if(keyword.charAt(0) == '#') {
 		keyword = keyword.substr(1);				
 		self.location = '/feed/searchList?keyword='+keyword;				

@@ -54,6 +54,21 @@
 	<select id="listCountsByTagCount" resultType="int">
 		select count(feed_no) from tbl_tagFeedRelations where tag_id = #{tag_id}
 	</select>
+	
+	<!-- 모든 피드 -->
+	<select id="listAllFeeds" resultType="FeedVO">
+		select A.*,B.profile_pic
+			 from
+		tbl_feed as A left join tbl_member as B on A.user_no_fk = B.user_no
+			order by feed_no desc limit #{pageStart},#{perPageNum}		
+	</select>
+	
+	<select id="listAllFeedCount" resultType="int">
+		select count(feed_no) from tbl_feed;
+	</select>
+	
+	
+	
 		
 	<!-- 피드 등록 -->
 	<insert id="register">

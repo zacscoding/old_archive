@@ -26,6 +26,8 @@ public interface FeedService {
 	public List<FeedVO> listFeedsByTag(Criteria cri,Integer tag_id) throws Exception;
 	public int listCountsByTagCount(Integer tag_id) throws Exception;
 	public List<FeedVO> listUsersFeedPics(Integer user_no) throws Exception;
+	public List<FeedVO> listAllFeeds(Criteria cri) throws Exception;
+	public int listAllFeedCount() throws Exception;
 	
 	/*		tag		*/	
 	public void registerTags(String tag) throws Exception;

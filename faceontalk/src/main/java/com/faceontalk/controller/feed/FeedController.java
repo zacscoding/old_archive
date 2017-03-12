@@ -47,13 +47,23 @@ public class FeedController {
 		
 		String tag_name = cri.getKeyword();
 		
-		//해시 태그가 존재하지 않음
-		HashTagVO vo = feedService.selectTagByName(tag_name);
+		logger.info("listSearchPage ... tag_name : "+tag_name);
 		
-		String msg = "검색하신 #"+tag_name+ "태그는 존재하지 않습니다.";
+		//keyword가 없으면 모든 피드 리스트를 보여줌
+		if(tag_name == null || tag_name.isEmpty()) {			
+			model.addAttribute("feedList", feedService.listAllFeeds(cri));
+			PageMaker pageMaker = new PageMaker();
+			pageMaker.setCri(cri);
+			pageMaker.setTotalCount(feedService.listAllFeedCount());
+			model.addAttribute("pageMaker", pageMaker);
+			return;
+		}
+		
+		//해시 태그가 존재하지 않음
+		HashTagVO vo = feedService.selectTagByName(tag_name);		
 		
 		if(vo == null) {
-			model.addAttribute("msg",msg);
+			model.addAttribute("msg","검색하신 #"+tag_name+ "태그는 존재하지 않습니다.");
 			return;
 		}		
 		

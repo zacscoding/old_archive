@@ -24,8 +24,15 @@
 			<h2 class="profile-name">
 				${memberVO.user_id}
 				<!-- 팔로우 하기 버튼 -->
-				<button type="button" class="btn btn-primary">Follow</button>
-				<button type="button" class="btn btn-success">Following</button>
+				<c:choose>
+					<c:when test="${isFollower == true}">
+						<button type="button" class="btn btn-success followBtn" value="-1">Following</button>		
+					</c:when>
+					<c:otherwise>
+						<button type="button" class="btn btn-default followBtn" value="1">Follow</button>	
+					</c:otherwise>
+				</c:choose>
+				
 			</h2>
 			<div class="profile-info">
 				<div class="info">
@@ -70,13 +77,36 @@
 </div>	<!-- .//container 끝-->
 
 <script>
+
+$(document).ready(function() {
+	//피드 상세 보여주기	
+	function displayFeed(feed_no) {	
+		//아작스로 feed detail 얻어옴
+		//받은 데이터로 모달창에 표시	
+		alert(feed_no);
+	}
 	
-//피드 상세 보여주기	
-function displayFeed(feed_no) {	
-	//아작스로 feed detail 얻어옴
-	//받은 데이터로 모달창에 표시	
-	alert(feed_no);
-}
+	//팔로우 버튼 클릭
+	$('.followBtn').on('click',function(event){
+		var status = $(this).attr('value');
+		var user_no = '${memberVO.user_no}';
+		alert(user_no);
+		if(status == 1) {
+			alert("팔로우 하기");
+			$(this).removeClass('btn-default');
+			$(this).addClass('btn-success');
+			$(this).html('Following');
+			$(this).attr('value',-1);
+		} else {
+			$(this).removeClass('btn-success');
+			$(this).addClass('btn-default');
+			$(this).html('Follow');
+			$(this).attr('value',1);
+		}
+	});
+});
+
+
     
 </script>
 
