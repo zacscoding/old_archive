@@ -33,6 +33,11 @@ public class FrontController {
 		
 	}
 	
+	@RequestMapping(value="/test6",method=RequestMethod.GET)
+	public void test6GET() throws Exception {
+		
+	}
+	
 	@RequestMapping(value="/testFeed",method=RequestMethod.GET)
 	public String testFeed() throws Exception {
 		return "/feed/list2";

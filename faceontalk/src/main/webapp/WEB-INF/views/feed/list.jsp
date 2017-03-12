@@ -11,17 +11,22 @@
 		
 		<c:if test="${not empty msg}">
 			<div class="alert alert-info">${msg}</div>
-		</c:if>
-
+		</c:if>		
 		<!-- 피드 박스 -->
 		<c:forEach var="vo" items="${feedList}" varStatus="status">
 			<input type="hidden" id="feed_no_fk">
 			<div class="social-feed-box" id="feedbox${vo.feed_no}">
 				<!-- 상단 : 프로필, 이름 , 등록 일 -->
-				<div class="social-avatar">
-					<a href="/accounts/detail?user_id=${vo.user_id_fk}" class="pull-left"> <img
-						class="img-circle img-responsive"
-						src="http://dimg.donga.com/wps/SPORTS/IMAGE/2016/02/01/76251832.2.jpg">
+				<div class="social-avatar">					
+					<a href="/accounts/detail?user_id=${vo.user_id_fk}" class="pull-left">
+					<c:choose>
+						<c:when test="${empty vo.profile_pic}">					 
+							<img class="img-circle img-responsive" src="http://dimg.donga.com/wps/SPORTS/IMAGE/2016/02/01/76251832.2.jpg">
+						</c:when>
+						<c:otherwise>
+							<img class="img-circle img-responsive" src="/displayImage?type=p&fileName=${vo.profile_pic}">
+						</c:otherwise>
+					</c:choose>
 					</a>
 					<div class="media-body">
 						<div class="pull-left">
@@ -49,11 +54,12 @@
 				<div class="social-body">
 					<!-- 이미지 -->
 					<img src="/displayImage?type=f&fileName=${vo.file_name}"
-						class="img-responsive">
-
+						class="img-responsive"><br/>
 					<!-- 컨텐츠 -->
+					<h4>					
+					${vo.content}
+					</h4>
 					
-					<p>${vo.content}</p>
 					
 					<!-- 버튼 -->
 					<c:if test="${vo.reply_count>3}">
@@ -70,7 +76,7 @@
 					<!-- 댓글 시작-->
 					<div class="social-comment" id="commentDisplay${vo.feed_no}">
 						<c:forEach var="replyVO" items="${vo.replyList}">
-							<li class='pull-left' id="rno${replyVO.rno}">							
+							<li class='pull-left' id="rno${replyVO.rno}">						
 							
 							<!-- 댓글 작성자 -->
 							<a href="/accounts/detail?user_id=${replyVO.user_id_fk}">${replyVO.user_id_fk}</a>							
@@ -161,8 +167,7 @@
 
 <script>
 	/*	피드 관련 script	*/
-	$(document).ready(function() {
-		
+	$(document).ready(function() {		
 		//피드 삭제 하기 
 		// ajax로 서버 전송 -> 그에 해당하는 <div> remove
 		$(".feedDelBtn").on('click',function(event) {

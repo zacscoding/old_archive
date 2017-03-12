@@ -78,7 +78,7 @@
 			class="glyphicon glyphicon-heart"></i></a></li>
 
 		<!-- 마이페이지 -->
-		<li class="topMenu"><a href="#"> <i 
+		<li class="topMenu"><a href="/accounts/mypage"> <i 
 			class="glyphicon glyphicon-user"></i></a></li>
 
 		</ul>

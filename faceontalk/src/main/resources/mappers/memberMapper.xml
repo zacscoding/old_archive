@@ -23,11 +23,32 @@
 	where user_no = #{user_no}
 	</select>
 	
+	<select id="searchListById" resultType="MemberVO">
+		select user_no,user_id,profile_pic
+			 from 
+		tbl_member		
+			where 
+		user_id like CONCAT(#{keyword},'%')
+	</select>
+	
 	<!-- 회원 정보 수정 -->
 	<update id="update">
-	update tbl_member set user_id=#{user_id}, password = #{password}, phone=#{phone}
+	update tbl_member set user_id=#{user_id},phone=#{phone}
 	where user_no=#{user_no}	
 	</update>
+	
+	<!-- 비밀번호 수정 -->
+	<update id="changePassoword">
+	update tbl_member set password = #{password} where user_no = #{user_no}
+	</update>
+	
+	<!-- 프로필 수정 -->
+	<update id="editProfile">
+	update tbl_member set profile_pic = #{profile_pic} where user_no = #{user_no}
+	</update>
+	
+	
+	
 	
 	<!-- 로그인 상태 유지 -->
 	<update id="keepLogin"> 
@@ -51,6 +72,14 @@
 	
 	<select id="isFollow" resultType="int">
 		select count(*) from tbl_follow where follower = #{follower} and following = #{following}
+	</select>
+	
+	<select id="getFollowerCount" resultType="int">
+		select count(following) from tbl_follow where following = #{user_no}
+	</select>
+	
+	<select id="getFollowingCount" resultType="int">
+		select count(follower) from tbl_follow where follower = #{user_no}
 	</select>
 	
 	

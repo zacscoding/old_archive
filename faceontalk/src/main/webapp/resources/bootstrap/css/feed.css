@@ -10,7 +10,7 @@
 	
 	/* Social feed */
 	.social-feed-separated .social-feed-box {
-	  margin-left: 80px;
+	  margin-left: 100px;
 	}
 	.social-feed-separated .social-avatar {
 	  float: left;
@@ -20,6 +20,7 @@
 	  width: 55px;
 	  height: 55px;
 	  border: 1px solid #e7eaec;
+	  margin-bottom : 10px;
 	}
 	.social-feed-separated .social-feed-box .social-avatar {
 	  padding: 15px 15px 0 15px;
@@ -65,7 +66,7 @@
 	  padding: 15px;
 	}
 	.social-body img {
-	  margin-bottom: 10px;
+	  margin-bottom: 50px;
 	}
 	.social-footer {
 	  border-top: 1px solid #e7eaec;
@@ -83,7 +84,7 @@
 	  margin-top: 15px;
 	}
 	.social-comment textarea {
-	  font-size: 12px;
+	  font-size: 15px;
 	}
 	.form-control, .single-line {
 	    background-color: #FFFFFF;

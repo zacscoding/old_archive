@@ -1,6 +1,7 @@
 package com.faceontalk.service.member;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -8,6 +9,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.faceontalk.domain.SearchCriteria;
 import com.faceontalk.domain.member.EmailAuthVO;
 import com.faceontalk.domain.member.FollowVO;
 import com.faceontalk.domain.member.MemberVO;
@@ -69,6 +71,20 @@ public class MemberServiceImpl implements MemberService {
 	public void edit(MemberVO vo) throws Exception {
 		dao.update(vo);
 	}
+	
+	//비밀번호 수정
+	@Override
+	public void changePassoword(Integer user_no,String password) throws Exception {
+		//encrypt password
+		password = passwordEncoder.encode(password);
+		dao.changePassoword(user_no, password);
+	}
+	
+	//프로필 업데이트 
+	@Override
+	public void editProfile(Integer user_no, String profile_pic) throws Exception {
+		dao.editProfile(user_no,profile_pic);		
+	}
 
 	//회원 검색 by id
 	@Override
@@ -82,11 +98,20 @@ public class MemberServiceImpl implements MemberService {
 		return dao.searchByNum(user_no);
 	}	
 	
+	//회원 검색 % 연산
 	@Override
-	public void regist(FollowVO vo) throws Exception {
+	public List<MemberVO> searchListById(String user_id) throws Exception {
+		return dao.searchListById(user_id);
+	}
+	
+	
+	@Transactional
+	@Override	
+	public void regist(FollowVO vo) throws Exception {		
 		dao.registFollower(vo);
 	}
-
+	
+	@Transactional
 	@Override
 	public void remove(FollowVO vo) throws Exception {
 		dao.removeFollower(vo);
@@ -95,7 +120,17 @@ public class MemberServiceImpl implements MemberService {
 	@Override
 	public Boolean isFollow(FollowVO vo) throws Exception {
 		return dao.isFollow(vo);
-	}	
+	}
+	
+	@Override
+	public int getFollowerCount(Integer user_no) throws Exception {
+		return dao.getFollowerCount(user_no);
+	}
+
+	@Override
+	public int getFollowingCount(Integer user_no) throws Exception {
+		return dao.getFollowingCount(user_no);
+	}
 	
 
 	@Override
@@ -104,6 +139,5 @@ public class MemberServiceImpl implements MemberService {
 		dao.removeExpiredAuthMember();
 		dao.removeExpiredAuthEmail();		
 	}
-
 
 }

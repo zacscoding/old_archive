@@ -24,8 +24,7 @@
 			<h2 class="profile-name">
 				${memberVO.user_id}
 				<!-- 팔로우 하기 버튼 -->
-				<button type="button" class="btn btn-primary">Follow</button>
-				<button type="button" class="btn btn-success">Following</button>
+				<button type="button" class="btn btn-primary" id="editBtn">Edit Profile</button>
 			</h2>
 			<div class="profile-info">
 				<div class="info">
@@ -78,6 +77,10 @@ function displayFeed(feed_no) {
 	//받은 데이터로 모달창에 표시	
 	alert(feed_no);
 }	
+
+$('#editBtn').on('click',function(event){
+	self.location="/accounts/edit?user_no="+${memberVO.user_no};
+});
 	
     
 </script>

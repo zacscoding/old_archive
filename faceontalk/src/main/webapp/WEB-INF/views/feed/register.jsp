@@ -27,7 +27,7 @@
             					<img class="media-object" src="/resources/bootstrap/images/default_profile.png">	
             				</c:when>
             				<c:otherwise>
-            					<img class="media-object" src="${login.profile_pic}">
+            					<img class="media-object" src="/displayImage?fileName=${login.profile_pic}">
             				</c:otherwise>            				
             			</c:choose>            			
             		</a>
@@ -88,7 +88,7 @@ $(".fileDrop").on("drop", function(event){
 	formData.append("file", file);
 	
 	$.ajax({
-		  url: '/feed/uploadPic',
+		  url: '/uploadPic',
 		  data: formData,
 		  dataType:'text',
 		  processData: false,
@@ -115,7 +115,7 @@ $(".fileDrop").on("drop", function(event){
 $('.uploadedPic').on('click','small',function(event) {
 	var that = $(this);	
 	$.ajax({
-		url: '/feed/deleteImage',
+		url: '/deleteImage',
 		type: 'post',
 		data: {fileName:$(this).attr("data-src")},
 		dataType: 'text',

@@ -80,12 +80,11 @@
 	
 	<!-- 조회 ( by feed_no) -->
 	<select id="selectByFeedNum" resultType="FeedVO">
-		select
-			*
-		from
-			tbl_feed
-		where 
-			feed_no = #{feed_no}
+		select A.*,B.profile_pic 
+			from 
+		tbl_feed as A left join tbl_member as B on A.user_no_fk = B.user_no  
+			where 
+		A.feed_no = #{feed_no}		
 	</select>
 	
 	<!-- 수정 -->

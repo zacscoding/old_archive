@@ -34,11 +34,11 @@ import com.faceontalk.util.UploadFileUtils;
 @Controller
 @RequestMapping(value="/feed/*")
 public class FeedController {	
+	private static final String UPLOAD_PATH="c:\\faceontalk\\upload\\feed";
+	
 	private static final Logger logger = LoggerFactory.getLogger(FeedController.class);	
 	@Inject
 	private FeedService feedService;
-	
-	private static final String uploadPath="c:\\faceontalk\\upload\\feed";
 		
 	
 	/**		feed lists about search				*/
@@ -63,7 +63,7 @@ public class FeedController {
 		HashTagVO vo = feedService.selectTagByName(tag_name);		
 		
 		if(vo == null) {
-			model.addAttribute("msg","검색하신 #"+tag_name+ "태그는 존재하지 않습니다.");
+			model.addAttribute("msg","검색하신 \"#"+tag_name+ "\" 는 존재하지 않습니다.");
 			return;
 		}		
 		
@@ -121,7 +121,7 @@ public class FeedController {
 		rttr.addFlashAttribute("message", "SUCCESS");
 		
 		/**		temp code 	*/
-		return "redirect:/feed/result";				
+		return "redirect:/feed/list";				
 	}
 	
 	
@@ -144,6 +144,63 @@ public class FeedController {
 		return "redirect:/feed/result";	
 	}	
 	
+	
+	
+	
+	/**		Ajax		*/
+	
+	/**		ajax register pic	*/
+	@ResponseBody
+	@RequestMapping(value="/uploadPic",method=RequestMethod.POST, produces="test/plain;charset=UTF-8")
+	public ResponseEntity<String> uploadPicutre(MultipartFile file) throws Exception {		
+		ResponseEntity<String> entity = null;		
+		//이미지 타입인지 체크
+		String fileName = file.getOriginalFilename();
+		logger.info("/uploadPic  fileName : "+fileName);
+		
+		MediaType mediaType = MediaUtils.getMediaType(fileName.substring(fileName.lastIndexOf('.')+1));
+		
+		if(mediaType == null) { //이미지가 아니면
+			entity = new ResponseEntity<String>("notMatchedTypes",HttpStatus.OK);
+		} else { //이미지 이면
+			entity = new ResponseEntity<String>(
+					UploadFileUtils.uploadFile(UPLOAD_PATH, file.getOriginalFilename(), "f", file.getBytes()),
+					HttpStatus.CREATED );			
+		}		
+		return entity;
+	}	
+	
+	
+	/**		delete pic		*/
+	@ResponseBody
+	@RequestMapping(value="/deleteImage",method=RequestMethod.POST)
+	public ResponseEntity<String> deleteFile(String fileName,@PathVariable("type") String type) {
+		logger.info("delete file : "+fileName);			
+		
+		//파일 삭제
+		File file = new File(UPLOAD_PATH+fileName.replace('/',File.separatorChar));
+		
+		if(file.exists())
+			file.delete();		
+		return new ResponseEntity<String>("deleted",HttpStatus.OK);		
+	}
+	
+	/**		read		*/
+	@ResponseBody
+	@RequestMapping(value="/{feed_no}",method=RequestMethod.GET)
+	public ResponseEntity<FeedVO> getFeed(@PathVariable("feed_no") Integer feed_no) throws Exception {
+		logger.info("getFeed.." + feed_no);
+		
+		ResponseEntity<FeedVO> entity = null;
+		try {
+			entity = new ResponseEntity<FeedVO>(feedService.selectFeedByNum(feed_no),HttpStatus.OK);
+		} catch(Exception e) {
+			entity = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		}
+		
+ 		return entity;
+	}
+	
 	/**	remove	*/
 	// 게시글 삭제 -> tbl_tag에서 참조하는 피드가 0개이면 tag도 삭제할지 고민
 	@ResponseBody
@@ -161,59 +218,10 @@ public class FeedController {
 		}		
 		return entity;
 	}	
-	
+		
 	@RequestMapping(value="/result",method=RequestMethod.GET)
 	public void result() {
 		//empty
 	}
-	
-	
-	
-	
-	
-	/**		Ajax		*/	
-	/**		ajax register pic	*/
-	@ResponseBody
-	@RequestMapping(value="/uploadPic",method=RequestMethod.POST, produces="test/plain;charset=UTF-8")
-	public ResponseEntity<String> uploadPicutre(MultipartFile file) throws Exception {		
-		ResponseEntity<String> entity = null;
 		
-		//이미지 타입인지 체크
-		String fileName = file.getOriginalFilename();
-		logger.info("/uploadPic  fileName : "+fileName);
-		
-		MediaType mediaType = MediaUtils.getMediaType(fileName.substring(fileName.lastIndexOf('.')+1));
-		
-		if(mediaType == null) { //이미지가 아니면
-			entity = new ResponseEntity<String>("notMatchedTypes",HttpStatus.OK);
-		} else { //이미지 이면
-			entity = new ResponseEntity<String>(
-					UploadFileUtils.uploadFile(uploadPath, file.getOriginalFilename(), file.getBytes()),
-					HttpStatus.CREATED );
-		}		
-		return entity;
-	}	
-	
-	/**		delete pic		*/
-	@ResponseBody
-	@RequestMapping(value="/deleteImage",method=RequestMethod.POST)
-	public ResponseEntity<String> deleteFile(String fileName) {
-		logger.info("delete file : "+fileName);
-		
-		//썸네일 삭제
-		String front = fileName.substring(0,12);
-		String end = fileName.substring(14);
-		File file = new File(uploadPath+(front+end).replace('/',File.separatorChar));
-		if(file.exists())
-			file.delete();
-		
-		//원본 삭제
-		file = new File(uploadPath+fileName.replace('/',File.separatorChar));
-		if(file.exists())
-			file.delete();
-		
-		return new ResponseEntity<String>("deleted",HttpStatus.OK);		
-	}
-	
-	
 }
