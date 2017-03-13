@@ -1,7 +1,6 @@
 package com.faceontalk.controller.member;
 
 import java.io.File;
-import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -176,24 +175,22 @@ public class MemberController {
 	/**		delete profile pic		*/
 	@ResponseBody
 	@RequestMapping(value="/uploadPic",method=RequestMethod.DELETE)
-	public ResponseEntity<String> deleteFile(HttpServletRequest request, @RequestBody MemberVO vo) throws Exception {
+	public ResponseEntity<String> deleteFile(@RequestBody MemberVO vo) throws Exception {
 		
-		logger.info("deleteFile.. file name : "+vo.getProfile_pic());
+		logger.info("deleteFile.. file name : "+ vo.getProfile_pic());
+		
 		String fileName = vo.getProfile_pic();
+		
 		ResponseEntity<String> entity = null;
 		
 		//파일 삭제
 		File file = new File(UPLOAD_PATH+fileName.replace('/',File.separatorChar));
 		
-		try {
-			
+		try {			
 			memberService.editProfile(vo.getUser_no(),null);			
 			logger.info(file.getAbsolutePath());
 			if(file.exists()) 
 				file.delete();
-			
-			//session update
-			getLoginUser(request).setProfile_pic(null);
 			
 			entity = new ResponseEntity<String>("deleted",HttpStatus.OK); 
 		} catch(Exception e) {

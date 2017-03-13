@@ -4,7 +4,7 @@ public class LoginDTO {
 	
 	private String user_id;
 	private String password;
-	private boolean userCookie;
+	private boolean useCookie;
 	
 	//setters,getters,toString()
 	public String getUser_id() {
@@ -19,14 +19,15 @@ public class LoginDTO {
 	public void setPassword(String password) {
 		this.password = password;
 	}
-	public boolean isUserCookie() {
-		return userCookie;
+	public boolean isUseCookie() {
+		return useCookie;
 	}
-	public void setUserCookie(boolean userCookie) {
-		this.userCookie = userCookie;
+	public void setUseCookie(boolean useCookie) {
+		this.useCookie = useCookie;
 	}
 	@Override
 	public String toString() {
-		return "LoginDTO [user_id=" + user_id + ", password=" + password + ", userCookie=" + userCookie + "]";
-	}	
+		return "LoginDTO [user_id=" + user_id + ", password=" + password + ", useCookie=" + useCookie + "]";
+	}
+	
 }

@@ -16,7 +16,7 @@
 			<div class="profile-img">
 				<c:choose>
 					<c:when test="${empty memberVO.profile_pic}">					 
-						<img class="img-circle img-responsive" src="/resources/boostrap/images/default_profile.png">
+						<img class="img-circle img-responsive" src="/resources/bootstrap/images/default_profile.png">
 					</c:when>
 					<c:otherwise>
 						<img class="img-circle img-responsive" src="/displayImage?type=p&fileName=${memberVO.profile_pic}">
@@ -31,6 +31,7 @@
 				${memberVO.user_id}
 				<!-- 팔로우 하기 버튼 -->
 				<button type="button" class="btn btn-primary" id="editBtn">Edit Profile</button>
+				<button type="button" class="btn btn-success" id="logoutBtn">Logout</button>
 			</h2>
 			<div class="profile-info">
 				<div class="info">
@@ -87,7 +88,10 @@ function displayFeed(feed_no) {
 $('#editBtn').on('click',function(event){
 	self.location="/accounts/edit";
 });
-	
+
+$('#logoutBtn').on('click',function(event){
+	self.location="/user/logout";
+});
     
 </script>
 
