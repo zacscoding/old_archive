@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mypet.mapper.ProductMapper">
+	
+	<insert id="create">
+	insert into tbl_product (product_no, product_name, category_no_fk, cost_price, selling_price, 
+				profit, qty, hit, is_best, filesMain, reg_date)
+	values(product_seq.nextval, #{product_name}, #{category_no_fk}, #{cost_price}, #{selling_price},
+				(#{cost_price} - ${selling_price}), #{qty}, 0, #{is_best}, #{filesMain}, sysdate)
+	</insert>
+	
+	<select id="read" resultType="ProductVO">
+	select
+		*
+	from
+		tbl_product, tbl_product_content
+	where product_no = #{product_no}
+	and tbl_product.product_no = tbl_product_content.pno_fk
+	</select>
+	
+	<update id="update">
+	update tbl_product set
+		product_name = #{product_name}, cost_price = #{cost_price}, selling_price = #{selling_price},
+		profit = #{profit}, is_best = #{is_best}
+	where product_no = #{product_no}
+	</update>
+	
+	<delete id="delete">
+	delete from tbl_product where product_no = #{product_no}
+	</delete>
+	
+	<update id="updateHitCnt">
+	update tbl_product set hit = hit+1 where product_no = #{product_no}
+	</update>
+	
+	
+	<insert id="addFile">
+	insert into tbl_product_file(fullName, pno_fk) values(#{fullName}, product_seq.currval) 
+	</insert>
+	
+	<insert id="addContent">
+	insert into tbl_product_content(content, pno_fk) values(#{content}, product_seq.currval)
+	</insert>
+	
+	<select id="getFile" resultType="string">
+	select fullName from tbl_product_file where pno_fk = #{pno_fk} order by reg_date
+	</select>
+	
+	<delete id="deleteFile">
+	delete from tbl_product_file where pno_fk = #{pno_fk}
+	</delete>
+	
+	<delete id="deleteContent">
+	delete from tbl_product_content where pno_fk = #{pno_fk}
+	</delete>
+	
+	<insert id="replaceFile">
+	insert into tbl_product_file(fullName, pno_fk) values (#{fullName}, #{pno_fk})
+	</insert>
+	
+	<select id="getCategory" resultType="CategoryVO">
+	select
+		*
+	from
+		tbl_product_category
+	where animal_no_fk = #{animal_no}
+	</select>
+	
+	<select id="getAnimal" resultType="AnimalVO">
+	select
+		*
+	from
+		tbl_animal
+	</select>
+	
+	<sql id="search">
+		<if test="searchType != null">
+			<if test="searchType == 'c'.toString()">
+			and category_no_fk = #{keyword}
+			</if>
+			<if test="searchType == 'p'.toString()">
+			and product_name like CONCAT(CONCAT('%', #{keyword}), '%')
+			</if>
+			<if test="searchType == 'b'.toString()">
+			and is_best = #{keyword}
+			</if>
+		</if>
+		<if test="cateType != null">
+			and category_no_fk = #{cateType}
+		</if>
+	</sql>
+	
+	<sql id="order">
+		<if test="conditionType == null or conditionType == ''">
+		order by product_no desc
+		</if>
+		<if test="conditionType != null">
+			<if test="conditionType == 't'.toString()">
+			order by hit desc
+			</if>
+			<if test="conditionType == 'l'.toString()">
+			order by selling_price asc
+			</if>
+			<if test="conditionType == 'h'.toString()">
+			order by selling_price desc
+			</if>
+		</if>
+	</sql>
+	
+	<sql id="productType">
+		<if test="productType == 'n'.toString()">
+		and is_best = 'n'
+		</if>
+		<if test="productType == 'a'.toString()">
+		and is_best = 'n' or is_best = 'y'
+		</if>
+	</sql>
+	
+	<select id="listSearch" resultType="ProductVO">
+	<![CDATA[
+		select * from(
+		 select tbl_product.*, row_number() over (]]>
+		 <include refid="order"></include>
+		 <![CDATA[)R
+		from tbl_product where product_no > 0
+	]]>
+		<include refid="search"></include>
+		<include refid="productType"></include>
+	<![CDATA[	
+		) where R between #{pageStart} and #{pageLast}
+	]]>
+	</select>
+	
+	<select id="listSearchCount" resultType="int">
+	<![CDATA[
+		select count(product_no)
+		from tbl_product
+		where product_no > 0
+	]]>
+	<include refid="search"></include>
+	<include refid="productType"></include>
+	</select>
+	
+	<select id="bestSearch" resultType="ProductVO">
+	<![CDATA[
+		select * from(
+		select tbl_product.*, row_number() over (order by product_no desc)R
+		from tbl_product where product_no > 0
+		and is_best = 'y'
+		]]>
+		<include refid="search"></include>
+	<![CDATA[
+		order by hit asc
+		) where R <= 12
+	]]>
+	</select>
+	
+	
+</mapper>
