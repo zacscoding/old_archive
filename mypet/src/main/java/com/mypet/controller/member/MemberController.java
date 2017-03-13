@@ -34,7 +34,7 @@ import com.mypet.util.EmailSenderUtil;
 @RequestMapping("/user/*")
 public class MemberController {
 	private final Logger logger = LoggerFactory.getLogger(MemberController.class);
-	private static final String USER_JOIN_SUCCESS = "/user/joinSuccess";
+	private static final String USER_JOIN_SUCCESS = "/user/loginform";
 	private static final String USER_JOIN_FORM = "/user/join";	
 	
 	@Inject
