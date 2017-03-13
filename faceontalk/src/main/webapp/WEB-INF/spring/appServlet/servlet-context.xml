@@ -34,8 +34,8 @@
 	
 	<interceptors>
 		<!-- 
-		login post시
-		 pre 
+			login post시
+		 	pre 
 		 -->
 		<interceptor>
 			<mapping path="/user/loginPost"/>
@@ -47,13 +47,10 @@
 			pre : 세션 및 쿠키로 로그인 체크 > request에 요청 경로 저장 
 		 -->
 		<interceptor>
-			<mapping path="/"/>			
-			<mapping path="/feed/*"/>			
+			<mapping path="/feed/*"/>
+			<mapping path="/accounts/*"/>			
 			<beans:ref bean="authInterceptor"/>
 		</interceptor>		
-	</interceptors>
-	
-	
-	
+	</interceptors>	
 	
 </beans:beans>

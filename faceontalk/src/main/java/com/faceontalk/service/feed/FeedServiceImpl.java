@@ -29,14 +29,10 @@ public class FeedServiceImpl implements FeedService {
 	@Inject
 	private ReplyDAO replyDAO;
 	
-	/////////////////////////////
-	//feed	
-	@Override	
-	public List<FeedVO> listSearchCriteria(SearchCriteria cri) throws Exception {
-		//not yet implement
-		 return null;
-	}	
+	/**		feed	*/
 	
+	/*	Read	*/		
+	//read login user, followers
 	@Override
 	public List<FeedVO> listFollowersFeeds(Criteria cri, Integer user_no) throws Exception {
 		List<FeedVO> feedList = feedDAO.listFollowersFeeds(cri, user_no); 
@@ -45,19 +41,42 @@ public class FeedServiceImpl implements FeedService {
 			vo.setReplyList(replyDAO.list(vo.getFeed_no(), 1, REPLY_LIMIT_SIZE ));
 		}
 		return feedList;
-	}
-	
+	}	
 	@Override
 	public int listFollowersFeedCount(Integer user_no) throws Exception {
 		return feedDAO.listFollowersFeedCount(user_no);
-	}	
-	@Override
-	public void modifyReplyCount(Integer feed_no, boolean isIncrease) throws Exception {
-		feedDAO.modifyReplyCount(feed_no,isIncrease);	
 	}
 	
+	//read only users feed
+	@Override
+	public List<FeedVO> listUsersFeedPics(Integer user_no) throws Exception {
+		List<FeedVO> feedList = feedDAO.listUsersFeedPics(user_no);
+		return feedList;
+	}
+
+	//read search by tag_id
+	@Override
+	public List<FeedVO> listFeedsByTag(Criteria cri,Integer tag_id) throws Exception {
+		return feedDAO.listFeedsByTag(cri,tag_id);
+	}	
+	@Override
+	public int listCountsByTagCount(Integer tag_id) throws Exception {
+		return feedDAO.listCountsByTagCount(tag_id);
+	}	
 	
+	//read all feed
+	@Override
+	public List<FeedVO> listAllFeeds(Criteria cri) throws Exception {
+		return feedDAO.listAllFeeds(cri);
+	}	
+	@Override
+	public int listAllFeedCount() throws Exception {
+		return feedDAO.listAllFeedCount();
+	}
 	
+		
+	/*	Create	*/
+	/***/
 	@Transactional
 	@Override
 	public void register(FeedVO vo) throws Exception {
@@ -69,8 +88,7 @@ public class FeedServiceImpl implements FeedService {
 			for (String tag_name : hashTags) {
 				registFeedAndTag(feed_no, tag_name);
 			}
-		}	
-		
+		}			
 //		//sol1) ---> 이걸로 다시 하기
 //		if(!hashTags.isEmpty()) { //exist hash tag
 //			//새로 삽입된 피드 가져오기(필요한건 feed_no)
@@ -91,7 +109,6 @@ public class FeedServiceImpl implements FeedService {
 //			}
 //		}
 	}
-		
 	
 	@Override
 	public FeedVO getLastInsertedFeed() throws Exception {		
@@ -160,7 +177,12 @@ public class FeedServiceImpl implements FeedService {
 		feedDAO.removeRelation(feed_no,null);
 		replyDAO.removeAll(feed_no);
 	}
-
+	
+	@Override
+	public void modifyReplyCount(Integer feed_no, boolean isIncrease) throws Exception {
+		feedDAO.modifyReplyCount(feed_no,isIncrease);	
+	}
+	
 	
 	/////////////////////////////
 	//tag	
@@ -205,5 +227,7 @@ public class FeedServiceImpl implements FeedService {
 			tag = getLastInsertedTag();
 		}				
 		registerRelation(feed_no,tag.getTag_id());
-	}	
+	}
+	
+	
 }

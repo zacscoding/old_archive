@@ -11,8 +11,12 @@ public interface FeedDAO {
 	//feed
 	public List<FeedVO> listFollowersFeeds(Criteria cri,Integer user_no) throws Exception;
 	public int listFollowersFeedCount(Integer user_no) throws Exception;
-	
-//	public List<FeedVO> listSearch(SearchCriteria cri) throws Exception;
+	public List<FeedVO> listFeedsByTag(Criteria cri,Integer tag_id) throws Exception;
+	public int listCountsByTagCount(Integer tag_id) throws Exception;
+	public List<FeedVO> listUsersFeedPics(Integer user_no) throws Exception;
+	public List<FeedVO> listAllFeeds(Criteria cri) throws Exception;
+	public int listAllFeedCount() throws Exception;
+		
 	public void register(FeedVO vo) throws Exception;	
 	public FeedVO selectByFeedNo(Integer feed_no) throws Exception;
 	public void remove(Integer feed_no) throws Exception;

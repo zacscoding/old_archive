@@ -17,7 +17,7 @@ public class UploadFileUtils {
 	private static final Logger logger = LoggerFactory.getLogger(UploadFileUtils.class);
 
 	/*	thumbnail 생성 파일(경로포함)	 반환		*/
-	public static String uploadFile(String uploadPath, String originalName, byte[] fileData) throws Exception {
+	public static String uploadFile(String uploadPath, String originalName,String type, byte[] fileData) throws Exception {
 		// 파일 고유 아이디
 		UUID uid = UUID.randomUUID();
 
@@ -27,29 +27,36 @@ public class UploadFileUtils {
 		// 저장 경로 (년/월/일/)
 		String savedPath = calcPath(uploadPath);
 		logger.info("UploadFileUtils.uploadFile() : " + uploadPath + savedPath);
+		
 		File target = new File(uploadPath + savedPath, savedName);
 
 		FileCopyUtils.copy(fileData, target);
 
-		return makeThumbnail(uploadPath, savedPath, savedName);		
+		return makeThumbnail(uploadPath, savedPath, savedName, type);		
 	}
 	
 	/*	이미지 크기 조정	*/
-	private static String makeThumbnail(String uploadPath, String path, String fileName) throws Exception {
+	private static String makeThumbnail(String uploadPath, String path, String fileName, String type) throws Exception {
 		File originalFile = new File(uploadPath + path, fileName);
 		
-		BufferedImage originalImage = ImageIO.read(originalFile);
-				
+		BufferedImage originalImage = ImageIO.read(originalFile);				
+		
+		
 		int imgwidth = Math.min(originalImage.getHeight(),  originalImage.getWidth());
 		
-		int imgheight = imgwidth;
+		int imgheight = imgwidth;		
 			
 		BufferedImage scaledImage = Scalr.crop(originalImage, (originalImage.getWidth() - imgwidth)/2, (originalImage.getHeight() - imgheight)/2, imgwidth, imgheight, null);
 		
-		BufferedImage resizedImage = Scalr.resize(scaledImage, 640,640, null);
+		BufferedImage resizedImage = null;
 		
-		String thumbnailName = uploadPath + path + File.separator + "s_" + fileName;
+		if(type.equals("f"))		
+			resizedImage =  Scalr.resize(scaledImage, 640,640, null);
+		else if(type.equals("p"))
+			resizedImage = Scalr.resize(scaledImage, 100, 100, null);
+			
 		
+		String thumbnailName = uploadPath + path + File.separator + "s_" + fileName;		
 		
 		File newFile = new File(thumbnailName);
 		
@@ -67,9 +74,13 @@ public class UploadFileUtils {
 	private static String calcPath(String uploadPath) {
 		
 		Calendar cal = Calendar.getInstance();
+		
 		String yearPath = File.separator + cal.get(Calendar.YEAR);
+		
 		String monthPath = yearPath + File.separator + new DecimalFormat("00").format(cal.get(Calendar.MONTH) + 1);
+		
 		String datePath = monthPath + File.separator + new DecimalFormat("00").format(cal.get(Calendar.DATE));
+		
 		makeDir(uploadPath, yearPath, monthPath, datePath);
 
 		logger.info(datePath);

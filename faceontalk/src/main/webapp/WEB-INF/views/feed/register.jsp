@@ -27,7 +27,7 @@
             					<img class="media-object" src="/resources/bootstrap/images/default_profile.png">	
             				</c:when>
             				<c:otherwise>
-            					<img class="media-object" src="${login.profile_pic}">
+            					<img class="media-object" src="/displayImage?fileName=${login.profile_pic}">
             				</c:otherwise>            				
             			</c:choose>            			
             		</a>
@@ -98,7 +98,6 @@ $(".fileDrop").on("drop", function(event){
 			 if(data=='notMatchedTypes') {
 				 
 			 } else {
-				 alert(data);
 				 str="<div><img src='/displayImage?type=f&fileName="+data+"'/>"
 				 	+ "<small id='file_name' data-src="+data+">X</small></div>";
 				 $('#file_name').attr('value',data); //file_name 속성	
@@ -113,11 +112,14 @@ $(".fileDrop").on("drop", function(event){
 
 //파일 이미지 삭제 
 $('.uploadedPic').on('click','small',function(event) {
-	var that = $(this);	
+	var that = $(this);
 	$.ajax({
-		url: '/feed/deleteImage',
-		type: 'post',
-		data: {fileName:$(this).attr("data-src")},
+		url: '/feed/uploadPic',
+		type: 'delete',
+		headers: { 
+		      "Content-Type": "application/json",
+		      "X-HTTP-Method-Override": "delete" },
+		data: {fileName:$(this).attr("data-src")},				      	
 		dataType: 'text',
 		success:function(result) {
 			if(result == 'deleted') {				

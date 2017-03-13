@@ -11,7 +11,8 @@
 		
 		<c:if test="${not empty msg}">
 			<div class="alert alert-info">${msg}</div>
-		</c:if>		
+		</c:if>
+
 		<!-- 피드 박스 -->
 		<c:forEach var="vo" items="${feedList}" varStatus="status">
 			<input type="hidden" id="feed_no_fk">
@@ -54,12 +55,13 @@
 				<div class="social-body">
 					<!-- 이미지 -->
 					<img src="/displayImage?type=f&fileName=${vo.file_name}"
-						class="img-responsive"><br/>
+						class="img-responsive">
+
 					<!-- 컨텐츠 -->
-					<h4>					
+					
+					<h4>
 					${vo.content}
 					</h4>
-					
 					
 					<!-- 버튼 -->
 					<c:if test="${vo.reply_count>3}">
@@ -76,7 +78,7 @@
 					<!-- 댓글 시작-->
 					<div class="social-comment" id="commentDisplay${vo.feed_no}">
 						<c:forEach var="replyVO" items="${vo.replyList}">
-							<li class='pull-left' id="rno${replyVO.rno}">						
+							<li class='pull-left' id="rno${replyVO.rno}">							
 							
 							<!-- 댓글 작성자 -->
 							<a href="/accounts/detail?user_id=${replyVO.user_id_fk}">${replyVO.user_id_fk}</a>							
@@ -119,7 +121,7 @@
 			<ul class="pagination">
 				<c:if test="${pageMaker.prev}">
 					<li><a
-						href="list${pageMaker.makeQuery(pageMaker.startPage-1)}">«</a></li>
+						href="/feed/searchList${pageMaker.makeSearch(pageMaker.startPage-1)}">«</a></li>
 				</c:if>
 				
 				<c:if test="${pageMaker.startPage != 0}">				
@@ -127,13 +129,13 @@
 						var="idx">
 						<li
 							<c:out value="${pageMaker.cri.page==idx? 'class =active':''}" />>
-							<a href="list${pageMaker.makeQuery(idx)}">${idx}</a>
+							<a href="/feed/searchList${pageMaker.makeSearch(idx)}">${idx}</a>
 						</li>
 					</c:forEach>
 				</c:if>
 
 				<c:if test="${pageMaker.next && pageMaker.endPage > 0}">
-					<li><a href="list${pageMaker.makeQuery(pageMaker.endPage +1)}">»</a></li>
+					<li><a href="/feed/searchList${pageMaker.makeSearch(pageMaker.endPage +1)}">»</a></li>
 				</c:if>
 			</ul>
 		</div>

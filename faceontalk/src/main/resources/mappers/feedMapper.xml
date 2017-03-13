@@ -5,32 +5,69 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.faceontalk.mapper.FeedMapper">
-	<!-- 피드리스트 + 페이지 처리 -->
-	<select id="listSearch" resultType="FeedVO">
-		select
-			*
-		from
-			tbl_feed
-		where 
-			feed_no = 1		
-		order by feed_no desc,regdate desc
-		limit #{pageStart},#{perPageNum}
-	</select>
+
 
 	<!-- tbl_feed left join tbl_member (feed.* + member.profile_pic) -->	
 	<select id="listFollowersFeeds" resultType="FeedVO">
-		select A.*,B.profile_pic from tbl_feed as A left join tbl_member as B on A.user_no_fk = B.user_no  
-		where (A.user_no_fk = #{user_no}) 
-		or (A.user_no_fk in (select following from tbl_follow where follower = #{user_no} ))
+		select A.*,B.profile_pic 
+			from 
+		tbl_feed as A left join tbl_member as B on A.user_no_fk = B.user_no  
+			where 
+		(A.user_no_fk = #{user_no})				
+				or 
+		(A.user_no_fk in (select following from tbl_follow where follower = #{user_no} ))		
+		order by feed_no desc		
+		limit #{cri.pageStart},#{cri.perPageNum}
+								
+	</select>	
+	
+	<select id="listFollowersFeedCount" resultType="int">
+		select count(feed_no) from tbl_feed 
+			where 
+		(user_no_fk = #{user_no} ) 
+			or
+		(user_no_fk in (select following from tbl_follow where follower = #{user_no} ) )
+		order by feed_no desc	
+	</select>
+	
+	
+	<!-- feed list pics only user -->
+	<select id="listUsersFeedPics" resultType="FeedVO">
+		select feed_no,file_name 
+			from
+		tbl_feed
+			where user_no_fk = #{user_no} order by feed_no desc 
+	</select>
+		
+	<!-- 태그로 피드 찾기 -->
+	<select id="listFeedsByTag" resultType="FeedVO">
+		select A.*,B.profile_pic
+			 from
+		tbl_feed as A left join tbl_member as B on A.user_no_fk = B.user_no  
+			where 
+		feed_no in (select feed_no from tbl_tagFeedRelations where tag_id = #{tag_id})
 		order by feed_no desc
 		limit #{cri.pageStart},#{cri.perPageNum}
 	</select>	
 	
-	<select id="listFollowersFeedCount" resultType="int">
-		select count(feed_no) from tbl_feed where (user_no_fk = #{user_no} ) 
-		or (user_no_fk in (select following from tbl_follow where follower = #{user_no} ))
-		order by feed_no desc	
+	<!-- 태그로 피드 갯수 새기 -->			
+	<select id="listCountsByTagCount" resultType="int">
+		select count(feed_no) from tbl_tagFeedRelations where tag_id = #{tag_id}
 	</select>
+	
+	<!-- 모든 피드 -->
+	<select id="listAllFeeds" resultType="FeedVO">
+		select A.*,B.profile_pic
+			 from
+		tbl_feed as A left join tbl_member as B on A.user_no_fk = B.user_no
+			order by feed_no desc limit #{pageStart},#{perPageNum}		
+	</select>
+	
+	<select id="listAllFeedCount" resultType="int">
+		select count(feed_no) from tbl_feed;
+	</select>
+	
+	
 	
 		
 	<!-- 피드 등록 -->
@@ -43,12 +80,11 @@
 	
 	<!-- 조회 ( by feed_no) -->
 	<select id="selectByFeedNum" resultType="FeedVO">
-		select
-			*
-		from
-			tbl_feed
-		where 
-			feed_no = #{feed_no}
+		select A.*,B.profile_pic 
+			from 
+		tbl_feed as A left join tbl_member as B on A.user_no_fk = B.user_no  
+			where 
+		A.feed_no = #{feed_no}		
 	</select>
 	
 	<!-- 수정 -->

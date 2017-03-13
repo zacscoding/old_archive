@@ -26,11 +26,5 @@ public class HashTagVO {
 	@Override
 	public int hashCode() {
 		return tag_name.hashCode();
-	}
-	
-	
-	
-	
-	
-	
+	}	
 }

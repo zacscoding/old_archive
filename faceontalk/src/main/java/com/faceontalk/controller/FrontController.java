@@ -14,6 +14,8 @@ public class FrontController {
 		return "redirect:/feed/list";
 	}
 	
+	
+	
 	/**
 	 *  View Page test methods
 	 */
@@ -31,6 +33,11 @@ public class FrontController {
 		
 	}
 	
+	@RequestMapping(value="/test6",method=RequestMethod.GET)
+	public void test6GET() throws Exception {
+		
+	}
+	
 	@RequestMapping(value="/testFeed",method=RequestMethod.GET)
 	public String testFeed() throws Exception {
 		return "/feed/list2";
@@ -39,7 +46,7 @@ public class FrontController {
 	/*	test header	*/
 	@RequestMapping("/header")
 	public String test() {
-		return "/include/header";
+		return "/include/header3";
 	}
 	
 	/*	test user detail*/

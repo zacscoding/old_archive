@@ -26,13 +26,11 @@ public class LoginServiceImpl implements LoginService {
 	public MemberVO login(LoginDTO dto) throws Exception {
 		
 		MemberVO vo = dao.searchById(dto.getUser_id());
-		logger.info(vo.toString());
-		System.out.println(dto.getPassword());
-		//mismatch id or password
-		if(vo == null || !passwordEncoder.matches(dto.getPassword(),vo.getPassword())) {
-			System.out.println("not match password");
+		
+		if(vo == null || !passwordEncoder.matches(dto.getPassword(),vo.getPassword())) {			
 			vo = null;
 		}
+		
 		return vo;
 	}
 

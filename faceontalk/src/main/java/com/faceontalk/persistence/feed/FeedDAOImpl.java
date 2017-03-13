@@ -21,23 +21,12 @@ public class FeedDAOImpl implements FeedDAO {
 	
 	/////////////////////
 	//feed	
+	/////////////////////
 	
 	/*		regist feed		*/
 	@Override
 	public void register(FeedVO vo) throws Exception {
 		session.insert(namespace+".register",vo);
-	}
-	
-	/*		select one by feed_no		*/
-	@Override
-	public FeedVO selectByFeedNo(Integer feed_no) throws Exception {
-		return session.selectOne(namespace+".selectByFeedNum", feed_no);		
-	}
-	
-	/*		select one by last inserted		*/
-	@Override
-	public FeedVO getLastInsertedFeed() throws Exception {		
-		return session.selectOne(namespace+".getLastInsertedFeed");
 	}
 	
 	/*		update feed		*/
@@ -54,8 +43,7 @@ public class FeedDAOImpl implements FeedDAO {
 		paramMap.put("delta",delta);
 		
 		session.update(namespace+".updateReplyCount", paramMap);
-	}
-	
+	}	
 
 	/*		remove feed		*/
 	@Override
@@ -63,13 +51,6 @@ public class FeedDAOImpl implements FeedDAO {
 		session.delete(namespace+".remove",feed_no);
 	}
 	
-	/*		select feed_no with last inserted		*/
-	@Override
-	public int getLastInsertedFeedNum() throws Exception {
-		return session.selectOne(namespace+".getLastInsertedFeedNum");
-	}
-	
-
 	/*		modify reply count		*/
 	@Override
 	public void modifyReplyCount(Integer feed_no, boolean isIncrease) throws Exception {
@@ -86,39 +67,80 @@ public class FeedDAOImpl implements FeedDAO {
 
 	
 	
-	////////////////////
-	// get lists
-	////////////////////
-	//followers
+	/*	read 	*/
+	
+	/*		select one by feed_no		*/
+	@Override
+	public FeedVO selectByFeedNo(Integer feed_no) throws Exception {
+		return session.selectOne(namespace+".selectByFeedNum", feed_no);		
+	}
+	
+	/*		select one by last inserted		*/
+	@Override
+	public FeedVO getLastInsertedFeed() throws Exception {		
+		return session.selectOne(namespace+".getLastInsertedFeed");
+	}	
+	
+	/*		select feed_no with last inserted		*/
+	@Override
+	public int getLastInsertedFeedNum() throws Exception {
+		return session.selectOne(namespace+".getLastInsertedFeedNum");
+	}
+	
+	//followers and mine
 	@Override
 	public List<FeedVO> listFollowersFeeds(Criteria cri, Integer user_no) throws Exception {
 		Map<String,Object> paramMap = new HashMap<>();
 		paramMap.put("cri",cri);
-		paramMap.put("user_no",user_no);
+		paramMap.put("user_no",user_no);		
 		return session.selectList(namespace+".listFollowersFeeds",paramMap);				
 	}
-	//followers feed count
+	
+	//followers and mine feed count
 	@Override
 	public int listFollowersFeedCount(Integer user_no) throws Exception {		
 		return session.selectOne(namespace+".listFollowersFeedCount",user_no);
 	}
+	
+	//users feed
+	@Override
+	public List<FeedVO> listUsersFeedPics(Integer user_no) throws Exception {		
+		return session.selectList(namespace+".listUsersFeedPics",user_no);	
+	}
+	
+	// feed including tag list 
+	@Override
+	public List<FeedVO> listFeedsByTag(Criteria cri,Integer tag_id) throws Exception {
+		Map<String,Object> paramMap = new HashMap<>();
+		paramMap.put("cri",cri);
+		paramMap.put("tag_id",tag_id);
+		
+		return session.selectList(namespace+".listFeedsByTag",paramMap);
+	}
+	
+	// feed including tag list count
+	@Override
+	public int listCountsByTagCount(Integer tag_id) throws Exception {
+		return session.selectOne(namespace+".listCountsByTagCount",tag_id);
+	}
+	
 
+	// all feeds
+	@Override
+	public List<FeedVO> listAllFeeds(Criteria cri) throws Exception {
+		return session.selectList(namespace+".listAllFeeds",cri);
+	}
 	
+	@Override
+	public int listAllFeedCount() throws Exception {
+		return session.selectOne(namespace+".listAllFeedCount");
+	}
 	
-	
-	
-	
-//	//search
-//	@Override
-//	public List<FeedVO> listSearch(SearchCriteria cri) throws Exception {
-//		return session.selectList(namespace+".listSearch",cri);
-//	}
-//	
 
-
-
+		
 	/////////////////////
 	//tag
+	/////////////////////
 	@Override
 	public void registerTag(String tag_name) throws Exception {
 		session.insert(namespace+".registerTag", tag_name);		
@@ -140,6 +162,8 @@ public class FeedDAOImpl implements FeedDAO {
 		
 	/////////////////////
 	//relation with feed and tag
+	/////////////////////
+	
 	@Override
 	public void registerRelation(Integer feed_no, Integer tag_id) throws Exception {
 		Map<String,Integer> paramMap = new HashMap<>();
@@ -160,9 +184,7 @@ public class FeedDAOImpl implements FeedDAO {
 //		}
 	}
 
-	
-	
-	
+
 }
 
 
