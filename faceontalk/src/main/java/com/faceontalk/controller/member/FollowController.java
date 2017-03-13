@@ -34,17 +34,13 @@ public class FollowController {
 												@PathVariable("following") Integer following) throws Exception {
 		
 		ResponseEntity<String> entity = null;		
-		try {		
-			
+		try {					
 			//regist follow 
 			FollowVO vo = new FollowVO();
 			vo.setFollower(follower);
-			vo.setFollowing(following);
-			
-			memberService.regist(vo);
-			
-			entity = new ResponseEntity<String>("SUCCESS",HttpStatus.OK);
-			
+			vo.setFollowing(following);			
+			memberService.regist(vo);			
+			entity = new ResponseEntity<String>("SUCCESS",HttpStatus.OK);			
 		} catch(Exception e) {
 			entity = new ResponseEntity<String>(e.getMessage(),HttpStatus.BAD_REQUEST);			
 		}		
