@@ -21,7 +21,7 @@
 					<a href="/accounts/detail?user_id=${vo.user_id_fk}" class="pull-left">
 					<c:choose>
 						<c:when test="${empty vo.profile_pic}">					 
-							<img class="img-circle img-responsive" src="http://dimg.donga.com/wps/SPORTS/IMAGE/2016/02/01/76251832.2.jpg">
+							<img class="img-circle img-responsive" src="/resources/bootstrap/images/default_profile.png">
 						</c:when>
 						<c:otherwise>
 							<img class="img-circle img-responsive" src="/displayImage?type=p&fileName=${vo.profile_pic}">

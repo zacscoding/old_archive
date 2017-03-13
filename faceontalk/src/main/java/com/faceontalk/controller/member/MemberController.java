@@ -1,5 +1,7 @@
 package com.faceontalk.controller.member;
 
+import java.io.File;
+import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -71,8 +73,11 @@ public class MemberController {
 		
 	/** 	edit account	*/
 	@RequestMapping(value="/edit", method = RequestMethod.GET)
-	public String editGet(Integer user_no,Model model) throws Exception {
-		model.addAttribute("vo",memberService.searchByNum(user_no));
+	public String editGet(HttpServletRequest request, Model model) throws Exception {
+		HttpSession session = request.getSession();
+		MemberVO vo = (MemberVO) session.getAttribute("login");
+		
+		model.addAttribute("vo",memberService.searchByNum(vo.getUser_no()));
 		return "/user/edit";
 	}	
 	
@@ -85,9 +90,11 @@ public class MemberController {
 			if(anotherUser != null) {
 				throw new DuplicateIdException();
 			}
+			
 			//update db
 			memberService.edit(vo);			
-			vo = memberService.searchByNum(vo.getUser_no());			
+			vo = memberService.searchByNum(vo.getUser_no());	
+			
 			//update session
 			HttpSession session = request.getSession();
 			session.setAttribute("login",vo);
@@ -137,7 +144,9 @@ public class MemberController {
 	/**		Upload profile		*/
 	@ResponseBody
 	@RequestMapping(value="/uploadPic/{user_no}",method=RequestMethod.POST, produces="test/plain;charset=UTF-8")
-	public ResponseEntity<String> uploadPicutre(@PathVariable("user_no") Integer user_no ,MultipartFile file) throws Exception {		
+	public ResponseEntity<String> uploadPicutre(@PathVariable("user_no") Integer user_no,
+													HttpServletRequest request,
+													MultipartFile file) throws Exception {		
 		ResponseEntity<String> entity = null;		
 		//이미지 타입인지 체크
 		String fileName = file.getOriginalFilename();
@@ -147,15 +156,52 @@ public class MemberController {
 			if(mediaType == null) { //이미지가 아니면
 				entity = new ResponseEntity<String>("notMatchedTypes",HttpStatus.OK);
 			} else { //이미지 이면
-				String savedFileName  = UploadFileUtils.uploadFile(UPLOAD_PATH, file.getOriginalFilename(), "f", file.getBytes());
+				
+				//db update
+				String savedFileName  = UploadFileUtils.uploadFile(UPLOAD_PATH, file.getOriginalFilename(), "p", file.getBytes());
 				memberService.editProfile(user_no, savedFileName);
+				
+				//session update
+				MemberVO vo = getLoginUser(request);
+				vo.setProfile_pic(savedFileName);
+				
 				entity = new ResponseEntity<String>(savedFileName,HttpStatus.CREATED );			
 			}			
 		} catch(Exception e) {
 			entity = new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
 		}		
 		return entity;
-	}	
+	}
+	
+	/**		delete profile pic		*/
+	@ResponseBody
+	@RequestMapping(value="/uploadPic",method=RequestMethod.DELETE)
+	public ResponseEntity<String> deleteFile(HttpServletRequest request, @RequestBody MemberVO vo) throws Exception {
+		
+		logger.info("deleteFile.. file name : "+vo.getProfile_pic());
+		String fileName = vo.getProfile_pic();
+		ResponseEntity<String> entity = null;
+		
+		//파일 삭제
+		File file = new File(UPLOAD_PATH+fileName.replace('/',File.separatorChar));
+		
+		try {
+			
+			memberService.editProfile(vo.getUser_no(),null);			
+			logger.info(file.getAbsolutePath());
+			if(file.exists()) 
+				file.delete();
+			
+			//session update
+			getLoginUser(request).setProfile_pic(null);
+			
+			entity = new ResponseEntity<String>("deleted",HttpStatus.OK); 
+		} catch(Exception e) {
+			entity = new ResponseEntity<String>("failed",HttpStatus.OK);
+		}	
+		
+		return entity; 		
+	}
 	
 	
 	/**	Search Member	*/	
@@ -232,6 +278,12 @@ public class MemberController {
 		}				
 		model.addAttribute("memberList",memberList);		
 		return "/user/list";
+	}
+	
+	/////////////////
+	// private methods
+	private MemberVO getLoginUser(HttpServletRequest request) {
+		return (MemberVO)(request.getSession().getAttribute("login"));
 	}
 
 }

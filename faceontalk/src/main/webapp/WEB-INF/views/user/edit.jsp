@@ -6,8 +6,8 @@
 
 <style>
 	.fileDrop {
-	  width: 20%;
-	  height: 100px;
+	  width: 30%;
+	  height: 150px;
 	  border: 1px dotted blue;	    
 	}	
 	small {
@@ -25,8 +25,22 @@
 	 <h3 class="text-primary">Edit profile</h3>
 		<div class="row col-sm-4 col-lg-4">
 			<h4>Profile Pic</h4>
-			<div class="fileDrop" style="display:block">&nbsp;<Strong>Drag and drop</Strong> profile image here</div>
-			<div class="uploadedPic" style="display:none"></div>						       
+			
+			<input type="hidden" id="fileName" value="${vo.profile_pic}">
+						
+			<c:choose>
+				<c:when test="${empty vo.profile_pic}">
+					<div class="fileDrop" style="display:block">&nbsp;<Strong>Drag and drop</Strong> profile image here</div>
+					<div class="uploadedPic" style="display:none"></div>		
+				</c:when>				
+				<c:otherwise>
+					<div class="fileDrop" style="display:none">&nbsp;<Strong>Drag and drop</Strong> profile image here</div>
+					<div class="uploadedPic">
+						<img class='img-circle' src='/displayImage?type=p&fileName=${vo.profile_pic}'/>
+						<small id='file_name' data-src='${vo.profile_pic}'>X</small>
+					</div>
+				</c:otherwise>
+			</c:choose>			
 						 
 		</div>
 		<div class="row col-sm-4 col-lg-4">	 	
@@ -100,7 +114,7 @@
 	
 </div>   
 <script>
-
+$(document).ready(function(){
 	//비밀번호 변경
 	$('#pwChangeBtn').on('click',function(event) {
 		event.preventDefault();		
@@ -130,8 +144,7 @@
 				}			
 			});		
 		}
-	});	
-	
+	});
 	
 	//프로필 업로드
 	//이미지 타입인지 체크
@@ -162,11 +175,13 @@
 			  contentType: false,
 			  type: 'POST',
 			  success: function(data){
-				 if(data=='notMatchedTypes') {
+				 if(data=='notMatchedTypes') { 
 					 
 				 } else {
 					 str="<img class='img-circle' src='/displayImage?type=p&fileName="+data+"'/>"
-					 	+ "<small id='file_name' data-src="+data+">X</small>";							 	
+					 	+ "<small>X</small>";
+					 	
+					 $('#fileName').val(data); //파일 이름 hidden	
 					 $('.fileDrop').css('display','none'); // 드랍창 숨기기				 
 					 $('.uploadedPic').append(str); // 썸네일 이미지 보이기
 					 $('.uploadedPic').css('display','block');					 
@@ -175,7 +190,30 @@
 		});	
 	});	
 	
-
+	//파일 이미지 삭제 
+	//processData :false == 일반적인 query string으로 변환 false
+	$('.uploadedPic').on('click','small',function(event) {
+		var profile_pic =  $('#fileName').val();
+		var user_no = '${login.user_no}';
+		$.ajax({
+			url: '/accounts/uploadPic',
+			type: 'delete',
+			headers: { 
+			      "Content-Type": "application/json",
+			      "X-HTTP-Method-Override": "delete" },
+			data: JSON.stringify({user_no:user_no,profile_pic:profile_pic}),			      
+			dataType: 'text',
+			success:function(result) {
+				if(result == 'deleted') {
+					$('.uploadedPic').empty(); //기존 사진 지우기
+					$('.fileDrop').css('display','block'); //드랍창 보이기
+					$('.uploadedPic').css('display','none'); //기존 이미지 창 숨기기
+					$('#fileName').val(''); //파일 이름 hidden  지우기
+				}
+			}		
+		});	
+	});
+});
 
 
 </script>

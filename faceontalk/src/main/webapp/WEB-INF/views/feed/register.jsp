@@ -88,7 +88,7 @@ $(".fileDrop").on("drop", function(event){
 	formData.append("file", file);
 	
 	$.ajax({
-		  url: '/uploadPic',
+		  url: '/feed/uploadPic',
 		  data: formData,
 		  dataType:'text',
 		  processData: false,
@@ -98,7 +98,6 @@ $(".fileDrop").on("drop", function(event){
 			 if(data=='notMatchedTypes') {
 				 
 			 } else {
-				 alert(data);
 				 str="<div><img src='/displayImage?type=f&fileName="+data+"'/>"
 				 	+ "<small id='file_name' data-src="+data+">X</small></div>";
 				 $('#file_name').attr('value',data); //file_name 속성	
@@ -113,11 +112,14 @@ $(".fileDrop").on("drop", function(event){
 
 //파일 이미지 삭제 
 $('.uploadedPic').on('click','small',function(event) {
-	var that = $(this);	
+	var that = $(this);
 	$.ajax({
-		url: '/deleteImage',
-		type: 'post',
-		data: {fileName:$(this).attr("data-src")},
+		url: '/feed/uploadPic',
+		type: 'delete',
+		headers: { 
+		      "Content-Type": "application/json",
+		      "X-HTTP-Method-Override": "delete" },
+		data: {fileName:$(this).attr("data-src")},				      	
 		dataType: 'text',
 		success:function(result) {
 			if(result == 'deleted') {				

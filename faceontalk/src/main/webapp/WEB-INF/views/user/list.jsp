@@ -26,13 +26,12 @@
 			<c:choose>
 				<c:when test="${not empty vo.profile_pic}">
 					<a class="pull-left" href="/accounts/detail?user_id=${vo.user_id}">
-						<img class="media-object" src="/displayImage?fileName=${vo.profile_pic}">
+						<img class="media-object img-circle img-responsive" src="/displayImage?type=p&fileName=${vo.profile_pic}">
 					</a>
-				</c:when>
-				
+				</c:when>				
 				<c:otherwise>
 					<a class="pull-left" href="/accounts/detail?user_id=${vo.user_id}">
-						<img class="media-object" src="http://dimg.donga.com/wps/SPORTS/IMAGE/2016/02/01/76251832.2.jpg">
+						<img class="media-object img-circle img-responsive" src="/resources/boostrap/images/default_profile.png">
 					</a>
 				</c:otherwise>
 			</c:choose>

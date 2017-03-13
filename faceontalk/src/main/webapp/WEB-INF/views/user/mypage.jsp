@@ -14,11 +14,17 @@
 	<div class="row">
 		<div class="profile-teaser-left">
 			<div class="profile-img">
-				<img class="img-circle"
-					src="https://secure.gravatar.com/avatar/b2ce7fb8c6a55a148824baa1d0c40a98?s=100&d=retro&r=g" />
-				<!-- <img class="img-rounded img-responsive" src="">  -->
+				<c:choose>
+					<c:when test="${empty memberVO.profile_pic}">					 
+						<img class="img-circle img-responsive" src="/resources/boostrap/images/default_profile.png">
+					</c:when>
+					<c:otherwise>
+						<img class="img-circle img-responsive" src="/displayImage?type=p&fileName=${memberVO.profile_pic}">
+					</c:otherwise>
+				</c:choose>
 			</div>
 		</div>
+		
 		<div class="profile-teaser-main">
 			<!-- 유저 아이디 -->
 			<h2 class="profile-name">
@@ -79,7 +85,7 @@ function displayFeed(feed_no) {
 }	
 
 $('#editBtn').on('click',function(event){
-	self.location="/accounts/edit?user_no="+${memberVO.user_no};
+	self.location="/accounts/edit";
 });
 	
     

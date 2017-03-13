@@ -18,10 +18,16 @@
 			<input type="hidden" id="feed_no_fk">
 			<div class="social-feed-box" id="feedbox${vo.feed_no}">
 				<!-- 상단 : 프로필, 이름 , 등록 일 -->
-				<div class="social-avatar">
-					<a href="/accounts/detail?user_id=${vo.user_id_fk}" class="pull-left"> <img
-						class="img-circle img-responsive"
-						src="http://dimg.donga.com/wps/SPORTS/IMAGE/2016/02/01/76251832.2.jpg">
+				<div class="social-avatar">					
+					<a href="/accounts/detail?user_id=${vo.user_id_fk}" class="pull-left">
+					<c:choose>
+						<c:when test="${empty vo.profile_pic}">					 
+							<img class="img-circle img-responsive" src="/resources/bootstrap/images/default_profile.png">
+						</c:when>
+						<c:otherwise>
+							<img class="img-circle img-responsive" src="/displayImage?type=p&fileName=${vo.profile_pic}">
+						</c:otherwise>
+					</c:choose>
 					</a>
 					<div class="media-body">
 						<div class="pull-left">

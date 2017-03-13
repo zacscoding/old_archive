@@ -15,6 +15,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -173,8 +174,9 @@ public class FeedController {
 	
 	/**		delete pic		*/
 	@ResponseBody
-	@RequestMapping(value="/deleteImage",method=RequestMethod.POST)
-	public ResponseEntity<String> deleteFile(String fileName,@PathVariable("type") String type) {
+	@RequestMapping(value="/uploadPic",method=RequestMethod.DELETE)
+	public ResponseEntity<String> deleteFile(@RequestBody String fileName) {
+		
 		logger.info("delete file : "+fileName);			
 		
 		//파일 삭제
