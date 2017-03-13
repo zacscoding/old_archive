@@ -3,6 +3,8 @@
     	
 
 <div class="footer">
+	 <strong>Copyright &copy;  Hakcoding, Zaccoding , Changcoding, Mincoding</strong> All rights reserved.
+	<!--
 	<div class="container">    
   <div class="row">
     <div class="col-lg-12">
@@ -59,6 +61,7 @@
     </div>
   </div>
 </div>
+  -->
 </div>
 	
     

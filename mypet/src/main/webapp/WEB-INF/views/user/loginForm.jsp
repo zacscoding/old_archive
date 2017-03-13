@@ -45,6 +45,18 @@
                                     </div>
                                 </div>    
                             </form>
+                            
+                            <c:if test="${not empty emailAddr}">
+                            <div class="row">
+					        	<!-- 성공 메시지 -->
+						        <div class="alert alert-success" id="successAlert">						  			<div class="text primary">
+						  			<strong>Success to join.</strong><br/>
+						  				Please check ur email authentication.<br/>
+						  				<a href="//${emailAddr}">Confirm Email</a><br/>
+						  			</div>
+								</div>
+							</div>
+							</c:if>                            
                         </div>                     
                     </div>  
         </div>        
