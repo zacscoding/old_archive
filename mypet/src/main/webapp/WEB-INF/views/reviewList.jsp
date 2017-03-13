@@ -143,8 +143,7 @@
 							<div class="media">
 							  <a class="pull-left" href="#">
 								<!-- 왼쪽 이미지 -->
-							    <img class="media-object" src="/resources/bootstrap/imgs/logo.png" alt="img">
-							    
+							    <img class="media-object" src="/resources/bootstrap/imgs/logo.png" alt="img">							    
 							  </a>
 							  <div class="media-body">
 							  	<button type="button" class="close" data-dismiss="modal">
