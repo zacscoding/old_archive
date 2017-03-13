@@ -103,7 +103,7 @@
 </div>
 
 <script>
-	$(document).ready(function(){
+	$(document).ready(function() {
 		$('#searchBtn').on("click",function(event){
 			self.location = "list"
 							+'${pageMaker.makeQuery(1)}'
