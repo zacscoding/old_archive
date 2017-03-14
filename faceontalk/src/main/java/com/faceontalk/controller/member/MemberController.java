@@ -119,7 +119,6 @@ public class MemberController {
 		} catch(Exception e) {
 			entity = new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
 		}		
-				
 		return entity;
 	}
 	
