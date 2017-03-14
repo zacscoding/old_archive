@@ -190,6 +190,7 @@ $(document).ready(function(){
 		});	
 	});	
 	
+	
 	//파일 이미지 삭제 
 	//processData :false == 일반적인 query string으로 변환 false
 	$('.uploadedPic').on('click','small',function(event) {
@@ -201,7 +202,7 @@ $(document).ready(function(){
 			headers: { 
 			      "Content-Type": "application/json",
 			      "X-HTTP-Method-Override": "delete" },
-			data: JSON.stringify({user_no:user_no,profile_pic:profile_pic}),			      
+			data: JSON.stringify({user_no:user_no,profile_pic:profile_pic}),						      
 			dataType: 'text',
 			success:function(result) {
 				if(result == 'deleted') {

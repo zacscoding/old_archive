@@ -139,30 +139,6 @@
 		</div>
 	</div>
 	<!-- .//페이징 처리 끝-->
-
-
-	<a class="btn btn-primary btn-xs" 
-	    data-toggle="modal" data-target="#modifyModal">Modify</a>
-		    
-	<!-- modify 버튼 클릭 시 Modal 창-->  
-	<div id="modifyModal" class="modal modal-primary fade" role="dialog">
-	  <div class="modal-dialog">
-	    <!-- Modal content-->
-	    <div class="modal-content">
-	      <div class="modal-header">
-	        <button type="button" class="close" data-dismiss="modal">&times;</button>
-	        <h4 class="modal-title"></h4>
-	      </div>
-	      <div class="modal-body" data-rno>
-	        <p><input type="text" id="modifytext" class="form-control"></p>
-	      </div>
-	      <div class="modal-footer">
-	        <button type="button" class="btn btn-info" id="replyModBtn">Modify</button>
-	        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-	      </div>
-	    </div>
-	  </div>
-	</div>
 </div>
 
 <script>

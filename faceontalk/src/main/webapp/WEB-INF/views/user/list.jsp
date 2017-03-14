@@ -31,7 +31,7 @@
 				</c:when>				
 				<c:otherwise>
 					<a class="pull-left" href="/accounts/detail?user_id=${vo.user_id}">
-						<img class="media-object img-circle img-responsive" src="/resources/boostrap/images/default_profile.png">
+						<img class="media-object img-circle img-responsive" src="/resources/bootstrap/images/default_profile.png">
 					</a>
 				</c:otherwise>
 			</c:choose>

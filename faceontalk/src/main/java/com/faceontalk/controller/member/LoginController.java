@@ -36,7 +36,7 @@ public class LoginController {
 	@RequestMapping(value="/loginPost", method=RequestMethod.POST)
 	public String loginPOST(LoginDTO dto,HttpSession session,Model model) throws Exception {
 		
-		logger.info("LoginController.. loginPOST");
+		logger.info("LoginController.. loginPOST"+dto.toString());
 		
 		//check users id and password
 		MemberVO vo = service.login(dto);		
@@ -50,7 +50,7 @@ public class LoginController {
 		model.addAttribute("memberVO",vo);
 		
 		//check keep login
-		if(dto.isUserCookie()) {
+		if(dto.isUseCookie()) {
 			System.out.println("user Cookie");
 			int amount = 60*60*24*7; //1week
 			Date sessionLimit = new Date(System.currentTimeMillis() + (1000*amount));	

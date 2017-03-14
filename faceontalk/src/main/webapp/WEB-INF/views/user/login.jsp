@@ -108,7 +108,9 @@
                                         <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
                                         <input id="password" type="password" class="form-control" name="password" placeholder="암호">
                                     </div>
-	
+                                    
+							<input type="checkbox" name="useCookie"> Remember Me
+							
 							<!-- 아이디 찾기 -->
 							<div style="margin-top: 10px" class="form-group">
 								<!-- Button -->

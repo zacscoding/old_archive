@@ -46,17 +46,14 @@
 	<update id="editProfile">
 	update tbl_member set profile_pic = #{profile_pic} where user_no = #{user_no}
 	</update>
-	
-	
-	
-	
+		
 	<!-- 로그인 상태 유지 -->
 	<update id="keepLogin"> 
-		into tbl_member sessionkey = #{sessionId},sessionlimit = #{next} where user_no = #{user_no}
+		update tbl_member set sessionkey = #{sessionId}, sessionlimit = #{next} where user_no = #{user_no}
 	</update>
 	
 	<select id="checkUserWithSessionKey" resultType="MemberVO">
-	select * from tbl_user where
+	select * from tbl_member where
 	sessionkey = #{value} and sessionlimit > now()
 	</select>
 	

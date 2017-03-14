@@ -24,10 +24,10 @@
             		<a class="pull-left">
             			<c:choose>
             				<c:when test="${empty login.profile_pic}">
-            					<img class="media-object" src="/resources/bootstrap/images/default_profile.png">	
+            					<img class="media-object img-circle img-responsive" src="/resources/bootstrap/images/default_profile.png">	
             				</c:when>
             				<c:otherwise>
-            					<img class="media-object" src="/displayImage?fileName=${login.profile_pic}">
+            					<img class="media-object img-circle img-responsive" src="/displayImage?type=p&fileName=${login.profile_pic}">
             				</c:otherwise>            				
             			</c:choose>            			
             		</a>
