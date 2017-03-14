@@ -48,7 +48,7 @@
 				${memberVO.user_id}
 				<!-- 팔로우 하기 버튼 -->
 				<c:choose>
-					<c:when test="${isFollower == true}">
+					<c:when test="${isFollow == true}">
 						<button type="button" class="btn btn-success followBtn" value="-1">Following</button>		
 					</c:when>
 					<c:otherwise>

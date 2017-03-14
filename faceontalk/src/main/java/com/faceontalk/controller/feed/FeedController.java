@@ -148,8 +148,7 @@ public class FeedController {
 	
 	
 	
-	/**		Ajax		*/
-	
+	/**		Ajax		*/	
 	/**		ajax register pic	*/
 	@ResponseBody
 	@RequestMapping(value="/uploadPic",method=RequestMethod.POST, produces="test/plain;charset=UTF-8")
