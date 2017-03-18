@@ -13,9 +13,8 @@ public class MemberVO {
 	private String profile_pic;
 	private Integer follower_cnt;
 	private Integer following_cnt;
-	
+		
 	//setters,getters,toString
-
 	public Integer getFollower_cnt() {
 		return follower_cnt;
 	}

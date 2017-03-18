@@ -3,10 +3,10 @@ package com.faceontalk.persistence.member;
 import java.util.Date;
 import java.util.List;
 
-import com.faceontalk.domain.SearchCriteria;
 import com.faceontalk.domain.member.EmailAuthVO;
 import com.faceontalk.domain.member.FollowVO;
 import com.faceontalk.domain.member.MemberVO;
+import com.faceontalk.dto.FollowDTO;
 
 public interface MemberDAO {
 	//crud
@@ -29,6 +29,9 @@ public interface MemberDAO {
 	public void registFollower(FollowVO vo) throws Exception;
 	public void removeFollower(FollowVO vo) throws Exception;
 	public Boolean isFollow(FollowVO vo) throws Exception;	
+	public List<FollowDTO> getFollowerList(Integer user_no) throws Exception;
+	public List<FollowDTO> getFollowingList(Integer user_no) throws Exception;
+	
 	
 	//auth
 	public void registerAuthToken(String user_id,String auth_token,Date auth_limit) throws Exception;

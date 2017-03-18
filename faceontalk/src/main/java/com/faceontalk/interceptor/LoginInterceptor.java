@@ -49,7 +49,7 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
 				Cookie loginCookie = new Cookie("loginCookie",session.getId());
 				loginCookie.setPath("/");
 				loginCookie.setMaxAge(60*60*24*7); //1week
-				response.addCookie(loginCookie);				
+				response.addCookie(loginCookie);
 			}
 			//기존 경로 URI 처리
 			Object dest = session.getAttribute("dest");

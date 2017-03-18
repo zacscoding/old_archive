@@ -137,12 +137,11 @@ public class FeedController {
 	public String modifyFeedPOST(FeedVO vo, RedirectAttributes rttr) throws Exception {
 		logger.info("/modifyFeed .. post");
 		logger.info("in controller vo : "+vo);
+		
 		feedService.modify(vo);
 		
-		rttr.addFlashAttribute("message", "SUCCESS");
-		
 		/**temp code */
-		return "redirect:/feed/result";	
+		return "redirect:/feed/list";	
 	}	
 	
 	

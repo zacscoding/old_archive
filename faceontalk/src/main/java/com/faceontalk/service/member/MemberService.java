@@ -2,10 +2,10 @@ package com.faceontalk.service.member;
 
 import java.util.List;
 
-import com.faceontalk.domain.SearchCriteria;
 import com.faceontalk.domain.member.EmailAuthVO;
 import com.faceontalk.domain.member.FollowVO;
 import com.faceontalk.domain.member.MemberVO;
+import com.faceontalk.dto.FollowDTO;
 
 public interface MemberService {
 	//회원 가입
@@ -28,6 +28,9 @@ public interface MemberService {
 	public void remove(FollowVO vo) throws Exception;
 	// check
 	public Boolean isFollow(FollowVO vo) throws Exception;
+	// list
+	public List<FollowDTO> getFollowerList(Integer user_no) throws Exception;
+	public List<FollowDTO> getFollowingList(Integer user_no) throws Exception;
 	// follower cnt
 	public int getFollowerCount(Integer user_no)throws Exception;
 	// following cnt

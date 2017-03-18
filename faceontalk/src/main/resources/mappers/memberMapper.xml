@@ -71,6 +71,23 @@
 		select count(*) from tbl_follow where follower = #{follower} and following = #{following}
 	</select>
 	
+	<select id="getFollowerList" resultType="com.faceontalk.dto.FollowDTO">	
+		select user_no,user_id,profile_pic 
+			from 
+		tbl_member
+			where
+		user_no in (select follower from tbl_follow where following = #{user_no} )		
+	</select>
+	
+	<select id="getFollowingList" resultType="com.faceontalk.dto.FollowDTO">	
+		select user_id,profile_pic 
+			from 
+		tbl_member
+			where
+		user_no in (select following from tbl_follow where follower = #{user_no} )
+	</select>
+	
+	
 	<select id="getFollowerCount" resultType="int">
 		select count(following) from tbl_follow where following = #{user_no}
 	</select>

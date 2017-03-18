@@ -3,8 +3,7 @@
 
 <%@ include file="../include/header.jsp" %>
 <style>
-	.fileDrop {
-	  width: 60%;
+	.fileDrop {	  
 	  height: 100px;
 	  border: 1px dotted blue;	    
 	}	
@@ -36,33 +35,38 @@
             		</div>
         </div>
 	</div>
-	
+	<br/><br/><br/>
+	<div class="row">
 	<!-- register form -->
-	<form  role="form" id="registerForm" class="form-horizontal" action="/feed/register" method="POST">
+	<form  role="form" id="registerForm" class="form-horizontal"  action="/feed/register" method="POST">
 	<input type="hidden" name="user_no_fk" value="${login.user_no}">	
 	<input type="hidden" name="user_id_fk" value="${login.user_id}">
-	<input type="hidden" name="file_name" id="file_name">				
+	<input type="hidden" name="file_name" id="file_name">
+			
+			<!-- drop image & view image -->
+			<div class="form-group">        
+            	<div class="fileDrop col-sm-4 col-lg-4" style="display:block">&nbsp;<Strong>Drag and drop</Strong> image here</div>
+				<div class="uploadedPic col-sm-4 col-lg-4" style="display:none"></div>
+			</div>
+								
             <!-- content -->
             <div class="form-group">
               <div class="col-md-9">
                 <textarea class="form-control" id="content" name="content" placeholder="Content" rows="8"></textarea>
               </div>
             </div>            
-                
-            <!-- drop image & view image -->
-            <div class="fileDrop" style="display:block">&nbsp;<Strong>Drag and drop</Strong> image here</div>
-			<div class="uploadedPic" style="display:none"></div>
 			<br/>
+			
 			<input type="submit" class="btn btn-primary" value="Regist" id="btnRegister">                
 			<input type="reset" class="btn btn-warning" value="Clear">
 	</form>	
+	</div>
 	<br/><br/>
+	
 	<div class="alert alert-danger" id="errorMessage" style="display:none">
 		<strong>Please</strong> &nbsp; upload one picture.
 	</div>	
 </div>
-
-
 
 
 
@@ -83,8 +87,11 @@ $(".fileDrop").on("drop", function(event){
 	event.preventDefault();	
 	var files = event.originalEvent.dataTransfer.files;	
 	var file = files[0];
-		
-	var formData = new FormData();
+	
+	if(file == null || file.length == 0)
+		return;		
+	
+	var formData = new FormData();	
 	formData.append("file", file);
 	
 	$.ajax({

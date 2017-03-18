@@ -89,10 +89,7 @@
 							
 							<!-- 댓글 수정 ,삭제  --> 
 							<c:if test="${replyVO.user_id_fk == login.user_id}">
-								&nbsp;&nbsp;&nbsp;&nbsp;															
-								<button type="button" class="btn btn-primary btn-xs"
-									onclick="modifyReply(${vo.feed_no},${replyVO.rno},${replyVO.replytext})"
-									value="${replyVO.rno}">Modify</button>																		
+								&nbsp;&nbsp;&nbsp;&nbsp;												
 								<button type="button" class="btn btn-danger btn-xs replyDelBtn"
 									onclick="setFeedNumer(${replyVO.feed_no_fk}); removeReply(${replyVO.rno});">Remove</button>									
 							</c:if></li><br/><br/>
@@ -209,10 +206,8 @@
 					+ user_id +"</a>&nbsp;&nbsp;&nbsp;&nbsp;"		
 					+ replytext;
 			if(user_id == '${login.user_id}') {				
-				str += "&nbsp;&nbsp;&nbsp;&nbsp;" 
-						+ "<button type='button' class='btn btn-primary btn-xs'"
-						+ "onclick='modifyReply(" + feed_no + "," + rno + "," + replytext + ")'>Modify</button>" 
-						+ "&nbsp;&nbsp;<button type='button' class='btn btn-danger btn-xs replyDelBtn'" //삭제 버튼
+				str += "&nbsp;&nbsp;&nbsp;&nbsp;"
+						+ "<button type='button' class='btn btn-danger btn-xs replyDelBtn'" //삭제 버튼
 						+ "onclick='setFeedNumer(" + feed_no 
 						+ "); removeReply(" + rno +");'>Remove</button>";
 			}

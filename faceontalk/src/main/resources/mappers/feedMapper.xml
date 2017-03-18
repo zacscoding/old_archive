@@ -90,7 +90,7 @@
 	<!-- 수정 -->
 	<update id="update">
 		update tbl_feed set
-			content=#{content} ,moddate=now()
+			content=#{content} ,moddate=now() , file_name = #{file_name}
 		where
 			feed_no=#{feed_no}
 	</update>

@@ -36,25 +36,23 @@
 			<div class="profile-info">
 				<div class="info">
 					<h4>
-						<span class="">게시글</span>&nbsp;${feedList.size()}
+					<a href="#" onclick="return false;">
+						게시글&nbsp;${feedList.size()}
+					</a>
 					</h4>
 				</div>
 				<div class="info">
 					<h4>
-						<span class="">팔로워</span>&nbsp;
-						<c:if test="${empty memberVO.follower_cnt}">
-							0
-						</c:if>
-						${memberVO.follower_cnt} 명
+					<a href="#" onclick="return false;" id="follower_cnt">
+						팔로워&nbsp;${memberVO.follower_cnt}명
+					</a>
 					</h4>
 				</div>
-				<div class="info">
+				<div class="info" id="following_info">
 					<h4>
-						<span class="">팔로잉</span>&nbsp;
-						<c:if test="${empty memberVO.following_cnt}">
-							0
-						</c:if>
-						${memberVO.following_cnt} 명
+						<a href="#" onclick="return false;" id="following_cnt">
+						팔로잉&nbsp;${memberVO.following_cnt}명
+						</a>
 					</h4>
 				</div>
 			</div>
@@ -76,7 +74,20 @@
 </div>	<!-- .//container 끝-->
 
 <script>
-	
+
+//팔로우 상태 출력
+/* var printFollowCnt = function() {
+	var user_no = '${memberVO.user_no}';
+	$.getJSON('/follow/'+user_no, function(data) {
+		var follower_cnt = data.follower_cnt;
+		var following_cnt = data.following_cnt;
+		$('#follower_cnt').empty();
+		$('#follower_cnt').html('팔로워&nbsp;'+follower_cnt+'명');
+		$('#following_cnt').empty();
+		$('#following_cnt').html('팔로잉&nbsp;'+following_cnt+'명');
+	});		
+}; */
+
 //피드 상세 보여주기	
 function displayFeed(feed_no) {
 	
@@ -85,10 +96,12 @@ function displayFeed(feed_no) {
 	alert(feed_no);
 }	
 
+//edit 버튼 이벤트 처리
 $('#editBtn').on('click',function(event){
 	self.location="/accounts/edit";
 });
 
+//로그아웃 버튼 이벤트 처리
 $('#logoutBtn').on('click',function(event){
 	self.location="/user/logout";
 });

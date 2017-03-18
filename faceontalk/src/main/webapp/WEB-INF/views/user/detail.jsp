@@ -280,7 +280,6 @@ var printFollowCnt = function() {
 		}
 	});
 
-
     
 </script>
 

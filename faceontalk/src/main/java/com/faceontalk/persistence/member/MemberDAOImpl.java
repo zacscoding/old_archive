@@ -10,10 +10,10 @@ import javax.inject.Inject;
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.stereotype.Repository;
 
-import com.faceontalk.domain.SearchCriteria;
 import com.faceontalk.domain.member.EmailAuthVO;
 import com.faceontalk.domain.member.FollowVO;
 import com.faceontalk.domain.member.MemberVO;
+import com.faceontalk.dto.FollowDTO;
 
 @Repository
 public class MemberDAOImpl implements MemberDAO {
@@ -97,6 +97,18 @@ public class MemberDAOImpl implements MemberDAO {
 		return (result>0) ? Boolean.TRUE : Boolean.FALSE;
 	}
 	
+	//팔로워 리스트
+	@Override
+	public List<FollowDTO> getFollowerList(Integer user_no) throws Exception {
+		return session.selectList(namespace+".getFollowerList",user_no);
+	}
+
+	@Override
+	public List<FollowDTO> getFollowingList(Integer user_no) throws Exception {
+		return session.selectList(namespace+".getFollowingList",user_no);
+	}
+
+	
 	//users follower count
 	@Override
 	public int getFollowerCount(Integer user_no) throws Exception {
@@ -139,6 +151,7 @@ public class MemberDAOImpl implements MemberDAO {
 		session.delete(namespace+".removeExpiredAuthMember");		
 	}
 
+	
 
 	
 }

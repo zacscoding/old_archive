@@ -249,10 +249,10 @@ public class MemberController {
 		if(memberVO == null)
 			return "redirect:/";
 		
-		//follow info
+		//follow info		
 		memberVO.setFollower_cnt(memberService.getFollowerCount(memberVO.getUser_no()));
 		memberVO.setFollowing_cnt(memberService.getFollowingCount(memberVO.getUser_no()));		
-		model.addAttribute("memberVO",memberService.searchByNum(memberVO.getUser_no()));
+		model.addAttribute("memberVO",memberVO);
 		
 		// feed info
 		model.addAttribute("feedList",feedService.listUsersFeedPics(memberVO.getUser_no()));

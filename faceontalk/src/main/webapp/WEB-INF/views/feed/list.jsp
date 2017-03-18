@@ -39,7 +39,7 @@
 						
 						<c:if test="${vo.user_id_fk == login.user_id}">
 						<div class="pull-right">
-							<button type="button" class="btn btn-primary btn-circle">
+							<button type="button" class="btn btn-primary btn-circle feedModBtn" value="${vo.feed_no}">
 								<i class="glyphicon glyphicon-list"></i></button>
 							<button type="button" class="btn btn-warning btn-circle feedDelBtn" value="${vo.feed_no}">
 								<i class="glyphicon glyphicon-remove"></i></button>
@@ -87,10 +87,7 @@
 							
 							<!-- 댓글 수정 ,삭제  --> 
 							<c:if test="${replyVO.user_id_fk == login.user_id}">
-								&nbsp;&nbsp;&nbsp;&nbsp;															
-								<button type="button" class="btn btn-primary btn-xs"
-									onclick="modifyReply(${vo.feed_no},${replyVO.rno},${replyVO.replytext})"
-									value="${replyVO.rno}">Modify</button>																		
+								&nbsp;&nbsp;&nbsp;&nbsp;									
 								<button type="button" class="btn btn-danger btn-xs replyDelBtn"
 									onclick="setFeedNumer(${replyVO.feed_no_fk}); removeReply(${replyVO.rno});">Remove</button>									
 							</c:if></li><br/><br/>
@@ -167,8 +164,12 @@
 		});
 		
 		//피드 수정하기
-		//수정 폼으로 넘기기 ->
-		
+		$(".feedModBtn").on('click',function(event) {
+			event.preventDefault();
+			var feed_no = $(this).val();
+			alert(feed_no);
+			self.location="/feed/modifyFeed?feed_no="+feed_no;
+		});
 		
 	}); 
 
@@ -207,22 +208,19 @@
 					+ user_id +"</a>&nbsp;&nbsp;&nbsp;&nbsp;"		
 					+ replytext;
 			if(user_id == '${login.user_id}') {				
-				str += "&nbsp;&nbsp;&nbsp;&nbsp;" 
-						+ "<button type='button' class='btn btn-primary btn-xs'"
-						+ "onclick='modifyReply(" + feed_no + "," + rno + "," + replytext + ")'>Modify</button>" 
-						+ "&nbsp;&nbsp;<button type='button' class='btn btn-danger btn-xs replyDelBtn'" //삭제 버튼
+				str += "&nbsp;&nbsp;&nbsp;&nbsp;"
+						+ "<button type='button' class='btn btn-danger btn-xs replyDelBtn'" //삭제 버튼
 						+ "onclick='setFeedNumer(" + feed_no 
 						+ "); removeReply(" + rno +");'>Remove</button>";
 			}
 			str += "</li><br/><br/>"			
-		}
-		
+		};		
 		// 기존 display 비우기
 		target.empty(); 
 		
 		// 새로운 display 
 		target.append(str);
-	} 
+	};
 
 	//댓글 등록의 이벤트처리
 	$('.replyAddBtn').on('click', function(event) {
