@@ -107,7 +107,7 @@ public class FeedServiceImpl implements FeedService {
 //				logger.info("vo : "+vo.getFeed_no() + "tag_id : "+tag_id);				
 //				feedService.registerRelation(vo.getFeed_no(),tag_id);
 //			}
-//		}
+//		}	
 	}
 	
 	@Override

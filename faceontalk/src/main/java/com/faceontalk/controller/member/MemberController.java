@@ -119,7 +119,6 @@ public class MemberController {
 		} catch(Exception e) {
 			entity = new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
 		}		
-				
 		return entity;
 	}
 	
@@ -226,11 +225,10 @@ public class MemberController {
 			FollowVO follower= new FollowVO();
 			follower.setFollower(loginUser.getUser_no());
 			follower.setFollowing(vo.getUser_no());
-			model.addAttribute("isFollower",memberService.isFollow(follower));
+			model.addAttribute("isFollow",memberService.isFollow(follower));
 		} else {
-			model.addAttribute("isFollower",Boolean.FALSE);
+			model.addAttribute("isFollow",Boolean.FALSE);
 		}
-		
 		model.addAttribute("memberVO",vo);		
 		model.addAttribute("feedList",feedService.listUsersFeedPics(vo.getUser_no()));
 		model.addAttribute("following_cnt",memberService.getFollowingCount(vo.getUser_no()));
