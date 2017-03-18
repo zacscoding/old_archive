@@ -140,7 +140,6 @@ public class FeedController {
 		
 		feedService.modify(vo);
 		
-		/**temp code */
 		return "redirect:/feed/list";	
 	}	
 	
