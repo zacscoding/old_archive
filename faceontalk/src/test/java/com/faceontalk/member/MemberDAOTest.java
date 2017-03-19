@@ -1,5 +1,7 @@
 package com.faceontalk.member;
 
+import java.util.List;
+
 import javax.inject.Inject;
 
 import org.junit.Test;
@@ -11,6 +13,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
+import com.faceontalk.domain.member.FollowVO;
 import com.faceontalk.domain.member.MemberVO;
 import com.faceontalk.persistence.member.MemberDAO;
 
@@ -24,22 +27,21 @@ public class MemberDAOTest {
 	@Inject
 	private MemberDAO dao;
 	@Inject
-	private BCryptPasswordEncoder passwordEncoder;
-	
-	
-	
+	private BCryptPasswordEncoder passwordEncoder;	
 	
 //	/**	Create member test code	 */
 //	@Test
 //	public void testCreate() throws Exception {
-//		MemberVO vo = new MemberVO();
-//		vo.setUser_id("hiva1");
-//		vo.setUser_email("hiva1@naver.com");
-//		vo.setPassword(passwordEncoder.encode("hivahivahivahiva"));
-//		vo.setPhone("1234");		
-//		dao.regist(vo);
+//		for(int i=1;i<100;i++) {
+//			MemberVO vo = new MemberVO();
+//			vo.setUser_id("user_"+i);
+//			vo.setUser_email("user@naver.com");
+//			vo.setPassword(passwordEncoder.encode("test"));
+//			vo.setPhone("010-111-1111");		
+//			dao.regist(vo);
+//		}		
 //	}
-	
+//	
 	
 //	/** Encrypt password test	*/
 //	@Test
@@ -53,29 +55,29 @@ public class MemberDAOTest {
 //	}
 	
 //	/** Select by name test code	 */
-	@Test
-	public void testSelect() throws Exception {
-		//SearchByName
-		String value = "hiva1";
-		MemberVO vo = dao.searchById(value);
-		
-//		//SearchById
-//		Integer value = 5;		
-//		MemberVO vo = dao.searchByNum(value);
-		
-		if(vo!=null) {
-			System.out.println(vo);
-			String password = "hivahivahivahiva";			
-			if(passwordEncoder.matches(password,vo.getPassword())) 
-				logger.info("match password");
-			else
-				logger.info("not match password");
-		} else {
-			System.out.println(value+"존재하지 않음");
-		}
-		
-		
-	}
+//	@Test
+//	public void testSelect() throws Exception {
+//		//SearchByName
+//		String value = "hiva1";
+//		MemberVO vo = dao.searchById(value);
+//		
+////		//SearchById
+////		Integer value = 5;		
+////		MemberVO vo = dao.searchByNum(value);
+//		
+//		if(vo!=null) {
+//			System.out.println(vo);
+//			String password = "hivahivahivahiva";			
+//			if(passwordEncoder.matches(password,vo.getPassword())) 
+//				logger.info("match password");
+//			else
+//				logger.info("not match password");
+//		} else {
+//			System.out.println(value+"존재하지 않음");
+//		}
+//		
+//		
+//	}
 
 	
 //	/**	Update test code	*/
@@ -106,7 +108,16 @@ public class MemberDAOTest {
 //	
 //	/** Remove follow test*/
 	
-	
+	@Test
+	public void insert() throws Exception {
+		List<MemberVO> list = dao.searchListById("user");
+		FollowVO fVo = new FollowVO();
+		for(MemberVO vo : list ) {			
+			fVo.setFollower(vo.getUser_no());
+			fVo.setFollowing(114);
+			dao.registFollower(fVo);
+		}
+	}
 	
 
 }

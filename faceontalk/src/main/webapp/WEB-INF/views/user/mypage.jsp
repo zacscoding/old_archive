@@ -8,6 +8,24 @@
 <!-- user detail css -->
 <link href="/resources/bootstrap/css/userdetail.css" rel="stylesheet" type="text/css">
 
+<style>
+.profile_img img{
+	  width: 50px;
+	  height: 50px;
+	  border: 1px solid #e7eaec;
+	  margin-right: 15px;
+	  margin-bottom : 10px;
+}
+
+.modal-header {
+	height : 80px;
+}
+
+.modal-backdrop {
+	height : 1000px;
+}
+</style>
+
 <!-- container -->
 <div class="container">
 	<!-- 상단 profile -->
@@ -71,6 +89,14 @@
 		</div>	
 		</c:forEach>
 	</div>
+	
+	<!-- feed modal -->
+	<input type="hidden" name="feed_no" id="feed_no">
+	<div class="row">	
+		<div class='modal fade' id='feedModal'>
+    	</div> <!-- / modal -->    
+	</div> <!-- .// feed modal 끝 -->	
+	
 </div>	<!-- .//container 끝-->
 
 <script>
@@ -88,23 +114,99 @@
 	});		
 }; */
 
-//피드 상세 보여주기	
-function displayFeed(feed_no) {
+	//피드 상세 보여주기
+	function displayFeed(feed_no) {		
+		$('#feed_no').val(feed_no);		
+		//ajax get 으로 feed 상세 정보 얻어오기
+		$.getJSON("/feed/"+ feed_no, function(data) {			
+			printModal(data);
+			printReply(data.feed_no);
+			$('#feedModal').modal();
+		});			
+	}
+	//피드 출력
+	var printModal = function(feed) {
+		var str = '';
+			str	+= "<div class='modal-dialog'><div class='modal-content'><div class='modal-header'>"
+				+"<button type='button' class='close' data-dismiss='modal' aria-hidden='true'>×</button><h4 class='modal-title'>"                                                
+	        	+"<a href='/accounts/detail?user_id=" + feed.user_id_fk + "' class='pull-left profile_img'>"
+	        	+"<img class='img-circle img-responsive' src='" ;
+	        	
+	        if( '${memberVO.profile_pic}'.length == 0) {
+	        	str += "/resources/bootstrap/images/default_profile.png'>"
+	        } else {	        	
+	        	str += "/displayImage?type=p&fileName=${memberVO.profile_pic}'>";
+	        }	
+	        	
+	        str +="</a><a href='/accounts/detail?user_id="+ feed.user_id_fk +"'>"
+	        	+"<strong>" + feed.user_id_fk + "</strong></a><br/><small class='text-muted'>"+ feed.displayTime +"</small></h4></div>"	        	
+	        	+"<div class='modal-body'> <img class='img-responsive pull-left' src='/displayImage?fileName=" + feed.file_name +"&type=f'><br/>"
+	        	+ "<br/><h4><br/><br/>" + feed.content + "</h4><hr><div class='comment'></div></div>"
+	        	+ "<div class='modal-footer'><div class='input-group'> <input type='text' class='form-control' id='replytext' placeholder='comment'>"
+	        	+ "<span class='input-group-btn'><button type='button' class='btn btn-primary' id='replyAddBtn'>ADD</button></span>"
+	        	+ "</div></div></div></div>";
+	        	
+	    $('#feedModal').empty();
+		$('#feedModal').append(str);
+	}		
 	
-	//아작스로 feed detail 얻어옴
-	//받은 데이터로 모달창에 표시	
-	alert(feed_no);
-}	
-
-//edit 버튼 이벤트 처리
-$('#editBtn').on('click',function(event){
-	self.location="/accounts/edit";
-});
-
-//로그아웃 버튼 이벤트 처리
-$('#logoutBtn').on('click',function(event){
-	self.location="/user/logout";
-});
+	//댓글 출력
+	var printReply = function(feed_no) {	
+		$.getJSON("/replies/all/"+feed_no , function(data) {
+			var str = '';
+			for(var i in data) {
+				var feed_no = data[i].feed_no_fk;
+				var user_id = data[i].user_id_fk
+				var rno = data[i].rno;
+				var replytext = data[i].replytext;
+				
+				str += "<li class='pull-left' id='rno"+ rno
+				+ "'> <a href='/accounts/detail?user_id=" + user_id +"'>"
+				+ user_id +"</a>&nbsp;&nbsp;&nbsp;&nbsp;"		
+				+ replytext;
+				if(user_id == '${login.user_id}') {				
+					str += "&nbsp;&nbsp;&nbsp;&nbsp;" 
+						+ "<button type='button' class='btn btn-primary btn-xs'"
+						+ "onclick='modifyReply(" + feed_no + "," + rno + "," + replytext + ")'>Modify</button>" 
+						+ "&nbsp;&nbsp;<button type='button' class='btn btn-danger btn-xs replyDelBtn'" //삭제 버튼
+						+ "onclick='removeReply(" + rno +");'>Remove</button>";
+				}
+				str += "</li><br/><br/>"
+			}
+			$('.comment').empty();
+			$('.comment').append(str);
+		});
+	}
+	
+	//댓글 삭제 
+	function removeReply(rno) {
+		var feed_no = $('#feed_no').val();
+		
+		$.ajax({
+			type : 'delete',
+			url : '/replies/'+ rno,
+			headers : {
+				"Content-Type" : "application/json",
+				"X-HTTP-Method-Override" : "DELETE"
+			},
+			dataType : 'text',			
+			success : function(result) { //성공시
+				if (result == 'SUCCESS') 
+					printReply(feed_no);				
+			}});
+	}	
+	
+	
+		
+	//edit 버튼 이벤트 처리
+	$('#editBtn').on('click',function(event){
+		self.location="/accounts/edit";
+	});
+	
+	//로그아웃 버튼 이벤트 처리
+	$('#logoutBtn').on('click',function(event){
+		self.location="/user/logout";
+	});
     
 </script>
 

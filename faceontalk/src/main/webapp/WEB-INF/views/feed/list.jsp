@@ -7,8 +7,7 @@
 <link href="/resources/bootstrap/css/feed.css" rel="stylesheet" type="text/css">
 
 <div class="container" align="center">
-	<div class="col-md-7">
-		
+	<div class="col-md-7">		
 		<c:if test="${not empty msg}">
 			<div class="alert alert-info">${msg}</div>
 		</c:if>		
@@ -71,12 +70,11 @@
 					<br />
 				</div>
 				<!-- content 끝 -->
-
 				<div class="social-footer">
 					<!-- 댓글 시작-->
 					<div class="social-comment" id="commentDisplay${vo.feed_no}">
-						<c:forEach var="replyVO" items="${vo.replyList}">
-							<li class='pull-left' id="rno${replyVO.rno}">						
+						<c:forEach var="replyVO" items="${vo.replyList}">							
+							<li class="pull-left" id="rno${replyVO.rno}">						
 							
 							<!-- 댓글 작성자 -->
 							<a href="/accounts/detail?user_id=${replyVO.user_id_fk}">${replyVO.user_id_fk}</a>							
@@ -87,10 +85,11 @@
 							
 							<!-- 댓글 수정 ,삭제  --> 
 							<c:if test="${replyVO.user_id_fk == login.user_id}">
-								&nbsp;&nbsp;&nbsp;&nbsp;									
-								<button type="button" class="btn btn-danger btn-xs replyDelBtn"
-									onclick="setFeedNumer(${replyVO.feed_no_fk}); removeReply(${replyVO.rno});">Remove</button>									
-							</c:if></li><br/><br/>
+								&nbsp;&nbsp;&nbsp;&nbsp;
+								<button type="button" class="btn btn-danger btn-xs replyDelBtn" 
+								onclick="setFeedNumer(${replyVO.feed_no_fk}); removeReply(${replyVO.rno});">Remove</button>									
+							</c:if>
+							</li><br/><br/>
 						</c:forEach>
 					</div>
 										

@@ -94,54 +94,7 @@ public class FollowController {
 		}		
 		
 		return entity;	
-	}
-	
-	
-	/*		follower list		*/
-	@RequestMapping(value="/follower/{user_no}")
-	public ResponseEntity<List<FollowDTO>> listFollower(@PathVariable("user_no") Integer user_no,HttpServletRequest request)throws Exception {		
-		ResponseEntity<List<FollowDTO>> entity = null;
-		try {			
-			//팔로워 리스트 가져오기
-			List<FollowDTO> list = memberService.getFollowerList(user_no);
-			
-			//로그인 유저가 팔로우 하는지 체크
-			HttpSession session = request.getSession();
-			MemberVO loginUser = (MemberVO) session.getAttribute("login");
-			if(loginUser != null)
-				checkFollow(list,loginUser.getUser_no());
-			
-			entity = new ResponseEntity<>(list,HttpStatus.OK);									
-		} catch(Exception e) {
-			entity = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-		}
-		return entity;
-	}
-	
-	@RequestMapping(value="/following/{user_no}")
-	public ResponseEntity<List<FollowDTO>> listFollowing(@PathVariable("user_no") Integer user_no,HttpServletRequest request)throws Exception {
-		ResponseEntity<List<FollowDTO>> entity = null;
-		try {
-			//팔로잉 리스트 가져오기
-			List<FollowDTO> list = memberService.getFollowingList(user_no);
-			
-			//로그인 유저가 팔로우하는지 체크
-			HttpSession session = request.getSession();
-			MemberVO loginUser = (MemberVO) session.getAttribute("login");
-			
-			//로그인 상태이고, 자신의 following 리스트를 가져오는 케이스가 아님
-			if(loginUser != null && loginUser.getUser_no() != user_no) 
-				checkFollow(list,loginUser.getUser_no());
-			
-			entity = new ResponseEntity<>(list,HttpStatus.OK);		
-		} catch(Exception e) {
-			entity = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-		}
-		return entity;		
-	}
-	
-	
-	
+	}	
 	
 	/////////////////////////////
 	//private methods	
@@ -160,18 +113,4 @@ public class FollowController {
 		
 		return retMap;
 	}
-	
-	//팔로우 상태 체크
-	private void checkFollow(List<FollowDTO> list,Integer user_no) throws Exception {
-		FollowVO vo = new FollowVO();
-		vo.setFollower(user_no);
-		for(FollowDTO dto : list) {
-			vo.setFollowing(dto.getUser_no());
-			if(memberService.isFollow(vo)) 
-				dto.setFollow(true);
-			
-		}
-	}
-	
-	
 }

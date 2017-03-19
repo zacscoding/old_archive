@@ -42,7 +42,7 @@ public class ImageController {
 		HttpHeaders headers = new HttpHeaders();
 		
 		try(InputStream in = new FileInputStream(uploadPath+fileName)) {
-			headers.setContentType(mediaType); // MIME 타입을 이미지 타입으로 생성
+			headers.setContentType(mediaType); // MIME 타입을 이미지 타입으로 생성			
 			entity = new ResponseEntity<byte[]>(IOUtils.toByteArray(in),headers,HttpStatus.CREATED);			
 		} catch(Exception e) {
 			e.printStackTrace();

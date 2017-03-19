@@ -138,31 +138,38 @@ public class FeedServiceImpl implements FeedService {
 		// ==> 새로운 태그가 tbl_tab에 존재하지 않으면 regist tag
 		// ==> regist relation...
 		 */		
-		//tags
 		
-		Map<String,HashTagVO> prevTagsMap = this.getTagsMap(vo.getFeed_no());	
+		//이전 content의 태그 를 담는 맵
+		Map<String,HashTagVO> prevTagsMap = this.getTagsMap(vo.getFeed_no());
+		
+		//새로운 content의 해시 태그 리스트
 		List<String> modifiedTagsList = HashTagHelper.getAllHashTags(vo.getContent());
-		List<String> newTagsList = new LinkedList<>();		
+		
+		//새로 추가된 태그를 담을 리스트
+		List<String> newTagsList = new LinkedList<>();
+		
+		//수정된 내용에서 새로 추가된 태그를 newTagsList에 담음
 		for(int i=0;i<modifiedTagsList.size();i++) {
 			String tag_name = modifiedTagsList.get(i);
 			if(prevTagsMap.remove(tag_name) ==null) {
 				newTagsList.add(tag_name);				
 			}
 		}		
-		//새로운 관계 생성 == newTagsList
+		
+		//새로운 태그에 대한 관계 생성 == newTagsList
 		for(String tag_name : newTagsList) {
 			registFeedAndTag(vo.getFeed_no(),tag_name);
 		}		
-		//기존 관계 삭제 == prevTagsMap
+		
+		//변경된 태그에 대한 기존 관계 삭제 == prevTagsMap
 		Iterator<String> keyItr = prevTagsMap.keySet().iterator();
 		while(keyItr.hasNext()) {
 			HashTagVO tag = prevTagsMap.get(keyItr.next());
 			removeRelation(vo.getFeed_no(), tag.getTag_id());
 		}		
+		
 		//2.content		
 		feedDAO.update(vo);
-		//3. check for modified file image		
-		
 	}	
 
 	@Override

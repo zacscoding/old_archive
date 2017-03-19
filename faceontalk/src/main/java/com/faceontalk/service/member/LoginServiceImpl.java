@@ -20,17 +20,16 @@ public class LoginServiceImpl implements LoginService {
 	MemberDAO dao;	
 	@Inject
 	private BCryptPasswordEncoder passwordEncoder;
-	
-	
-	@Override
-	public MemberVO login(LoginDTO dto) throws Exception {
 		
+	@Override
+	public MemberVO login(LoginDTO dto) throws Exception {		
 		MemberVO vo = dao.searchById(dto.getUser_id());
 		
+		logger.info("loginService ... DTO : "+dto.toString());
+				
 		if(vo == null || !passwordEncoder.matches(dto.getPassword(),vo.getPassword())) {			
 			vo = null;
-		}
-		
+		}		
 		return vo;
 	}
 

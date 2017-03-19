@@ -1,5 +1,5 @@
 @CHARSET "UTF-8";
-/*
+	/*
 		url : 
 		http://bootdey.com/snippets/view/Social-network-feed-list
 	*/
@@ -9,8 +9,9 @@
 	}
 	
 	/* Social feed */
+	
 	.social-feed-separated .social-feed-box {
-	  margin-left: 100px;
+	  margin-left: 150px;	  
 	}
 	.social-feed-separated .social-avatar {
 	  float: left;
@@ -28,6 +29,7 @@
 	}
 	.social-feed-box {
 	  /*padding: 15px;*/
+	  align:center;
 	  border: 1px solid #e7eaec;
 	  background: #fff;
 	  margin-bottom: 15px;

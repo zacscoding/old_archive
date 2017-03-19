@@ -13,8 +13,7 @@ public class FrontController {
 	public String getFront(HttpServletRequest request) {
 		return "redirect:/feed/list";
 	}
-	
-	
+		
 	
 	/**
 	 *  View Page test methods
@@ -66,6 +65,13 @@ public class FrontController {
 	public void searchTest() {
 		
 	}
+	
+	/*	Follow Test	*/
+	@RequestMapping("/viewTest/followTest")
+	public void followTest() {
+		
+	}
+	
 	
 
 }

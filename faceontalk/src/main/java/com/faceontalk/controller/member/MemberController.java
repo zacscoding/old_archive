@@ -16,6 +16,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,9 +25,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.faceontalk.domain.SearchCriteria;
 import com.faceontalk.domain.member.EmailAuthVO;
 import com.faceontalk.domain.member.FollowVO;
 import com.faceontalk.domain.member.MemberVO;
+import com.faceontalk.dto.FollowDTO;
 import com.faceontalk.email.EmailSenderUtil;
 import com.faceontalk.exception.DuplicateIdException;
 import com.faceontalk.exception.ExceedPeriodException;
@@ -275,10 +278,110 @@ public class MemberController {
 		return "/user/list";
 	}
 	
+	
+	/**		Follow List		*/	
+	@RequestMapping(value="/followList", method=RequestMethod.GET)
+	public void FollowList(@ModelAttribute("cri") SearchCriteria cri,Integer no,
+							HttpServletRequest request,Model model) throws Exception {
+		
+		List<FollowDTO> list = null; 
+				
+		MemberVO loginUser = getLoginUser(request);
+		
+		if(cri.getKeyword().equals("er")) { //follower 리스트
+			model.addAttribute("type","er");
+			//팔로워 리스트 가져 오기
+			list = memberService.getFollowerList(no);
+			
+			//로그인 유저가 팔로우하는 지 체크
+			if(loginUser != null)
+				checkFollow(list,loginUser.getUser_no());
+			
+		} else { //following 리스트
+			
+			model.addAttribute("type","ee");
+			
+			list = memberService.getFollowingList(no);
+			
+			//로그인 상태이고, 자신의 following 리스트를 가져오는 케이스가 아님
+			if(loginUser != null) {				
+				if(loginUser.getUser_no() != no) { //다른 사람 팔로잉 보는 경우
+					checkFollow(list,loginUser.getUser_no());	
+				} else { //자신의 팔로잉 보는 경우 모두 팔로잉 상태
+					for(FollowDTO dto : list)
+						dto.setFollow(true);
+				}				
+			} 
+		}	
+		model.addAttribute("list",list);
+		model.addAttribute("memberVO",memberService.searchByNum(no));
+	}
+		
 	/////////////////
-	// private methods
+	// private methods	
+	//로긴 유저 가져오기
 	private MemberVO getLoginUser(HttpServletRequest request) {
 		return (MemberVO)(request.getSession().getAttribute("login"));
 	}
+	
+	//팔로우 상태 체크
+	private void checkFollow(List<FollowDTO> list,Integer user_no) throws Exception {
+		FollowVO vo = new FollowVO();
+		vo.setFollower(user_no);
+		for(FollowDTO dto : list) {
+			vo.setFollowing(dto.getUser_no());
+			if(memberService.isFollow(vo)) 
+				dto.setFollow(true);
+			
+		}
+	}
+	
+	
+	/**		추후에 restful 방식으로 구현할 때 	*/
+	/*
+	@RequestMapping(value="/follower/{user_no}")
+	public ResponseEntity<List<FollowDTO>> listFollower(@PathVariable("user_no") Integer user_no,HttpServletRequest request)throws Exception {		
+		ResponseEntity<List<FollowDTO>> entity = null;
+		try {			
+			//팔로워 리스트 가져오기
+			List<FollowDTO> list = memberService.getFollowerList(user_no);
+			
+			//로그인 유저가 팔로우 하는지 체크
+			HttpSession session = request.getSession();
+			MemberVO loginUser = (MemberVO) session.getAttribute("login");
+			if(loginUser != null)
+				checkFollow(list,loginUser.getUser_no());
+			
+			entity = new ResponseEntity<>(list,HttpStatus.OK);									
+		} catch(Exception e) {
+			entity = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		}
+		return entity;
+	}
+	
+	//Following List
+	@RequestMapping(value="/following/{user_no}")
+	public ResponseEntity<List<FollowDTO>> listFollowing(@PathVariable("user_no") Integer user_no,HttpServletRequest request)throws Exception {
+		ResponseEntity<List<FollowDTO>> entity = null;
+		try {
+			//팔로잉 리스트 가져오기
+			List<FollowDTO> list = memberService.getFollowingList(user_no);
+			
+			//로그인 유저가 팔로우하는지 체크
+			HttpSession session = request.getSession();
+			MemberVO loginUser = (MemberVO) session.getAttribute("login");
+			
+			//로그인 상태이고, 자신의 following 리스트를 가져오는 케이스가 아님
+			if(loginUser != null && loginUser.getUser_no() != user_no) 
+				checkFollow(list,loginUser.getUser_no());
+			
+			entity = new ResponseEntity<>(list,HttpStatus.OK);		
+		} catch(Exception e) {
+			entity = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		}
+		return entity;		
+	}
+	*/
+	
 
 }

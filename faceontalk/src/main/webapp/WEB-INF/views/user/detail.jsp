@@ -7,6 +7,7 @@
 
 <!-- user detail css -->
 <link href="/resources/bootstrap/css/userdetail.css" rel="stylesheet" type="text/css">
+
 <style>
 .profile_img img{
 	  width: 50px;
@@ -23,7 +24,6 @@
 .modal-backdrop {
 	height : 1000px;
 }
-
 </style>
 
 <!-- container -->
@@ -37,7 +37,7 @@
 							<img class="img-circle img-responsive" src="/resources/bootstrap/images/default_profile.png">
 						</c:when>
 						<c:otherwise>
-							<img class="img-circle img-responsive" src="/displayImage?type=p&fileName=${vo.profile_pic}">
+							<img class="img-circle img-responsive" src="/displayImage?type=p&fileName=${memberVO.profile_pic}">
 						</c:otherwise>
 				</c:choose>
 			</div>
@@ -66,7 +66,7 @@
 				</div>
 				<div class="info">
 					<h4>
-					<a href="#" onclick="return false;" id="follower_cnt">
+					<a href="#" onclick="displayFollower(); return false;" id="follower_cnt">
 						팔로워&nbsp;${follower_cnt}명
 					</a>
 					</h4>
@@ -83,7 +83,7 @@
 	</div> <!-- .// 상단 profile 끝-->
 
 	<!-- image list  -->
-	<div class="row">
+	<div class="row" id="feedList">
 		<c:forEach var="vo" items="${feedList}">
 			<div class="gallery_product col-lg-4 col-md-4 col-sm-4 col-xs-6 filter hdpe">
 			<a href="#" onclick="displayFeed(${vo.feed_no}); return false;">
@@ -108,22 +108,21 @@
 				
 <script>
 
-//팔로우 상태 출력
-var printFollowCnt = function() {
-	var user_no = '${memberVO.user_no}';
-	$.getJSON('/follow/'+user_no, function(data) {
-		var follower_cnt = data.follower_cnt;
-		var following_cnt = data.following_cnt;
-		$('#follower_cnt').empty();
-		$('#follower_cnt').html('팔로워&nbsp;'+follower_cnt+'명');
-		$('#following_cnt').empty();
-		$('#following_cnt').html('팔로잉&nbsp;'+following_cnt+'명');
-	});		
-};
+	//팔로우 상태 출력
+	var printFollowCnt = function() {
+		var user_no = '${memberVO.user_no}';
+		$.getJSON('/follow/'+user_no, function(data) {
+			var follower_cnt = data.follower_cnt;
+			var following_cnt = data.following_cnt;
+			$('#follower_cnt').empty();
+			$('#follower_cnt').html('팔로워&nbsp;'+follower_cnt+'명');
+			$('#following_cnt').empty();
+			$('#following_cnt').html('팔로잉&nbsp;'+following_cnt+'명');
+		});		
+	};
 
 	//피드 상세 보여주기	
-	function displayFeed(feed_no) {
-		
+	function displayFeed(feed_no) {		
 		$('#feed_no').val(feed_no);		
 		//ajax get 으로 feed 상세 정보 얻어오기
 		$.getJSON("/feed/"+ feed_no, function(data) {			
@@ -173,10 +172,19 @@ var printFollowCnt = function() {
 			str	+= "<div class='modal-dialog'><div class='modal-content'><div class='modal-header'>"
 				+"<button type='button' class='close' data-dismiss='modal' aria-hidden='true'>×</button><h4 class='modal-title'>"                                                
 	        	+"<a href='/accounts/detail?user_id=" + feed.user_id_fk + "' class='pull-left profile_img'>"
-	        	+"<img class='img-circle img-responsive' src='" + "http://dimg.donga.com/wps/SPORTS/IMAGE/2016/02/01/76251832.2.jpg'>"
-	        	+"</a><a href='/accounts/detail?user_id="+ feed.user_id_fk +"'>"
-	        	+"<strong>" + feed.user_id_fk + "</strong></a><br/><small class='text-muted'>"+ feed.displayTime +"</small></h4></div>"
+	        	+"<img class='img-circle img-responsive' src='"; 
 	        	
+	        	
+	        	+ "http://dimg.donga.com/wps/SPORTS/IMAGE/2016/02/01/76251832.2.jpg'>"
+	        	
+	        if( '${memberVO.profile_pic}'.length == 0) {
+		      	str += "/resources/bootstrap/images/default_profile.png'>"
+		    } else {	        	
+		      	str += "/displayImage?type=p&fileName=${memberVO.profile_pic}'>";
+		    }	
+	        	
+	        str +="</a><a href='/accounts/detail?user_id="+ feed.user_id_fk +"'>"
+	        	+"<strong>" + feed.user_id_fk + "</strong></a><br/><small class='text-muted'>"+ feed.displayTime +"</small></h4></div>"	        	
 	        	+"<div class='modal-body'> <img class='img-responsive pull-left' src='/displayImage?fileName=" + feed.file_name +"&type=f'><br/>"
 	        	+ "<br/><h4><br/>" + feed.content + "</h4><hr><div class='comment'></div></div>"
 	        	+ "<div class='modal-footer'><div class='input-group'> <input type='text' class='form-control' id='replytext' placeholder='comment'>"
@@ -279,7 +287,12 @@ var printFollowCnt = function() {
 			});
 		}
 	});
-
+	
+	
+	//팔로워 리스트 출력
+	function displayFollower() {
+		$('#feedList').css('display','none');
+	}
     
 </script>
 

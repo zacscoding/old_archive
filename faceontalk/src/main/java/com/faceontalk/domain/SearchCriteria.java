@@ -24,8 +24,5 @@ public class SearchCriteria extends Criteria {
 	@Override
 	public String toString() {		
 		return super.toString() + "SearchCriteria [keyword=" + keyword + "]";
-	}
-	
-	
-	
+	}	
 }
