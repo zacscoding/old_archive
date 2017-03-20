@@ -16,8 +16,10 @@ import com.faceontalk.persistence.member.MemberDAO;
 @Service
 public class LoginServiceImpl implements LoginService {
 	private Logger logger = LoggerFactory.getLogger(LoginServiceImpl.class);
+	
 	@Inject
-	MemberDAO dao;	
+	MemberDAO dao;
+	
 	@Inject
 	private BCryptPasswordEncoder passwordEncoder;
 		

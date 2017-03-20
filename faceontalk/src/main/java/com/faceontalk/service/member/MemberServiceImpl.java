@@ -31,7 +31,7 @@ public class MemberServiceImpl implements MemberService {
 	private RegistrationNotifierService registrationNotifierService;
 
 	//회원 가입
-	@Transactional
+	//@Transactional
 	@Override
 	public void regist(MemberVO vo) throws Exception {		
 		//1.confirm id
@@ -51,7 +51,7 @@ public class MemberServiceImpl implements MemberService {
 		Date auth_limit = new Date(System.currentTimeMillis()+(1000*amount));	
 		dao.registerAuthToken(vo.getUser_id(),auth_token,auth_limit);
 		
-		//send email authentication with uri
+		//5.send email authentication with uri
 		registrationNotifierService.sendMail(vo, auth_token);		
 	}
 	

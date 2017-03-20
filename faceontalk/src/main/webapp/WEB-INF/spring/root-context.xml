@@ -15,12 +15,14 @@
 		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd
 		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.3.xsd">
 	
-	
+	<!-- 메일 프로퍼티 사용하기 위해 -->
 	<context:property-placeholder location="classpath:/mail.properties"/>
 	
 	<!-- Root Context: defines shared resources visible to all other web components -->
-	<aop:aspectj-autoproxy></aop:aspectj-autoproxy><!-- 자동으로 AspectJ 라이브러리를 이용 & Proxy객체 생성 -->
-	
+			
+	<!-- 자동으로 AspectJ 라이브러리를 이용 & Proxy객체 생성 -->
+	<aop:aspectj-autoproxy></aop:aspectj-autoproxy>
+		
 	<bean id="dataSource"
 		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 		<property name="driverClassName" value="net.sf.log4jdbc.sql.jdbcapi.DriverSpy"></property>
@@ -72,11 +74,8 @@
 		
 	<context:component-scan base-package="com.faceontalk.service"></context:component-scan>
 	<context:component-scan base-package="com.faceontalk.persistence"></context:component-scan>	
-	<context:component-scan base-package="com.faceontalk.scheduler"></context:component-scan> 
+	<context:component-scan base-package="com.faceontalk.scheduler"></context:component-scan>
 	
-	<!-- <context:component-scan base-package="com.faceontalk.aop"></context:component-scan>  -->
-	
-	<aop:config>
-	</aop:config>
+	<aop:config></aop:config>
 	
 </beans>

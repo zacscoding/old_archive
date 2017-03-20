@@ -55,7 +55,7 @@ public class MemberController {
 	@RequestMapping(value="/join", method=RequestMethod.POST)	
 	public ResponseEntity<Map<String,String>> registPOST(@RequestBody MemberVO vo) throws Exception {
 		logger.info("/accounts/join (POST)");
-		logger.info(vo.toString());		
+		
 		ResponseEntity<Map<String,String>> entity = null;				
 		Map<String,String> retMap = new HashMap<>();
 		try {
