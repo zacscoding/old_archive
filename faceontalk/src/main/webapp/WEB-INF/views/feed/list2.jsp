@@ -6,15 +6,15 @@
 <!-- feed css -->
 <link href="/resources/bootstrap/css/feed.css" rel="stylesheet" type="text/css">
 
-<div class="container">
-	<div class="col-md-7  center-block">
+<div class="container" align="center">
+	<div class="col-md-7">		
 		<c:if test="${not empty msg}">
 			<div class="alert alert-info">${msg}</div>
 		</c:if>		
 		<!-- 피드 박스 -->
 		<c:forEach var="vo" items="${feedList}" varStatus="status">
 			<input type="hidden" id="feed_no_fk">
-			<div class="social-feed-box center-block" id="feedbox${vo.feed_no}">
+			<div class="social-feed-box" id="feedbox${vo.feed_no}">
 				<!-- 상단 : 프로필, 이름 , 등록 일 -->
 				<div class="social-avatar">					
 					<a href="/accounts/detail?user_id=${vo.user_id_fk}" class="pull-left">
@@ -55,10 +55,11 @@
 					<img src="/displayImage?type=f&fileName=${vo.file_name}"
 						class="img-responsive"><br/>
 					<!-- 컨텐츠 -->
-					<h4 align="center">					
-					${vo.content}					
+					<h4>					
+					${vo.content}
 					</h4>
-					<br />
+					
+					
 					<!-- 버튼 -->
 					<c:if test="${vo.reply_count>3}">
 						<button class="btn btn-white btn-xs pull-left" id="commentBtn${vo.feed_no}"							

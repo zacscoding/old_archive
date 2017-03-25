@@ -56,9 +56,7 @@
             <!-- content -->
             <div class="form-group">
               <div class="col-md-9">
-                <textarea class="form-control" id="content" name="content" placeholder="Content" rows="8">
-                	${vo.content}
-                </textarea>
+                <textarea class="form-control" id="content" name="content" placeholder="Content" rows="8">${vo.content}</textarea>
               </div>
             </div>            
 			<br/>

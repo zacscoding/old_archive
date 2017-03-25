@@ -141,7 +141,7 @@
         </div>        
         <br/> 
         <!-- 메시지 -->
-        <div class="row">
+        <div class="row col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">
         	<!-- 성공 메시지 -->
 	        <div class="alert alert-success" style="display:none" id="successAlert">
 	  			<div class="text primary">
@@ -164,7 +164,7 @@
 			
 			<!-- 이메일 인증 성공, 등의 메시지 -->
 			<c:if test="${not empty msg}">
-				<div class="alert alert-info">
+				<div class="alert alert-warning" id="message">
 					<div class="text primary">
 						<strong>${msg}</strong>
 					</div>
@@ -175,7 +175,16 @@
 	</div><!-- container.끝 -->
         
 <script>	
-	$(document).ready(function() {				
+	$(document).ready(function() {		
+		
+		//도움 메시지 안보이게 하기
+		function clearMessage() {
+			$('#successAlert').css('display','none');
+			$('#duplicateIdAlert').css('display','none');
+			$('#failAlert').css('display','none');
+			$('#message').css('display','none');
+		}
+		
 		/*		회원 가입 (데이터가 적어서 JSON 처리)		*/
 		$('#btnSignUp').on('click',function() {
 			
@@ -198,23 +207,20 @@
 					//alert(ret.result);
 					//alert(ret.RESULT);
 					//alert(ret.MAIL);					
-					if(ret.result == 'SUCCESS') {						
-						$('#successAlert').css('display','block');
-						$('#duplicateIdAlert').css('display','none');
-						$('#failAlert').css('display','none');
+					if(ret.result == 'SUCCESS') {
+						clearMessage();
+						$('#successAlert').css('display','block');						
 						$('#gotoEmail').attr('href','//'+ret.mail);
 						// <a href='//www.naver.com'></a> 해야지 local host 안뜸 
 					} else if(ret.result == 'DUPLICATED_ID') {
-						$('#successAlert').css('display','none');
-						$('#failAlert').css('display','none');
+						clearMessage();						
 						$('#duplicateIdAlert').css('display','block');	
 					}						
 				},
 				error:function() {
+					clearMessage();
 					alert("Please try again after a few sconds");
-					$('#failAlert').css('display','block');					
-					$('#successAlert').css('display','none');
-					$('#duplicateIdAlert').css('display','none');					 					
+					$('#failAlert').css('display','block');
 				}
 			});			
 		});		

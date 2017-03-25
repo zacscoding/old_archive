@@ -56,7 +56,7 @@ public class MemberController {
 	public ResponseEntity<Map<String,String>> registPOST(@RequestBody MemberVO vo) throws Exception {
 		logger.info("/accounts/join (POST)");
 		
-		ResponseEntity<Map<String,String>> entity = null;				
+		ResponseEntity<Map<String ,String>> entity = null;				
 		Map<String,String> retMap = new HashMap<>();
 		try {
 			memberService.regist(vo);
@@ -201,8 +201,7 @@ public class MemberController {
 		
 		return entity; 		
 	}
-	
-	
+		
 	/**	Search Member	*/	
 	@RequestMapping(value="/detail",method=RequestMethod.GET)
 	public String getUserDetail(String user_id,HttpServletRequest request, Model model) throws Exception {
