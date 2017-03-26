@@ -1,5 +1,0 @@
-static : HTML , CSS ,JavaScript, 이미지 파일들을 보관하는 경로
-templates : Thymeleaf와 같은 템플릿의 경로
-application.properties : 애플리케이션 내의 설정 파일
-
-#http://docs.spring.io/spring-boot/docs/current/reference/html/howto-data-access.html
