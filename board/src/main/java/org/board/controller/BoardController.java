@@ -46,6 +46,17 @@ public class BoardController {
 		return null;
 	}
 	
+	/*	TEST CODE	*/
+	
+	@RequestMapping("/articles/testHeader")
+	public String headerTest() {
+		logger.info("test header");
+		return "/include/header";
+	}
+	
+	
+	/*	//TEST CODE	끝	*/
+	
 	
 
 }
