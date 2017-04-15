@@ -82,16 +82,14 @@
 		<form action="#" method="GET">
 			<c:forEach var="vo" items="${feedList}">
 				<div class="gallery_product col-lg-4 col-md-4 col-sm-4 col-xs-6 filter hdpe feedImage" data-no="${vo.feed_no}" >
-				<a href="#">
-				<img
+				<img data-no="${vo.feed_no}"
 					src="/displayImage?type=f&fileName=${vo.file_name}"
-				class="img-responsive">
-				</a>
+				class="img-responsive imgList">
 			</div>	
 			</c:forEach>
 		</form>
 	</div>
-	
+			
 	<!-- feed modal -->
 	<input type="hidden" name="feed_no" id="feed_no">
 	<div class="row">	
@@ -147,7 +145,7 @@
 				printReply(data.feed_no);
 				$('#feedModal').modal();
 			});
-		});		
+		});
 		
 		//피드 출력
 		var printModal = function(feed) {

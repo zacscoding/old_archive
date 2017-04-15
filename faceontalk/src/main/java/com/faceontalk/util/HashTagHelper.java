@@ -1,61 +1,67 @@
 package com.faceontalk.util;
 
+import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.LinkedList;
+import java.util.Iterator;
 import java.util.List;
 
 /*
  * TEMP hash tag helper.....
  */
-public class HashTagHelper {	
-	public static String contents1 ="ㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋ\n해시 태그 테스트\n#해시#태그#테스트#ㅋㅋㅋㅋㅋㅋ";
-	public static String contents2= "kkkk";		
+public class HashTagHelper {
 	
-	public static List<String> getAllHashTags(String content) {
-		//해시태그 리스트
-		List<String> hashTagsList = new LinkedList<>();
-		// 중복 태그 방지 HashSet
-		HashSet<String> set = new HashSet<>();
+	//태그를 담을 기본 capacity 
+	private static final int DEFAULT_CAPACITY = 20;
+		
+	public static List<String> getAllHashTags(String content) {			
+		//태그를 담을 set
+		HashSet<String> set = new HashSet<>(DEFAULT_CAPACITY);
+		//현재 인덱스
 		int curIdx = 0;
+		//시작 인덱스
 		int startIdx = 0;
 
 		while (curIdx < content.length()) {
 			if (content.charAt(curIdx) == '#') {
 				startIdx = curIdx++;
-				while (curIdx < content.length() && content.charAt(curIdx) != ' '
-						&& content.charAt(curIdx) != '#'&& content.charAt(curIdx) != '\n') {
-					curIdx++;
+				
+				while ( curIdx < content.length() ) {
+					char curChar = content.charAt(curIdx);
+					if( isEndOfTag(curChar) ) {
+						break;
+					} else {
+						curIdx++;
+					}
 				}
-
 				String tag = content.substring(startIdx + 1, curIdx);
-				if (!tag.isEmpty() && set.add(tag)) { // 빈 문자열이 아니고, 중복 태그가 아니면
-					hashTagsList.add(tag);
+				// 빈 문자열이 아니면
+				if ( !tag.isEmpty() ) { 
+					set.add(tag);
 				}
 			} else {
 				curIdx++;
 			}
 		}
 		
+		//반환할 태그 리스트( 동적 증가 방지를 위해 초기 capacity == set.size() )
+		List<String> hashTagsList = new ArrayList<>(set.size());
+		Iterator<String> tagItr = set.iterator();
+		while( tagItr.hasNext() ) {			
+			hashTagsList.add( tagItr.next() );
+		}
 		return hashTagsList;
-		
-		
-		//Queue<String> hashTagQue = new LinkedList<>();
-		//Set<String> hashTagsSet = new LinkedHashSet<>();
-//		while(!hashTagQue.isEmpty()) {
-//			System.out.println(hashTagQue.poll());
-//		}		
-//		//null || empty로 보낼지 고민
-//		if(hashTagsList.isEmpty())
-//			return null;		
-//		List<String> tagsList = new ArrayList<>(hashTagsSet.size());
-//		Iterator<String> itr = hashTagsSet.iterator();
-//		while(itr.hasNext()) {
-//			//System.out.println(itr.next());
-//			tagsList.add(itr.next());
-//		}
-//		return tagsList;
 	}
 	
+	private static boolean isEndOfTag(char ch) {
+		switch(ch) {
+		case ' ':
+		case '#':
+		case '\n':
+			return true;
+		default :
+			return false;
+		}
+	}
 	
 	
 	

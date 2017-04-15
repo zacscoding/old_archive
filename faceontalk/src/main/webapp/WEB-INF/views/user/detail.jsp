@@ -85,12 +85,10 @@
 	<!-- image list  -->
 	<div class="row" id="feedList">
 		<c:forEach var="vo" items="${feedList}">
-			<div class="gallery_product col-lg-4 col-md-4 col-sm-4 col-xs-6 filter hdpe">
-			<a href="#" onclick="displayFeed(${vo.feed_no}); return false;">
-			<img
-				src="/displayImage?type=f&fileName=${vo.file_name}"
-			class="img-responsive">
-			</a>
+			<div class="gallery_product col-lg-4 col-md-4 col-sm-4 col-xs-6 filter hdpe">			
+				<img data-no="${vo.feed_no}"
+					src="/displayImage?type=f&fileName=${vo.file_name}"
+				class="img-responsive imgList">			
 		</div>	
 		</c:forEach>
 	</div>
@@ -107,7 +105,7 @@
 
 				
 <script>
-
+$(function(){
 	//팔로우 상태 출력
 	var printFollowCnt = function() {
 		var user_no = '${memberVO.user_no}';
@@ -121,16 +119,16 @@
 		});		
 	};
 
-	//피드 상세 보여주기	
-	function displayFeed(feed_no) {		
+	//피드 상세 보여주기
+	$('.imgList').on('click',function(event){
+		var feed_no = $(this).data("no");
 		$('#feed_no').val(feed_no);		
-		//ajax get 으로 feed 상세 정보 얻어오기
 		$.getJSON("/feed/"+ feed_no, function(data) {			
 			printModal(data);
 			printReply(data.feed_no);
 			$('#feedModal').modal();
-		});			
-	}	
+		});	
+	});
 	
 	//댓글 등록 버튼 클릭
 	$('#replyAddBtn').on('click', function(event) {	
@@ -293,7 +291,7 @@
 	function displayFollower() {
 		$('#feedList').css('display','none');
 	}
-    
+});    
 </script>
 
 <%@ include file="/WEB-INF/views/include/footer.jsp" %>
