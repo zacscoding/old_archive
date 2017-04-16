@@ -7,16 +7,19 @@ grant all privileges on board_ex.* to 'board'@'localhost';
 create table tbl_member(
 	user_no int auto_increment,
 	user_id varchar(50) unique,
-	password varchar(50),
+	password varchar(150),
 	email varchar(50),
 	profile_pic varchar(150),
+	reg_date timestamp default now(),
 	primary key user_no
 );
-	
+
+
+
 
 --board table
 create table tbl_borad(
-	board_no int auto_increment,
+	board_no int auto_increment, 
 	title varchar(150),
 	reply_count int default 0,
 	like_count int default 0,

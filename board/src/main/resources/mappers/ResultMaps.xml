@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="resultMap">
+	
+	<resultMap id="memberResult" type="org.board.domain.MemberVO">
+		<result property="userNo" column="user_no" />
+		<result property="userId" column="user_id" />
+		<result property="profilePic" column="profile_pic" />
+		<result property="regDate" column="reg_date" />
+	</resultMap>
+		
+
+</mapper>
