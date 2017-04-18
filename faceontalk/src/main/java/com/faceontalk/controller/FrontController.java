@@ -72,6 +72,11 @@ public class FrontController {
 		
 	}
 	
+	/*	Follow list test	*/
+	@RequestMapping("/viewTest/followListTest")
+	public void followListTest() {
+		
+	}
 	
 
 }

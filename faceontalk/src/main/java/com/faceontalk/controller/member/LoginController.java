@@ -34,7 +34,7 @@ public class LoginController {
 	}
 	
 	@RequestMapping(value="/loginPost", method=RequestMethod.POST)
-	public String loginPOST(LoginDTO dto,HttpSession session,Model model) throws Exception {
+	public String loginPOST(LoginDTO dto,HttpSession session,Model model,RedirectAttributes rttr) throws Exception {
 		
 		logger.info("LoginController.. loginPOST"+dto.toString());
 		
@@ -42,8 +42,8 @@ public class LoginController {
 		MemberVO vo = service.login(dto);		
 		if(vo == null || !vo.isEnabled()) {//check email auth
 			logger.info("memberVo.. is null");
-			model.addAttribute("msg","Please confirm user id");
-			return "/user/login";
+			rttr.addFlashAttribute("msg","Please confirm user id");
+			return "redirect:/user/login";
 		}		
 		
 		logger.info("memberVO is not null");
@@ -58,7 +58,6 @@ public class LoginController {
 		}
 		
 		return "/user/loginPost";
-		
 	}
 	
 	@RequestMapping(value="/logout", method=RequestMethod.GET)

@@ -14,7 +14,7 @@ public class RegistrationNotifierService {
 	@Autowired
 	private JavaMailSender mailSender;	
 	
-	private static String AUTH_URI = "http://localhost:8080/accounts/confirm_verification";
+	private static String AUTH_URI = "http://localhost:8282/accounts/confirm_verification";
 	
 	public void sendMail(MemberVO vo,String auth_token) throws Exception /*//MessagingException,UnsupportedEncodingException*/{			
 		try {

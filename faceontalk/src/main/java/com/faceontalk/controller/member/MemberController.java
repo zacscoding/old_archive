@@ -84,23 +84,27 @@ public class MemberController {
 	}	
 	
 	@RequestMapping(value="/edit", method = RequestMethod.POST)
-	public String editGetPOST(HttpServletRequest request,MemberVO vo,Model model) throws Exception {
+	public String editPOST(HttpServletRequest request,MemberVO vo,Model model) throws Exception {
 		String url = "redirect:/accounts/mypage";		
-		try {
-			MemberVO anotherUser = memberService.searchById(vo.getUser_id());
-			//user_name변경 
-			if(anotherUser != null) {
-				throw new DuplicateIdException();
-			}
+		try {			
+			// get loggined user
+			HttpSession session = request.getSession();
+			MemberVO loginUser = (MemberVO) session.getAttribute("login");
 			
+			// 아이디 변경 할 경우
+			if(! loginUser.getUser_id().equals(vo.getUser_id()) ) {
+				MemberVO anotherUser = memberService.searchById(vo.getUser_id());
+				//user_name변경 
+				if(anotherUser != null) {
+					throw new DuplicateIdException();
+				}
+			}
 			//update db
 			memberService.edit(vo);			
 			vo = memberService.searchByNum(vo.getUser_no());	
 			
-			//update session
-			HttpSession session = request.getSession();
-			session.setAttribute("login",vo);
-			
+			//update session			
+			session.setAttribute("login",vo);			
 		} catch(DuplicateIdException ex) {
 			model.addAttribute("duplicateId", Boolean.TRUE);
 			model.addAttribute("vo",memberService.searchByNum(vo.getUser_no()));
