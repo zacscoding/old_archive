@@ -39,8 +39,7 @@ public class MemberService {
 		if( anotherUser != null )
 			throw new DuplicateValueException("동일한 ID가 존재합니다.");
 		
-		
-		passwordService.encodePassword(vo);
+		passwordService.encryptPassword(vo);
 		
 		memberMapper.regist(vo);
 	}
@@ -59,10 +58,9 @@ public class MemberService {
 	 * @return 존재 : true , 존재 하지 않음 : false
 	 * @throws Exception
 	 */
-	public boolean checkExist(SearchPairDTO dto) throws Exception {		
-		logger.info(String.valueOf(memberMapper.checkExist(dto)));
-		
-		return ( memberMapper.checkExist(dto) > 0 );
+	public boolean existMember(SearchPairDTO dto) throws Exception {		
+		logger.info( String.valueOf(memberMapper.existMember(dto)) );		
+		return ( memberMapper.existMember(dto) > 0 );
 	}
 	
 	

@@ -48,7 +48,7 @@ public interface MemberMapper {
 	 */
 	//@Select("select count(user_no) from tbl_member where ${searchType} = #{keyword}")
 	@SelectProvider(type=DynamicQueryProvider.class, method="checkMember")
-	public int checkExist(SearchPairDTO dto) throws Exception;
+	public int existMember(SearchPairDTO dto) throws Exception;
 	
 
 }

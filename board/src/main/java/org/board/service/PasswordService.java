@@ -11,9 +11,9 @@ public class PasswordService {
 	@Autowired
 	private BCryptPasswordEncoder passwordEncoder;
 	
-	public void encodePassword(MemberVO vo) {
-		String encodedPw = passwordEncoder.encode( vo.getPassword() );
-		vo.setPassword(encodedPw);
+	public void encryptPassword(MemberVO vo) {
+		String encPassword = passwordEncoder.encode( vo.getPassword() );
+		vo.setPassword(encPassword);
 	}
 
 }

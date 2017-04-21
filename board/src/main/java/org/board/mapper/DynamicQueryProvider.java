@@ -16,20 +16,19 @@ public class DynamicQueryProvider {
 	 */
 	public static String checkMember(SearchPairDTO dto) {
 		StringBuilder sb = new StringBuilder("select count(user_no) from tbl_member where user_no > 0 ");
-		String searchType = null;
+		String searchType = dto.getSearchType();
 		
-		if(dto.getSearchType() != null) {			
-			if(dto.getSearchType().equals("id")) {
+		if( searchType != null) {			
+			if(searchType.equals("id")) {
 				searchType = "user_id";
-			} else if(dto.getSearchType().equals("email")) {
-				searchType = "email";
-			}			
+			} 		
+			
 			sb.append("and ")
 			.append(searchType)
-			.append("=")
-			.append("#{keyword}");			
+			.append("=#{keyword}");
 		}
-		logger.info(sb.toString());
+		
+		logger.info( sb.toString() );
 		return sb.toString();
 		
 	}
