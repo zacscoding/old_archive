@@ -3,7 +3,7 @@ package org.board.service;
 import org.board.domain.MemberVO;
 import org.board.dto.SearchPairDTO;
 import org.board.exception.DuplicateValueException;
-import org.board.mapper.MemberMapper;
+import org.board.persistence.MemberMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

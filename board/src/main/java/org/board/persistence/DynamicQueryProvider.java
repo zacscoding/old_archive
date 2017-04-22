@@ -1,4 +1,4 @@
-package org.board.mapper;
+package org.board.persistence;
 
 import org.board.dto.SearchPairDTO;
 import org.slf4j.Logger;

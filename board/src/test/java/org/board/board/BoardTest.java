@@ -1,7 +1,7 @@
 package org.board.board;
 
-import org.board.mapper.BoardMapper;
-import org.board.member.MemberTest;
+import org.board.member.MemberDAOTest;
+import org.board.persistence.BoardMapper;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,7 +12,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class BoardTest {
-	private static final Logger logger = LoggerFactory.getLogger(MemberTest.class);
+	private static final Logger logger = LoggerFactory.getLogger(MemberDAOTest.class);
 	
 	@Autowired
 	private BoardMapper boardMapper;

@@ -1,4 +1,4 @@
-package org.board.mapper;
+package org.board.persistence;
 
 public interface BoardMapper {
 	
