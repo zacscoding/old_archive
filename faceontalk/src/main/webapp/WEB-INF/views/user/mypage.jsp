@@ -101,9 +101,7 @@
 
 
 <script>
-
-	/*		계정 수정 및 로그아웃 처리	*/
-		
+	/*		계정 수정 및 로그아웃 처리	*/		
 	//edit 버튼 이벤트 처리
 	$('#editBtn').on('click',function(event){
 		self.location="/accounts/edit";
@@ -137,8 +135,7 @@
 		//피드 상세 보여주기
 		$('.feedImage').click(function(e) {
 			e.preventDefault();
-			var feed_no = $(this).data('no');
-			
+			var feed_no = $(this).data('no');			
 			//ajax get 으로 feed 상세 정보 얻어오기
 			$.getJSON("/feed/"+ feed_no, function(data) {			
 				printModal(data);

@@ -68,7 +68,7 @@
 			</div>
 			<div class="form-group">		
 				<button type="submit" class="btn btn-primary" id="editBtn">Submit</button>
-				<button type="reset" class="btn btn-primary">Cancel</button>
+				<button class="btn btn-primary">Cancel</button>
 			</div>
 		</form>
 	</div>

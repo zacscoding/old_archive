@@ -18,6 +18,12 @@ public class UploadFileUtils {
 
 	/*	thumbnail 생성 파일(경로포함)	 반환		*/
 	public static String uploadFile(String uploadPath, String originalName,String type, byte[] fileData) throws Exception {
+		
+		// 업로드 패스 체크
+		File uploadDir = new File(uploadPath);
+		if ( !uploadDir.exists() )
+			uploadDir.mkdirs();
+		
 		// 파일 고유 아이디
 		UUID uid = UUID.randomUUID();
 
@@ -26,6 +32,7 @@ public class UploadFileUtils {
 
 		// 저장 경로 (년/월/일/)
 		String savedPath = calcPath(uploadPath);
+		
 		logger.info("UploadFileUtils.uploadFile() : " + uploadPath + savedPath);
 		
 		File target = new File(uploadPath + savedPath, savedName);
@@ -40,7 +47,6 @@ public class UploadFileUtils {
 		File originalFile = new File(uploadPath + path, fileName);
 		
 		BufferedImage originalImage = ImageIO.read(originalFile);				
-		
 		
 		int imgwidth = Math.min(originalImage.getHeight(),  originalImage.getWidth());
 		

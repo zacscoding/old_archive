@@ -38,7 +38,7 @@ public class FeedServiceImpl implements FeedService {
 		List<FeedVO> feedList = feedDAO.listFollowersFeeds(cri, user_no); 
 		//get reply list at first 
 		for(FeedVO vo : feedList) {
-			vo.setReplyList(replyDAO.list(vo.getFeed_no(), 1, REPLY_LIMIT_SIZE ));
+			vo.setReplyList(replyDAO.list(vo.getFeed_no(), 0 , REPLY_LIMIT_SIZE ));
 		}
 		return feedList;
 	}	
