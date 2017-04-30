@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 /**
+ * 게시판 관련 컨트롤러
  * 
  * @author 	:	Zaccoding
  * @date 	: 	2017. 4. 8.

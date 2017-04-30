@@ -18,6 +18,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+/**
+ * 유저 관련 컨트롤러
+ * @author zaccoding
+ * @date 2017. 4. 30.
+ */
+
 @Controller
 @RequestMapping("/users/**")
 public class MemberController {
@@ -43,23 +49,20 @@ public class MemberController {
 	 * 회원 가입 POST 요청 처리 메소드
 	 * @date	: 2017. 4. 16.
 	 * @param memberVO 회원 가입 요청 정보
-	 * @return 가입 결과 뷰 페이지
+	 * @return 가입 폼 페이지
 	 */
 	@RequestMapping(value = "/register" , method=RequestMethod.POST)
 	public String registerPOST(@ModelAttribute MemberVO memberVO, Model model) throws Exception {
 		logger.info("register POST");
-		
-		String viewName = null;
-		
+				
 		try {
 			memberService.register(memberVO);
-			viewName = "/users/registerSuccess";
-		} catch(DuplicateValueException e) {		
-			model.addAttribute("message", e.getMessage());
-			model.addAttribute("memberVO",memberVO);
-			viewName =  "/users/register";
+			model.addAttribute("result","success");
+		} catch(DuplicateValueException e) {
+			model.addAttribute("result","fail");
+			model.addAttribute("message", e.getMessage());			
 		}		
-		return viewName;
+		return "/users/register";
 	}
 	
 	/**

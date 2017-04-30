@@ -35,9 +35,9 @@ public class MemberService {
 	 */
 	public void register(MemberVO vo) throws Exception {
 		
-		MemberVO anotherUser = memberMapper.selectById( vo.getUserId() );
+		MemberVO anotherUser = memberMapper.selectById( vo.getUserId() );		
 		if( anotherUser != null )
-			throw new DuplicateValueException("동일한 ID가 존재합니다.");
+			throw new DuplicateValueException("Duplicate ID. Please use another id");
 		
 		passwordService.encryptPassword(vo);
 		

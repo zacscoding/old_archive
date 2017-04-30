@@ -9,11 +9,34 @@ import java.util.Date;
  * @date 	: 	2017. 4. 16.
  */
 public class MemberVO {
+	/**
+	 * 유저 시퀀스
+	 */
 	private Integer userNo;
+	
+	/**
+	 * 계정 아이디
+	 */
 	private String userId;
+	
+	/**
+	 * 비밀 번호
+	 */
 	private String password;
+		
+	/**
+	 * 이메일
+	 */
 	private String email;
+	
+	/**
+	 * 프로필 사진
+	 */
 	private String profilePic;
+	
+	/**
+	 * 등록일
+	 */
 	private Date regDate;
 	
 	

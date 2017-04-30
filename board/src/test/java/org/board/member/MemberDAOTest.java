@@ -18,7 +18,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class MemberDAOTest {
-	
 	private static final Logger logger = LoggerFactory.getLogger(MemberDAOTest.class);
 	@Autowired
 	private MemberMapper memberMapper;	

@@ -1,9 +1,9 @@
--- schema 생성
+#schema 생성
 CREATE SCHEMA `board_ex` DEFAULT CHARACTER SET utf8;
 create user 'board'@'localhost' identified by 'board';
 grant all privileges on board_ex.* to 'board'@'localhost';
 
---member table
+#member table
 create table tbl_member(
 	user_no int auto_increment,
 	user_id varchar(50) unique,
@@ -14,10 +14,7 @@ create table tbl_member(
 	primary key user_no
 );
 
-
-
-
---board table
+#board table
 create table tbl_borad(
 	board_no int auto_increment, 
 	title varchar(150),
@@ -28,14 +25,14 @@ create table tbl_borad(
 	mod_date timestamp,	
 );			
 
---board detail table
+#board detail table
 create table tbl_board_detail(
 	board_no primary key,
 	content varchar(2000),
 );
 	
 
---reply table
+#reply table
 create table tbl_reply (
 	reply_no int auto_increment,
 	board_no int not null,
