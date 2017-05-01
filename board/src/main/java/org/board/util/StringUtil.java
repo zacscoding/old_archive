@@ -11,6 +11,19 @@ public class StringUtil {
 	/**
 	 * 문자열 합치기
 	 * 
+	 * StringBuilder 내부에 동적으로 배열이 증가하지 못하게,
+	 * 초기 값 + 1 를 할당 후 append()
+	 * 
+	 * 이유 : 
+	 * => StringBuilder ( AbstractStringBuilder ) 는 
+	 * char[] value = new char[capacity];
+	 * int count; // 현재 사용 된 length
+	 * append(str) 일때,  
+	 * 
+	 * ( str + count ) - value.length > 0 면 동적 증가
+	 * 
+	 * ( 사실 크게 차이 없음 )
+	 * 
 	 * @author 	zaccoding
 	 * @date 	2017. 4. 22.
 	 * @param prefix 접두사
@@ -19,8 +32,8 @@ public class StringUtil {
 	 * @return 합친 문자열
 	 */
 	public static String combineStrings(String prefix, String body, String suffix) {		
-		int length = getLength(prefix,body,suffix);		
-		return new StringBuilder(length)
+		int totalLength = getTotalLength(prefix,body,suffix);		
+		return new StringBuilder(totalLength + 1)
 						.append(prefix)
 						.append(body)
 						.append(suffix)
@@ -61,7 +74,7 @@ public class StringUtil {
 	 * @param values
 	 * @return
 	 */
-	public static int getLength(String ... values) {
+	public static int getTotalLength(String ... values) {
 		int ret = 0;
 		for(String value : values) {
 			ret += getLength(value);
