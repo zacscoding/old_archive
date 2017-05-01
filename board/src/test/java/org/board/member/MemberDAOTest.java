@@ -5,14 +5,12 @@ import java.util.List;
 
 import org.board.domain.MemberVO;
 import org.board.persistence.MemberMapper;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
@@ -22,8 +20,8 @@ public class MemberDAOTest {
 	@Autowired
 	private MemberMapper memberMapper;	
 	private List<MemberVO> users;
-		
-	@Before
+	
+	//@Before
 	public void setUp() {
 		users = new ArrayList<MemberVO>();		
 		for(int i=1; i<3; i++) {
@@ -35,7 +33,7 @@ public class MemberDAOTest {
 		}		
 	}
 	
-	@Test
+	//@Test
 	public void testInsertAndSelect() throws Exception {
 		memberMapper.removeAll();
 		memberMapper.initAutoInc();
@@ -46,7 +44,7 @@ public class MemberDAOTest {
 		displayAll();		
 	}
 	
-	@Test
+	//@Test
 	public void updateTest() throws Exception {
 		for(MemberVO user : users) {
 			user = memberMapper.selectById(user.getUserId());
@@ -57,14 +55,22 @@ public class MemberDAOTest {
 		}
 		displayAll();
 	}
-	
-	
+		
 	private void displayAll() throws Exception {
 		for(MemberVO user : users) {
 			MemberVO vo = memberMapper.selectById(user.getUserId());
 			if(vo != null)
 				logger.info( vo.toString() );
 		}
+	}
+	
+	@Test
+	public void selectTest() throws Exception {
+		MemberVO vo = memberMapper.selectById("test1");
+		if( vo == null ) 
+			logger.info("vo is null");
+		else 
+			logger.info(vo.toString());
 	}
 	
 	

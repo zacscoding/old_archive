@@ -5,14 +5,17 @@ grant all privileges on board_ex.* to 'board'@'localhost';
 
 #member table
 create table tbl_member(
-	user_no int auto_increment,
+	user_no int auto_increment primary key,
 	user_id varchar(50) unique,
 	password varchar(150),
 	email varchar(50),
 	profile_pic varchar(150),
 	reg_date timestamp default now(),
-	primary key user_no
+	enabled boolean default false,
+	session_key varchar(50) not null default 'none',
+	session_limit timestamp
 );
+
 
 #board table
 create table tbl_borad(
@@ -37,9 +40,12 @@ create table tbl_reply (
 	reply_no int auto_increment,
 	board_no int not null,
 	text varchar(1000) not null,
-	user_no int
+	user_no int ....
+);
 	
 
 
-
+#init tbl_member
+delete from tbl_member where user_no > 0;
+alter table tbl_member auto_increment = 1;
 

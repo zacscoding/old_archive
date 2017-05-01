@@ -3,13 +3,16 @@ package org.board.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 @Configuration
-public class SpringConfig {
+public class AppConfig extends WebMvcConfigurerAdapter {
 	
 	@Bean
-	public BCryptPasswordEncoder BCryptPasswordEncoder() {
+	public BCryptPasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
 	}
+	
+	
 
 }

@@ -28,7 +28,6 @@ public class StringUtil {
 	}
 		
 	
-	
 	/**
 	 * 문자열 유효성 체크 메소드
 	 * 

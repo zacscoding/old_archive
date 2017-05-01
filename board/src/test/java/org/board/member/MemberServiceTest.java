@@ -7,9 +7,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.board.domain.MemberVO;
+import org.board.dto.LoginDTO;
 import org.board.dto.SearchPairDTO;
+import org.board.service.LoginService;
 import org.board.service.MemberService;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -26,10 +27,13 @@ public class MemberServiceTest {
 	
 	@Autowired
 	MemberService memberService;
+	
+	@Autowired
+	LoginService loginService;
 		
 	List<MemberVO> users = new ArrayList<>();	
 	
-	@Before
+	//@Before
 	public void setUp() {		
 		for(int i=1; i<5; i++) {
 			MemberVO vo = new MemberVO();
@@ -42,7 +46,7 @@ public class MemberServiceTest {
 	}
 	
 	
-	@Test
+	//@Test
 	public void insertTest() throws Exception {		
 		for(MemberVO user : users) {
 			memberService.register(user);
@@ -54,7 +58,21 @@ public class MemberServiceTest {
 			dto.setKeyword("test1");
 			assertThat( memberService.existMember(dto) , is(true) );
 		}
-		
+	}
+	
+	@Test
+	public void selectTest() throws Exception {
+		LoginDTO dto = new LoginDTO();
+		dto.setId("test1");
+		dto.setPassword("test");
+		if(loginService == null) {
+			logger.info("login service null");
+		}
+		MemberVO vo = loginService.login(dto);
+		if( vo == null ) 
+			logger.info("vo is null");
+		else
+			logger.info(vo.toString());
 	}
 	
 	

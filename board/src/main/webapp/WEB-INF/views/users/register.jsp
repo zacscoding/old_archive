@@ -78,19 +78,19 @@
 		            <!-- 성공 메시지 -->
 		            <div class="alert alert-success alert-dismissible registMessage"">
 		            	<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-		                Success to Join.		                
+		                Success to Join :) &nbsp;&nbsp;&nbsp;<a href="/login">Sign in</a>		                
 		            </div>
 				</c:if>            
 		    </div>
-		</c:if>
-			    		
-	    <a href="login.html" class="text-center">I already have a membership</a>
+		</c:if>			    		
+	    <a href="/login" class="text-center">I already have a membership</a>
 	  </div>
 	  <!-- /.form-box -->
 	</div>
 	<!-- /.register-box -->
 </section>
-</div><!-- /. content-wrapper -->		
+</div><!-- /. content-wrapper -->
+		
 	<!-- iCheck -->
 	<script src="/resources/plugins/iCheck/icheck.min.js"></script>
 	<script>	

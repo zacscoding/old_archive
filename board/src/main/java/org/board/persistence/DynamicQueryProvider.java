@@ -29,8 +29,8 @@ public class DynamicQueryProvider {
 		}
 		
 		logger.info( sb.toString() );
-		return sb.toString();
 		
+		return sb.toString();		
 	}
 
 }

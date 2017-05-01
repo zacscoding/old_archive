@@ -39,6 +39,18 @@ public class MemberVO {
 	 */
 	private Date regDate;
 	
+	/**
+	 * 로그인 쿠키 사용 시 
+	 * 세션 아이디
+	 */
+	private String sessionKey;
+	
+	/**
+	 * 자동 로그인 유효 시간
+	 */
+	private Date sessionLimit;
+	
+	
 	
 	/*		getters, setters , toString	*/
 	public Integer getUserNo() {
@@ -77,10 +89,24 @@ public class MemberVO {
 	public void setRegDate(Date regDate) {
 		this.regDate = regDate;
 	}
+	public String getSessionKey() {
+		return sessionKey;
+	}
+	public void setSessionKey(String sessionKey) {
+		this.sessionKey = sessionKey;
+	}
+	public Date getSessionLimit() {
+		return sessionLimit;
+	}
+	public void setSessionLimit(Date sessionLimit) {
+		this.sessionLimit = sessionLimit;
+	}
 	
 	@Override
 	public String toString() {
 		return "MemberVO [userNo=" + userNo + ", userId=" + userId + ", password=" + password + ", email=" + email
-				+ ", profilePic=" + profilePic + ", regDate=" + regDate + "]";
-	}	
+				+ ", profilePic=" + profilePic + ", regDate=" + regDate + ", sessionKey=" + sessionKey
+				+ ", sessionLimit=" + sessionLimit + "]";
+	}
+		
 }

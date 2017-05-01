@@ -11,6 +11,9 @@
 
 TEMP HOME!
 
+${login.userId}
+
+
 </section>
 
 </div>

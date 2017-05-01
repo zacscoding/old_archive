@@ -175,7 +175,7 @@
                   <a href="#" class="btn btn-default btn-flat">Profile</a>
                 </div>
                 <div class="pull-right">
-                  <a href="#" class="btn btn-default btn-flat">Sign out</a>
+                  <a href="/logout" class="btn btn-default btn-flat">Sign out</a>
                 </div>
               </li>
             </ul>
@@ -222,6 +222,7 @@
         <li class="header">Welcome :D </li>
         
         <!-- 로그인 -->
+        <c:if test="${empty login}">
         <li class="treeview">
         	<a href="#">
             	<i class="fa fa-users"></i> <span>Accounts</span>
@@ -230,10 +231,11 @@
             	</span>
           	</a>
           	<ul class="treeview-menu">
-            	<li><a href="../../index.html"><i class="fa fa-circle-o"></i>Log in</a></li>
+            	<li><a href="/login"><i class="fa fa-circle-o"></i>Log in</a></li>
             	<li><a href="/users/register"><i class="fa fa-circle-o"></i>Join Us</a></li>
           	</ul>        
         </li>
+        </c:if>
         
         <li class="treeview">
           <a href="#">

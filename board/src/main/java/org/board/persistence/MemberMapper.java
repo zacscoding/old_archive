@@ -1,8 +1,10 @@
 package org.board.persistence;
 
+import java.util.Date;
+
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.ResultMap;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.SelectProvider;
 import org.apache.ibatis.annotations.Update;
@@ -20,7 +22,6 @@ public interface MemberMapper {
 	 * @throws Exception
 	 */
 	@Select("select * from tbl_member where user_id = #{userId}")
-	@ResultMap("resultMap.memberResult")
 	public MemberVO selectById(String userId) throws Exception;
 	
 	/**
@@ -33,7 +34,6 @@ public interface MemberMapper {
 	 * @throws Exception
 	 */
 	@Select("select * from tbl_member where email = #{email}")
-	@ResultMap("resultMap.memberResult")
 	public MemberVO selectByEmail(String email) throws Exception;
 	
 	
@@ -68,8 +68,6 @@ public interface MemberMapper {
 	public void modifyPassword(MemberVO vo) throws Exception;
 	
 	
-	
-	
 	/**
 	 * user 시퀀스로 삭제하기
 	 * 
@@ -91,9 +89,42 @@ public interface MemberMapper {
 	@Delete("delete from tbl_member where user_no > 0")
 	public void removeAll()throws Exception;
 	
+	
+	/**
+	 * 멤버 테이블 user_no 컬럼 1로 초기화 하기
+	 * 
+	 * @author 	zaccoding
+	 * @date 	2017. 5. 1.
+	 * @throws Exception
+	 */
 	@Update("alter table tbl_member auto_increment=1")
 	public void initAutoInc() throws Exception;
 	
+	/**
+	 * 세션키로 MemberVO 인스턴스 찾는 메소드
+	 *  
+	 * @author 	zaccoding
+	 * @date 	2017. 5. 1.
+	 * @param sessionId 자동 로그인 쿠키를 사용했을 때의 세션 아이디
+	 * @return 세션아이디가 존재하고, 기간이 유효하면 vo 인스턴스 , 아니면 null
+	 * @throws Exception
+	 */
+	@Select("select * from tbl_member where session_key = #{sessionKey} and session_limit > now()")
+	public MemberVO getUserBySessionKey(String sessionKey) throws Exception;
+	
+	/**
+	 * 자동 로그인 처리 메소드
+	 * 
+	 * @author 	zaccoding
+	 * @date 	2017. 5. 1.
+	 * @param userNo 유저 시퀀스
+	 * @param sessionKey 자동 로그인 요청 시의 세션 아이디
+	 * @param expiredDate 유효 시간
+	 * @throws Exception
+	 */
+	@Update("update tbl_member set session_key = #{sessionKey}, session_limit = #{expiredDate} where user_no = #{userNo}")
+	public void keepLogin(@Param("userNo") Integer userNo, @Param("sessionKey") String sessionKey, 
+						  @Param("expiredDate") Date expiredDate) throws Exception;	
 	
 	/**
 	 * 존재 여부 체크 메소드
