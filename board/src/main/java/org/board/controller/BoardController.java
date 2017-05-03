@@ -33,7 +33,7 @@ public class BoardController {
 	 */
 	@RequestMapping(value="/create",method=RequestMethod.GET)
 	public String registerGET() {				
-		return "/board/register";				
+		return "/articles/register";				
 	}
 	
 	/**
@@ -46,6 +46,8 @@ public class BoardController {
 		
 		return null;
 	}
+	
+	
 	
 	/*	TEST CODE	*/	
 	@RequestMapping("/articles/testHeader")

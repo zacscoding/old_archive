@@ -8,19 +8,4 @@ package org.board.util;
  */
 public class LoginUtil {
 	
-	/**
-	 * 세션에 담을 로그인 
-	 */
-	public static final String LOGIN_SESSION_NAME = "login";
-	
-	/**
-	 * 기존 요청 경로
-	 */
-	public static final String URI_DESTINATION = "dest";
-	
-	/**
-	 * 로그인 쿠키 
-	 */
-	public static final String LOGIN_COOKIE_NAME = "loginCookie";
-
 }

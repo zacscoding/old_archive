@@ -61,8 +61,7 @@
   $(function () {
 	  
   });
-</script>
-	
+</script> 	
 	</section>	
 </div>
 <%@ include file="/WEB-INF/views/include/footer.jsp" %>

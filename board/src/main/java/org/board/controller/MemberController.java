@@ -70,7 +70,7 @@ public class MemberController {
 	 * ID/EMAIL 중복 확인 처리 메소드
 	 * 
 	 * @date	: 2017. 4. 16.
-	 * @param  
+	 * @param   
 	 * <ul>
 	 *  <li>ID 중복 검사 	: searchType == "id"</li>
 	 *  <li>EMAIL	검사 	: searchType == "email" </li>

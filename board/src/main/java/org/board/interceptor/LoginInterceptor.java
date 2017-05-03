@@ -5,7 +5,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.board.util.LoginUtil;
+import org.board.util.WebConstant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -13,7 +13,21 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 /**
- * 로그인 인터셉터 클래스
+ * <h4>로그인 인터셉터 클래스</h4>
+ * 
+ * 
+ * <strong>preHandle<strong><br>
+ * <ul>
+ * 	<li>기존 로그인 정보가 세션에 존재하면, 초기화</li>
+ * </ul>
+ * 		 
+ * <strong>postHandle<strong><br>
+ * <ul>
+ * 	<li>로그인 정보를 세션에 담는다</li>
+ *  <li>자동 로그인 체크 시, response에 자동로그인 쿠키를 담는다</li>
+ *  <li>기존 요청 경로 경로로 리다이렉트 시키고 없으면 최상위 경로 "/"로 리다이렉트</li>
+ * </ul>
+ *  
  * 
  * @author zaccoding
  * @date 2017. 5. 1.
@@ -25,11 +39,10 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
 	private static final Logger logger = LoggerFactory.getLogger(LoginInterceptor.class);
 	
 	/**
-	 *  로그인 요청 처리 전 preHandle 메소드
+	 *  로그인 요청 처리 전 preHandle 메소드 <br>
 	 *  아래와 같은 기능을 수행 함 <br>
 	 *  <ul>
 	 *  	<li>로그인 요청 후 세션에 같은 사용자가 존재하면 세션을 초기화</li>
-	 *  	<li></li>
 	 *  </ul>
 	 */
 	@Override
@@ -40,7 +53,7 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
 		
 		HttpSession session = request.getSession();
 		
-		if( session.getAttribute(LoginUtil.LOGIN_SESSION_NAME) != null ) {
+		if( session.getAttribute(WebConstant.LOGIN_SESSION_NAME) != null ) {
 			logger.info("clear before login data in session");
 			session.invalidate();
 		}
@@ -50,7 +63,7 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
 	
 	
 	/**
-	 *  로그인 요청 처리 후 postHandle 메소드 
+	 *  로그인 요청 처리 후 postHandle 메소드 <br>
 	 *  아래와 같은 기능을 수행 함 <br>
 	 *  <ul>
 	 *  	<li>로그인 VO 인스턴스를 세션에 담음</li>  	
@@ -72,19 +85,19 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
 		if( memberVO != null ) {
 			logger.info("new login success");
 			
-			session.setAttribute(LoginUtil.LOGIN_SESSION_NAME, memberVO);
+			session.setAttribute(WebConstant.LOGIN_SESSION_NAME, memberVO);
 			
 			//자동 로그인 체크
 			if( request.getParameter("useCookie") != null ) {
 				logger.info("use auto login service");
-				Cookie loginCookie = new Cookie( LoginUtil.LOGIN_COOKIE_NAME , session.getId() );
+				Cookie loginCookie = new Cookie( WebConstant.LOGIN_COOKIE_NAME , session.getId() );
 				loginCookie.setPath("/");
 				loginCookie.setMaxAge(60*60*24*7); // 1week 
 				response.addCookie(loginCookie);
 			}
 			
 			//기존 요청 경로 URL 처리
-			Object dest = session.getAttribute( LoginUtil.URI_DESTINATION );
+			Object dest = session.getAttribute( WebConstant.URI_DESTINATION );
 			if( dest != null ) 
 				logger.info("dest : " + dest.toString());			
 			response.sendRedirect( dest == null ? "/" : (String)dest );

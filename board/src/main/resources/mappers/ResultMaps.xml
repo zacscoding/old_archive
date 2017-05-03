@@ -6,6 +6,7 @@
 
 <mapper namespace="resultMap">
 	
+	<!-- Member Result Map 현재는 사용 X camel 세팅으로 대체 -->
 	<resultMap id="memberResult" type="org.board.domain.MemberVO">
 		<result property="userNo" column="user_no" />
 		<result property="userId" column="user_id" />

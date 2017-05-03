@@ -9,9 +9,13 @@
 
 <h4>${msg}</h4>
 
-TEMP HOME!
 
-${login.userId}
+TEMP INDEX PAGE !!!! <br>
+
+
+login id : ${login.userId} <br>
+
+<a href="/articles/create">새글쓰기</a>
 
 
 </section>

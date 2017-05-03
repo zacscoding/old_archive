@@ -10,7 +10,7 @@ import javax.servlet.http.HttpSession;
 import org.board.domain.MemberVO;
 import org.board.dto.LoginDTO;
 import org.board.service.LoginService;
-import org.board.util.LoginUtil;
+import org.board.util.WebConstant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -102,16 +102,16 @@ public class LoginController {
 	@RequestMapping(value="/logout", method=RequestMethod.GET)
 	public String logout(HttpServletRequest request, HttpServletResponse response, HttpSession session) throws Exception {
 		
-		Object obj = session.getAttribute( LoginUtil.LOGIN_SESSION_NAME );
+		Object obj = session.getAttribute( WebConstant.LOGIN_SESSION_NAME );
 		
 		if( obj != null && obj instanceof MemberVO ) {
 			
 			MemberVO vo = (MemberVO) obj;
 			
-			session.removeAttribute( LoginUtil.LOGIN_SESSION_NAME );
+			session.removeAttribute( WebConstant.LOGIN_SESSION_NAME );
 			session.invalidate();
 			
-			Cookie loginCookie = WebUtils.getCookie( request,  LoginUtil.LOGIN_COOKIE_NAME );
+			Cookie loginCookie = WebUtils.getCookie( request,  WebConstant.LOGIN_COOKIE_NAME );
 			
 			if( loginCookie != null ) {
 				loginCookie.setPath("/");

@@ -4,6 +4,7 @@ create user 'board'@'localhost' identified by 'board';
 grant all privileges on board_ex.* to 'board'@'localhost';
 
 #member table
+
 create table tbl_member(
 	user_no int auto_increment primary key,
 	user_id varchar(50) unique,
@@ -16,22 +17,45 @@ create table tbl_member(
 	session_limit timestamp
 );
 
+#category
+
+create table category (
+	cate_no int auto_increment primary key,
+	name varchar(150),
+	parent_no int default 0	
+);
 
 #board table
-create table tbl_borad(
-	board_no int auto_increment, 
+
+create table tbl_board (
+	board_no int auto_increment primary key, 
 	title varchar(150),
+	user_no int,
 	reply_count int default 0,
 	like_count int default 0,
 	view_count int default 0,
 	reg_date timestamp default now(),
-	mod_date timestamp,	
-);			
+	mod_date timestamp,
+	foreign key(user_no) references tbl_member(user_no)	
+);
+
+			
 
 #board detail table
-create table tbl_board_detail(
-	board_no primary key,
+
+create table tbl_board_detail (
+	board_no int primary key,
 	content varchar(2000),
+	foreign key(board_no) references tbl_board(board_no)
+);
+
+#board attachement file table
+
+create table tbl_board_attach (	
+	full_name varchar(150) primary key,
+	board_no int,
+    regdate timestamp default now(),
+	foreign key(board_no) references tbl_board(board_no)		
 );
 	
 

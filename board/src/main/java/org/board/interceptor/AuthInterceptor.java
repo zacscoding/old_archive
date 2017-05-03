@@ -8,6 +8,7 @@ import javax.servlet.http.HttpSession;
 import org.board.domain.MemberVO;
 import org.board.service.LoginService;
 import org.board.util.LoginUtil;
+import org.board.util.WebConstant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,17 +45,17 @@ public class AuthInterceptor extends HandlerInterceptorAdapter {
 		HttpSession session = request.getSession();
 		
 		// 로그인 안 한 경우
-		if( session.getAttribute(LoginUtil.LOGIN_SESSION_NAME) == null ) {
+		if( session.getAttribute(WebConstant.LOGIN_SESSION_NAME) == null ) {
 			logger.info("current user is not logined");
 			
-			Cookie loginCookie = WebUtils.getCookie( request, LoginUtil.LOGIN_COOKIE_NAME );
+			Cookie loginCookie = WebUtils.getCookie( request, WebConstant.LOGIN_COOKIE_NAME );
 			//로그인 쿠키 존재
 			if( loginCookie != null ) {				
 				MemberVO vo = loginService.checkLoginBefore( loginCookie.getValue() );				
 				// 로그인 쿠키가 유효한 경우
 				if( vo != null ) {
 					logger.info("use previous Cookie for login");
-					session.setAttribute( LoginUtil.LOGIN_SESSION_NAME, vo );
+					session.setAttribute( WebConstant.LOGIN_SESSION_NAME, vo );
 					return true;
 				}				
 			}	
@@ -85,7 +86,7 @@ public class AuthInterceptor extends HandlerInterceptorAdapter {
 		
 		if( request.getMethod().equalsIgnoreCase("GET") ) {
 			logger.info("dest : " + (uri + query));
-			request.getSession().setAttribute( LoginUtil.URI_DESTINATION  , (uri + query) );
+			request.getSession().setAttribute( WebConstant.URI_DESTINATION  , (uri + query) );
 		}		
 	}
 	
