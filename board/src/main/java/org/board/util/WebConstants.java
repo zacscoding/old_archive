@@ -6,7 +6,7 @@ package org.board.util;
  * @author zaccoding
  * @date 2017. 5. 3.
  */
-public class WebConstant {
+public class WebConstants {
 	
 	/**
 	 * 세션에 담을 로그인 
@@ -26,11 +26,16 @@ public class WebConstant {
 	/**
 	 * 파일 저장 패스	
 	 */
-	public static final String uploadPath = "c:\\board";
+	public static final String UPLOAD_ATTACH_PATH = "c:\\board\\attach";
+	
+	/**
+	 * 이미지 업로드 패스
+	 */
+	public static final String UPLOAD_IMAGE_PATH = "c:\\board\\images";
 	
 	/**
 	 * 파일 POST 전 임시 패스
 	 */
-	public static final String tempPath = "c:\\temp";
+	public static final String UPLOAD_TEMP_PATH = "c:\\board\\temp";
 	
 }

@@ -96,10 +96,11 @@
 							<!-- 업로드 된 파일들 -->							
 							<div class="form-group">
 								<div class="box-footer">
-									<ul class="mailbox-attachments clearfix">
+									<ul class="mailbox-attachments clearfix uploadedList">
+										<!-- sample ex -->
+										<!-- 
 										<li><span class="mailbox-attachment-icon"><i
 												class="fa fa-file-pdf-o"></i></span>
-
 											<div class="mailbox-attachment-info">
 												<a href="#" class="mailbox-attachment-name"><i
 													class="fa fa-paperclip"></i> Sep2014-report.pdf</a> <span
@@ -108,9 +109,9 @@
 														class="fa fa-fw fa-remove"></i></a>
 												</span>
 											</div></li>
+											
 										<li><span class="mailbox-attachment-icon"><i
 												class="fa fa-file-word-o"></i></span>
-
 											<div class="mailbox-attachment-info">
 												<a href="#" class="mailbox-attachment-name"><i
 													class="fa fa-paperclip"></i> App Description.docx</a> <span
@@ -119,9 +120,9 @@
 														class="fa fa-fw fa-remove"></i></a>
 												</span>
 											</div></li>
+											
 										<li><span class="mailbox-attachment-icon has-img"><img
 												src="/resources/dist/img/photo1.png" alt="Attachment"></span>
-
 											<div class="mailbox-attachment-info">
 												<a href="#" class="mailbox-attachment-name"><i
 													class="fa fa-camera"></i> photo1.png</a> <span
@@ -130,9 +131,9 @@
 														class="fa fa-fw fa-remove"></i></a>
 												</span>
 											</div></li>
+											
 										<li><span class="mailbox-attachment-icon has-img"><img
 												src="/resources/dist/img/photo2.png" alt="Attachment"></span>
-
 											<div class="mailbox-attachment-info">
 												<a href="#" class="mailbox-attachment-name"><i
 													class="fa fa-camera"></i> photo2.png</a> <span
@@ -140,7 +141,8 @@
 													class="btn btn-default btn-xs pull-right"><i
 														class="fa fa-fw fa-remove"></i></a>
 												</span>
-											</div></li>
+											</div></li>											
+											 --> 
 									</ul>
 								</div>
 							</div>
@@ -180,9 +182,9 @@
 					</div>
 					<div class="modal-body">
 						<div class="form-group">
-							<input type="file" id="exampleInputFile">
+							<input type="file" name="uploadImage" id="uploadImage">
 						</div>
-						<div class="form-group imageDrop"
+						<div class="form-group fileDrop" data-type="image"
 							style="border: 1px dotted blue; height: 70px;">
 							<div align="center" style="margin-top: 25px;">
 								<strong>Or drag and drop</strong> Image :)
@@ -192,7 +194,7 @@
 					<div class="modal-footer">
 						<button type="button" class="btn btn-default pull-left"
 							data-dismiss="modal">Close</button>
-						<button type="button" class="btn btn-primary">ADD</button>
+						<button type="button"  id="btnAddImage" class="btn btn-primary">ADD</button>
 					</div>
 				</div>
 				<!-- /.modal-content -->
@@ -216,10 +218,10 @@
 					</div>
 					<div class="modal-body">
 						<div class="form-group">
-							<input type="file" id="exampleInputFile">
+							<input type="file" name="uploadFile" id="uploadFile">
 						</div>
-						<div class="form-group fileDrop"
-							style="border: 1px dotted blue; height: 50px;">
+						<div class="form-group fileDrop" data-type="file"
+							style="border: 1px dotted blue; height: 70px;">
 							<div align="center" style="margin-top: 25px;">
 								<strong>Or drag and drop</strong> files :)
 							</div>
@@ -228,7 +230,7 @@
 					<div class="modal-footer">
 						<button type="button" class="btn btn-default pull-left"
 							data-dismiss="modal">Close</button>
-						<button type="button" class="btn btn-primary">ADD</button>
+						<button type="button" id="btnAddFile" class="btn btn-primary">ADD</button>
 					</div>
 				</div>
 				<!-- /.modal-content -->
@@ -244,6 +246,23 @@
 
 <!-- CK Editor -->
 <script src="https://cdn.ckeditor.com/4.5.7/standard/ckeditor.js"></script>
+<!-- Handlebars -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/3.0.1/handlebars.js"></script>
+<!-- upload js -->
+<script type="text/javascript" src="/resources/js/upload.js"></script>
+
+<!-- 업로드 리스트 뷰 출력 탬플릿 -->
+<script id="template" type="text/x-handlebars-template">
+<li>
+  <span class="mailbox-attachment-icon has-img"><img src="{{imgsrc}}" alt="Attachment"></span>
+  <div class="mailbox-attachment-info">
+	<a href="{{getLink}}" class="mailbox-attachment-name">{{fileName}}</a>
+	<a href="{{fullName}}" 
+     class="btn btn-default btn-xs pull-right delbtn"><i class="fa fa-fw fa-remove"></i></a>
+	</span>
+  </div>
+</li>                
+</script>
 
 <script>
   $(function () {	  
@@ -251,43 +270,88 @@
     // instance, using default configuration.    
     CKEDITOR.replace('editor1');
     
+    var template = Handlebars.compile($('#template').html());
     
-    // dragenter, dragover 이벤트 제거
-    $(".fileDrop").on("dragenter dragover", function(event) {
-    	event.preventDefault();
-    });
-    
-    // 파일 드랍 이벤트 처리
-    $(".fileDrop").on("drop", function(event) {
-    	event.preventDefault();
-    	
-    	var files = event.originalEvent.dataTransfer.files;
-    	var file = files[0];
-    	
+    // 업로드
+    function upload(file,type) {    	
     	if( file == null || file.length == 0 ) {
     		return;
     	}
     	
+    	var url = null;
+    	if( type === 'image' ) {
+    		url = '/uploadImage';
+    	} else {
+    		url = '/uploadAttach';
+    	}  	
+    	
     	var formData = new FormData();
     	formData.append("file",file);
     	
-    	$.ajax({
-    		url:'/uploadFile',
+    	$.ajax( {
+    		url: url,
     		data: formData,
     		dataType: 'text',
     		processData: false,
     		contentType: false,
     		type: 'POST',
     		success: function(data) {
-    			alert(data.result);
+    			afterUploadHandle(data,type);
     		}
-    	});
+    	});    	
+    };
+    
+    // 업로드 후 뷰 처리
+    function afterUploadHandle(data,type) {
+    	//게시글 내부 이미지 뷰 처리
+    	if( type === 'image') {
+    		$('#imageModal').modal('hide');
+    		var html = "<img src='/displayImage?fileName=" + data + "' style='height:550px; width:550px'/><br>";
+    		//CKEDITOR.instances['editor1'].setData(html);    		
+    		CKEDITOR.instances['editor1'].insertHtml(html);
+    	}
+    	// 첨부파일 뷰 처리
+    	else if( type==='file') {
+    		$('#fileModal').modal('hide');
+    		var fileInfo = getFileInfo(data);
+    		var html = template(fileInfo);
+    		$(".uploadedList").append(html);	
+    	}
+    };
+    
+    // dragenter, dragover 이벤트 제거
+    $(".fileDrop").on("dragenter dragover", function(event) {
+    	event.preventDefault();
+    });    
+    
+    // 이미지 , 파일 드랍 이벤트 처리 
+    // 이미지 드랍 > textarea에 이미지 url 추가
+    // 파일 드랍 > uploadList에 추가
+    $(".fileDrop").on("drop", function(event) {
+    	event.preventDefault();
+    	// 파일
+    	var files = event.originalEvent.dataTransfer.files;
+    	var file = files[0];
+    	// 이미지 or 첨부 타입
+    	var type = $(this).data('type');    	
+    	upload(file,type);
+    });
+        
+    $('#btnAddImage').on('click', function(event) {
+    	var file = $('input[name=uploadImage]')[0].files[0];
+    	upload(file,'image');
+    	$('#uploadImage').val("");
+    });
+    
+    $('#btnAddFile').on('click', function(event) {
+    	var file = $('input[name=uploadFile]')[0].files[0];
+    	upload(file,'file');
+    	$('#uploadFile').val("");  
     });
     
     
-    
-    
   });
+  
 </script>
 </body>
 </html>

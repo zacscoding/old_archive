@@ -6,6 +6,6 @@ package org.board.util;
  * @author zaccoding
  * @date 2017. 5. 1.
  */
-public class LoginUtil {
+public class LoginUtils {
 	
 }

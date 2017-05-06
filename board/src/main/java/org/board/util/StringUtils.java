@@ -10,7 +10,7 @@ import java.util.Calendar;
  * @author 	:	Zaccoding
  * @date 	: 	2017. 4. 16.
  */
-public class StringUtil {
+public class StringUtils {
 	
 	/**
 	 * 문자열 합치기 <br>
@@ -32,19 +32,24 @@ public class StringUtil {
 	 * 
 	 * @author 	zaccoding
 	 * @date 	2017. 4. 22.
-	 * @param prefix 접두사
-	 * @param body 내용
-	 * @param suffix 접미사
+	 * @param values 가변인자문자열
 	 * @return 합친 문자열
-	 */
-	public static String combineStrings(String prefix, String body, String suffix) {		
-		int totalLength = getTotalLength(prefix,body,suffix);		
-		return new StringBuilder(totalLength)
-						.append(prefix)
-						.append(body)
-						.append(suffix)
-						.toString();
+	 */	
+	public static String combineStrings(String ... values) {
+		if( values == null ) {
+			return null;
+		}
+		
+		int totalLength = getTotalLength( values );
+		
+		StringBuilder sb = new StringBuilder( totalLength );
+		for( String value : values ) {
+			sb.append( value );
+		}
+		
+		return sb.toString();
 	}
+	
 		
 	
 	/**
@@ -82,9 +87,11 @@ public class StringUtil {
 	 */
 	public static int getTotalLength(String ... values) {
 		int ret = 0;
+		
 		for(String value : values) {
 			ret += getLength(value);
 		}
+		
 		return ret;
 	}
 	
@@ -112,6 +119,25 @@ public class StringUtil {
 				.append( df.format( cal.get(Calendar.DATE) ) ) //일
 				.toString();
 	}	
+	
+	/**
+	 * 파일 확장자명을 구하는 메소드
+	 * 
+	 * @author 	zaccoding
+	 * @date 	2017. 5. 5.
+	 * @param fileName 파일 이름
+	 * @return 확장자명이름 , 또는 빈 문자열(.이 존재하지 않으면)
+	 */
+	public static String getFileFormat(String fileName) {
+		int dotIndex = fileName.lastIndexOf(".");
+		
+		if( dotIndex == -1 ) {
+			return "";
+		}
+		
+		return fileName.substring(dotIndex + 1);
+	}
+	
 }
 
 

@@ -4,7 +4,7 @@ import org.board.domain.MemberVO;
 import org.board.dto.SearchPairDTO;
 import org.board.exception.DuplicateValueException;
 import org.board.service.MemberService;
-import org.board.util.StringUtil;
+import org.board.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -93,7 +93,7 @@ public class MemberController {
 				prefix = "사용 불가능 한 ";
 			}
 			
-			String message = StringUtil.combineStrings(prefix,searchDTO.getSearchType()," 입니다.");
+			String message = StringUtils.combineStrings(prefix,searchDTO.getSearchType()," 입니다.");
 			
 			entity = new ResponseEntity<>(message,HttpStatus.OK);
 			

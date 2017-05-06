@@ -5,7 +5,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.board.util.WebConstant;
+import org.board.util.WebConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -53,7 +53,7 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
 		
 		HttpSession session = request.getSession();
 		
-		if( session.getAttribute(WebConstant.LOGIN_SESSION_NAME) != null ) {
+		if( session.getAttribute(WebConstants.LOGIN_SESSION_NAME) != null ) {
 			logger.info("clear before login data in session");
 			session.invalidate();
 		}
@@ -85,19 +85,19 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
 		if( memberVO != null ) {
 			logger.info("new login success");
 			
-			session.setAttribute(WebConstant.LOGIN_SESSION_NAME, memberVO);
+			session.setAttribute(WebConstants.LOGIN_SESSION_NAME, memberVO);
 			
 			//자동 로그인 체크
 			if( request.getParameter("useCookie") != null ) {
 				logger.info("use auto login service");
-				Cookie loginCookie = new Cookie( WebConstant.LOGIN_COOKIE_NAME , session.getId() );
+				Cookie loginCookie = new Cookie( WebConstants.LOGIN_COOKIE_NAME , session.getId() );
 				loginCookie.setPath("/");
 				loginCookie.setMaxAge(60*60*24*7); // 1week 
 				response.addCookie(loginCookie);
 			}
 			
 			//기존 요청 경로 URL 처리
-			Object dest = session.getAttribute( WebConstant.URI_DESTINATION );
+			Object dest = session.getAttribute( WebConstants.URI_DESTINATION );
 			if( dest != null ) 
 				logger.info("dest : " + dest.toString());			
 			response.sendRedirect( dest == null ? "/" : (String)dest );
