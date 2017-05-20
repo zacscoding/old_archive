@@ -9,6 +9,11 @@ import java.util.Date;
  * @date 	: 	2017. 4. 16.
  */
 public class MemberVO {
+
+	/*=================================
+	 * Member Fields
+	 *================================= */
+	
 	/**
 	 * 유저 시퀀스
 	 */
@@ -50,54 +55,70 @@ public class MemberVO {
 	 */
 	private Date sessionLimit;
 	
-	
-	
-	/*		getters, setters , toString	*/
+
+	/*=================================
+	 * Setters , Getters, toString
+	 *================================= */
 	public Integer getUserNo() {
 		return userNo;
 	}
+	
 	public void setUserNo(Integer userNo) {
 		this.userNo = userNo;
 	}
+	
 	public String getUserId() {
 		return userId;
 	}
+	
 	public void setUserId(String userId) {
 		this.userId = userId;
 	}
+	
 	public String getPassword() {
 		return password;
 	}
+	
 	public void setPassword(String password) {
 		this.password = password;
 	}
+	
 	public String getEmail() {
 		return email;
 	}
+	
 	public void setEmail(String email) {
 		this.email = email;
 	}
+	
 	public String getProfilePic() {
 		return profilePic;
 	}
+	
 	public void setProfilePic(String profilePic) {
 		this.profilePic = profilePic;
 	}
+	
 	public Date getRegDate() {
 		return regDate;
 	}
+	
 	public void setRegDate(Date regDate) {
 		this.regDate = regDate;
 	}
+	
 	public String getSessionKey() {
 		return sessionKey;
 	}
+	
 	public void setSessionKey(String sessionKey) {
 		this.sessionKey = sessionKey;
 	}
+	
 	public Date getSessionLimit() {
 		return sessionLimit;
 	}
+	
 	public void setSessionLimit(Date sessionLimit) {
 		this.sessionLimit = sessionLimit;
 	}

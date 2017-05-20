@@ -1,7 +1,9 @@
 package org.board.controller;
 
+import org.board.service.CategoryService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,15 +18,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @Controller
 @RequestMapping("/articles/*")
 public class BoardController {
-	
+	/*=================================
+	 * Member Fields
+	 *================================= */
 	private static final Logger logger = LoggerFactory.getLogger(BoardController.class);
 	
-	@RequestMapping("/home")
-	public String testHome(Model model) {		
-		logger.info("BoardController...testHome()");		
-		model.addAttribute("msg","HOME!");
-		return "home";
-	}
+	@Autowired
+	private CategoryService categoryService;
 	
 	/**
 	 * 게시글 작성 폼 요청 처리 메소드
@@ -32,7 +32,8 @@ public class BoardController {
 	 * @return 게시글 작성 폼
 	 */
 	@RequestMapping(value="/create",method=RequestMethod.GET)
-	public String registerGET() {				
+	public String registerGET(Model model) throws Exception {
+		model.addAttribute("categoryList", categoryService.listAll());
 		return "/articles/register";				
 	}
 	
@@ -42,7 +43,7 @@ public class BoardController {
 	 * @return 게시글 리스트 페이지
 	 */
 	@RequestMapping(value="/create",method=RequestMethod.POST)
-	public String registerPOST() {
+	public String registerPOST() throws Exception {
 		
 		return null;
 	}
@@ -54,6 +55,13 @@ public class BoardController {
 	public String headerTest() {
 		logger.info("test header");
 		return "/include/header";
+	}
+	
+	@RequestMapping("/home")
+	public String testHome(Model model) {		
+		logger.info("BoardController...testHome()");		
+		model.addAttribute("msg","HOME!");
+		return "home";
 	}
 	/*	//TEST CODE	끝	*/
 	

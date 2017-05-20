@@ -97,7 +97,7 @@ public class FileUtils {
 		BufferedImage sourceImg = ImageIO.read( new File( uploadPath + path , fileName) );
 		
 		// 썸네일 버퍼 이미지
-		BufferedImage destImg = Scalr.resize(sourceImg, Scalr.Method.AUTOMATIC,Scalr.Mode.FIT_TO_HEIGHT, 480);
+		BufferedImage destImg = Scalr.resize(sourceImg, Scalr.Method.AUTOMATIC,Scalr.Mode.FIT_TO_HEIGHT, 100);
 		
 		// 원본 파일 : filename.file -> 썸네일 : s_filename.file
 		String thumbnailName = StringUtils.combineStrings(uploadPath, path, File.separator, "s_" , fileName);

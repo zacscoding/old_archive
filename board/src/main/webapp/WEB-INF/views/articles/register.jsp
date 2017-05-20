@@ -2,7 +2,6 @@
     pageEncoding="UTF-8"%>
 <%@ include file="/WEB-INF/views/include/header.jsp" %>
 
-
 <!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
 	<!-- Content Header (Page header) -->
@@ -45,16 +44,14 @@
 
 					<div class="box-body pad">
 						<!-- 폼 -->
-						<form role="registForm" action="/testRegist" method="POST">
+						<form role=registerForm id="registerForm" action="/articles/create" method="POST">
 							<!-- 카테고리 -->
 							<div class="form-group">
 								<select class="form-control">
-									<option>Select category</option>
-									<option>option 1</option>
-									<option>option 2</option>
-									<option>option 3</option>
-									<option>option 4</option>
-									<option>option 5</option>
+									<option value="-1">Select category</option>
+									<c:forEach var="categoryVO" items="${categoryList}">
+										<option value="${categoryVO.cateNo}">${categoryVO.name}</option>	
+									</c:forEach>		
 								</select>
 							</div>
 							<!-- /. 카테고리 끝 -->
@@ -296,13 +293,13 @@
     		contentType: false,
     		type: 'POST',
     		success: function(data) {
-    			afterUploadHandle(data,type);
+    			handleAfterUploaded(data,type);
     		}
     	});    	
     };
     
     // 업로드 후 뷰 처리
-    function afterUploadHandle(data,type) {
+    function handleAfterUploaded(data,type) {
     	//게시글 내부 이미지 뷰 처리
     	if( type === 'image') {
     		$('#imageModal').modal('hide');
@@ -311,9 +308,9 @@
     		CKEDITOR.instances['editor1'].insertHtml(html);
     	}
     	// 첨부파일 뷰 처리
-    	else if( type==='file') {
+    	else if( type === 'file') {
     		$('#fileModal').modal('hide');
-    		var fileInfo = getFileInfo(data);
+    		var fileInfo = getFileInfo(data,'temp');
     		var html = template(fileInfo);
     		$(".uploadedList").append(html);	
     	}
@@ -336,18 +333,41 @@
     	var type = $(this).data('type');    	
     	upload(file,type);
     });
-        
+	
+    // 이미지 추가 버튼 클릭 이벤트
     $('#btnAddImage').on('click', function(event) {
     	var file = $('input[name=uploadImage]')[0].files[0];
     	upload(file,'image');
     	$('#uploadImage').val("");
     });
     
+    // 첨부파일 버튼 클릭 이벤트
     $('#btnAddFile').on('click', function(event) {
     	var file = $('input[name=uploadFile]')[0].files[0];
     	upload(file,'file');
     	$('#uploadFile').val("");  
+    }); 
+    
+    
+    // 등록 버튼 SUBMIT
+    $('#registerForm').submit( function(event) {
+    	event.preventDefault();
+    	
+    	var that = $(this);
+    	var fileStr = "";
+    	
+    	$(".uploadedList .delbtn").each(function(index) {
+    		str += "<input type='hidden' name='files[" + index + "]' value='"+$(this).attr("href") + "'>"; 
+    	});
+    	
+    	that.append(fileStr);
+    	that.get(0).submit();
     });
+    
+    
+    
+    
+    
     
     
   });

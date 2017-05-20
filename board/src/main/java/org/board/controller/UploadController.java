@@ -14,9 +14,9 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -43,8 +43,7 @@ public class UploadController {
 	 */
 	@RequestMapping(value="/uploadImage", method=RequestMethod.POST, produces = "text/plain;charset=UTF-8")
 	public ResponseEntity<String> uploadImage(MultipartFile file) throws Exception {
-		logger.info("upload image .." + file.getOriginalFilename());
-		
+		logger.info("upload image .." + file.getOriginalFilename());		
 		return new ResponseEntity<>( FileUtils.uploadFile(WebConstants.UPLOAD_IMAGE_PATH, file , false), HttpStatus.CREATED );		
 	}
 	
@@ -91,7 +90,7 @@ public class UploadController {
 	 * @throws Exception
 	 */
 	@RequestMapping("/displayAttach")
-	public ResponseEntity<byte[]> displayAttach(String type, String fileName) throws Exception {
+	public ResponseEntity<byte[]> displayAttach(@RequestParam("type") String type, @RequestParam("fileName") String fileName) throws Exception {
 		logger.info("displayAttach : " + type + "\n" + fileName);
 		String uploadPath = null;
 		if( type.equals("temp") ) {

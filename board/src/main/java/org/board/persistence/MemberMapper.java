@@ -11,6 +11,12 @@ import org.apache.ibatis.annotations.Update;
 import org.board.domain.MemberVO;
 import org.board.dto.SearchPairDTO;
 
+/**
+ * 회원 멤버 관련 Mapper 인터페이스
+ * 
+ * @author zaccoding
+ * @date 2017. 4. 16.
+ */
 public interface MemberMapper {
 	
 	/**
