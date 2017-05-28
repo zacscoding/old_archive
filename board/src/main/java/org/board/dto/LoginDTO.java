@@ -8,6 +8,9 @@ package org.board.dto;
  */
 public class LoginDTO {
 	
+	/*=================================
+	 * Member Fields
+	 *================================= */	
 	/**
 	 * 로그인 아이디
 	 */

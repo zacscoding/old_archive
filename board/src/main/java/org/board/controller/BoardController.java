@@ -1,5 +1,7 @@
 package org.board.controller;
 
+import org.board.domain.BoardVO;
+import org.board.service.BoardService;
 import org.board.service.CategoryService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,6 +28,9 @@ public class BoardController {
 	@Autowired
 	private CategoryService categoryService;
 	
+	@Autowired
+	private BoardService boardService;
+	
 	/**
 	 * 게시글 작성 폼 요청 처리 메소드
 	 *  
@@ -43,8 +48,12 @@ public class BoardController {
 	 * @return 게시글 리스트 페이지
 	 */
 	@RequestMapping(value="/create",method=RequestMethod.POST)
-	public String registerPOST() throws Exception {
-		
+	public String registerPOST(BoardVO vo) throws Exception {
+		logger.info( vo.toString() );
+		/* TEMP CODE	*/
+		vo.setUserNo(1);
+		/* TEMP CODE	*/
+		boardService.regist(vo);
 		return null;
 	}
 	

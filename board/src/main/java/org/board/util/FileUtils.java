@@ -2,14 +2,12 @@ package org.board.util;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
+import java.io.IOException;
 import java.util.Calendar;
 import java.util.UUID;
 
 import javax.imageio.ImageIO;
 
-import org.apache.commons.io.IOUtils;
 import org.imgscalr.Scalr;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -123,6 +121,32 @@ public class FileUtils {
 		if( !path.exists() ) {
 			path.mkdirs();
 		}
+	}
+	
+	/**
+	 * 업로드 후 파일 이동 처리 메소드
+	 * 
+	 * @author 	zaccoding
+	 * @date 	2017. 5. 28.
+	 * @param fileName post 처리 된 파일 이름
+	 */
+	public static void moveFileFromTempDir(String fileName) {		
+		try {
+			String cmd = new StringBuilder("cmd.exe /C move ")
+						.append(WebConstants.UPLOAD_TEMP_PATH)
+						.append(File.separator)
+						.append(fileName)
+						.append(" ")
+						.append(WebConstants.UPLOAD_ATTACH_PATH)
+						.toString();
+			Runtime.getRuntime().exec(cmd);
+			
+		} catch(IOException e) {
+			e.printStackTrace();
+			logger.error("failed to move file from temp to save dir",e);
+			throw new RuntimeException(e);
+		}
+		
 	}
 	
 	

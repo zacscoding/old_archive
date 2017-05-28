@@ -26,11 +26,26 @@ public class DynamicQueryProvider {
 			sb.append("and ")
 			.append(searchType)
 			.append("=#{keyword}");
-		}
+		}		
 		
 		logger.info( sb.toString() );
 		
 		return sb.toString();		
 	}
+	
+	public static String addAttach(String[] files) {
+		StringBuilder sb = new StringBuilder(
+				"insert into tbl_board_attach (board_no,full_name) values(last_insert_id(),"+ files[0] + ")");
+		
+		for(int i=1;i<files.length;i++ ) {
+			sb.append(",(last_insert_id(),\'")
+			.append(files[i])
+			.append("\')");
+		}
+		
+		return sb.toString();
+	}
+	
+	
 
 }

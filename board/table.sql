@@ -42,15 +42,14 @@ create table tbl_board (
 	board_no int auto_increment primary key, 
 	title varchar(150),
 	user_no int,
-	cate_no int,
-	cate_name varchar(50),
+	cate_no int,	
 	reply_count int default 0,
 	like_count int default 0,
 	view_count int default 0,
 	reg_date timestamp default now(),
 	mod_date timestamp,
 	foreign key(user_no) references tbl_member(user_no),	
-	foreign key(cate_no) references tbl_category(cate_no)
+	foreign key(cate_no) references tbl_category(cate_no)	
 );
 
 
@@ -86,6 +85,7 @@ create tbl_board_image(
 	regdate timestamp default now(),
 	foreign key(board_no) references tbl_board(board_no)
 );
+
 	
 
 ##########################

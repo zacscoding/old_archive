@@ -45,9 +45,10 @@
 					<div class="box-body pad">
 						<!-- 폼 -->
 						<form role=registerForm id="registerForm" action="/articles/create" method="POST">
+							<input type="hidden" name="categoryName">
 							<!-- 카테고리 -->
 							<div class="form-group">
-								<select class="form-control">
+								<select class="form-control" id="category" name="cateNo">
 									<option value="-1">Select category</option>
 									<c:forEach var="categoryVO" items="${categoryList}">
 										<option value="${categoryVO.cateNo}">${categoryVO.name}</option>	
@@ -58,13 +59,13 @@
 
 							<!-- 제목 -->
 							<div class="form-group">
-								<input type="text" class="form-control" placeholder="Title">
+								<input type="text" class="form-control" name="title" placeholder="Title">
 							</div>
 							<!-- /. 제목 끝 -->
 
 							<!-- 태그 -->
-							<div class="form-group">
-								<input type="text" class="form-control" placeholder="Tags">
+							<div class="form-group tagList">
+								<input type="text" class="form-control" id="tags" placeholder="Tags">								
 							</div>
 							<!-- /. 태그 끝 -->
 
@@ -81,12 +82,15 @@
 									data-toggle="modal" data-target="#fileModal"> <i
 									class="fa  fa-paperclip"></i>Files
 								</a>
+								
+								<button type="button" class="btn btn-default" id="btnTest">Test</button>
+								
 							</div>
 							<!-- /. 파일 끝-->
 
 							<!-- 텍스트 에디터 -->
 							<div class="form-group">
-								<textarea id="editor1" name="editor1" rows="50" cols="70"></textarea>
+								<textarea id="editor1" name="content" rows="50" cols="70"></textarea>
 							</div>
 							<!-- 텍스트 에디터 끝-->
 
@@ -147,7 +151,7 @@
 							<!-- 버튼 -->
 							<div class="form-group">
 								<div class="pull-left">
-									<button class="btn btn-default btn-lg">Reset</button>
+									<input type="reset" class="btn btn-default btn-lg" value="Reset">
 								</div>
 								<div class="pull-right">
 									<button class="btn btn-info btn-lg" id="btnRegister">Submit</button>
@@ -265,10 +269,9 @@
   $(function () {	  
     // Replace the <textarea id="editor1"> with a CKEditor
     // instance, using default configuration.    
-    CKEDITOR.replace('editor1');
+    CKEDITOR.replace('content');
     
-    var template = Handlebars.compile($('#template').html());
-    
+    var template = Handlebars.compile($('#template').html());    
     // 업로드
     function upload(file,type) {    	
     	if( file == null || file.length == 0 ) {
@@ -357,16 +360,13 @@
     	var fileStr = "";
     	
     	$(".uploadedList .delbtn").each(function(index) {
-    		str += "<input type='hidden' name='files[" + index + "]' value='"+$(this).attr("href") + "'>"; 
-    	});
+    		fileStr += "<input type='hidden' name='files[" + index + "]' value='"+$(this).attr("href") + "'>"; 
+    	});    	
     	
     	that.append(fileStr);
     	that.get(0).submit();
-    });
-    
-    
-    
-    
+    });    
+        
     
     
     
