@@ -9,7 +9,6 @@
 <body>	
 	<script>
 		self.location="/feed/list";	
-	</script>
-	
+	</script>	
 </body>
 </html>

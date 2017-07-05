@@ -34,7 +34,7 @@ public class LoginController {
 	}
 	
 	@RequestMapping(value="/loginPost", method=RequestMethod.POST)
-	public String loginPOST(LoginDTO dto,HttpSession session,Model model,RedirectAttributes rttr) throws Exception {
+	public String loginPOST(LoginDTO dto, HttpSession session, Model model,RedirectAttributes rttr) throws Exception {
 		
 		logger.info("LoginController.. loginPOST"+dto.toString());
 		
@@ -55,8 +55,7 @@ public class LoginController {
 			int amount = 60*60*24*7; //1week
 			Date sessionLimit = new Date(System.currentTimeMillis() + (1000*amount));	
 			service.keepLogin(vo.getUser_no(), session.getId(),sessionLimit);			
-		}
-		
+		}		
 		return "/user/loginPost";
 	}
 	

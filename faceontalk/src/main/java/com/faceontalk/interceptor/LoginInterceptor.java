@@ -51,6 +51,7 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
 				loginCookie.setMaxAge(60*60*24*7); //1week
 				response.addCookie(loginCookie);
 			}
+			
 			//기존 경로 URI 처리
 			Object dest = session.getAttribute("dest");
 			if(dest != null) 
