@@ -40,6 +40,10 @@ private static final Logger logger = LoggerFactory.getLogger(TestController.clas
 	
 	@RequestMapping("add_session")
 	public String addSession(HttpServletRequest req) {
+		req.getProtocol();
+		req.getRemoteHost();
+		req.getSession().getId();
+		
 		req.getSession().setAttribute("testSession", "test");
 		return REDIRECT_PATH;
 	}
