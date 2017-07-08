@@ -46,7 +46,7 @@ public class TestService implements InitializingBean {
 			int ret = 0;
 			List<DatasVO> list = getListFromVO(vo);
 			for(int i=0; i<10; i++) {
-				ret += mapper.insertMultiple(list);
+				ret += mapper.insertMultiple(list);				
 			}
 			return ret;
 		}		
@@ -65,10 +65,8 @@ public class TestService implements InitializingBean {
 	// SELECT
 	public int selectAll() {
 		List<DatasVO> list = mapper.selectAll();
-		return list.size();
+		return (list == null) ? 0 : list.size();
 	}
-	
-	
 	
 	//query
 	public int executeQuery(String query) throws Exception {
@@ -154,7 +152,7 @@ public class TestService implements InitializingBean {
 		
 		if( keySet.contains("timestamp_col") ) {
 			vo.setTimestampCol((Date)dataValues[8]);
-		}					
+		}				
 		
 		return vo;
 	}

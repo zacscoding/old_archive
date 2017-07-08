@@ -30,4 +30,7 @@ public interface TestMapper {
 	public int updateAll();
 	public List<DatasVO> selectAll();	
 	public int deleteAll();
+	
+	
+	public int insertError();
 }
