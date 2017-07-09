@@ -12,6 +12,8 @@ import java.util.TreeSet;
  * 
  */
 public class StringUtils {
+	static String TAB = "\t";
+	static String NEW_LINE="\r\n";
 	
 	/**
 	 * 문자열 유효성 체크
@@ -52,6 +54,58 @@ public class StringUtils {
 		 }
 		 
 		 return retSet;
+	 }
+	 
+	 public static String getJsonFormatString(String oneLine) {
+		 StringBuilder sb = new StringBuilder();
+			int tabSize = 1;		
+			for(int i=0; i<oneLine.length(); i++) {
+				char ch = oneLine.charAt(i);
+				switch(ch) {
+				case '{':
+				case '[':
+					if(i==0) {
+						sb.append(ch);
+						sb.append(NEW_LINE);
+						for(int j=1;j<=tabSize;j++){
+							sb.append(TAB);
+						}
+					}
+					else {
+						sb.append(NEW_LINE);
+						for(int j=1;j<=tabSize;j++){
+							sb.append(TAB);
+						}
+						sb.append(ch);
+						sb.append(NEW_LINE);
+						tabSize++;
+						for(int j=1;j<=tabSize;j++){
+							sb.append(TAB);
+						}
+					}								
+					break;
+				case ',':
+					sb.append(ch);
+					sb.append(NEW_LINE);
+					for(int j=1;j<=tabSize;j++){
+						sb.append(TAB);
+					}
+					break;
+				case '}':
+				case ']':
+					tabSize--;
+					sb.append(NEW_LINE);
+					for(int j=1;j<=tabSize;j++){
+						sb.append(TAB);
+					}
+					sb.append(ch);				
+					break;
+				default :				
+					sb.append(ch);
+				}
+			}
+			
+			return sb.toString();
 	 }
 	 
 	 

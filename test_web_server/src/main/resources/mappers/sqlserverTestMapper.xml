@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dogsound.persistence.SqlServerTestMapper">  
+	<!-- insert -->	
+	<insert id="insertOne">
+		INSERT INTO test_table (
+			bigint_col, binary_col, bit_col, char_col , datetime_col , decimal_col, float_col, int_col, text_col, tinyint_col 
+		) values (
+			#{bigintCol}, #{binaryCol}, #{bitCol}, #{charCol}, #{datetimeCol}, #{decimalCol}, #{floatCol,jdbcType=DOUBLE}, #{intCol}, #{textCol,jdbcType=LONGVARCHAR}, #{tinyintCol}
+		)		
+	</insert>
+	
+	<insert id="insertMultiple">	
+		INSERT
+			INTO
+		test_table(
+			bigint_col, binary_col, bit_col, char_col , datetime_col , decimal_col, float_col, int_col, text_col, tinyint_col
+		) values
+		<foreach collection="list" item="item" separator="," >
+			(
+			#{item.bigintCol}, #{item.binaryCol}, #{item.bitCol}, #{item.charCol}, #{item.datetimeCol}, #{item.decimalCol}, #{item.floatCol,jdbcType=DOUBLE}, #{item.intCol}, #{item.textCol,jdbcType=LONGVARCHAR}, #{item.tinyintCol}
+		)
+		</foreach>	
+	</insert>	
+</mapper>
