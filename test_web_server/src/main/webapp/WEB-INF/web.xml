@@ -2,7 +2,15 @@
 <web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
-
+	
+	<display-name>Test Web Server</display-name>
+	
+	<!-- error page -->
+	<error-page>
+	    <error-code>404</error-code>
+	    <location>/WEB-INF/views/errors/404.jsp</location>
+  	</error-page>
+	
 	<!-- The definition of the Root Spring Container shared by all Servlets 
 		and Filters -->
 	<context-param>
@@ -11,11 +19,16 @@
 		/WEB-INF/spring/root-context.xml</param-value>
 	</context-param>
 
-	<!-- Set default profile for context -->
+	<!-- Set default profile for context --> 
 	<context-param>
 		<param-name>spring.profiles.active</param-name>
+		<!-- Oracle Profile -->
 		<param-value>db.oracle.11gExp</param-value>
-	</context-param>
+		<!-- SqlServer profile -->	
+		<!-- 	
+		<param-value>db.sqlserver.2008</param-value>
+		 -->
+	</context-param>	
 
 	<!-- Creates the Spring Container shared by all Servlets and Filters -->
 	<listener>
@@ -30,10 +43,15 @@
 			<param-name>contextConfigLocation</param-name>
 			<param-value>/WEB-INF/spring/appServlet/servlet-context.xml</param-value>
 		</init-param>
-		<!-- oracle 11g expression -->
+		<!-- active profile -->
 		<init-param>
 			<param-name>spring.profiles.active</param-name>
+			<!-- oracle 11g expression -->
 			<param-value>db.oracle.11gExp</param-value>
+			<!-- SqlServer 2008 -->
+			<!--			 
+			<param-value>db.sqlserver.2008</param-value>
+			-->
 		</init-param>
 		<load-on-startup>1</load-on-startup>
 	</servlet>

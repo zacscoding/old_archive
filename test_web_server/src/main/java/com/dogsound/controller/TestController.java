@@ -19,9 +19,8 @@ import com.dogsound.util.StringUtils;
 @Controller
 public class TestController {
 	private static final Logger logger = LoggerFactory.getLogger(TestController.class);
-
 	private static final String REDIRECT_PATH = "redirect:/crudtest";
-
+	
 	@Inject
 	private TestService service;
 
@@ -50,6 +49,7 @@ public class TestController {
 	// CRUD VIEW
 	@RequestMapping(value = "/crudtest", method = RequestMethod.GET)
 	public String view(Model model) {
+		model.addAttribute("query",GeneralConfig.getSqlQuery());
 		model.addAttribute("dataList", DBDataTypeUtil.getDataList());
 		model.addAttribute("dbProfile", GeneralConfig.ACTIVE_DB_PROFILE.substring(3));
 		return "test";

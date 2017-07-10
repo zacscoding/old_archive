@@ -10,10 +10,25 @@
 	<title>Insert title here</title>
 </head>
 <body>
+	<table style="width:100%;">
+		<tr>
+			<td>
+				<strong>WAS : TOMCAT</strong> <br/>
+				<strong>ORM : Mybatis</strong> <br/>
+				<strong>DB : ${dbProfile}</strong> <br/>
+				<strong><a href="${context}">HOME</a></strong> <br/>
+			</td>
+			<td>
+				${query}
+			</td>			
+		</tr>	
+	</table>
+	<!-- 
 	<h4>WAS : TOMCAT</h4>
 	<h4>ORM : Mybatis</h4>
 	<h4>DB : ${dbProfile}</h4>
 	<h4><a href="${context}">HOME</a></h4>
+	 -->
 	<hr>
 	<h4>Result</h4>		
 	<c:if test="${not empty message}">

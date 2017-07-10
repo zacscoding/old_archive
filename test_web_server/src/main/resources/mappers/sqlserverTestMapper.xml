@@ -6,9 +6,11 @@
 	<!-- insert -->	
 	<insert id="insertOne">
 		INSERT INTO test_table (
-			bigint_col, binary_col, bit_col, char_col , datetime_col , decimal_col, float_col, int_col, text_col, tinyint_col 
+			string_col, boolean_col, short_col, integer_col, long_col,
+			float_col, double_col, bigdecimal_col, timestamp_col 
 		) values (
-			#{bigintCol}, #{binaryCol}, #{bitCol}, #{charCol}, #{datetimeCol}, #{decimalCol}, #{floatCol,jdbcType=DOUBLE}, #{intCol}, #{textCol,jdbcType=LONGVARCHAR}, #{tinyintCol}
+			#{stringCol,jdbcType=LONGVARCHAR}, #{booleanCol}, #{shortCol}, #{integerCol}, #{longCol},
+			#{floatCol,jdbcType=FLOAT}, #{doubleCol,jdbcType=DOUBLE}, #{bigdecimalCol}, #{timestampCol}
 		)		
 	</insert>
 	
@@ -16,11 +18,13 @@
 		INSERT
 			INTO
 		test_table(
-			bigint_col, binary_col, bit_col, char_col , datetime_col , decimal_col, float_col, int_col, text_col, tinyint_col
+			string_col, boolean_col, short_col, integer_col, long_col,
+			float_col, double_col, bigdecimal_col, timestamp_col
 		) values
 		<foreach collection="list" item="item" separator="," >
 			(
-			#{item.bigintCol}, #{item.binaryCol}, #{item.bitCol}, #{item.charCol}, #{item.datetimeCol}, #{item.decimalCol}, #{item.floatCol,jdbcType=DOUBLE}, #{item.intCol}, #{item.textCol,jdbcType=LONGVARCHAR}, #{item.tinyintCol}
+			#{item.stringCol,jdbcType=LONGVARCHAR}, #{item.booleanCol}, #{item.shortCol}, #{item.integerCol}, #{item.longCol},
+			#{item.floatCol,jdbcType=FLOAT}, #{item.doubleCol,jdbcType=DOUBLE}, #{item.bigdecimalCol}, #{item.timestampCol}
 		)
 		</foreach>	
 	</insert>	

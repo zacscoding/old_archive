@@ -118,7 +118,7 @@ public class TestService implements InitializingBean {
 			keySet.add(data);
 		}
 		
-		if( keySet.contains("varchar2_col") ) {
+		if( keySet.contains("string_col") ) {
 			vo.setStringCol((String)dataValues[0]);
 		}
 		

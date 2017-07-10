@@ -1,5 +1,8 @@
 package com.dogsound.config;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Arrays;
 
 import org.springframework.beans.factory.InitializingBean;
@@ -26,4 +29,38 @@ public class GeneralConfig implements InitializingBean {
 			ACTIVE_DB_PROFILE = activeProfile;
 		}
 	}
+	
+	public static String getSqlQuery() {
+		String activeProfile = GeneralConfig.ACTIVE_DB_PROFILE.substring(3);
+		String fileName = null;
+		if(activeProfile.startsWith("oracle")) {
+			fileName = "oracle_table.sql";
+		}
+		else if(activeProfile.startsWith("sqlserver")) {
+			fileName = "sqlserver_table.sql";
+		}		
+		BufferedReader br = null;
+		StringBuilder sb = new StringBuilder();
+		try {		
+			br = new BufferedReader(new InputStreamReader(GeneralConfig.class.getResourceAsStream("/sql/"+fileName)));
+			while(true) {
+				String readLine = br.readLine();
+				if(readLine == null)
+					break;
+				if(readLine.startsWith("--") || readLine.startsWith("#"))
+					continue;
+				if(readLine.endsWith(",") || readLine.endsWith("(") || readLine.endsWith(")"))
+					readLine += "<br>";
+				sb.append(readLine);
+			}		
+		} 
+		catch(IOException e) {
+			e.printStackTrace();
+		}
+		finally {
+			if(br!=null) try{br.close();}catch(IOException e){}
+		}
+		return sb.toString();
+	}
+	
 }

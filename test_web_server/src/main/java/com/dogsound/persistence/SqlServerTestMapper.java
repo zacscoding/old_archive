@@ -2,6 +2,7 @@ package com.dogsound.persistence;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
@@ -24,6 +25,12 @@ public interface SqlServerTestMapper extends TestMapper {
 	 * SELECT
 	 ====================*/
 	@Select("select * from test_table")
-	public List<DatasVO> selectAll();
+	public List<DatasVO> selectAll();	
 		
+	/*===================
+	 * DELETE
+	 ====================*/
+	@Delete("delete from test_table")
+	public int deleteAll();
 }
+	

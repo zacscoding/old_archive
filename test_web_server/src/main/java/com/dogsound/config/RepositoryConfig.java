@@ -46,6 +46,7 @@ public class RepositoryConfig {
 			throw new RuntimeException("there is no active profiles");
 		}
 		
+		logger.debug("active profile : " + prefix);
 		DriverManagerDataSource dataSourceManager = new DriverManagerDataSource();		
 		dataSourceManager.setDriverClassName((String)dbProperties.getProperty( prefix + ".driver" ));
 		dataSourceManager.setUrl((String)dbProperties.get( prefix + ".url" ));

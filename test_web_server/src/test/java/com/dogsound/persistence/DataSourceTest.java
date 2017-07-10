@@ -20,7 +20,8 @@ import org.springframework.test.context.web.WebAppConfiguration;
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebAppConfiguration
 @ContextConfiguration(locations={"file:src/main/webapp/WEB-INF/spring/root-context.xml"})
-@ActiveProfiles("db.oracle.11gExp")
+//@ActiveProfiles("db.oracle.11gExp")
+@ActiveProfiles("db.sqlserver.2008")
 public class DataSourceTest {
 	private static final Logger logger = LoggerFactory.getLogger(DataSourceTest.class);
 	

@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.dogsound.config.GeneralConfig;
+
 /**
  * data type ref : 
  * http://nowonbun.tistory.com/147
@@ -14,8 +16,8 @@ import java.util.List;
 
 public class DBDataTypeUtil {	
 	public static final List<String> dataList = new ArrayList<String>(); 		
-	public static final String[] dataTypes = {
-			"varchar2_col",
+	public static final String[] OracleDataTypes = {
+			"string_col",
 			"boolean_col",
 			"short_col",
 			"integer_col",
@@ -25,9 +27,21 @@ public class DBDataTypeUtil {
 			"bigdecimal_col",
 			"timestamp_col",			
 	};
+	public static final String[] SqlServerDataTypes = {
+			"string_col",
+			"boolean_col",
+			"short_col",
+			"integer_col",
+			"long_col",
+			"float_col",
+			"double_col",
+			"bigdecimal_col",
+			"timestamp_col"
+	};
+	
 	
 	public static final Object[] dataValues = {
-			"varchar2 records",
+			"strings records",
 			new Boolean(true),
 			new Short((short)1),
 			Integer.valueOf(11),
@@ -39,6 +53,15 @@ public class DBDataTypeUtil {
 	};	
 	
 	static {
+		String activeProfile = GeneralConfig.ACTIVE_DB_PROFILE.substring(3);
+		String[] dataTypes = null;; 
+		if(activeProfile.startsWith("oracle")) {
+			dataTypes = OracleDataTypes;
+		}
+		else if(activeProfile.startsWith("sqlserver")) {
+			dataTypes = SqlServerDataTypes;
+		}
+		
 		for( String dataType : dataTypes ) {
 			dataList.add(dataType);
 		}		
