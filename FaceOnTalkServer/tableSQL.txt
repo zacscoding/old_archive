@@ -1,0 +1,102 @@
+alter table member modify email check ( email LIKE '%@%.%' AND email NOT LIKE '@%' AND email NOT LIKE '%@%@%');
+
+/*
+* table : member
+*/
+create table member(
+	user_id number primary key
+	,user_name varchar2(20) not null
+	,password varchar2(20) not null
+	,email varchar2(50) not null unique
+	,regdate date not null
+	,phone varchar2(20) not null
+	,gender char(1) not null
+	,birth varchar2(20) not null
+	,friend_count number not null
+);
+
+alter table member modify email unique; 	
+alter table member modify gender check(gender='m' or gender='f');	
+create sequence member_seq;
+
+/*
+*table : relationship
+* status 0 : pending // 1 : accepted // 2 : declined // 3: blocked
+*/
+
+create table relationship(
+	user_one_id number
+	,user_two_id number
+	,status char(1) not null
+	,action_user_id number not null
+	,primary key(user_one_id,user_two_id)
+	,foreign key (user_one_id) references member(user_id)
+	,foreign key (user_two_id) references member(user_id)
+);
+	
+/*
+* table : feed
+*/
+create table feed(
+	feed_no number 
+	,writer_id number 
+	,writer_email varchar2(50) not null unique
+	,writer_name varchar2(20) not null
+	,content varchar2(3000) not null
+	,regdate date not null
+	,moddate date not null
+	,like_count number
+	,primary key(feed_no,writer_id)
+	,foreign key (writer_id) references member(user_id)
+	,foreign key (writer_email) references member(email)
+	,foreign key (writer_name) references member(user_name)
+);
+
+/*
+* sequence : for feed
+*/
+
+create sequence feed_seq;
+
+
+/******************
+*	message table
+*	πÃ¡§-------------------
+*/
+create table message(
+  	message_id number primary key,
+  	group_id varchar2(256) primary key,
+	message varchar2(1024) not null,
+	sender number not null,
+	send_date date not null
+	);
+
+/*
+*	sequence : for message
+*/
+create sequence message_seq;
+
+
+
+/*
+*	schedule table
+*/
+
+create table schedule(
+	group_id varchar2(256) not null
+	,content varchar2(1024) not null
+	,writer number not null
+	,regdate date not null
+	,d_day date not null
+	,foreign key (writer) references member(user_id)
+);
+	
+/*
+*	sequence : for schedule
+create sequence schedule_seq;
+	
+	
+	
+
+	
+	
