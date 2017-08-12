@@ -1,0 +1,584 @@
+/*
+*제어문
+
+ -조건제어문
+   -if
+    -if
+    -if ~ else
+    -if ~ else if ~ else
+   -switch ~ case
+
+
+ -반복제어문
+   -for
+    -단일 for
+    -반복 for
+
+   -while
+    -while
+    -do ~ while
+
+
+*/
+
+ 
+
+/*
+
+*if문 예제
+
+import java.util.*;
+
+public class IfTest1 {
+ public static void main(String[] args){
+  Scanner in = new Scanner(System.in);
+  
+//  System.out.print("차량의 속도를 입력 :");
+//  int speed=in.nextInt();
+//  
+//  if(speed>80){
+//   System.out.println("당신의 차량은 과태료 부가 대상입니다.");
+//  }
+//  else{
+//   System.out.println("당신의 차량은 과태료 부가 대상이 아닙니다.");
+//  }
+  
+  System.out.print("첫 번째 수를 입력 :");
+  int n1=in.nextInt();
+  System.out.print("두 번째 수를 입력 :");
+  int n2=in.nextInt();
+  
+  if(n1>n2){
+   System.out.println("첫번째 수가 더 큰수");
+//   System.out.println(n1+"과 "+n2+"중 큰 수는 "+n1+"입니다.");
+  }
+  else if(n1<n2)
+  {
+   System.out.println("두번째 수가 더 큰수");
+//   System.out.println(n1+"과 "+n2+"중 큰 수는 "+n2+"입니다.");
+  }
+  else
+  {
+   System.out.println("두수는 같은 수");
+//   System.out.println(n1+"과 "+n2+"는 같습니다.");
+  }
+ }
+}
+
+ 
+
+*짝수와 홀수를 구하는 예제
+
+import java.util.*;
+
+public class DecideOddOrEven {
+ public static void main(String[] args){
+  Scanner in=new Scanner(System.in);
+  
+  System.out.print("임의의 수 입력 :");
+  int x=in.nextInt();
+  
+  if(x%2==0){
+   System.out.println(x+"는 짝수 입니다.");
+  }
+  else{
+   System.out.println(x+"는 홀수 입니다.");
+  }    
+ }
+}
+
+ 
+
+*/
+
+
+
+
+/*
+/*
+ * 임의의 수를 입력 받아 그 수가 3의 배수인지, 5의 배수인지, 3과 5의 배수인지
+ * 알려주는 프로그램
+ * 
+ */
+
+import java.util.*; //Scanner 클래스
+public class IfTest1 {
+ public static void main(String[] args) {
+  Scanner sc=new Scanner(System.in);
+  System.out.print("임의의 수를 입력하세요:");
+  String tmpStr=sc.nextLine();
+  int n=Integer.parseInt(tmpStr);
+//  int n=sc.nextInt();
+//  int n=System.in.read()-48; //+throws IOException
+  
+  if(n%3==0&&n%5==0){
+   //논리식이 모두 참일때 참, 하나라도 거짓이면 거짓
+   //|| or 연산자 : 둘중에 하나만 참이면 참, 둘다 거짓이면 거짓
+   System.out.println(n+"은 3과 5의 배수 입니다.");
+  }
+  else{   
+   if(n%3==0){
+    System.out.println(n+"은 3의 배수 입니다.");
+   }
+   else if(n%5==0){
+    System.out.println(n+"은 5의 배수 입니다.");
+   }
+   else{
+    System.out.println(n+"은 3과 5의 배수가 아닙니다.");
+   }
+  }  
+ }
+}
+*/
+
+ 
+
+ 
+
+ 
+
+/*
+
+/*
+ *3개의 수를 입력받아 큰수대로 나열하기 
+ *첫번째수를 입력 :10
+ *두번째수를 입력: 15
+ *세번째수를 입력: 13
+ *결과 : 15>=13>=10
+ */
+import java.util.*;
+public class IfTest2 {
+ public static void main(String[] args){
+  Scanner sc=new Scanner(System.in);
+  System.out.print("첫번째 수를 입력 :");
+  int n1=sc.nextInt();
+  System.out.print("두번째 수를 입력 :");
+  int n2=sc.nextInt();
+  System.out.print("세번째 수를 입력 :");
+  int n3=sc.nextInt();  
+  
+  if(n1>=n2){
+   if(n1>=n3){
+    if(n2>=n3){     
+    System.out.println(n1+">="+n2+">="+n3);
+    }
+    else{
+    System.out.println(n1+">="+n3+">="+n2);
+    }
+   }
+   else{
+    System.out.println(n3+">="+n1+">="+n2);
+   }   
+  }
+  else{//n1<n2
+   if(n2>=n3){
+    if(n1>=n3)
+    System.out.println(n2+">="+n1+">="+n3);
+    else{
+    System.out.println(n2+">="+n3+">="+n1);
+    }
+   }
+   else{
+    System.out.println(n3+">="+n2+">="+n1);
+   }  
+   
+  }  
+ }
+}
+
+ 
+
+
+*/
+
+ 
+
+ 
+
+ 
+
+/*
+
+/*
+ *두개의 수를 입력받고 한개의 산술연산자(+,-,*,/,%)를 입력 받아서
+ *입력한 연산자대로 결과를 알려주는 프로그램
+ *첫번째 수 : 10
+ *두번째 수 : 20
+ *
+ */
+
+ 
+
+ 
+
+ 
+
+import java.util.*;
+import java.io.*;
+
+public class IfTest33 {
+ public static void main(String[] args) throws IOException{
+ Scanner sc=new Scanner(System.in);
+ 
+ System.out.print("첫번째 수를 입력 : ");
+ int n1=sc.nextInt();
+ System.out.print("두번째 수를 입력 : ");
+ int n2=sc.nextInt();
+ System.out.print("산술 연산자 입력 : ");
+ char op=(char)System.in.read();
+ int result=0;
+ if(op=='+'){
+  result=n1+n2;
+ }
+ else if(op=='-'){
+  result=n1-n2;
+ }
+ else if(op=='*'){
+  result=n1*n2;
+ }
+ else if(op=='/'){
+  result=n1/n2;
+ }
+ else if(op=='%'){
+  result=n1%n2;
+ }
+ else{
+  System.out.println("지원하지 않는 연산자 입니다.");
+ }
+ 
+ switch(op){ //case 의 내용이 이미 메모리에 올라감(컴파일전에) -> op입력받으면 순서대로 하는게 아니라 case 중 해당하는데 넘어감
+   //만약 break문이 없으면 그 다음 case 실행 -> break 실행
+   //op에는 byte,short,char,int만 가능
+ case '+':
+  result=n1+n2;
+  break;
+ case '-':
+  result=n1-n2;
+  break;
+ case '*':
+  result=n1*n2;
+  break;
+ case '/':
+  result=n1/n2;
+  break;
+ case '%':
+  result=n1%n2;
+  break;  
+ }
+
+ System.out.printf("%d %c %d = %d 입니다.",n1,op,n2,result); 
+ }
+ 
+
+}
+
+*/
+
+ 
+
+ 
+
+ 
+
+
+/*
+
+
+import java.util.*;
+
+public class ForTest2 {
+ public static void main(String[] args) {
+  Scanner sc = new Scanner(System.in);
+
+  System.out.println("임의의 수를 입력하세요 : ");
+  String str = sc.nextLine();
+  int n = Integer.parseInt(str);
+  //int n=sc.nextInt();
+  System.out.println(n + "의 약수는");
+  for (int i = 1; i <= n/2; i++) {
+   if (n % i == 0) {
+    System.out.print(i+",");
+   }
+  }
+  System.out.print(n);
+ }
+}
+
+ 
+
+
+*/
+
+ 
+
+ 
+
+ 
+
+
+/*
+
+*구구단 출력 프로그램
+
+import java.util.*;
+public class ForTest3 {
+ public static void main(String[] args){
+  Scanner in=new Scanner(System.in);
+  int n;
+  do{
+  System.out.print("2-9단을 입력하세요 : ");
+  n=in.nextInt();
+  }while(n<2||n>9);  
+  for(int i=1;i<=9;i++){
+   System.out.println(n+"*"+i+"="+(n*i));   
+  }  
+ }
+}
+
+ 
+
+*/
+
+
+//Fortest
+
+
+/*
+
+
+
+
+import java.util.*;
+public class ForTest1 {
+	public static void main(String[] args){
+//		임의의 수를 입력 받아 그 그 수까지 3의 배수의 합을 구하는 프로그램
+//		Scanner in=new Scanner(System.in);
+//		int sum=0;
+//		System.out.print("임의의 수를 입력하세요 : ");
+//		int n=in.nextInt();
+//		for(int i=1;i<=n;i++){
+//			if(i%3==0){
+//				sum+=i;
+//			}
+//		}
+//		System.out.println("1-"+n+"까지 3의 배수의 합 : "+sum);
+		
+//		//2-9까지 구구단 출력
+//		System.out.println("2-9단 출력");
+//		for(int i=1;i<=9;i++){
+//			for(int j=2;j<=9;j++){
+//				System.out.printf("%d * %d = %2d ",j,i,j*i);
+//			}
+//			System.out.println();
+//		}
+		
+//		//아래와같이 출력하기
+//		//1번.
+//		//12345
+//		//12345
+//		//12345
+//		//12345
+//		//12345
+//		for(int i=1;i<=5;i++){
+//			for(int j=1;j<=5;j++){
+//				System.out.print(j);
+//			}
+//			System.out.println();
+//		}
+		
+		//2번
+		//12345
+		//23456
+		//34567
+		//45678
+		//56789
+		for(int i=1;i<=5;i++){
+			for(int j=i;j<=i+4;i++){
+				System.out.print(j);
+			}
+			System.out.println();
+		}
+
+		// //3번
+		// //1
+		// //12
+		// //1234
+		// //12345
+		// for(int i=1;i<=5;i++){
+		// for(int j=1;j<=i;j++){
+		// System.out.print(j);
+		// }
+		// System.out.println();
+		// }
+
+		// 4번
+		// 12345
+		// 1234
+		// 123
+		// 12
+		// 1
+		// for (int i = 1; i <= 5; i++) {
+		// for (int j = 1; j + i <= 6; j++) {
+		// System.out.print(j);
+		// }
+		// System.out.println();
+		// }
+
+
+		// 5번
+		// 1
+		// 12
+		// 123
+		// 1234
+		// 12345
+		// 1234
+		// 123
+		// 12
+		// 1
+		//int count = 0;
+		//for (int i = 1; i <= 9; i++) {
+		//if (i <= 5)
+		//count++;
+		//else
+		//count--;
+		//for (int j = 1; j <= count; j++) {
+		//System.out.print(j);
+		//}
+		//System.out.println();		
+				
+	}
+}
+
+
+*/
+
+
+ 
+
+
+//While문
+
+/*
+
+//While문
+
+
+public class WhileTest1 {
+ public static void main(String[] args){
+  int i=1;
+  int sum=0;
+  while(i<=10){
+   sum+=i;
+   i++;
+  }  
+  System.out.println("1~10까지의 합 : "+sum);
+ }
+}
+
+
+import java.io.*;
+public class WhilteTest2 {
+ public static void main(String[] args) throws IOException{
+    
+  while(true){
+   System.out.print("아무키나 누르세요!");
+   int asc=System.in.read();
+   
+   //엔터를 입력하면
+   if(asc==13){   
+   System.in.read();
+   }
+   
+   if(asc=='n'||asc=='N') break;
+   System.out.println("입력하신 키의 아스키코드값은 : "+asc);
+  }
+  System.out.println("프로그램을 종료합니다.");
+ }
+
+}
+
+ 
+
+ 
+
+/*
+ *임의의 수를 입력 받아 0이나 음수가 들어올때까지 계속 입력을 받는다.
+ *0이나 음수가 들어오면 입력을 끝내고, 그때까지 입력된 수의 합과 평균값을 구하는 프로그램
+ */ 
+import java.util.*;
+public class WhileTest3 {
+ public static void main(String[] args){
+  Scanner in=new Scanner(System.in);
+  int sum=0,count=0;
+  while(true){
+   System.out.printf("수를 입력하세요(종료 0 or 음수) :");
+   int n=in.nextInt();
+   if(n<=0) break;
+   sum+=n;
+   count++;
+  }
+  System.out.printf("입력하신 값들의 합은 : %d , 평균은 : %.2f 입니다.\n",sum,(float)sum/count);
+ }
+
+}
+
+ 
+
+ 
+
+
+/*
+ * 분을 입력 받아 시간으로 나타내는 프로그램
+ * 분을 입력 : 100
+ * 1시간 40분
+ */
+import java.util.*;
+
+public class WhileTest4 {
+ public static void main(String[] args) {
+  Scanner in = new Scanner(System.in);
+  int minute, hour;
+
+  System.out.println("분을 입력받아 시간으로 나타내는 프로그램");
+  while (true) {
+   System.out.print("분을 입력(종료 : 0) : ");
+   minute = in.nextInt();
+   if (minute == 0) {
+    break;
+   } else if (minute < 0) {
+    System.out.println("양수를 입력하세요");
+   } else {
+    hour = minute / 60;
+    minute %= 60;
+    System.out.printf("%d시간 %d분\n", hour, minute);
+   }
+  }
+  System.out.println("--종료--");
+ }
+
+}
+
+ 
+
+
+//do while 문
+
+/*
+ * 국어점수(0~100까지만)를 입력 받는 프로그램
+ */
+import java.util.*;
+public class WhileTest2 {
+ public static void main(String[] args){
+  Scanner in=new Scanner(System.in);
+  int score;
+  
+  do{
+   System.out.print("국어 점수를 입력 하세요 :");
+   score=in.nextInt();
+  }while(score<0||score>100);
+  //do {} 지역변수 선언하면 while( ) 연산 불가능
+  System.out.println("국어 점수는 : "+score+"입니다.");
+ }
+}
+
+*/

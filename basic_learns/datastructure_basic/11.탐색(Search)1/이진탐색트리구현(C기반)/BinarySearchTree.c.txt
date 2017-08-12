@@ -1,0 +1,123 @@
+#include "BinarySearchTree.h"
+#include <stdio.h>
+
+// BST의 생성 및 초기화
+void BSTMakeAndInit(BTreeNode ** pRoot) {
+	*pRoot=NULL;
+}
+
+// 노드에 저장된 데이터 반환
+BSTData BSTGetNodeData(BTreeNode * bst) {
+	return GetData(bst);
+}
+
+// BST를 대상으로 데이터 저장(노드의 생성과정 포함)
+void BSTInsert(BTreeNode ** pRoot, BSTData data) {
+	//1)재귀적으로
+	/*BTreeNode* next;
+	if (*pRoot == NULL) 
+	{
+		*pRoot= MakeBTreeNode();
+		SetData(*pRoot, data);
+	}
+	else 
+	{	
+		BSTData nowData = GetData(*pRoot);
+		if (nowData == data)
+			return;
+		else if (nowData > data) {
+			next = GetLeftSubTree(*pRoot);
+			if (next != NULL) {
+				BSTInsert(&next, data);
+				return;
+			}
+			else {
+				next = MakeBTreeNode();
+				SetData(next, data);
+				MakeLeftSubTree(*pRoot, next);
+			}
+		}
+		else {
+			next = GetRightSubTree(*pRoot);
+			if (next != NULL) {
+				BSTInsert(&next, data);
+				return;
+			}	
+			else {
+				next = MakeBTreeNode();
+				SetData(next, data);
+				MakeRightSubTree(*pRoot, next);
+			}
+		}
+	}*/
+
+
+	//2)While문으로
+	BTreeNode* pNode = NULL;	//parent node
+	BTreeNode* cNode = *pRoot;	//current node
+	BTreeNode* nNode = NULL;	// new node
+
+	while (cNode != NULL) {
+		BSTData curData = GetData(cNode);
+		if (curData == data)
+			return;
+
+		pNode = cNode;
+
+		if (curData > data) 		
+			cNode = GetLeftSubTree(cNode);		
+		else 
+			cNode = GetRightSubTree(cNode);		
+	}
+
+	nNode = MakeBTreeNode();
+	SetData(nNode, data);
+
+	if (pNode != NULL) {
+		if (data < GetData(pNode))
+			MakeLeftSubTree(pNode,nNode);
+		else
+			MakeRightSubTree(pNode,nNode);
+	}
+	else {
+		*pRoot = nNode;
+	}
+}
+
+// BST를 대상으로 데이터 탐색
+BTreeNode * BSTSearch(BTreeNode * bst, BSTData target) {
+	////1)재귀함수로
+	//BSTData data = GetData(bst);
+	//BTreeNode* next;
+	//if (data == target)
+	//	return bst;
+	//else if (data > target) {
+	//	next = GetLeftSubTree(bst);
+	//	if(next!=NULL)
+	//		return BSTSearch(GetLeftSubTree(bst), target);
+	//}
+	//else {
+	//	next = GetRightSubTree(bst);
+	//	if (next != NULL)
+	//		return BSTSearch(GetRightSubTree(bst), target);
+	//}
+	//return NULL;
+
+
+	////2)While문으로
+	BTreeNode* cNode = bst;
+	BSTData cd;
+
+	while (cNode != NULL) {
+		cd = GetData(cNode);
+		
+		if (cd == target)
+			return cNode;
+		else if (cd > target)
+			cNode = GetLeftSubTree(cNode);
+		else
+			cNode = GetRightSubTree(cNode);
+	}
+	
+	return NULL;
+}

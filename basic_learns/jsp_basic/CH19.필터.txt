@@ -1,0 +1,837 @@
+-----------CH19.필터-----------------
+;이장에서 다룰 내용
+-필터
+-Filter 구현
+-로그인 검사 등 필터 응용
+
+---------------------------------------------------------------------------------------------
+
+//01 필터란 무엇인가?
+;HTTP 요청과 응답을 변경할 수 있는 재사용 가능한 클래스
+
+-필터의 기본 구조 (+그림)
+						웹 컨테이너
+			--요청-->  	필터 --> 자원(JSP,서블릿 등)
+웹 브라우저	<--응답--			<--	
+
+=>필터는 1개만 존재하는게 아니라, 여러개의 필터 체인(Filter Chain)을 형성할 수도 있음
+=>필터는 정보를 변경할 뿐만 아니라 흐름도 변경할 수 있음
+  (클라이언트의 요청을 필터 체인의 다음 단계(결과적으로는 클라이너트가 요청한 자원)에 보내는것이 아니라, 다른 자원의 결과를 클라이언트에 전송
+   할 수 있음)
+=>사용자 인증, 권한 검사와 같은 기능을 구현할 때 용이하게 사용 가능
+  
+---------------------------------------------------------------------------------------------
+
+//02 필터의 구현
+
+-javax.servlet.Filter 인터페이스 : 클라이언트와 최종 자원 사이에 위치하는 필터를 나타내는 객체가 구현해야 하는 인터페이스
+
+-javax.servlet.ServletRequestWrapper 클래스 : 필터가 요청을 변경한 결과를 저장하는 래퍼
+
+-javax.servlet.ServletResponseWrapper 클래스 : 필터가 응답을 변경하기 위해 사용하는 래퍼
+
+-----------
+
+/2.1 Filter 인터페이스
+Filter 인터페이스에 정의된 인터페이스
+
+//필터를 초기화할 때 호출된다.
+	-public void init(FilterConfig filterConfig) throws ServletException{
+		//필터 초기화 작업
+	}
+
+//필터 기능을 수행한다. chain을 이용해서 체인의 다음 필터로 처리를 전달할 수 있음
+	-public void doFilter(ServletRequest request,ServletResponse response, FilterChain chain)
+									throws java.io.IOException,ServletException{
+		//1.request 파라미터를 이용하여 요청의 필터 작업 수행
+		..
+		//2.체인의 다음 필터 처리
+		chain.doFilter(request,response);
+		//3.response를 이용하여 응답의 필터링 작업 수행
+		..
+	}
+
+//필터가 웹 컨테이너에서 삭제될 때 호출
+	-public void destroy()
+
+
+=>서블릿 컨테이너는 사용자가 특정한 자원을 요청했을 때 그 자원 사이에 필터가 존재하는 경우 필터 객체의 doFilter() 메소드를 호출
+=>doFilter의 수행 흐름 
+1.request 파라미터를 이용하여 클라이언트의 요청을 필터링한다.
+  (1단계에서는 RequestWrapper 클래스를 사용하여 클라이언트의 요청을 변경할 수 있음)
+2.chain.doFilter() 메소드를 호출한다.
+  (2단계에서는 요청의 필터링 결과를 다음 필터에 전달한다.)
+3.response 파라미터를 사용하여 클라이언트로 가는 응답을 필터링 한다.
+  (3단계에서는 체인을 통해서 전달된 응답 데이터를 변경하여 그 결과를 클라이언트에 전송한다)
+  
+=>요청과 응답의 필터 적용 순서는 반대.
+
+-FilterConfig가 제공하는 메소드
+메소드							리턴타입				 설명
+getFilterName()					String				설정 파일에서 <filter-name>에 지정한 필터의 이름을 리턴
+getInitParameter(String name)	String				설정 파일의 <init-param>에서 지정한 초기화 파라미터의 값을 읽어옴(존재x null 리턴)
+getInitParameterNames()			Enumeration<String>	초기화 파라미터의 이름 목록을 구한다.
+getServletContext()				ServletContext		서블릿 컨텍스트 객체를 구한다.
+
+-----------
+
+/2.2 필터 설정하기 : web.xml 이용
+=>필터 설정하는 방법 : 1)web.xml 파일 설정 2)@WebFilter 애노테이션 사용
+
+<filter>
+	<filter-name>FilterName</filter-name>
+	<filter-class>javacan.filter.FilterClass</filter-class>
+	<init-param>
+		<param-name>paramName</param-name>
+		<param-value>value</param-value>	
+	</init-param>
+</filter>
+
+<filter-mapping>
+	<filter-name>FilterName</filter-name>
+	<url-pattern>*.jsp</url-pattern>
+or	<servlet-name>ServeltName</servlet-name>
+</filter-mapping>	
+
+
+=>
+(1)기본 필터 적용
+<filter> 	: 웹 어플리케이션에서 사용할 필터를 지정
+<filter-mapping> : 특정 자원에 대해 어떤 필터를 사용할지를 지정
+<init-param> : 초기화(init 메소드 호출 시)
+
+(2)적용URL패턴 or Servlet)
+<url-pattern> : 클라이언트가 요청한 특정 URI에 대해 필터링
+<servlet-name> : uri pattern 대신 사용 가능 -> 특정 서블릿에 대한 요청에 대해서 필터를 적용
+
+(3)dispatcher를 통해 필터가 적용되는 시점 변경
+<dispatcher> : 필터가 적용되는 시점을 설정 ( <filter-mapping>의 자식태그로 사용 가능 )
+REQUEST	: 클라이언트의 요청인 경우 필터를 적용한다(기본값)
+FORWARD : forward()를 통해서 제어 흐름을 이동하는 경우에 필터를 적용한다.
+INCLUDE : include()를 통해서 포함되는 경우에 필터를 적용한다.
+
+
+e.g) dispatcher의 흐름 
+	<filter-mapping>
+		<filter-name>AuthCheckFilter</filter-name>
+		<url-pattern>/pds/*</url-pattern>
+		<dispatcher>REQUEST</dispatcher>
+	</filter-mapping>
+
+	<filter-mapping>
+		<filter-name>IPCheckFilter</filter-name>
+		<url-pattern>/pds/data/*</url-pattern>
+		<dispatcher>INCLUDE</dispatcher>
+	</filter-mapping>
+
+=> 클라이언트 요청 CASE
+	1)웹 브라우저에서 /pds/data/download.jsp를 요청한 경우
+	=>두 개의 필터 매핑 모두 이 URL을 처리할 수 있음
+	=>BUT 두 번째 필터 매핑은 INCLUDE 이므로 웹 브라우저의 요청에 대해서는 필터가 적용 X
+
+	2)<jsp:include page="/pds/data/util.jsp" flush="false" />
+	=>/pds/data/util.jsp는 두 개의 필터 모두 해당
+	=>BUT 첫 번째 필터는 웹 브라우저의 요청에 대해서만 적용되므로 사용되지 X
+
+
+e.g)웹 브라우저의 요청이 동시에 여러 개의 필터 매핑에 적용되는 경우 -> web.xml에 표시한 순서대로 필터 적용
+	<filter-mapping>
+		<filter-name>AuthCheckFilter</filter-name>
+		<url-pattern>/pds/*</url-pattern>
+	</filter-mapping>	
+
+	<filter-mapping>
+		<filter-name>IPCheckFilter</filter-name>
+		<url-pattern>/pds/data/*</url-pattern>
+	</filter-mapping>
+
+	<filter-mapping>
+		<filter-name>CompressFilter</filter-name>
+		<url-pattern>/pds/data/*</url-pattern>
+	</filter-mapping>
+
+=> 	/pds/data/a.jsp 를 요청하면 필터는
+	AuthCheckFilter -> IPCheckFilter -> CompressFilter 순서대로 실행
+
+
+e.g)한 개 이상의 <url-pattern>태그와 <servlet-name>태그를 설정하는 경우
+<filter-mapping>
+	<filter-name>IPCheckFilter</filter-name>
+	<url-pattern>/pds/data/*</url-pattern>
+	<url-pattern>/webinterface/*</url-pattern>
+	<servlet-name>DownloadServlet</servlet-name>
+</filter-mapping>
+
+-----------
+
+/2.3 필터 설정하기 : @WebFilter 애노테이션 이용
+
+e.g)
+import javax.servlet.annotation.WebFilter;
+@WebFilter(filterName="xsltFilter" urlPatterns={"/xml/*","/xsl/*"})
+public class XSLTFilter implements Filter{
+	//필터 구현
+}
+
+=>주요속성
+urlPatterns : 필터를 적용할 URL 패턴 목록을 지정
+servletNames : 필터를 적용할 서블릿 이름 목록을 지정
+filterName : 필터의 이름을 지정
+initParams : 초기화 파라미터 목록을 지정
+dispatcherTypes : 필터를 적용할 범위를 지정 (열거 타입인 DispatcherType에 정의 된 값을 사용, 기본 : DispatcherType.REQUEST)
+
+-----------
+
+/2.4 요청 및 응답 래퍼 클래스
+;필터 기능을 하려면 클라이언트의 요청을 변경하고 클라이언트로 가는 응답을 변경할 수 있어야함.
+ ->요청과 응답을 변경할 때 사용하는 것이 ServletRequestWrapper / ServletResponseWrapper (javax.servlet.래퍼클래스들)
+-요청 정보를 변경하여 최종 자원인 서블릿/JSP/HTML/기타 자원에 전달
+-최종 자원으로부터의 응답을 변경하여 새로운 응답 정보를 클라이언트에게 보냄
+
+
+=>대부분 필터는 HTTP 프로토콜에 대한 요청과 응답을 필터링하므로
+=>javax.servlet.http.HttpServletResponseWrapper,javax.servlet.http.HttpServletRequestWrapper
+  (javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse 인터페이스를 구현 한 클래스)
+=>필터를 통해서 변경하고 싶은 요청 정보가 있으면 HttpServletRequestWrapper를 상속 & 메소드 재정의 & 구현한 래퍼 클래스의 객체를 
+  FilterChain의 doFilter() 메소드에 넘겨주면 됨.
+  
+e.g)지정한 파라미터가 존재하지 않을 경우, 파라미터의 값을 공백문자열("")로 제공하는 요청 레퍼 클래스
+
+//요청 래퍼 클래스
+/*	chap19/src/filter/NullParameterRequestWrapper.java	*/
+package filter;
+
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequestWrapper;
+
+public class NullParameterRequestWrapper extends HttpServletRequestWrapper{ //요청 래퍼 클래스로 동작하기 위해 HttpServletRequestWrapper 클래스 상속
+	private Map<String,String[]> parameterMap=null;
+	
+	public NullParameterRequestWrapper(HttpServletRequest request){
+		super(request);
+		parameterMap=new HashMap<String,String[]>(request.getParameterMap());
+	}
+
+	public void checkNull(String[] parameterNames){
+		for(int i=0;i<parameterNames.length;i++){
+			if(!parameterMap.containsKey(parameterNames[i])){
+				String[] values=new String[]{""};
+				parameterMap.put(parameterNames[i], values);				
+			}
+		}
+	}
+	
+	@Override
+	public String getParameter(String name) {
+		String[] values=getParameterValues(name);
+		if(values!=null && values.length > 0)
+			return values[0];
+		
+		return null;		
+	}
+	
+	@Override
+	public Map<String,String[]> getParameterMap(){
+		return parameterMap;
+	}
+	
+	@Override
+	public Enumeration<String> getParameterNames(){
+		return Collections.enumeration(parameterMap.keySet());
+	}
+	
+	@Override
+	public String[] getParameterValues(String name){
+		return (String[])parameterMap.get(name);
+	}
+}
+
+
+//요청래퍼클래스를 사용해서 요청 파라미터를 처리하는 필터 클래스
+/*	chap19/src/filter/NullParameterFilter.java	*/
+
+
+
+package filter;
+
+import java.io.IOException;
+import java.util.StringTokenizer;
+
+import javax.servlet.Filter;
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+
+public class NullParameterFilter implements Filter{	//필터 인터페이스 구현
+	private String[] parameterNames=null;
+	
+	@Override
+	public void init(FilterConfig config) throws ServletException{
+		String names=config.getInitParameter("parameterNames");
+		StringTokenizer st=new StringTokenizer(names,",");	//파라미터 목록은 , 로 구분됨
+		parameterNames=new String[st.countTokens()];
+		
+		for(int i=0;st.hasMoreTokens();i++){
+			parameterNames[i]=st.nextToken();
+		}
+	}
+	
+	//필터작업수행
+	@Override
+	public void doFilter(ServletRequest request,ServletResponse response,FilterChain chain) throws IOException,ServletException{
+		NullParameterRequestWrapper requestWrapper=new NullParameterRequestWrapper((HttpServletRequest)request);
+		requestWrapper.checkNull(parameterNames);
+		
+		chain.doFilter(requestWrapper,response);		
+	}
+	
+	@Override
+	public void destroy(){
+		
+	}
+	
+
+}
+
+
+// *.jsp 로 들어오는 요청에 대해서 NullParameterFilter를 필터로 적용하는 설정
+/*	web.xml		*/
+
+
+  <filter>
+  	<filter-name>NullParameter</filter-name>
+  	<filter-class>filter.NullParameterFilter</filter-class>
+  	<init-param>
+  		<param-name>parameterNames</param-name>
+  		<param-value>id,name</param-value>
+  	</init-param>  
+  </filter>
+  
+  <filter-mapping>
+  	<filter-name>NullParameter</filter-name>
+  	<url-pattern>*.jsp</url-pattern>  
+  </filter-mapping>  
+
+
+=>parameterNames 초기화 파라미터 값으로 "id,name"을 지정.
+=>id 파라미터와 name 파라미터가 존재하지 않을 경우 이 두 파라미터의 기본값을 ""로 설정
+
+
+//JSP 페이지
+/*	chap19/WebContent/nullParam.jsp		*/
+
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>NullParameterFilter 테스트</title>
+</head>
+<body>
+
+id 파라미터 : <%=request.getParameter("id") %> <br>
+name 파라미터 : <%=request.getParameter("name") %><br>
+member 파라미터 : <%=request.getParameter("member") %><br>
+
+</body>
+</html>
+
+
+<< 실행 결과 : http://localhost:8080/chap19/nullParam.jsp?id=zaccoding >>
+id 파라미터 : zaccoding 
+name 파라미터 : 
+member 파라미터 : null
+
+---------------------------------------------------------------------------------------------
+
+//03 필터의 응용
+;필터의 제한은 없음. 활용에 따라 필터의 응용 범위가 다양
+
+-사용자인증
+-캐싱 필터
+-자원 접근에 대한 로깅
+-응답 데이터 변환(HTML 변환, 응답 헤더 변환,데이터 암호화 등)
+-공통 기능 실행
+
+=>이 장에서는 사용자 인증 , XSL/T 필터 적용(추후에 응용은 쉬움)
+
+-----------
+
+/3.1 로그인 검사 필터 
+;JSP/서블릿 마다 필터를 적용하면 로그인 했는지 판단하기 위한 코드 삽입이 가능. BUT 변경시 모두 변경
+
+
+e.g)session에 "MEMBER" 속성이 존재하면 로그인한 것으로 판단
+
+/*	chap19/src/filter/LoginCheckFilter.java		*/
+
+package filter;
+
+import java.io.IOException;
+
+import javax.servlet.Filter;
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
+public class LoginCheckFilter implements Filter {
+	@Override
+	public void init(FilterConfig config) throws ServletException{
+		
+	}
+	
+	@Override
+	public void doFilter(ServletRequest request, ServletResponse response,FilterChain chain)throws IOException,ServletException{
+		HttpServletRequest httpRequest=(HttpServletRequest)request;
+		HttpSession session=httpRequest.getSession(false);
+		
+		boolean login=false;
+		if(session!=null){
+			if(session.getAttribute("MEMBER")!=null)
+				login=true;
+		}
+		
+		if(login){
+			chain.doFilter(request, response);
+		}else{
+			RequestDispatcher dispatcher=request.getRequestDispatcher("/loginForm.jsp");
+			dispatcher.forward(request, response);			
+		}
+	}
+	
+	@Override
+	public void destroy(){
+	
+	}	
+}
+
+
+
+/*	web.xml		*/
+
+  <filter>
+  	<filter-name>LoginCheck</filter-name>
+  	<filter-class>filter.LoginCheckFilter</filter-class>
+  </filter>
+  
+  <filter-mapping>
+  	<filter-name>LoginCheck</filter-name>
+  	<url-pattern>/board/*</url-pattern>
+  </filter-mapping>
+  
+  
+
+/*	chap19/WebContent/loginForm.jsp		*/
+
+
+
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>로그인</title>
+</head>
+<body>
+
+<form action="<%=request.getContextPath()%>/login.jsp" >
+아이디 <input type="text" name="memberId">
+암호 <input type="password" name="password">
+<input type="submit" value="로그인">
+</form>
+</body>
+</html>
+
+
+
+
+/*	chap19/WebContent/login.jsp		*/
+
+
+
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%
+	String memberId=request.getParameter("memberId");
+	session.setAttribute("MEMBER",memberId);
+%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>로그인</title>
+</head>
+<body>
+
+로그인 처리
+
+</body>
+</html>
+
+
+/* chap19/WebContent/board/boardList.jsp	*/
+
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>리스트</title>
+</head>
+<body>
+
+게시판 리스트입니다.
+
+</body>
+</html>
+
+
+<< 실행 결과 : http://localhost:8080/chap19/board/boardList.jsp >>
+loginForm.jsp 페이지 나옴
+
+=>로그인 후 
+<< 실행 결과 : http://localhost:8080/chap19/board/boardList.jsp >>
+게시판 리스트입니다.
+
+-----------
+
+/3.2 XSL/T 필터
+note)응답 래퍼 클래스의 사용방법을 알기 위한 예제.실제로 XSL/T 변환을 해야하는 경우가 많지 않음.
+(XSL/T에 집중보다는 응답 데이터를 어떻게 변경하는가에 포커스)
+
+=>JSP나 서블릿이 생성한 XML 응답 데이터를 XSL/T를 이용해서 HTML로 변환해주는 기능 제공
+(서블릿/JSP가 생성한 데이터를 임시 버퍼에 저장 & 저장된 XML 데이터를 XSL/T를 사용해서 변환
+구현 클래스 :
+-응답 데이터를 임시로 보관하는 버퍼로 사용할 출력 스트림
+-버퍼를 사용하는 응답 래퍼 클래스
+-응답 래퍼 클래스를 이용해서 응답 데이터에 XSL/T 변환을 수해?는 필터
+
+
+//버퍼 역할을 할 출력 스트림
+/*	chap19/src/filter/ResponseBufferWriter.java	*/
+
+package filter;
+
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
+public class ResponseBufferWriter extends PrintWriter{
+	public ResponseBufferWriter(){
+		super(new StringWriter(4096));
+	}
+	
+	public String toString(){
+		return ((StringWriter)super.out).toString();
+	}
+}
+
+
+//서블릿과 JSP가 ResponseBufferWriter를 출력 스트림으로 사용하도록 한느 응답 래퍼 클래스
+/*	chap19/filter/XSLTResponseWrapper.java	*/
+
+
+package filter;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServletResponseWrapper;
+
+public class XSLTResponseWrapper extends HttpServletResponseWrapper{
+	private ResponseBufferWriter buffer=null;
+	
+	public XSLTResponseWrapper(HttpServletResponse response){
+		super(response);
+		buffer=new ResponseBufferWriter();
+	}
+	
+	
+	//JSP/서블릿은 ServletResponse의 getWriter() 메소드로 구한 출력 스트림에 데이터를 출력
+	@Override
+	public PrintWriter getWriter() throws IOException {
+		return buffer;	//ResponseBufferWriter 객체를 리턴함으로써 JSP의 출력 결과를 버퍼에 저장.
+	}
+	
+	//JSP/서블릿에서 설정한 콘텐트 타입을 무시하고, 필터에서 새롭게 콘텐트 타입을 지정
+	@Override
+	public void setContentType(String contentType){
+		//do noting
+	}
+	
+	//버퍼에 저장된 내용을 구함
+	public String getBufferedString(){
+		return buffer.toString();
+	}
+}
+
+
+//필터 구하기
+1.응답 래퍼(XSLTResponseWrapper)를 생성한다.
+2.생성한 응답 래퍼를 체인의 다음 필터에 전달
+3.래퍼로부터 서블릿/JSP가 출력한 데이터를 읽어와 XSL/T를 사용하여 HTML로 변환
+4.변환된 결과인 HTML을 실제 응답 스트림에 출력
+
+
+
+/*	chap19/src/filter/XSLTFilter.java	*/
+
+package filter;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.Reader;
+import java.io.StringReader;
+import java.io.StringWriter;
+
+import javax.servlet.Filter;
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.annotation.WebFilter;
+import javax.servlet.http.HttpServletResponse;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
+
+@WebFilter(filterName="xsltFilter",urlPatterns={"/xml/*"})
+public class XSLTFilter implements Filter{
+	
+	private String xslPath=null;
+	
+	@Override
+	public void init(FilterConfig config) throws ServletException{
+		xslPath=config.getServletContext().getRealPath("/WEB-INF/xsl/book.xsl");	//XSL/T변환할 때 사용할 XSL 파일의 경로를 구함
+	}
+	
+	@Override
+	public void doFilter(ServletRequest request,ServletResponse response,FilterChain chain) throws IOException,ServletException{
+		response.setContentType("text/html; charset=utf-8");	//필터가 생성할 출력의 콘텐트 타입을 "text/html; charset=utf-8" => 웹브라우저에 출력되는 문서는 HTML
+		PrintWriter writer=response.getWriter();
+		XSLTResponseWrapper responseWrapper=new XSLTResponseWrapper((HttpServletResponse)response);//필터체인을 통해서 전달할 응답 래퍼 객체를 생성
+		chain.doFilter(request, responseWrapper);	//체인 실행(체인을 통해 응답 래퍼 객체가 전달되므로 JSP/Servlet 이 출력하는 내용은 응답 래퍼 객체의 버퍼
+													// 즉 XSLTResponseWrapper 클래스의 buffer 필드 에 저장
+		
+		//XSL/T변환
+		try{
+			TransformerFactory factory=TransformerFactory.newInstance();
+			Reader xslReader=new BufferedReader(new FileReader(xslPath));
+			
+			StreamSource xslSource=new StreamSource(xslReader);
+			
+			Transformer transformer=factory.newTransformer(xslSource);
+			
+			String xmlDocument=responseWrapper.getBufferedString(); //응답 래퍼로부터 JSP/Servlet이 생성한 내용을 읽어온다 .XML 문서 원본을 사용
+			Reader xmlReader=new StringReader(xmlDocument);
+			StreamSource xmlSource=new StreamSource(xmlReader);
+			
+			StringWriter buffer=new StringWriter(4096);
+			
+			transformer.transform(xmlSource, new StreamResult(buffer)); //XSL/T 변환을 실행
+			
+			writer.print(buffer.toString()); //변환 결과를 출력
+		}catch(Exception ex){
+			throw new ServletException(ex);
+		}
+		
+		writer.flush();
+		writer.close();		
+	}
+	
+	@Override 
+	public void destroy(){
+		
+	}
+}
+
+
+
+/*	chap19/WebContent/WEB-INF/xsl/book.xsl	*/
+
+<?xml version="1.0" encoding="utf-8" ?>
+  
+<xsl:stylesheet 
+xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
+    <xsl:output method = "html" indent="yes" encoding="utf-8" />
+    <xsl:template match="list">
+<html>
+<head><title>책 목록</title></head>
+<body>
+현재 등록되어 있는 책의 목록은 다음과 같습니다.
+<ul>
+    <xsl:for-each select="book">
+    <li><b><xsl:value-of select="title" /></b>
+    (<xsl:value-of select="price" /> 원)
+    <br />
+    <i><xsl:value-of select="author" /></i>
+    </li>
+    </xsl:for-each>
+</ul>
+</body>
+</html>
+    </xsl:template>
+</xsl:stylesheet>
+
+
+
+
+//JSP페이지
+/*	chap19/WebContent/xml/bookList.jsp	*/
+
+
+<?xml version="1.0" encoding="utf-8" ?>
+<%@ page contentType="text/xml; charset=utf-8" %>
+<%@ page trimDirectiveWhitespaces="true" %>
+<list>
+    <book>
+        <title>스프링 4 프로그래밍 입문</title>
+        <author>최범균</author>
+        <price>25,000</price>
+    </book>
+    
+    <book>
+        <title>객체 지향과 디자인 패턴</title>
+        <author>최범균</author>
+        <price>20,000</price>
+    </book>
+</list>
+
+
+
+<< 실행 결과 : http://localhost:8080/chap19/xml/bookList.jsp >>
+현재 등록되어 있는 책의 목록은 다음과 같습니다.
+	? 스프링 4 프로그래밍 입문 (25,000 원) 
+	  최범균 
+	? 객체 지향과 디자인 패턴 (20,000 원) 
+      최범균 
+	  
+	  
+<< 실행 결과 : http://localhost:8080/chap19/xml2/bookList.jsp >>
+==>실제로 bookList.jsp 그대로 나옴 <list>~ 부터 
+
+-----------
+
+/3.3 캐릭터 인코딩 필터
+
+기존 캐릭터 인코딩 설정
+<% request.setCharacterEncoding("utf-8"); %>
+
+=>요청 파라미터를 사용하는 모든 JSP 코드마다 캐릭터 인코딩을 설정하기 위해 위의 코드 삽입(잘못된 것은 아님)
+  BUT 동일한 코드가 여러 곳에 중복해서 출현하는 것은 좋지 않은 방법
+  
+  
+  
+/*	chap19/src/util/CharacterEncodingFilter.java	*/
+
+package util;
+
+import java.io.IOException;
+
+import javax.servlet.Filter;
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+
+public class CharacterEncodingFilter implements Filter{
+	private String encoding;
+	
+	@Override
+	public void doFilter(ServletRequest req,ServletResponse res,FilterChain chain) throws IOException,ServletException{
+		req.setCharacterEncoding(encoding);
+		chain.doFilter(req, res);
+	}
+	
+	@Override
+	public void init(FilterConfig config) throws ServletException{
+		encoding=config.getInitParameter("encoding");
+		if(encoding==null)
+			encoding="UTF-8";		
+	}
+	
+	@Override
+	public void destroy(){
+		
+	}
+}
+
+
+/* web.xml	*/
+ <filter>
+  	<filter-name>encodingFilter</filter-name>
+  	<filter-class>util.CharacterEncodingFilter</filter-class>
+  	<init-param>
+  		<param-name>encoding</param-name>
+  		<param-value>utf-8</param-value>
+  	</init-param>  	
+  </filter>
+  
+  <filter-mapping>
+  	<filter-name>encodingFilter</filter-name>
+  	<url-pattern>/*</url-pattern>  
+  </filter-mapping>  
+
+=>encoding 초기화 파라미터를 이용해서 사용할 인코딩을 지정하고, 필터 매핑을 통해서 어떤 URL 패턴에 필터를 적용할지 지정.
+=>필터를 통해서 요청 캐릭터 인코딩을 설정하기 때문에 JSP마다 요청 캐릭터 인코딩을 설정하지 않아도 됨.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

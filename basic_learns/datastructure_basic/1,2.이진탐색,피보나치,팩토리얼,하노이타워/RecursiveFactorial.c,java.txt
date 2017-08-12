@@ -1,0 +1,72 @@
+------------------------------------------------------------------------------------------------------
+/*C언어*/
+
+#include <stdio.h>
+int factorial(int num);
+int cache[15] = { 0, };
+int main(void) {
+	
+	int num;
+	
+	while (1) {
+		printf("x!의 x 입력(종료 : -1) : ");
+		scanf("%d", &num);
+
+		if (num == -1) {
+			break;
+		}
+
+		if (cache[num] == 0) {
+			cache[num] = factorial(num);
+			printf("%d!==%d\n", num, cache[num]);
+		}
+		else {
+			printf("캐시메모리 사용\n");
+			printf("%d!==%d\n", num, cache[num]);
+		}
+		
+	}
+	return 0;
+	
+}
+
+int factorial(int num) {
+	if (num == 0) 
+		return 1;
+	else 
+		return num*factorial(num - 1);
+}
+
+------------------------------------------------------------------------------------------------------
+
+/*자바로 구현*/
+
+import java.util.Scanner;
+
+public class RecusiveTest {
+	public static int[] cache=new int[15];
+	public static void main(String[] args) {
+		Scanner sc=new Scanner(System.in);
+		while(true){
+			System.out.print("1-15 팩토리얼 (종료 : -1) : ");
+			int num=sc.nextInt();
+			if(num==-1){
+				break;
+			} 
+			
+			if(cache[num]!=0){
+				System.out.println("캐시메모리 사용");
+				System.out.println(num+"!= "+cache[num]+"\n");
+			} else {
+				cache[num]=factorial(num);
+				System.out.println(num+"!= "+cache[num]+"\n");
+			}			
+		}	
+	}
+	
+	public static int factorial(int num){
+		if(num==0) return 1;
+		else return num*factorial(num-1);
+	}
+}
+

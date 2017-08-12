@@ -1,0 +1,669 @@
+-------------------------ch13 템플릿(Template)1--------------------------------------
+
+
+(intro)
+e.g)
+int Add(int a,int b)
+{
+ return a+b;
+}
+==>
+기능 : 덧셈
+자료형 : int형 데이터
+
+==>double형을 하고 싶으면 자료형에 따라 추가적인 함수를 만들어야함
+==>자료형에 의존적임(같은 기능이지만, 자료형에 의존적으로 함수를 정의해야함)
+==>템플릿을 이용하면 자료형에 의존적이지 않은 함수를 만들 수 있음)
+
+
+템플릿(Template) : 모형자(사전적 뜻)
+==> 모형은 결정되어 있지만, 색을 결정되어있지 않음
+==>함수의 기능은 결정되어있지만, 자료형에 의존적이지 X
+
+==>
+T Add(T a,T b)
+{
+ return a+b;
+}
+
+==>
+기능 : 덧셈
+자료형 : 결정되어 있지 않음
+==>템블릿을 기반으로 구현 된 함수
+==>BUT T가 무엇인지 컴파일러는 모름
+==>template <typename T>  선언
+
+template <typename T>
+T Add(T a,T b)
+{
+ return a+b;
+}
+---------------------------------------------------------------------
+
+//함수를 대상으로 템플릿 이해하기
+
+Step1. 일반함수
+
+int Add(int num1,int num2)
+{
+ return num1+num2;
+}
+
+Step2.템플릿화의 중간 단계
+
+T Add(T num1,T num2)
+{
+ return num1+num2;
+}
+
+Step3.템플릿화 완료
+
+template <typename T>
+T Add(T num1,T num2)
+{
+ return num1+num2;
+}
+
+#include <iostream>
+using std::cout; using std::endl;
+
+template <typename T>
+T Add(T num1, T num2)
+{
+	return num1 + num2;
+}
+
+int main(void)
+{
+	cout << Add<int>(15, 20) << endl;
+	//==Add(15,20);
+	cout << Add<double>(2.9, 3.7) << endl;
+	//==Add(2.9,3.7);
+	cout << Add<int>(3.8,3.7) << endl;
+	cout << Add<double>(3.14, 2.75) << endl;
+
+	return 0;
+}
+
+---------------------------------------------------------------------
+
+//컴파일러가 생성하는 템플릿 기반의 함수
+
+template <typename T>
+T Add(T num1, T num2)
+{
+	return num1 + num2;
+}
+==>함수 템플릿(함수를 찍어내는 템플릿이다.)
+==>Add<int>(..)의 함수호출 문을 처음 컴파일할때 이 함수가 만들어진다.
+==>모형자와 같이 함수를 찍어낼 수 있는 틀. 즉 Template 이다.
+==>main()에서 Add<int>(3,4); 이 문장을 만나면
+int Add<int>(int num1,int num2)
+{
+ return num1+num2;
+}
+와 같이 만들어진다.
+
+==>마찬가지로 Main에서 Add<int>(2,7);를 만나면 추가로 만들지는 않음
+==>Main에서 Add<double>(1.2,2.0);를 만나면 T를 double로 간주하는 함수는 존재하지 않음
+==>T를 double로 한 함수를 또하나 만들어냄
+
+double Add<double>(double num1,double num2)
+{
+ return num1+num2;
+}
+
+==>위의 int,double은 Template 함수
+==>사용자는 함수 템플릿을 정의하고, 컴파일러는 이것을 기반으로 템블릿 함수를 만들어냄
+
+---------------------------------------------------------------------
+
+//호출하기가 좀 불편함
+
+int main(void)
+{
+	cout << Add(15, 20) << endl;	
+	//전달되는 인자를 통해서 컴파일러는 이를 Add<int>(15,20)으로 해석 & 함수생성	
+	cout << Add(2.9, 3.7) << endl;
+	//전달되는 인자를 통해서 컴파일러는 이를 Add<double>(2.9,3.7)으로 해석(T가 double이 되어야 값의 손실 없이
+	//인자를 전달할 수 있겠구나 하고)
+	//==>함수생성	
+	cout << Add<int>(3.8,3.7) << endl;
+	cout << Add<double>(3.14, 2.75) << endl;
+
+	return 0;
+}
+
+
+---------------------------------------------------------------------
+
+//함수 템플릿과 템플릿 함수
+==>수식어 말고 , 뒤에 템플릿 이냐 함수냐 에 따라 다름(바보 성우)
+
+template <typename T>
+T Add(T num1,T num2)
+{
+ return num1+num2;
+}
+
+==>함수 템플릿(틀,함수를 만드는데 사용되는 템플릿)
+-------------
+int Add<int>(int num1,int num2)
+{
+ return num1+num2;
+}
+double Add<double>(double num1,double num2)
+{
+ return num1+num2;
+}
+==>템플릿 함수(컴파일러가 만들어낸, 템플릿을 기반으로 만들어진 함수)
+==생성된 함수(Generated Function)
+
+//템플릿 함수와 일반함수의 구분
+#include <iostream>
+using std::cout; using std::endl;
+
+template <typename T1,typename T2>
+T1 Add(T1 num1, T2 num2)
+{
+	cout << "T1 Add(T1 num1, T2 num2)" << endl;
+	return num1 + num2;
+}
+
+int Add(int num1, int num2)
+{
+	cout << "int Add(int num1, int num2)" << endl;
+	return num1 + num2;
+}
+
+double Add(double num1, double num2)
+{
+	cout << "double Add(double num1, double num2)" << endl;
+	return num1 + num2;
+}
+
+int main(void)
+{
+	cout << Add(5, 7) << endl;
+	cout << Add(3.7, 7.5) << endl;
+	//일반함수가 정의되어 있어서 일반함수가 호출
+	cout << Add<int>(5, 7) << endl;
+	cout << Add<double>(3.7, 7.5)<<endl;
+	//일반함수가 정의되어 있으므로 <>를 통해 명시해줘야됨
+	return 0;
+}
+---------------------------------------------------------------------
+
+//둘 이상의 형(Type)에 대해 템플릿 선언하기
+
+template <typename T>
+==>T가 인트면 모두 인트형으로 하나로 됨
+==>template <typename T1,typename T2> 도 가능
+==>template <class T1,class T2>와 같음 //클래스 정의할때 class와 다름
+(초기에는 class였지만, 혼동이 있어서 typename이 등장)
+
+
+#include <iostream>
+using std::cout; using std::endl;
+
+template <class T1,class T2>
+//template <typename T1,typename T2>
+void ShowData(double num)
+{	
+	cout << (T1)num << ", " << (T2)num << endl;
+	//==cout << T1(num) << ", " << T2(num) << endl;
+	//int num=(int)3.14; == int num=int(3.14);
+}
+//T1과 T2가 결정되지 않음 모형자임
+
+int main(void)
+{
+	//앞과는 다르게 ShowData(65);하면 매개변수 형이 double로 선언되어서 T1,T2를 결정할 수 없음
+	//==>다 명시해 줘야됨
+
+	ShowData<char, int>(65);
+	//T1은 char , T2는 int를 기반으로 함수를 만들고 65를 인자로 전달
+	
+	ShowData<char, int>(67);
+	//T1은 char , T2는 int를 기반으로 함수를 호출하고 67을 인자로 전달
+
+	ShowData<char, double>(68.9);
+	//T1은 char, T2는 double을 기반으로 함수를 만들고 68.9를 인자로 전달
+
+	ShowData<short, double>(69.2);
+	//T1은 short,T2는 double을 기반으로 함수 만들고 69.2를 인자로 전달
+	ShowData<short, double>(70.4);
+	//T1은 short,T2는 double을 기반으로 함수를 호출 69.2를 인자로 전달
+	
+	return 0;
+}
+
+---------------------------------------------------------------------
+
+//함수 템플릿의 특수화(Specialization): 도입
+
+(Intro)
+#include <iostream>
+using std::cout; using std::endl;
+
+template <typename T>
+T Max(T a, T b)
+{
+	return a > b ? a : b;
+}
+
+int main(void)
+{
+	cout << Max(11, 15) << endl;
+	//T를 int로 간주
+	cout << Max('T','Q') << endl;
+	//T를 char로 간주
+	cout << Max(3.5,7.5) << endl;
+	//T를 double로 간주
+	cout << Max("Simple","Best") << endl;
+	//data영역에 "Simple"과 "Best"를 저장 & 주소값을 매개변수로 넘김
+	//=>주소값을 비교. ==>의미 없음
+	//Want : 문자열의 길이비교 or 사전 편찬 순서 비교
+
+	const char* Max(const char*a, const char* b)
+	{
+		return strlen(a) > strlen(b) ? a : b;
+	}
+	
+	//기본자료형일때는 기존 함수 템플릿, 특수한 문자열 같은 경우 위와 같은 함수
+	//템플릿의 특수화 등장 배경
+	return 0;
+}
+
+---------------------------------------------------------------------
+
+//함수 템플릿의 특수화(Specialization): 적용
+
+#include <iostream>
+using std::cout; using std::endl;
+
+template <typename T>
+T Max(T a, T b)
+{
+	return a > b ? a : b;
+}
+
+template <>
+char* Max(char* a, char *b)
+{
+	cout << "char* Max<char*>(char* a,char* b)" << endl;
+	return strlen(a) > strlen(b) ? a : b;
+}
+template<>
+const char* Max(const char* a, const char* b)
+{
+	cout << "const char* Max<const char*>(const char* a,const char* b)" << endl;
+	return strcmp(a, b) > 0 ? a : b;
+}
+
+
+int main(void)
+{
+	cout << Max("Simple", "Best") << endl;
+	//문자열 선언으로 인해서 반환되는 주소 값의 포인터형은 const char*이다. 따라서
+	//const char*Max(const char*a,const chat*b) 호출
+
+	char str1[] = "Simple";
+	char str2[] = "Best";
+	cout << Max(str1, str2) << endl;
+	//str1과 str2는 변수형태로 선언 => str1과 str2의 포인터형은 char* 이다
+	//따라서 이 문장에 의해 호출되는 함수는 char*Max(char*a,char*a)이다
+
+	return 0;
+
+}
+
+
+//함수 템플릿의 특수화(Specialization) : 비교
+
+//T에 대해 반드시 명시해야 하는 경우가 존재 =>
+
+template<>
+char* Max<char*>(char*a,char* b)
+{...}
+
+
+template<>
+const char* Max<const char*>(const char* a, const char* b)
+{..}
+
+---------------------------------------------------------------------
+
+//13-2 클래스 템플릿(Class Template)
+
+(Intro)
+함수 -> 템플릿화와 유사
+
+
+//클래스 템플릿의 정의
+
+
+//일반클래스
+
+class Point
+{
+private :
+	int xpos, ypos;
+public:
+	Point(int x = 0, int y = 0)
+		:xpos(x),ypos(y){}
+	void ShowPosition()const
+	{
+		cout << '[' << xpos << ", " << ypos << ']' << endl;
+	}
+};
+
+//=>어떤 자료형의 선언을 템플릿화 하겠는가를 결정
+//=>Want : int형과 double형으로 찍어낼 수 있도록 
+
+//클래스의 템플릿화
+template <typename T>
+class Point
+{
+private :
+	T xpos, ypos;
+public:
+	Point(T x = 0, T y = 0)
+		:xpos(x),ypos(y){}
+	void ShowPosition()const
+	{
+		cout << '[' << xpos << ", " << ypos << ']' << endl;
+	}
+};
+//==클래스 템플릿
+//모든 자료형을 T로 바꿀 필요는 x
+//객체 생성에서는 <>명시해주도록 약속
+(템플릿 함수는 매개변수와 거의 일치해서 편의상 생략을 가능.
+ BUT 클래스에서는 일치하지 않는 경우도 많음)
+
+int main(void)
+{
+	Point<int> pos1(3, 4);	//템플릿 클래스 Point<int> 형 객체 생성
+	//Point<int> 템플릿 클래스(템플릿을 기반으로 찍어낸 클래스)를 찍어냄
+	//찍어낸 템플릿 클래스를 기반으로 pos1을 생성
+	pos1.ShowPosition();
+
+	Point<double> pos2(2.4, 3.6);	//템플릿 클래스 Point<double> 형 객체 생성
+	pos2.ShowPosition();
+
+	Point<char> pos3('P', 'F');
+	pos3.ShowPosition();
+
+
+	return 0;
+}
+
+==>
+Point<int> 템플릿 클래스
+Point<double> 템플릿 클래스
+Point<char> 템플릿 클래스
+
+---------------------------------------------------------------------
+//클래스 템플릿의 선언과 정의의 분리
+
+-헤더.h
+
+template <typename T>
+class SimpleTemplate
+{
+ public:
+  T SimpleFunc(const T&ref);
+};
+
+SimpleTemplate::SimpleFunc(..) //SimpleTemplate클래스의 멤버함수 SimpleFunc를 의미
+==>
+template <typename T>	//안쓰면 모름. 바로 밑 함수만 선언이 유효
+SimpleTemplate<T>::SimpleFunc(...)
+//SimpleTemplate<T> : T에 대해 템플릿화 된 SimpleTemplate 클래스 템플릿
+==>
+//T에 대해서 템플릿으로 정의된 SimpleTemplate의 멤버함수 SimpleFunc를 의미함
+
+---------------------------------------------------------------------
+
+//헤더파일과 소스파일 구분
+
+-----------------------------
+PointTemplate.h
+-----------------------------
+#ifndef __POINT_TEMPLATE_H__
+#define __POINT_TEMPLATE_H__
+
+template <typename T>
+class Point
+{
+private:
+	T xpos, ypos;
+public:
+	Point(T a, T b);
+	void ShowPosition() const;
+};
+#endif
+
+
+-----------------------------
+PointTemplate.cpp
+-----------------------------
+#include <iostream>
+#include "PointTemplate.h"
+using namespace std;
+
+template <typename T>
+Point<T>::Point(T x, T y) : xpos(x), ypos(y) {}
+
+template <typenameT>
+void Point<T>::ShowPosition() const
+{
+	cout << '[' << xpos << ", " << ypos <<']' <<  endl;
+}
+
+-----------------------------
+PointMain.cpp
+-----------------------------
+#include <iostream>
+#include "PointTemplate.h"
+using namespace std;
+
+int main(void)
+{
+	Point<int> pos1(3, 4);
+	pos1.ShowPosition();
+
+	Point<double> pos2(2.4, 3.6);
+	pos2.ShowPosition();
+
+	Point<char> pos3('P', 'F');
+	pos3.ShowPosition();
+
+	return 0;
+}
+-----------------------------
+=>일반적인 파일분할 시 컴파일 에러 발생
+
+
+//파일을 나눌때 고려해야 될 사항이 존재
+
+
+
+컴파일은 파일 단위로 된다.
+PointMain.cpp에서
+Point<int>pos1(3,4);
+를 컴파일러 입장에서는 헤더파일만 보고 생성할 수 없다.
+==>그래서 함수의 정의가 있어야 한다.
+
+해결책 1. 클래스 템플릿의 정의 부를 담고 있는 소스파일을 포함시킨다.
+해결책 2. 헤더파일에 클래스 템플릿의 정의 부를 포함시킨다.
+          #include "PointTemplate.cpp"
+
+
+---------------------------------------------------------------------
+배열클래스의 템플릿화
+==>혼자 해보고 교재랑 비교해보기
+---------------------------------------------------------------------
+
+-------------------------
+main.cpp
+-------------------------
+
+#include "ArrayTemplate.h"
+#include "Point.h"
+
+int main(void)
+{
+	/** int형 정수 저장 **/
+	BoundCheckArray<int> iarr(5);	
+	int len1 = iarr.GetArrLen();
+	for (int i = 0; i < len1; i++) {
+		iarr[i] = (i + 1) * 11;
+	}
+	cout << "---Array of Int---" << endl;
+	for (int i = 0; i < len1; i++) {
+		cout << iarr[i] << " ";
+	}
+	cout << endl << endl;;
+
+	/** Point 객체 저장 **/	
+	BoundCheckArray<Point> oarr(3);
+	int len2 = oarr.GetArrLen();
+	for (int i = 0; i < len2; i++) {
+		oarr[i] = Point(i + 1, i + 2);
+	}
+	cout << "--Array of Point--" << endl;
+	for (int i = 0; i < len2; i++) {
+		cout << oarr[i];
+	}
+	cout << endl;
+
+	/** Point 객체의 주소 값 저장 **/
+	typedef Point* POINT_PTR;
+	BoundCheckArray<POINT_PTR> parr(3);
+	int len3 = parr.GetArrLen();
+	parr[0] = new Point(0, 5);
+	parr[1] = new Point(10, 15);
+	parr[2] = new Point(20, 25);
+	cout << "--Array of Pointer of Point--" << endl;
+	for (int i = 0; i < len3; i++) {
+		cout << *(parr[i]);
+	}
+
+	for (int i = 0; i < len3; i++) {
+		delete parr[i];
+	}
+
+	return 0;
+}
+
+
+
+-------------------------
+Point.h
+-------------------------
+#ifndef __POINT_H__
+#define __POINT_H__
+
+#include <iostream>
+using namespace std;
+
+class Point
+{
+private :
+	int xpos, ypos;
+public:
+	Point(int x = 0, int y = 0);
+	void ShowPosition() const;
+	Point& operator=(const Point& ref);
+	friend ostream& operator<<(ostream& os,const Point& ref);
+};
+
+
+#endif
+
+-------------------------
+Point.cpp
+-------------------------
+
+#include "Point.h"
+
+Point::Point(int x, int y)
+	:xpos(x), ypos(y) {}
+
+void Point::ShowPosition() const
+{
+	cout << '[' << xpos << ", " << ypos << ']' << endl;
+}
+Point& Point::operator=(const Point& ref)
+{
+	xpos = ref.xpos;
+	ypos = ref.ypos;
+	return *this;
+}
+
+ostream& operator<<(ostream&os,const Point& ref)
+{
+	os << '[' << ref.xpos << ", " << ref.ypos << ']' << endl;
+	return os;	
+}
+
+
+-------------------------
+ArrayTemplate.h
+-------------------------
+
+#ifndef __ARRAY_TEMPLATE_H__
+#define __ARRAY_TEMPLATE_H__
+
+#include <iostream>
+#include <cstdlib>
+using namespace std;
+
+template <typename T>
+class BoundCheckArray
+{
+private:
+	T* arr;
+	int arrlen;
+	BoundCheckArray(const BoundCheckArray& ref) {}
+	BoundCheckArray& operator=(const BoundCheckArray&ref) {}
+public:
+	BoundCheckArray(int len)
+		:arrlen(len)
+	{
+		arr = new T[arrlen];
+	}
+
+	int GetArrLen() const
+	{
+		return arrlen;
+	}
+
+	~BoundCheckArray()
+	{
+		delete[] arr;
+	}
+
+	T& operator[](int idx)
+	{
+		if (idx < 0 || idx >= arrlen) {
+			cout << "Bound index out of the exception" << endl;
+			exit(1);
+		}
+		return arr[idx];
+	}
+
+	T operator[](int idx) const
+	{
+		if (idx < 0 || idx >= arrlen) {
+			cout << "Bound index out of the exception" << endl;
+			exit(1);
+		}
+		return arr[idx];
+	}
+};
+
+#endif
+
+

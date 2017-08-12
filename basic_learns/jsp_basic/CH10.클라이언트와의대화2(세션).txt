@@ -1,0 +1,627 @@
+-----------CH10.클라이언트와의대화2(세션)-----------------
+;이 장에서 다룰 내용
+-session 기본 객체와 세션
+-session 속성
+-세션을 사용한 로그인 처리
+ 
+=>서버 세션을 사용하면 클라이언트의 상태를 저장할 수 있다. 쿠키와의 차이점은 세션은 웹 브라우저가 아니라 서버에 값을 저장
+
+---------------------------------------------------------------------------------------------
+session에서 자주 사용하는 메소드
+Object getAttribute(String name)	//이름에 해당하는 객체 값을 가져옴(없으면 null)
+Enumeration getAttributeNames()		//세선에서 모든 객체의 이름을 Enumeration형으로 얻음
+long getCreationTime()				//세션이 만들어진 시간을 반환
+String getId()						//해당 세션을 가리키는 고유 id값을 String형태로 반환
+long getLastAccessedTime()			//해당 세션이 클라이언트가 마지막으로 request를 보낸 시간을 long 형으로 반환
+int getMaxInactiveInterval()		//사용자가 다음 요청을 보낼 때까지 세션을 유지하는 최대 시간(초단위)를 반환
+boolean isNew()						//해당 세션이 처음 생성되었으면 true, 이전에 생성된 세션이면 false를 반환
+void removeAttribute(String name) 	//지정된 이름에 해당하는 객체를 세션에서 제거
+void setAttribute(String name,Object val)	//세션에 지정된 이름에 객체를 추가
+void setMaxInactiveInterval(int interval)	//사용자가 다음 요청을 보낼 ?까지 세션을 유지하는 최대 시간(초단위)를 설정
+											  이 시간을 넘기면 서블릿 컨테이너는 세션을 종료
+void invalidate()					//해당 세션을 없애고 세션에 속해있는 값들을 없앤다.
+
+
+
+/*	infoSession.jsp	*/
+
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ page import="java.util.Enumeration" %>
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Cookie &amp; Session</title>
+</head>
+<body>
+
+<h3>세션 정보를 얻어오는 메소드 사용하기</h3>
+<%
+	String id_str = session.getId(); // 세션아이디
+	long lastTime = session.getLastAccessedTime(); //마지막 request보낸 시간
+	long createdTime = session.getCreationTime(); //세션 만든 시간
+	long time_used = (lastTime - createdTime) / 60000;
+	int inactive = session.getMaxInactiveInterval()/60; //세션 유효 시간
+	boolean isNewSession = session.isNew();	 //새로운 세션인가
+%>
+
+[1] 세션 ID [ <%=id_str %> ]입니다.<br><hr>
+[2] 웹 사이트에 머문 시간 : [ <%=time_used%> ] 분 <br><hr>
+[3] 세션의 유효 시간 [<%=inactive %> ]분<br><hr>
+[4] 새로운 세션 ? [<%=isNewSession %>]<br><hr>
+
+</body>
+</html>
+
+---------------------------------------------------------------------------------------------
+
+//01 세션 사용하기 : session 기본 객체
+;세션은 웹 브라우저와 연관된 서버 영역 저장 공간
++책 232 그림보기
+
+웹 컨테이너는 기본적으로 한 웹 브라우저마다 한 세션을 생성한다.
+e.g)
+			 │    웹 컨테이너			│
+웹 브라우저1 ---│->JSP1----			│
+						│----->세션1	│		
+			  JSP2-----				│
+									│	
+웹 브라우저2 ---│->JSP1--->			│
+			 │			│----->세션2	│	
+			 │JSP2----->			│
+(JSP1,2는 같은 JSP 페이지)
+
+=>쿠키는 클라이언트 측의 데이터 보관소 // 세션은 서버측의 데이터 보관소
+
+-----------
+
+//1.1 세션 생성하기
+<%@ page session="true"%>
+<%
+	...
+	session.setAttribute("userInfo",userInfo);
+	..
+%>
+
+=>session의 default 값이 true이므로 따로 사용하지 않을때만 false로 속성 지정
+=>session은 최초로 웹브라우저에서 요청이 있으면 생성되고 이후에는 이미 생성된 session을 사용
+
+-----------
+
+//1.2 session 객체
+-session 기본 객체가 제공하는 세션 정보 관련 메소드
+String		getId()					세션의 고유 ID(세션ID)를 구한다.
+long		getCreationTime()		세션이 생성된 시간을 구한다. 시간은 1970년 1월 1일 이후 흘러간 시간.(단위 : 1/1000초)
+long		getLastAcessedTime()	웹 브라우저가 가장 마지막에 세션에 접근한 시간을 구한다. 시간은 1970년 1월 1일 이후 흘러간 시간
+									(단위:1/1000초)
+									
+=>웹 브라우저마다 별도의 세션을 갖음. 각 세션을 구분하기 위해 세션마다 고유 ID를 할당하는데 그 아이디를 세션 ID라고 함.
+  (쿠키 목록중 JSESSIONID=~~~~ 가 세션 ID를 공유할 때 사용하는 쿠키.)
+
+/* session의 정보를 얻는 예제 :sessionInfo.jsp   */  
+
+
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ page session="true" %><!-- 디폴트가 true이므로 생략 가능 -->
+<%@ page import="java.util.Date" %>
+<%@ page import="java.text.SimpleDateFormat" %>
+<%
+	Date time=new Date();
+	SimpleDateFormat formatter=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+%>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>세션정보</title>
+</head>
+<body>
+세션 ID =<%=session.getId() %><br>
+<%
+	time.setTime(session.getCreationTime());	//Date 객체에 세션 생성 시간을 전달
+%>
+세션 생성 시간 : <%=formatter.format(time) %><br>	<!--formatter 전달인자 형식으로 출력 -->
+<%
+	time.setTime(session.getLastAccessedTime());	//Date 객체에 마지막 세션에 접근한 시간 전달
+%>
+최근 접속 시간 : <%=formatter.format(time) %>
+
+
+</body>
+</html>
+
+
+
+<< 실행 결과 >>
+세션 ID =37628CCD84E2240320B1E9C526C7B75C
+세션 생성 시간 : 2016-10-27 17:09:23
+최근 접속 시간 : 2016-10-27 17:12:55
+
+==>브라우저를 시간을 두고 실행하면, 최근 접속 시간이 갱신되서 차이가 생김
+
+-----------
+
+//1.3 기본 객체의 사용
+=>한번 생성된 세션은 지정한 유효 시간 동안 유지된다.
+=>웹 어플리케이션을 실행하는 동안 지속적으로 사용해야 하는 데이터의 저장소로 세션이 적당
+
+
+
+
+/*   세션에 값을 저장할 때 속성을 사용하는 예제 : setMemberInfo.jsp   */
+
+
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%
+	//session에 정보를 저장
+	session.setAttribute("MEMBERID","Zaccoding");
+	session.setAttribute("NAME","ZAC");
+ %>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>세션에 정보 저장</title>
+</head>
+<body>
+
+세션에 정보를 저장하였습니다.
+
+</body>
+</html>
+
+
+
+<< 실행 결과 >>
+세션에 정보를 저장하였습니다. 
+
+
+=>일단 session 기본 객체에 속성을 설정하면 세션이 종료되기 전까지는 
+<%
+	String name=(String)session.getAttribute("NAME");
+%>
+회원명 : <%=name%>
+과 같이 사용 가능
+
+
+
+-- 쿠키 vs 세션 --
+세션의 장점
+1)보안상 안전하다
+;쿠키는 이름이나 데이터를 네트워크를 통해 HTTP 프로토콜을 사용하는 경우 중간에 누군가 쿠키 값을 읽을 수 있음.
+BUT 세션은 서버에만 저장되기 때문에 중요한 데이터를 저장하기에 알맞은 장소이다.
+
+2)(흔치 않지만) 웹브라우저가 쿠키를 지원하지 않거나 강제적으로 쿠키를 막는 경우 쿠키 사용 불가능. BUT 세션은 가능
+
+세션의 단점
+1)여러 서버에서 공유할 수 없음(www.daum.net 과 cafe.daum.net)
+=>Daum과 같은 포털 사이트는 쿠키를 이용해서 로그인 정보를 저장
+
+-----------
+
+//1.4 세션종료
+;세션을 종료하면 session 기본 객체 ,기본 객체에 저장했던 속성 목록 삭제
+
+
+
+
+/*   세션을 삭제하는 예제 : closeSession.jsp   */
+
+
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%
+	session.invalidate();
+%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>세션 종료</title>
+</head>
+<body>
+
+세션을 종료하였습니다.
+
+</body>
+</html>
+
+
+<< 실행 결과 : sessionInfo.jsp ->closeSession.jsp ->sessionInfo.jsp
+처음 :
+세션 ID =409BC600B80A459AB6702A2CCD728AD8
+세션 생성 시간 : 2016-10-27 17:26:09
+최근 접속 시간 : 2016-10-27 17:26:09 
+
+두번째 : 
+세션 ID =4BDE41071E0EDCD5226D9BE994041768
+세션 생성 시간 : 2016-10-27 17:26:15
+최근 접속 시간 : 2016-10-27 17:26:15 
+
+==>세션 ID 및 생성, 최근 접속 시간 다름!
+
+-----------
+
+//1.5 세션 유효 시간
+
+=>JSP 페이지가 session 기본 객체를 사용하도록 설정했다면 (session 속성 값을 "true" 또는 "false"로 지정하지 않은 경우)
+  웹 브라우저가 JSP 페이지를 실행할 때마다 session 기본 객체에 접근하게 됨.(즉, 접근할 때마다 세션의 최근 접근 시간을 변경)
+=>세션은 마지막 접근 이후 일정 시간 이내에 다시 세션에 접근하지 않는 경우 자동으로 세션을 종료
+e.g)세션의 유효시간이 30분인 경우
+		웹브라우저					웹 컨테이너
+				---세션 사용 요청--> 세션1 생성
+		(30분경과시점)------------- 			<<세션1삭제
+				--->세션 사용 요청--> 세션2 생성
+
+			
+=>
+세션 유효 시간을 설정하는 방법 : 
+1)WEB-INF\web.xml <session-config>태그 사용
+2)session.setMaxInactiveInterval() 메소드 사용
+
+
+1)web.xml을 이용해 세션 유효시간을 변경:web.xml  
+....
+<session-config>
+	<session-timeout>50</session-timeout>
+</session-config>
+</web-app>
+
+==>시간의 단위는 분 =>위의 예제는 세션의 제한 시간을 50분으로 지정.
+
+
+2)
+<%
+	session.getMaxInactInterval(60*60);	//60초*60=1시간
+%>
+
+=>전달인자로 0이나 음수로 설정하면 세션은 유효시간을 갖지 않음.
+=>명시적으로  session.invalidate();를 호출해줘야함(그렇지 않으면 메모리에 계속 존재)
+
+-----------
+
+//1.6 request.getSession()을 이용한 세션 생성
+
+=>
+reqeust.getSession()메소드는 현재 요청과 관련된 session 객체를 리턴한다.
+
+<%@ page session="false"%> <!-- getSession()메소드를 사용하므로 세션 속성 false로 지정 -->
+<%
+	HttpSession httpSession=request.getSession();
+	List list=(List)httpSession.getAttribute("list");
+	list.add(productId);
+%>
+
+=>세션이 존재하는 경우에만 session 객체를 구하고 싶으면 false로 전달하면 됨
+request.getSession(false); == 세션이 존재하면 session 객체 리턴 / 없으면 null 리턴
+
+
+<%@ page session="false"%> <!-- getSession()메소드를 사용하므로 세션 속성 false로 지정 -->
+<%
+	HttpSession httpSession=request.getSession(false);
+	List list=null;
+	if(httpSession!=null)
+		list=(List)httpSession.getAttribute("list");
+	else
+		list=Collection.emptyList();
+%>
+
+
+---------------------------------------------------------------------------------------------
+
+//02 세션을 이용한 로그인 상태 유지
+;세션을 사용해서 로그인을 처리하는 방식은 쿠키와 비슷
+1.로그인에 성공하면 session 기본 객체의 특정 속성에 데이터를 기록한다.
+2.이후로 session 기본 객체의 특정 속성이 존재하면 로그인한 것으로 간주한다.
+3.로그아웃할 경우 session.invalidate() 메소드를 호출하여 세션을 종료한다.
+
+-----------
+
+//2.1 인증된 사용자 정보 session 기본 객체에 저장하기
+
+/*  id,password 요청 parameter를 이용해 로그인 성공 여부 페이지 : \member\sessionLogin.jsp   */
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%
+	String id=request.getParameter("id");
+	String password=request.getParameter("password");
+	if(id.equals(password)){
+		session.setAttribute("MEMBERID",id);	
+%>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>로그인 성공</title>
+</head>
+<body>
+
+로그인에 성공하였습니다.
+
+
+</body>
+</html>
+<%
+	}else {
+%>
+<script>
+alert("로그인에 실패하였습니다.");
+history.go(-1);
+</script>
+<%
+	}
+%>
+
+==>아이디와 비밀번호가 같으면 로그인에 성공한 것으로 간주(실제로는 더 복잡함)
+
+
+/*  아이디와 비밀번호 세션 폼   \memebr\sessionLoginForm.jsp   */
+
+
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>로그인폼</title>
+</head>
+<body>
+request.getContextPath() : <%=request.getContextPath()%><br>
+<form action="<%=request.getContextPath()%>/member/sessionLogin.jsp" method="post"> <!-- getContextPath()하면 chap10/ 반환 -->
+아이디 <input type="text" name="id" size="10">
+암호 <input type="password" name="password" size="10">
+<input type="submit" value="로그인">
+</form>
+</body>
+</html>
+
+-----------
+
+//2.2 인증 여부 판단
+
+sessionLogin.jsp 에서 로그인에 성공하면 MEMBERID 속성에 로그인 상태 정보를 보관.
+=>"MEMBERID"속성을 사용해서 로그인 여부를 판단하면 됨
+
+/*   chap10/member/sessionLoginCheck.jsp   */
+
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%
+	String memberId=(String)session.getAttribute("MEMBERID");
+	boolean login=(memberId==null?false:true);
+%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>로그인여부 검사</title>
+</head>
+<body>
+
+<%
+	if(login){
+%>
+아이디"<%=memberId %>"로 로그인 한 상태
+<%
+	}else{
+		out.println("로그인 하지 않은 상태");
+	}
+%>
+
+</body>
+</html>
+
+-----------
+
+//2.3 로그아웃 처리
+
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%
+	session.invalidate();
+%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>로그아웃</title>
+</head>
+<body>
+
+로그아웃하였습니다.
+
+</body>
+</html>
+
+
+
+
+
+/*  로그인 부터 로그아웃 하는 예제(수정 필요)   */
+1.sessionLoginForm.jsp
+
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>로그인폼</title>
+</head>
+<body>
+<form action="<%=request.getContextPath()%>/member/sessionLogin.jsp" method="post"> <!-- getContextPath()하면 chap10/ 반환 -->
+아이디 <input type="text" name="id" size="10">
+암호 <input type="password" name="password" size="10">
+<input type="submit" value="로그인">
+</form>
+</body>
+</html>
+
+
+2.sessionLogin.jsp
+
+
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%	
+	String id=request.getParameter("id");
+	String password=request.getParameter("password");
+	if(id.equals(password)){	//로그인 성공		
+		session.setAttribute("MEMBERID",id);	
+%>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>로그인 성공</title>
+</head>
+<body>
+
+로그인에 성공하였습니다.
+<%
+	}else {	//로그인 실패
+		out.println("로그인에 실패하였습니다.");
+	}	
+%>
+
+<form action="<%=request.getContextPath()%>/member/sessionLoginCheck.jsp" method="post">
+<input type="submit" value="이동">
+
+</body>
+</html>
+
+
+
+3.sessionLoginCheck.jsp
+
+
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%	
+	String memberId=(String)session.getAttribute("MEMBERID");
+	boolean login=(memberId==null?false:true);
+%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>로그인여부 검사</title>
+</head>
+<body>
+
+<%
+	if(login){
+%>
+아이디"<%=memberId %>"로 로그인 한 상태
+<form action="<%=request.getContextPath()%>/member/sessionLogout.jsp" method="post">
+<input type="submit" value="로그아웃">
+<%
+	}else{
+		out.println("로그인 하지 않은 상태");
+	}
+%>
+
+</body>
+</html>
+
+
+
+4.sessionLogout.jsp
+
+
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%
+	session.invalidate();
+%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>로그아웃</title>
+</head>
+<body>
+로그아웃하였습니다.
+<form action="<%=request.getContextPath()%>/member/sessionLoginForm.jsp" method="post">
+<input type="submit" value="홈으로">
+</body>
+</html>
+
+
+---------------------------------------------------------------------------------------------
+
+//03 연관된 정보 저장을 위한 클래스 작성
+;세션에 id이외에 이름, 이메일, 나이 등등 정보를 담으려면 setAttribute, getAttribute 등 많은 코드가 추가되야함
++예외가 발생하는 경우(이메일이 필요없어서 삭제해야되는데 놓치면 NullPointerException 발생) 디버깅 하기도 힘들고 시간 많이 듬
+==>클래스 작성
+public class MemberInfo{
+	private String id;
+	private String name;
+	private String email;
+	...
+}
+
+==>session 도 간단해짐
+1.setter
+<%
+	MemberInfo memberInfo=new MemberInfo(id,name);
+	session.setAttribute("memberInfo",memberInfo);
+%>
+
+2.getter
+<%
+	MemberInfo member=session.getAttribute("memebrInfo");
+	out.println(member.getEmail().toLowerCase());
+%>
+
+
+---------------------------------------------------------------------------------------------
+
+//04 서블릿 컨텍스트와 세션
+
+/chap10/viewCookies.jsp
+/chap10_2/viewCookies.jsp
+를 각각 실행하면
+JSESSIONID가 다르게 나옴
+i.e
+웹 어플리케이션의 컨텍스트 경로가 /chap10이면, 세션을 위한 JSESSION 쿠키의 경로도 /chap10이 된다.
+=>/chap10 인 쿠키는 URL이 /chap10 경로로 시작하는 경우에만 전송하므로, /chap10 웹 어플리케이션에서 생성한
+JSESSION 쿠키는 /chap10 웹 어플리케이션에서만 사용한다.
+
+=>유사하게 /chap10_2 웹 어플리케이션에서 생성한 JSESSION 쿠키는 /chap_02 웹 어플리케이션에서만 사용
+
+=>서로다른 두 웹 어플리케이션이 다른 세션ID, JSESSIONID 쿠키를 사용
+==서로 다른 두 웹 어플리케이션이 세션을 공유하지 않음
+==같은 웹 브라우저라 하더라도 /chap10 어플리케이션에서 사용되는 session 기본객체와
+					  /chap10_2 어플레이션에서 사용되는 session 기본 객체는 다르다.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

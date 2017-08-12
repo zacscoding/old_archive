@@ -1,0 +1,68 @@
+import java.util.Comparator;
+import java.util.PriorityQueue;
+
+class MyString implements Comparable<MyString>{
+	String str;
+	public MyString(String str){
+		this.str=str;
+	}
+	
+	@Override
+	public String toString(){
+		return str;
+	}
+	
+	@Override
+	public int hashCode(){
+		return str.hashCode();
+	}
+	
+	@Override
+	public boolean equals(Object obj){
+		if(obj instanceof MyString){
+			MyString comp=(MyString)obj;
+			return comp.str.equals(str);
+		}
+		return false;
+	}
+		
+	@Override
+	public int compareTo(MyString comp){
+		return str.length()-comp.str.length();
+	}	
+}
+
+public class PriorityQueueExample {
+	public static void main(String[] args){
+		//Comparable을 구현하는 클래스		
+		PriorityQueue<MyString> ppq=new PriorityQueue<>();
+		ppq.add(new MyString("AAAAAAAAAAA"));
+		ppq.add(new MyString("BBBBB"));
+		ppq.add(new MyString("CCCCCCC"));
+		ppq.add(new MyString("D"));
+		ppq.add(new MyString("EEEEEEEEEEEEEE"));	
+		
+		//Comparator를 생성자에 넣기.		
+		PriorityQueue<String> ppq2=new PriorityQueue<>(
+				new Comparator<String>(){
+					@Override
+					public int compare(String str1,String str2){
+						return str1.length()-str2.length();
+					}
+				}
+		);
+		
+		//활용
+		System.out.println("젤위 저장된 문자열 : "+ppq.peek());
+		System.out.println("저장된 개수 : "+ppq.size());
+		System.out.println("BBBBB포함 ? :"+ppq.contains(new MyString("BBBBB")));
+		
+		
+		while(!ppq.isEmpty())
+			System.out.println(ppq.poll());
+		System.out.println();
+		
+	
+		
+	}
+}

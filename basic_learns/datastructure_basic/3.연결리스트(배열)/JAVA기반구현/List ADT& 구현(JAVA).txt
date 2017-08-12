@@ -1,0 +1,120 @@
+public interface List<E> {
+	/*리스트의 요소 개수 반환*/	
+	int size();
+	
+	/*리스트가 비었는지 반환*/
+	boolean isEmpty();
+	
+	/*index i에서 Element 반환*/
+	E get(int i) throws IndexOutOfBoundsException;
+	
+	/*index i에 Element e로 대체 & e 반환*/
+	E set(int i,E e) throws IndexOutOfBoundsException;
+	
+	/*index i에 Element e 삽입 & i+1부터 오른쪽으로 이동*/
+	void add(int i,E e) throws IndexOutOfBoundsException;
+	
+	/*Remove& returns the element at index i/ shifting subsequent elements earlier*/
+	E remove(int i) throws IndexOutOfBoundsException;
+}
+
+===>구현
+
+package MyUtil;
+public class ArrayList<E> implements List<E> {
+	//멤버 필드
+	public static final int CAPACITY=16;
+	public E[] data;
+	public int size=0;
+	
+	//생성자
+	public ArrayList(){
+		this(CAPACITY); //밑의 매개변수 있는 생성자 호출
+	}
+	public ArrayList(int capacity){
+		data=(E[]) new Object[capacity];		
+	}
+	
+	//public 메소드
+	
+	/*리스트의 요소 개수 반환*/	
+	//O(1)
+	public int size(){
+		return size;		
+	}
+	
+	/*리스트가 비었는지 반환*/
+	//O(1)
+	public boolean isEmpty(){
+		return size==0;
+	}
+	
+	/*index i에서 Element 반환*/
+	//O(1)
+	public E get(int i) throws IndexOutOfBoundsException{
+		checkIndex(i,size);		
+		return data[i];	
+	}
+	
+	/*index i에 Element e로 대체 & 기존 Element 반환*/
+	//O(1)
+	public E set(int i,E e) throws IndexOutOfBoundsException{
+		checkIndex(i,size);
+		E temp=data[i];
+		data[i]=e;		
+		return temp;
+	}
+	
+	/*index i에 Element e 삽입 & i+1부터 오른쪽으로 이동*/
+	//O(n)
+	public void add(int i,E e) throws IndexOutOfBoundsException,
+										IllegalStateException{
+		checkIndex(i,size+1);
+		if(size==data.length){
+			throw new IllegalStateException("Array is full");
+		}					
+		for(int idx=size-1;idx>=i;idx--){
+			data[idx+1]=data[idx];
+		}
+		data[i]=e;
+		size++;
+	}	
+		
+	/*Remove& returns the element at index i/ shifting subsequent elements earlier*/
+	//O(n)
+	public E remove(int i) throws IndexOutOfBoundsException{
+		checkIndex(i,size);
+		E temp=data[i];
+		for(int idx=i;idx<size-1;idx++){
+			data[i]=data[i+1];
+		}
+		data[size-1]=null;
+		size--;
+		return temp;
+	}
+	
+	//utility Method
+	//index check [0,n-1]
+	protected void checkIndex(int i,int n) throws IndexOutOfBoundsException{
+		if(i<0||i>=n){
+			throw new IndexOutOfBoundsException("Illegal index "+i);
+		}
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,1238 @@
+-------------------ch25.Swing컴포넌트와 이벤트 핸들링-----------------------
+
+//25-1 Swing에 대한 여러가지 이야기
+
+(Intro)
+UI는 프로그래머의 영역이였지만 현재의 흐름은 디자인은 디자이너가, 기능은 프로그래머가 나눠서!
+Swing은 UI의 컴포넌트.
+		JAVA			JAVA
+AWT
+		Windows			Linux
+		(oooo)			(oooo)	<<OS별 메뉴버튼 등 리소스
+
+=> Java에서 AWT를 이용해서 OS에게 UI를 만들도록 함. WORA는 가능했지만 OS 별 디자인이 다르고 +a 문제 발생
+ (운영체제가 제공해 주는 기능을 기반으로 만들어져서, 운영체제에 종속적임)
+=>이를 해결한 것이 Swing(Java에서 버튼 만들어서 OS에서 생성하도록)
+=>만약 Swing으로 개발 할 일이 있으면 컴포넌트 예제 보고 활용
+=>이벤트 핸들링도 중요함!
+
+-UI와 기능의 구현을 구분하는 형태로 소프트웨어의 개발방법은 발전해 나갈 것이다.
+-AWT와 Swing은 UI와 기능의 구현을 구분한 모델은 아니다. 하지만, 이에 대한 학습을 통해서
+ UI 구현에 대한 전반적인 이해를 갖출 수 있다.
+-Swing을 사용하지 않더라도 Swing의 학습은 다른 프레임워크의 이해에 많은 도움이 된다.
+-AWT와 Swing을 각각 별도로 공부할 필요는 없다. 둘 중 하나를 선택해서 UI 구현에 대한 경험을
+ 갖는 것에 의미를 두자!
+ 
+---------------------------------------------------------------------
+
+//25-2 Swing 컴포넌트와 이벤트 핸들링
+
+//Swing 프로그래밍에 대한 이해
+
+import java.awt.*;
+import javax.swing.*;
+
+class FirstSwing {
+	public static void main(String[] args) {
+		JFrame frm = new JFrame("First Swing");	//골격이 되는 창은 JFrame의 인스턴스
+		frm.setBounds(120, 120, 400, 100);		//x,y,width,height
+		frm.setLayout(new FlowLayout());		//여러한 배치 관리자(Layout Manager) 중 FlowLayout이라는 배치관리자 설정
+		
+		/*버튼 생성*/
+		JButton btn1 = new JButton("My Button");	
+		JButton btn2 = new JButton("Your Button");
+		JButton btn3 = new JButton("Our Button");
+
+		frm.add(btn1);
+		frm.add(btn2);
+		frm.add(btn3);
+		frm.setVisible(true);		
+	}
+}
+
+=>JFrame이 상속하는 클래스 중 하나는 java.awt.Container 클래스! 이 클래스를 상속하는 컴포넌트는 다른 Swing 컴포넌트를 얹을 수 있다.
+Container 클래스는 배치와 관련된 클래스이다. 따라서 setLayout 메소드 역시 Container 클래스의 메소드이다.
+
+=>FlowLayout 인스턴스가 장착되어 컴포넌트의 배치를 관리하게 된다. 단순히 add 메소드의 호출을 통해서 컴포넌트를 얹으면 FlowLayout 인스턴스가
+적절히 배치한다.
+
+=>setVisible 메소드 호출을 통해서 그간 작성한 JFrame을 눈에 보이게 한다.
+  (만들어지는 과정 (움직임 등)이 다보이게 됨 -> 다하고 보여지게끔  => 테스트하려면 setVisiable(true)넣고, sleep 걸어주기)
+
+---------------------------------------------------------------------
+
+//Swing과 AWT 비교
+
+ (	javax.swing vs java.awt (x는 확장 버전 의미) )
+Swing vs AWT
+;J만 빼면 됨
+JFrame frm = new JFrame("First Swing");
+=>Frame frm = new Frame("First Swing");
+JButton btn1 = new JButton("My Button");	
+=>Button btn1 = new Button("My Button");	
+
+==>AWT로 작성하면, 기존 Swing과 디자인이 약간 다르게 나옴(OS에 종속적)
+
+//exit 메소드
+import java.awt.*;
+import javax.swing.*;
+
+...
+		WindowListener listen=new WindowAdapter(){
+			public void windowClosing(WindowEvent ev){
+				System.exit(0);	// 프로그램의 종료를 명령하는 메소드 
+			}
+		};
+		
+		frm.addWindowListener(listen);
+..
+
+
+=>GUI창의 우측 상단의 x버튼을 눌러도 프로그램은 종료되지 않는다.(단지 frame창만 꺼짐)
+x 버튼이 눌렸을 때 프로그램이 종료되기를 원한다면 그에 따른 이벤트 핸들링이 필요하다!
+
+//exit 메소드의 전달 값
+System 클래스의
+public static void exit(int status)
+
+
+
+import java.io.*;
+
+class RunningProcess{	
+	public static void main(String[] args) throws IOException, InterruptedException	{
+		Process proc=Runtime.getRuntime().exec("java FirstAWTExitEvent");	//FirstAWTExitEvent실행
+		proc.waitFor();	//프로그램이 종료되기를 기다린다.
+		
+		if(proc.exitValue()==0)
+			System.out.println("정상 종료!");
+		else
+			System.out.println("비 정상 종료!!!!!");
+	}
+}
+
+Program A -------------> Program B	;A가 B프로그램 실행시키고 기다리는 상황
+B가 종료하면서 exit(value); 하게 되면 그 value에 따라서
+A가 적절히 처리할 수 있도록 할 수 있음.(관례적 : 정상 0, 비정상 -1)
+
+-waitFor()		//프로그램이 종료되기를 기다린다.
+-exitValue()	//프로그램의 종료 값(exit value)를 얻는다.
+
+---------------------------------------------------------------------
+//이벤트 리스너에 대한 간단한 소개
+
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+
+class MouseEventHandler implements MouseListener {
+	/* 마우스 버튼이 클릭되었을 때(눌렸다 풀렸을 때) 호출됩니다. */
+	public void mouseClicked(MouseEvent e) {
+		JButton button=(JButton)e.getComponent();
+		String nowState=button.getText();
+		if(nowState.equals("Pressed")){	//현재 마우스가 Clicked 되어 있으면			
+			button.setText("Unpressed");
+		}else{
+			button.setText("Pressed");
+		}
+		System.out.println("Clicked Button"+e.getButton());
+		System.out.println("마우스 버튼 눌렸다 풀림");
+	}
+
+	/* 마우스 커서가 버튼 위에 올라가면 호출됩니다. */
+	public void mouseEntered(MouseEvent e) {
+		System.out.println("커서 버튼 위 진입");
+	}
+
+	/* 마우스 커서가 버튼을 빠져나가면 호출됩니다. */
+	public void mouseExited(MouseEvent e) {
+		System.out.println("커서 버튼 위 탈출");
+	}
+
+	/* 마우스 버튼이 눌리는 순간 호출됩니다. */
+	public void mousePressed(MouseEvent e) {
+		System.out.println("마우스 버튼 눌림");
+	}
+
+	/* 마우스 버튼이 풀리는 순간 호출됩니다. */
+	public void mouseReleased(MouseEvent e) {
+		System.out.println("마우스 버튼 풀림");
+	}
+}
+
+public class EventHandler {
+	public static void main(String[] args) {
+		JFrame frm = new JFrame("First Swing");
+		frm.setBounds(120, 120, 400, 100);
+		frm.setLayout(new FlowLayout());
+
+		JButton btn1 = new JButton("My Button");
+		MouseListener listener = new MouseEventHandler();
+		btn1.addMouseListener(listener);
+
+		JButton btn2 = new JButton("Your Button");
+		btn2.addMouseListener(listener);
+
+		JButton btn3 = new JButton("Our Button");
+		btn3.addMouseListener(listener);
+
+		frm.add(btn1);
+		frm.add(btn2);
+		frm.add(btn3);
+		frm.setVisible(true);
+	}
+}
+
+
+=>
+MouseEvent(움직임(좌표) ,클릭.. 등등)의 정보를 EventHandler가 다뤄줌 => 마우스는
+MouseListener (<<약속) 
+
+=>
+MouseEventHandler 클래스에서 인자로 전달되는 MouseEvent e를 통해서 밑의 정보를 얻을 수 있음
+-이벤트가 발생한 위치정보 			getX,getY 메소드
+-이벤트가 발생한 인스턴스의 참조 값 	getComponent 메소드
+-이벤트를 발생시킨 마우스 버튼의 종류	getButton 메소드
+
++책 보기
+
+/*연습문제 Swing기반 클래스 정의*/
+
+import java.awt.*;
+import javax.swing.*;
+import java.awt.event.*;
+
+class MouseEventHandler implements MouseListener {
+	/* 마우스 버튼이 클릭되었을 때(눌렸다 풀렸을 때) 호출됩니다. */
+	public void mouseClicked(MouseEvent e) {
+		JButton button = (JButton) e.getComponent();
+		button.setText("Clicked");
+		System.out.println("Clicked Button" + e.getButton());
+		System.out.println("마우스 버튼 눌렸다 풀림");
+	}
+	/* 마우스 커서가 버튼 위에 올라가면 호출됩니다. */
+	public void mouseEntered(MouseEvent e) {}
+	/* 마우스 커서가 버튼을 빠져나가면 호출됩니다. */
+	public void mouseExited(MouseEvent e) {}
+	/* 마우스 버튼이 눌리는 순간 호출됩니다. */
+	public void mousePressed(MouseEvent e) {}
+	/* 마우스 버튼이 풀리는 순간 호출됩니다. */
+	public void mouseReleased(MouseEvent e) {}
+}
+
+class MyJFrame extends JFrame implements MouseListener {	
+	JButton btn1;
+	JButton btn2;
+	JButton btn3;	
+	
+	public MyJFrame(String title){
+		super(title);
+		setBounds(120,120,400,100);
+		setLayout(new FlowLayout());
+		addMouseListener(this);
+		
+		btn1=new JButton("My Button");
+		btn2=new JButton("Your Button");
+		btn3=new JButton("Out Button");			
+		
+		MouseListener listener=new MouseEventHandler();
+		btn1.addMouseListener(listener);
+		btn2.addMouseListener(listener);
+		btn3.addMouseListener(listener);
+		add(btn1);
+		add(btn2);
+		add(btn3);
+	}	
+		
+	public void mouseClicked(MouseEvent e){	
+		JFrame frm=(JFrame)e.getComponent();
+		System.out.println(frm.getName()+"상에서 마우스 버튼 눌렸다 풀림");		
+	}	
+	public void mouseEntered(MouseEvent e) {}
+	public void mouseExited(MouseEvent e) {}	
+	public void mousePressed(MouseEvent e) {}	
+	public void mouseReleased(MouseEvent e) {}
+}
+
+
+public class Solution{
+	public static void main(String[] args){		
+		JFrame frm=new MyJFrame("First Swing");		
+		frm.setVisible(true);			
+	}
+}
+
+---------------------------------------------------------------------
+
+//25-3 레이아웃 메니저(Layout Manager)
+
+//FlowLayout 배치 관리자
+(배치의 기준)
+-왼쪽에서 오른쪽으로 배치한다.
+-중앙으로 정렬해가며 배치한다.
+-한 줄에 모든 컴포넌트를 배치할 수 없을때에는 다음 줄에 이어서 배치를 한다.
+
+import java.awt.*;
+import javax.swing.*;
+
+public class FlowLayoutManager {
+	public static void main(String[] args) {
+		JFrame frm = new JFrame("FlowLayout Test");
+		frm.setBounds(120, 120, 400, 200);
+		frm.setLayout(new FlowLayout());
+
+		frm.add(new JButton("Hi!"));
+		frm.add(new JButton("I like Swing"));
+		frm.add(new JButton("I am a button"));
+
+		frm.add(new LargeButton("Hi!"));
+		frm.add(new LargeButton("I like Swing"));
+		frm.add(new LargeButton("I am a button"));
+
+		frm.setVisible(true);
+	}
+}
+
+class LargeButton extends JButton {
+	public LargeButton(String str) {
+		super(str);
+	}
+
+	public Dimension getPreferredSize() {
+		Dimension largeBtmSz 
+		= new Dimension(super.getPreferredSize().width + 30, super.getPreferredSize().height + 15);
+		return largeBtmSz;
+	}
+}
+
+=>창 크기 조절해도 기준대로 정렬됨.
+=>public Dimension getPreferredSize() 
+=>getPreferredSize 메소드는 JButton 클래스가 상속하는 상위 클래스에 정의된 메소드로써, GUI 창에 그려질
+컴포넌트의 적절한 크기정보를 반환한다. 그리고 FlowLayout 배치관리자는 이 메소드를 호출해서 반환되는 값을 참조하여
+컴포넌트를 배치한다.
+
+=>Dimension 클래스의 두 인스턴스 변수는 width와 height이며 직접 접근가능하다.
+=>이러한 원리로 되는구나 정도 경험해보기
+
+---------------------------------------------------------------------
+
+//BorderLayout 배치 관리자.
+
+import java.awt.*;
+import javax.swing.*;
+
+class BorderLayoutManager
+{
+	public static void main(String[] args)
+	{
+		JFrame frm=new JFrame("BorderLayout Test");
+		frm.setBounds(120, 120, 300, 200);
+		frm.setLayout(new BorderLayout());
+		
+		frm.add(new JButton("EAST"), BorderLayout.EAST);
+		frm.add(new JButton("WEST"), BorderLayout.WEST);
+		frm.add(new JButton("SOUTH"), BorderLayout.SOUTH);
+		frm.add(new JButton("NORTH"), BorderLayout.NORTH);
+		frm.add(new JButton("CENTER"), BorderLayout.CENTER);
+			
+		frm.setVisible(true);
+	}
+}
+
+(배치의 기준)
+BorderLayout.EAST	//동(EAST)
+BorderLayout.WEST	//서(WEST)
+BorderLayout.SOUTH	//남(SOUTH)
+BorderLayout.NORTH	//북(NORTH)
+BorderLayout.CENTER	//중앙(CENTER)
+
+     NORTH
+WEST CENTER	EAST
+	 SOUTH
+
+=>에디터 같은 경우에 BorderLayout 배치 관리자 자주사용함
+=>생략해도 나머지 부분이 채워짐(BUT Center는 비우면 비어져 나옴)
+
+---------------------------------------------------------------------
+
+//GridLayout 배치 관리자
+
+import java.awt.*;
+import javax.swing.*;
+
+class GridLayoutManager {
+	public static void main(String[] args) {
+		JFrame frm = new JFrame("GridLayout Test");
+		frm.setBounds(120, 120, 300, 200);
+		frm.setLayout(new GridLayout(3, 2));	//세로3 가로2
+
+		frm.add(new JButton("One")); 	frm.add(new JButton("Two"));
+		frm.add(new JButton("Three")); 	frm.add(new JButton("Four"));
+		frm.add(new JButton("Five"));	frm.add(new JButton("Six"));
+
+		frm.setVisible(true);
+	}
+}
+
+=>
+public GridLayout(int row,int cols,int hgap,int vgap)
+;가로 세로 분할정보 + 세로 가로의 컴포넌트 간 간격도 지정 가능.
+
+---------------------------------------------------------------------
+
+//하나의 JFrame에 둘 이상의 배치 관리자 적용
+JPanel 컴포넌트
+ -Jpanel은 눈에 보이는 성격의 컴포넌트가 아니다.
+ -JFrame처럼 다른 컴포넌트를 얹을 수 있고, 또 배치 관리자의 지정도 가능하다.
+ 
+
+import java.awt.*;
+import javax.swing.*;
+
+class MultiLayoutManager {
+	public static void main(String[] args) {
+		JFrame frm = new JFrame("Multi Layout Manager");
+		frm.setBounds(120, 120, 250, 150);
+		frm.setLayout(new BorderLayout());	//JFrame을 BorderLayout으로 설정
+		
+		/*버튼 설정*/
+		JButton btm1 = new JButton("B1");
+		JButton btm2 = new JButton("B2");
+		JButton btm3 = new JButton("B3");
+		JButton btm4 = new JButton("B4");
+		JButton btm5 = new JButton("B5");
+		JButton btm6 = new JButton("B6");
+		JButton btm7 = new JButton("B7");
+		JButton btm8 = new JButton("B8");
+		JButton btm9 = new JButton("B9");
+		JButton btm10 = new JButton("B10");
+		
+		/*JPanel1 설정*/
+		JPanel panel1 = new JPanel();
+		panel1.setLayout(new FlowLayout());
+		panel1.add(btm1);
+		panel1.add(btm2);
+		panel1.add(btm3);
+		panel1.add(btm4);
+
+		/*JPanel2 설정*/
+		JPanel panel2 = new JPanel();
+		panel2.setLayout(new GridLayout(2, 3, 2, 2));
+		panel2.add(btm5);
+		panel2.add(btm6);
+		panel2.add(btm7);
+		panel2.add(btm8);
+		panel2.add(btm9);
+		panel2.add(btm10);
+		
+		/*위의 설정 된 JPanel을 JFrame에 올리기*/
+		frm.add(panel1, BorderLayout.NORTH);
+		frm.add(panel2, BorderLayout.CENTER);
+
+		frm.setVisible(true);
+	}
+}
+
+=>Container를 상속하면 컴포넌트를 올릴 수 있음.
+
+---------------------------------------------------------------------
+
+//25-4 이벤트와 이벤트 리스너
+
+JFrame의 UI와 이벤트 발생 > 이벤트 핸들러 관계
+
+//이벤트의 종류와 그에 따른 이벤트 리스너
+
+-MouseEvent			MouseListener		마우스 관련 이벤트
+-MouseEvent			MouseMotionListener	마우스 움직임 관련 이벤트
+-TextEvent			TextListener		텍스트 관련 컴포넌트의 문자 편집 이벤트
+-ItemEvent			ItemListener		선택 관련 이벤트
+-AdjustmentEvent	AdjustmentListener	스크롤 바 이벤트
+-WindowEvent		WindowListener		GUI 프레임 창 관련 이벤트
+-AcitionEvent		ActionListener		컴포넌트 별 특정 행위 관련 이벤트
+
+
+ActionEvent :
+Button 위에서 액션 ? 
+1)버튼을 클릭했다.
+2)버튼이 눌렸다.
+==>버튼이 눌리는게 중요(Button을 비활성화하면 클릭은 의미X)
+==>Action이 언제 발생하냐가 아니라, A라는 Component는 언제 Action이 발생하냐 가 맞는 질문
+=>ActionEvent가 발생하는 상황은 컴포넌트에 따라 결정된다. JButton의 경우 JButton이 눌렸을때 ActionEvent가 발생
+=>setEnable(false)에 의해서 컴포넌트가 비활성화되면, 눌러지지 않기 때문에 ActionEvent가 발생하지 않는다.
+  그러나 MouseEvent는 발생한다.
+=>Swing 컴포넌트가 상속하는 JComponent 클래스의 setEnabled 메소드는 해당 컴포넌트를 유효화, 무효화 가능
+
+import java.awt.*;
+import javax.swing.*;
+import java.awt.event.*;
+
+class MouseEventHandler implements MouseListener {
+	public void mouseClicked(MouseEvent e) {
+		System.out.println("마우스 버튼 눌렸다 풀림");
+	}
+	public void mouseEntered(MouseEvent e) {}
+	public void mouseExited(MouseEvent e) {}
+	public void mousePressed(MouseEvent e) {}
+	public void mouseReleased(MouseEvent e) {}
+}
+
+class JButtonMouseEvent {
+	public static void main(String[] args) {
+		JFrame frm = new JFrame("JButton Disable");
+		frm.setBounds(120, 120, 250, 150);
+		frm.setLayout(new FlowLayout());
+
+		MouseListener mouseHandler = new MouseEventHandler();
+
+		JButton btn1 = new JButton("Button One");
+		btn1.addMouseListener(mouseHandler);
+		JButton btn2 = new JButton("Button Two");
+		btn2.addMouseListener(mouseHandler);
+
+		frm.add(btn1);
+		frm.add(btn2);
+		btn1.setEnabled(false);
+
+		frm.setVisible(true);
+	}
+}
+
+=>Button One을 비활성화했는데, 클릭하면 "마우스 버튼 눌렸다 풀림" 출력.
+=>스페이스로 버튼 클릭 가능 BUT 콘솔창에는 출력 X(마우스 event만 다루므로)
+=>ActionEvent로 구성하는게 타당함.
+cf)보안상의 이유로 마우스 버튼으로만 입력할 수 있음(은행 관련)
+
+---------------------------------------------------------------------
+
+//ActionEvent
+
+import java.awt.*;
+import javax.swing.*;
+import java.awt.event.*;
+
+class ActionEventHandler implements ActionListener {
+	public void actionPerformed(ActionEvent e) {	//행위가 하나이다.
+		System.out.println(e.getActionCommand());
+	}
+}
+
+class JButtonActionEvent {
+	public static void main(String[] args) {
+		JFrame frm = new JFrame("JButton Disable");
+		frm.setBounds(120, 120, 250, 150);
+		frm.setLayout(new FlowLayout());
+
+		JButton btn1 = new JButton("Button One");
+		JButton btn2 = new JButton("Button Two");
+
+		ActionListener actionHandler = new ActionEventHandler();
+
+		btn1.addActionListener(actionHandler);
+		btn2.addActionListener(actionHandler);
+
+		frm.add(btn1);
+		frm.add(btn2);
+		btn1.setEnabled(false);
+
+		frm.setVisible(true);
+	}
+}
+
+=>버튼의 눌림에 대해서는 ActionEvent를 기반으로 이벤트를 처리하는 것이 타당하다.
+(Button1은 어떤 식으로해도 actionPerformed호출 X , Button2는 클릭,스페이스 다 호출)
+
+---------------------------------------------------------------------
+
+//WindowEvent1
+
+import java.awt.*;
+import javax.swing.*;
+import java.awt.event.*;
+
+class WindowEventHandler implements WindowListener {
+	String frameInfo;
+
+	public WindowEventHandler(String info) {
+		frameInfo = info;
+	}
+
+	public void windowActivated(WindowEvent e) {
+		System.out.println(frameInfo + " windowActivated");
+	}
+
+	public void windowClosed(WindowEvent e) {
+	public void windowClosed(WindowEvent e) {
+		System.out.println(frameInfo + " windowClosed");
+	}
+
+	public void windowClosing(WindowEvent e) {
+		JFrame frm = (JFrame) e.getWindow();
+		frm.dispose();
+		System.out.println(frameInfo + " windowClosing");
+	}
+
+	public void windowDeactivated(WindowEvent e) {
+		System.out.println(frameInfo + " windowDeactivated");
+	}
+
+	public void windowDeiconified(WindowEvent e) {
+		System.out.println(frameInfo + " windowDeiconified");
+	}
+
+	public void windowIconified(WindowEvent e) {
+		System.out.println(frameInfo + " windowIconified");
+	}
+
+	public void windowOpened(WindowEvent e) {
+		System.out.println(frameInfo + " windowOpened");
+	}
+}
+
+class JFrameWindowEvent {
+	public static void main(String[] args) {
+		JFrame frmOne = new JFrame("Frame One");
+		JFrame frmTwo = new JFrame("Frame Two");
+
+		frmOne.setBounds(120, 120, 250, 150);
+		frmTwo.setBounds(380, 120, 250, 150);
+
+		frmOne.addWindowListener(new WindowEventHandler("Frame One"));
+		frmTwo.addWindowListener(new WindowEventHandler("Frame Two"));
+
+		frmOne.add(new JButton("Button One"));
+		frmTwo.add(new JButton("Button Two"));
+
+		frmOne.setVisible(true);
+		frmTwo.setVisible(true);
+	}
+}
+
+public void windowOpened(WindowEvent e)	//GUI 창이 등장하면서 호출
+
+public void windowActivated(WindowEvent e)	//GUI 창의 활성화(포커스 얻음)
+public void windowActivated(WindowEvent e)	//GUI 창의 비활성화(포커스 잃음)
+
+public void windowIconified(WindowEvent e) 	//우측 상단의 최소화 버튼이 눌릴때
+public void windowDeiconified(WindowEvent e)//다시 복원 되었을 때
+
+public void windowClosing(WindowEvent e)	//우 상단의 X 버튼이 눌리면 호출
+public void windowClosed(WindowEvent e)		//창이 소멸되면서 호출
+
+
+public void windowClosing(WindowEvent e) {	//X버튼이 눌리면 호출
+	JFrame frm = (JFrame) e.getWindow();
+	frm.dispose();	//windowsClosed 함수의 호출로 이어짐
+	System.out.println(frameInfo + " windowClosing");
+} //X버튼이 눌려서 창이 보이지 않는다고 해서 창이 소멸된 것은 아니다.
+=>창을 닫겠습니까 하고 예눌르면 windowsClosing은 호출X closed호출!
+
+---------------------------------------------------------------------
+
+//프로그램을 종료시키는 또 다른 방법
+
+import javax.swing.*;
+
+class SetDefaultCloseOperation {
+	public static void main(String[] args) throws Exception {
+		JFrame frmOne = new JFrame("Frame One");
+		JFrame frmTwo = new JFrame("Frame Two");
+
+		frmOne.setBounds(120, 120, 250, 150);
+		frmTwo.setBounds(380, 120, 250, 150);
+
+		frmOne.add(new JButton("Button One"));
+		frmTwo.add(new JButton("Button Two"));
+
+		frmOne.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);//dispose()와 같음
+		frmTwo.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+		
+		//frmTwo.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		//=>창이 2개 있어도 frmTwo x누르면 프로그램 종료
+		
+		
+		frmOne.setVisible(true);
+		frmTwo.setVisible(true);
+	}
+}
+
+=>setDefaultCloseOperation 의 인자로 WindowConstant.DISPOSE_ON_CLOSE가 전달되면
+X 버튼 눌릴 때 dispose 메소드 호출과 동일한 결과를 보인다.
+
+---------------------------------------------------------------------
+
+//MouseListener & MouseMotionListener
+
+MouseEvent Listener
+ MouseListener			마우스 관련 이벤트
+ MouseMotionListener	마우스 움직임 관련 이벤트
+
+import javax.swing.*;
+import java.awt.event.*;
+
+class MouseMotionHandler implements MouseMotionListener {
+	public void mouseDragged(MouseEvent e) {
+		System.out.printf("Drag [%d %d] \n", e.getX(), e.getY());
+	}
+
+	public void mouseMoved(MouseEvent e) {
+		System.out.printf("Move [%d %d] \n", e.getX(), e.getY());
+	}
+}
+
+class MouseMotionEvent {
+	public static void main(String[] args) throws Exception {
+		JFrame frm = new JFrame("Mouse Motion");
+		frm.setBounds(120, 120, 250, 150);
+		frm.addMouseMotionListener(new MouseMotionHandler());
+
+		frm.setVisible(true);
+		frm.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+	}
+} 
+
+---------------------------------------------------------------------
+
+//Adapter 클래스
+
+MouseListener는 인터페이스여서 모든 메소드를 선언해줌.
+=>빈 상태로 메소드를 채워진 클래스 : MouseAdapter
+=>즉, 인터페이스의 모든 메소드를 빈 상태로 구현해 놓은 것이 Adapter 클래스이다.
+
+MouseListener			MouseAdapter
+MouseMotionListener		MouseMotionAdapter
+TextListener			어댑터 클래스 없음
+ItemListener			어댑터 클래스 없음
+AdjustmentListener		어댑터 클래스 없음
+WindowListener			WindowAdapter
+ActionListener			어댑터 클래스 없음
+
+
+import javax.swing.*;
+import java.awt.event.*;
+
+class MouseEventHandler extends MouseAdapter {	
+	public void mouseClicked(MouseEvent e) {
+		System.out.println("마우스 버튼 눌렸다 풀림");
+	}
+}
+
+class AdapterEventHandling {
+	public static void main(String[] args) {
+		JFrame frm = new JFrame("Mouse Motion");
+		frm.setBounds(120, 120, 250, 150);
+		frm.addMouseListener(new MouseEventHandler());
+
+		frm.setVisible(true);
+		frm.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+	}
+}
+
+---------------------------------------------------------------------
+
+//Anonymous(익명) 클래스의 활용
+
+import javax.swing.*;
+import java.awt.event.*;
+
+class AdapterAnonymousHandling {
+	public static void main(String[] args) {
+		JFrame frm = new JFrame("Mouse Motion");
+		frm.setBounds(120, 120, 250, 150);
+		frm.addMouseListener(
+			new MouseAdapter(){ 	//오버라이딩 한 인스턴스 생성		
+				public void mouseClicked(MouseEvent e){
+					System.out.println("마우스 버튼 눌렸다 풀림");
+				}
+			}
+		);
+
+		frm.setVisible(true);
+		frm.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+	}
+}
+
+=>Adapter 클래스의 메소드를 하나만 정의하고자 하는 경우에는 Anonymous 클래스의 형태로 정의하는 것도 의미가 있다.
+
+---------------------------------------------------------------------
+
+//25-5 다양한 Swing 컴포넌트
+
+//JLabel & JTextField
+
+JLabel은 문자열 출력을 위한 컴포넌트
+JTextField는 문자열 출력을 위한 컴포넌트
+JPasswordField는 문자열을 가리며 출력
+
+import java.awt.*;
+import javax.swing.*;
+import java.awt.event.*;
+
+class PWHandler implements ActionListener {
+	JTextField id;
+	JPasswordField pw;	//JTextFiled를 상속하는 클래스, 패스워드 입력에 필요한 기능이 확장된 형태의 클래스
+
+	public PWHandler(JTextField id, JPasswordField pw) {
+		this.id = id;
+		this.pw = pw;
+	}
+
+	public void actionPerformed(ActionEvent e) {
+		System.out.println("ID: " + id.getText());//getText 메소드가 호출되면 텍스트상에 입력된 데이터가 문자열 형태로 반환
+		System.out.println("Password: " + new String(pw.getPassword()));
+		//getPassword()가 호출되면 텍스트상에 입력 된 데이터가 반환. 단 char형 배열의 형태로 반환되기 때문에 String인스턴스 생성
+		
+		//setText()를 통해 인자로 전달된 문자열은 텍스트에 출력 => ""빈문자열로 지우는 역할
+		id.setText("");
+		pw.setText("");
+	}
+}
+
+class JLabelAndJTextField {
+	public static void main(String[] args) {
+		JFrame frm = new JFrame("JLabel & JTextField");
+		frm.setBounds(120, 120, 180, 80);
+		frm.setLayout(new GridLayout(2, 2));
+
+		JLabel idLabel = new JLabel("ID ", SwingConstants.RIGHT);	//JLabel 생성 , 오른쪽 정렬
+		JTextField idText = new JTextField(10);	//JTextField인스턴스 생성, 10은 무시됨 GridLayout은 꽉채움
+
+		JLabel pwLabel = new JLabel("Password ", SwingConstants.RIGHT);	//JLable 생성, 오른쪽 정렬
+		JPasswordField pwText = new JPasswordField(10);
+		pwText.setEchoChar('*');	//pwText상에 보일 문자
+
+		pwText.addActionListener(new PWHandler(idText, pwText));	
+		//엔터누르면 ActionEvent 발생 & actionPerformed실행
+
+		frm.add(idLabel);
+		frm.add(idText);
+		frm.add(pwLabel);
+		frm.add(pwText);
+
+		frm.setVisible(true);
+		frm.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+	}
+}
+
+---------------------------------------------------------------------
+//JTextArea
+;여러 줄의 문자열 입력을 위한 컴포넌트
+
+import java.awt.*;
+import javax.swing.*;
+import java.awt.event.*;
+
+class ButtonTextHandler implements ActionListener {
+	JTextArea textArea;
+
+	public ButtonTextHandler(JTextArea area) {
+		textArea = area;
+	}
+
+	public void actionPerformed(ActionEvent e) {
+		String str=textArea.getText();		
+		System.out.println(str);
+		textArea.setText("모두 지웠습니다. \n");		//setText는 텍스트 창을 지우고 문자열을 입력
+		textArea.append("원하는 내용 입력하세요. \n");	//append 메소드는 텍스트 창의 입력된 문자열의 끝에 추가
+	}
+}
+
+class JTextAreaSimpleModel {
+	public static void main(String[] args) {
+		JFrame frm = new JFrame("JTextArea");
+		frm.setBounds(120, 120, 250, 270);
+		frm.setLayout(new FlowLayout());
+
+		JTextArea textArea = new JTextArea(10, 20);	//가로10,세로20(글자 수아님. 한자,한글,영어 다 다르므로)
+		textArea.append("원하는 내용 입력하세요. \n");
+		textArea.setCaretPosition(textArea.getText().length());	//커서의 위치를 변경하는 메소드
+
+		textArea.setLineWrap(true); //자동 줄 바꿈
+		textArea.setWrapStyleWord(true); //단어 단위 줄 바꿈
+
+		JButton btn = new JButton("Clear");
+		btn.addActionListener(new ButtonTextHandler(textArea));
+		frm.add(textArea);
+		frm.add(btn);
+
+		frm.setVisible(true);
+		frm.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+	}
+}
+
+---------------------------------------------------------------------
+
+//JScrollPane
+
+import java.awt.*;
+import javax.swing.*;
+import java.awt.event.*;
+
+class ButtonTextHandler implements ActionListener {
+	JTextArea textArea;
+
+	public ButtonTextHandler(JTextArea area) {
+		textArea = area;
+	}
+
+	public void actionPerformed(ActionEvent e) {
+		textArea.setText("모두 지웠습니다. \n");
+		textArea.append("원하는 내용 입력하세요. \n");
+	}
+}
+
+class JtextAreaScrollAdded {
+	public static void main(String[] args) {
+		JFrame frm = new JFrame("JTextArea");
+		frm.setBounds(120, 120, 250, 270);
+		frm.setLayout(new FlowLayout());
+
+		JTextArea textArea = new JTextArea(10, 20);
+		textArea.append("원하는 내용 입력하세요. \n");
+		textArea.setCaretPosition(textArea.getText().length());
+
+		textArea.setLineWrap(true);
+		textArea.setWrapStyleWord(true);
+
+		JButton btn = new JButton("Clear");
+		btn.addActionListener(new ButtonTextHandler(textArea));
+
+		JScrollPane simpleScroll = new JScrollPane(textArea);	//JTextArea의 참조값을 생성자로 전달 & 스크롤 생성
+		frm.add(simpleScroll);
+		frm.add(btn);
+
+		frm.setVisible(true);
+		frm.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+	}
+}
+
+=>생성하자 마자 스크롤 달고 싶으면
+JScrollPane simpleScroll=new JScrollPane(textArea,
+							ScroolPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,	// 세로 스크롤 정책
+							ScroolPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS	//가로 스크롤 정책												
+							);
+HORIZONTAL_SCROLLBAR_NEVER 도 있음.							
+
+---------------------------------------------------------------------
+
+//JCheckBox & JRadioButton
+
+JCheckBox : ㅁ <<체크하는거
+JRadioButton : ○ ● ○ ○
+=>ItemEvent 발생
+
+
+
+import java.awt.*;
+import javax.swing.*;
+import java.awt.event.*;
+
+class CheckBoxHandler implements ItemListener {
+	JRadioButton btn1;
+	JRadioButton btn2;
+	JRadioButton btn3;
+
+	public CheckBoxHandler(JRadioButton b1, JRadioButton b2, JRadioButton b3) {
+		btn1 = b1;
+		btn2 = b2;
+		btn3 = b3;
+	}
+
+	public void itemStateChanged(ItemEvent e) {	//체크박스가 체크되면 라디오버튼3개다 true(활성), 아니면 false(비활성)
+		if (e.getStateChange() == ItemEvent.SELECTED) {
+			btn1.setEnabled(true);
+			btn2.setEnabled(true);
+			btn3.setEnabled(true);
+		} else /* ItemEvent.DESELECTED */
+		{
+			btn1.setEnabled(false);
+			btn2.setEnabled(false);
+			btn3.setEnabled(false);
+		}
+	}
+}
+
+class RadioButtonHandler implements ItemListener{
+	public void itemStateChanged(ItemEvent e){
+		JRadioButton rbtn=(JRadioButton)e.getItem();
+		if(e.getStateChange()==ItemEvent.SELECTED){
+			System.out.println(rbtn.getText()+"선택 됨");
+		}else{
+			System.out.println(rbtn.getText()+"해제 됨");
+		}			
+	}
+}
+
+class JCheckBoxAndJRadioButton {
+	public static void main(String[] args) {
+		JFrame frm = new JFrame("Choice Component");
+		frm.setBounds(120, 120, 200, 200);
+		frm.setLayout(new GridLayout(0, 1)); /* 가로는 1, 세로는 자유롭게 */
+
+		/*체크박스 생성(체크박스에 표시될 문자열 정보를 전달)*/
+		JCheckBox checkBox = new JCheckBox("Are you a programmer");
+		
+		/*라디오 버튼 생성(라디오 버튼은 그룹화 하기 위해 만든 것)*/
+		JRadioButton rbtn1 = new JRadioButton("I like C");
+		JRadioButton rbtn2 = new JRadioButton("I like C++");
+		JRadioButton rbtn3 = new JRadioButton("I like Java", true);	//라디오버튼을 '선택'의 상태로 놓기 위함
+		
+		/*그룹화(세개 중 한개만 선택 가능)*/
+		ButtonGroup bGroup = new ButtonGroup();
+		bGroup.add(rbtn1);	bGroup.add(rbtn2);	bGroup.add(rbtn3);	//버튼3 주석하면, 버튼1,2 + 버튼3 복수선택가능
+
+		/*체크박스 이벤트 리스터 등록*/
+		checkBox.addItemListener(new CheckBoxHandler(rbtn1, rbtn2, rbtn3));
+		frm.add(checkBox);
+		frm.add(rbtn1);
+		frm.add(rbtn2);
+		frm.add(rbtn3);
+
+		rbtn1.setEnabled(false);
+		rbtn2.setEnabled(false);
+		rbtn3.setEnabled(false);
+
+		ItemListener iListener=new RadioButtonHandler();
+		rbtn1.addItemListener(iListener);
+		rbtn2.addItemListener(iListener);
+		rbtn3.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent e) {
+				if (e.getStateChange() == ItemEvent.SELECTED)
+					System.out.println("I like Java 선택 됨");
+			}
+		});
+
+		frm.setVisible(true);
+		frm.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+	}
+}
+
+---------------------------------------------------------------------
+
+//JRadioButton 이벤트 핸들링
+
+		rbtn1.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent e) {
+				if (e.getStateChange() == ItemEvent.SELECTED)
+					System.out.println("I like C too");
+			}
+		});
+
+		rbtn2.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent e) {
+				if (e.getStateChange() == ItemEvent.SELECTED)
+					System.out.println("I like C++ too");
+			}
+		});
+
+		rbtn3.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent e) {
+				if (e.getStateChange() == ItemEvent.SELECTED)
+					System.out.println("I like Java too");
+			}
+		});
+
+
+---------------------------------------------------------------------
+
+//Border
+
+/*위의 예제에 Border 추가*/
+
+import javax.swing.border.*;
+
+	Border rbtnBorder = BorderFactory.createEtchedBorder();	//그림그려주는 기능을 가진 인스턴스
+	rbtnBorder = BorderFactory.createTitledBorder(rbtnBorder, "Language");	
+	//위의 보더에 Title 채워주는거
+	
+	JPanel rbtnBorderPanel = new JPanel();
+	rbtnBorderPanel.setLayout(new GridLayout(0, 1));
+	
+	rbtnBorderPanel.setBorder(rbtnBorder);
+	rbtnBorderPanel.add(rbtn1);
+	rbtnBorderPanel.add(rbtn2);
+	rbtnBorderPanel.add(rbtn3);
+	
+	frm.add(rbtnBorderPanel);
+
+---------------------------------------------------------------------
+
+//JComboBox1
+;ItemEvent는 선택 받은 컴포넌트를 대상으로도 선택을 잃은 컴포넌트를 대상으로도 발생한다.
+
+
+import java.awt.*;
+import javax.swing.*;
+import java.awt.event.*;
+import java.util.Vector;
+
+class MyFriend {
+	String name;
+	int age;
+
+	public MyFriend(String name, int age) {
+		this.name = name;
+		this.age = age;
+	}
+
+	public String toString() {
+		return name;
+	}
+
+	public void showFriendInfo() {
+		System.out.println("name: " + name);
+		System.out.println("age: " + age);
+	}
+}
+
+class ChoiceHandler implements ItemListener {
+	public void itemStateChanged(ItemEvent e) {
+		if (e.getStateChange() == ItemEvent.SELECTED) {
+			System.out.println("Selected... ");
+			((MyFriend) e.getItem()).showFriendInfo();
+		} else {
+			System.out.println("Deselected... ");
+			((MyFriend) e.getItem()).showFriendInfo();
+		}
+	}
+}
+
+class TextChangedHandler implements ActionListener {
+	public void actionPerformed(ActionEvent e) {
+		if ((e.getActionCommand()).compareTo("comboBoxEdited") == 0)
+			System.out.println("ComboBox Edited");
+		else /* comboBoxChanged */
+			System.out.println("ComboBox Changed");
+	}
+	//e.getActionCommand()  호출하면 -> 1)선택 바뀌면 : comboBoxChanged 2)편집 하면 : comboBoxEdited
+}
+
+class JComboBoxModel {
+	public static void main(String[] args) {
+		JFrame frm = new JFrame("Choice Component");
+		frm.setBounds(120, 120, 250, 120);
+		frm.setLayout(new GridLayout(0, 2));
+
+		Vector<MyFriend> friend = new Vector<MyFriend>();
+		friend.add(new MyFriend("Yoon", 22));
+		friend.add(new MyFriend("Hong", 23));
+		friend.add(new MyFriend("Jung", 24));
+		friend.add(new MyFriend("Kang", 25));
+
+		JLabel label1 = new JLabel(" ComboBox");
+		JComboBox cmbBox1 = new JComboBox(friend);	//JComboBox에 toString()메소드를 호출
+		cmbBox1.setMaximumRowCount(3);
+		cmbBox1.addItemListener(new ChoiceHandler());
+
+		JLabel label2 = new JLabel(" Editable ComboBox");
+		JComboBox cmbBox2 = new JComboBox(friend);
+		cmbBox2.setEditable(true);	//Editable Combobox == 선택 + 직접 입력
+		cmbBox2.addActionListener(new TextChangedHandler());
+		//JComboBox는 ItemEvent, ActionEvent 둘다 발생
+
+		frm.add(label1);
+		frm.add(cmbBox1);
+		frm.add(label2);
+		frm.add(cmbBox2);
+
+		frm.setVisible(true);
+		frm.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+	}
+}
+
+---------------------------------------------------------------------
+
+//GUI창의 다른 느낌을 주는 Look And Feel
+;UI package , 껍데기를 바꿔서 디자인적인 느낌을 다르게.
+
+=>Swing에서는 Look And Feel 변경을 통해서 모든 컴포넌트의 View를 일괄 변경할 수 있다.
+
+---------------------------------------------------------------------
+
+//동적으로 변경하기
+//			this.revalidate();
+//			this.repaint();
+
+---------------------------------------------------------------------
+
+//메뉴탭
+
+
+import java.awt.BorderLayout;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
+
+class TabFrame extends JFrame{
+	JTabbedPane tPane;
+	private JPanel panel1;
+	private JPanel panel2;
+	private JPanel panel3;
+	
+	private JLabel label1;	
+	private JLabel label2;
+	private JLabel label3;
+	
+	private boolean isPanel1 = true;
+	
+	public MyFrame(){
+		super("Zac`s Program!");
+		init();
+	}
+	
+	private void init(){
+		this.setBounds(120,120,300,400);
+		this.setLayout(new BorderLayout());
+		
+		panel1 = new JPanel();
+		panel2 = new JPanel();
+		panel3 = new JPanel();
+		
+		panel1.add(new JButton("btn1"));
+		panel2.add(new JButton("btn2"));
+		panel3.add(new JButton("btn3"));
+		
+		tPane.add("1",panel1);
+		tPane.add("2",panel2);
+		tPane.add("3",panel3);
+		
+		this.add(tPane);	
+	}
+		
+	public void start(){
+		this.setVisible(true);
+	}
+}
+
+public class JTabbedPaneTest {	
+	public static void main(String[] args){
+		MyFrame frm = new MyFrame();
+		frm.start();
+		
+	}
+}
+
+---------------------------------------------------------------------
+//JScrollPane 
+displayScroll.getVerticalScrollBar().setValue(displayScroll.getVerticalScrollBar().getMaximum());
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

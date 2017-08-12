@@ -1,0 +1,228 @@
+----------------/*C언어*/-------------------------------
+/*BinarySearch.c*/
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#include <Windows.h>
+#define MYTIME 1000
+#define LENGTH 9
+#define DEBUG 1
+void SetArr(void);				//난수로 배열 초기화
+int SearchExistData(int);		//데이터 존재하는지 여부 (순차탐색)
+void SortAsc(void);				//오름차순 정리
+int BinarySearch(int, int, int);	//이진 탐색
+#if(DEBUG)
+void ShowArr(void);
+#endif
+int arr[LENGTH];
+int count = 1;
+
+int main(void)
+{
+	int i, target, choice;
+	int result;
+	while (1) {
+		count = 1;
+		printf("배열 개수 선택(종료 : 0):");
+		scanf("%d", &choice);
+		if (choice == 0) break;
+		SetArr();	//난수로 배열 초기화
+		SortAsc();	//오름 차순 정리
+		target = rand() % (30) + 1;
+		system("cls");
+#if(DEBUG)
+		ShowArr();
+		printf("data = %d\n", target);
+		Sleep(MYTIME);
+#endif
+		result = BinarySearch(0, LENGTH - 1, target);
+		if (result == 1) printf("%d가 존재합니다.\n", target);
+		else printf("%d가 존재하지 않습니다.\n", target);
+	}
+	return 0;
+}
+
+void SetArr(void)
+{
+	srand(time(NULL));
+	int i = 0, num = 0;
+	int tmp;
+
+	for (i = 0; i < LENGTH; i++) {
+		while (1) {
+			tmp = rand() % 30 + 1;
+			if (SearchExistData(tmp)) {
+				arr[i] = tmp;
+				break;
+			}
+		}
+	}
+}
+
+int SearchExistData(int data)
+{
+	int i;
+	for (i = 0; i < LENGTH; i++) {
+		if (data == arr[i]) {
+			return 0;
+		}
+	}
+	return 1;
+}
+
+void SortAsc(void)
+{
+	int i, j, tmp;
+	for (i = 0; i < LENGTH - 1; i++) {
+		for (j = i + 1; j < LENGTH; j++) {
+			if (arr[i] > arr[j]) {
+				tmp = arr[i];
+				arr[i] = arr[j];
+				arr[j] = tmp;
+			}
+		}
+	}
+}
+
+int BinarySearch(int first, int last, int data)
+{	
+	if(first>last) return -1;
+	
+	//static preLast = LENGTH;
+	int center = (first + last) / 2;
+	printf("%d번째 탐색 중 first=%d, center=%d, last= %d\n", count, first, center, last);
+	Sleep(MYTIME);
+	if (arr[center] == data) {
+		return 1;
+	}
+	else if (arr[center] < data) {
+		if (center + 1 == last) return 0;
+		count++;
+		BinarySearch(center + 1, last, data);
+	}
+	else { //arr[center] < data
+		if (first == center - 1) {
+			return 0;
+		}
+		if (first == center) return 0;
+		count++;
+		BinarySearch(first, center - 1, data);
+	}
+
+}
+#if(DEBUG)
+void ShowArr(void)
+{
+	int i;
+	for (i = 0; i < LENGTH; i++) {
+		printf("arr[%d]=%d  ", i, arr[i]);
+	}
+	printf("\n");
+}
+#endif
+
+---------------------------------------------------------------------------------
+자바(구현)
+
+
+
+import java.util.Arrays;
+public class BiSearchTest {	
+	public static int cnt=0;
+	public static int[] arr=new int[10];
+	public static void main(String[] args){
+		
+		for(int i=0;i<10;i++){
+			arr[i]=(int)(Math.random()*10);	//0 9 난수생성			
+		}
+		Arrays.sort(arr);
+		for(int i=0;i<arr.length;i++){
+			System.out.print(arr[i]);
+		}
+		System.out.println("");		
+		
+		int target=(int)(Math.random()*10);
+		System.out.println("target : "+target);
+		int idx=BsearchRecur(0,arr.length-1,target);
+		
+		if(idx==-1){
+			System.out.println("타켓 검색 실패");
+		} else {
+			System.out.println("타켓 검색 성공(idx="+ idx+")");
+		}
+		
+		
+		
+	}
+	public static int BsearchRecur(int left,int right,int target){
+		cnt++;
+		System.out.print(cnt+"번째 탐색 : ");
+		System.out.println("left : "+left+" right : "+right);
+		//기저사례
+		if(left>right){
+			return -1;
+		}
+		int mid=(left+right)/2;
+		//
+		if(arr[mid]==target){
+			return mid;
+		} else if(arr[mid]>target){
+			return BsearchRecur(left,mid-1,target);
+		} else{
+			return BsearchRecur(mid+1,right,target);
+		}
+	}
+}
+
+
+
+---------------------------------------------------------------------------------
+자바(활용)
+
+import java.util.Arrays;
+public class Test {	
+	public static int cnt=0;
+	public static int[] arr=new int[10];
+	public static void main(String[] args){		
+		for(int i=0;i<10;i++){
+			arr[i]=(int)(Math.random()*10);	//0 9 난수생성			
+		}
+		
+		Arrays.sort(arr);
+		
+		int target=(int)(Math.random()*20);
+		
+		
+		for(int i=0;i<arr.length;i++){
+			System.out.print(arr[i]+" ");
+		}		
+		System.out.println(" target : "+target);
+		System.out.println("");
+		int idx=Arrays.binarySearch(arr,target);	
+		//성공 : idx반환 // 실패 : -(fromIdx+1)
+		
+		
+		if(idx<0){
+			System.out.println("타켓 검색 실패"+idx);
+		} else {
+			System.out.println("타켓 검색 성공(idx="+ idx+")");
+		}
+		
+		
+		
+	}	
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+

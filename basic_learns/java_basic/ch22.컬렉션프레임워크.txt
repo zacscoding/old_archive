@@ -1,0 +1,1789 @@
+-------------------ch.22 컬렉션 프레임워크(Collection Framework)-----------------------
+(Intro)
+=>class들의 모임(정확히는 약간 거리가 있음)
+
+//22-1컬렉션 프레임워크의 기본적인 이해
+//컬렉션 프레임워크의 기본적인 이해
+
+기존의 문제점 :
+1.생산성
+
+2.호환성(통신), 즉 기준이 없다 
+=>무엇인가 만들때 기준 즉 골격을 만들어주는 게 프레임워크
+
+-프레임워크가 의미하는 바는 다음과 같다.
+ ->잘 정의된, 약속된 구조나 골격
+ 
+-자바의 컬렉션 프레임워크
+ ->인스턴스의 저장과 참조를 위해 잘 정의된, 클래스들의 구조
+ 
+-컬렉션 프레임워크가 제공하는 기능의 영역
+ ->자료구조와 알고리즘
+
+//컬렉션의 의미와 자료구조
+자료구조 : 배열(Array), 리스트(List), 스택(Stack), 큐(Queue), 트리(Tree), 해시(Hash)
+알고리즘(기본) : 정렬(Sort), 탐색(Search), 최대(Max) 최소(Min) 검색
+컬렉션 : 데이터의 저장, 그리고 이와 관련 있는 알고리즘을 구조화 해놓은 프레임워크(자료구조와 알고리즘을 클래스로 구현)
+ 
+=>자료구조의 필요성 
+자바의 컬렉션 프레임워크는 별도의 구현과 이해 없이 자료구조와 알고리즘을 적용할 수 있도록
+설계된 클래스들의 집합이다. 그러나 자료구조의 이론적인 특성을 단다면 보다 적절하고 합리적인
+활용이 가능하다.
+
+--------------------------------------------------------------------------
+
+컬렉션 : 무한한 데이터의 집합
+
+--------------------------------------------------------------------------
+
+//컬렉션 프레임워크의 기본골격
+
+-컬렉션 프레임워크의 인터페이스 구조
+		Collection<E> 
+	↑		↑		↑				Map<K,V>
+Set<E>  List<E> Queue<E>
+
+List : ArrayList, Vector, LinkedList
+Set  : HashSet, TreeSet
+Map  : HashMap, Hashtable, TreeMap, Properties
+
+
+-Collection<E> 인터페이스를 구현하는 제네릭 클래스
+ ->인스턴스 단위의 데이터 저장 기능 제공(배열과 같이 단순 인스턴스 참조 값 저장)
+-Map<K,V>
+ ->key-value 구조의 인스턴스 저장 기능 제공
+
+cf ) 컬렉션이 프레임워크인 이유 : 인터페이스 구조를 기반으로 클래스들이 정의되어 있기 때문. 
+
+=>
+인터페이스 분류				특징						구현 클래스
+ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+			List		-순서를 유지하고 저장			ArrayList,Vector,LinkedList
+						-중복 저장 가능
+Collection
+			Set			-순서를 유지하지 않고 저장		HashSet,TreeSet
+						-중복 저장 안됨
+						
+Map						-키와 값의 쌍으로 저장			HashMap,Hashtable,
+						-키는 중복 저장 안됨			TreeMap,Properties
+
+--------------------------------------------------------------------------
+
+//22.2 Collection<E> 인터페이스를 구현하는 제네릭 클래스들
+(intro)
+List<E> vs Set<E> 
+List : 1,2,5,3...일반적으로 저장되는 것
+Set : {1,2,5} <<집합과 같음 
+
+=>Collection<E>를 구현하는 제네릭 클래스들은 모두 인스턴스를 저장의 대상으로 삼는다(정확히는 참조 값)
+다만 저장하는 방식에 있어서 중복 저장을 허용하느냐 마느냐, 저장 시 정렬을 하느냐 마느냐 등등의 차이가 있다.
+
+--------------------------------------------------------------------------
+
+//List 컬렉션
+
+1)객체 추가
+boolean add(E e)	//주어진 객체를 맨 끝에 추가
+void add(int index,E element)	//주어진 인덱스에 객체를 추가
+set(int index,E element)	// 주어진 인덱스에 저장된 객체를 주어진 객체로 바꿈
+
+2)객체 검색
+boolean contains(Object o)	//주어진 객체가 저장되어 있는지 여부
+E get(int index)	//주어진 인덱스에 저장된 객체를 리턴
+boolean isEmpty()	//컬렉션이 비어 있는지 조사
+int size()		//저장되어 있는 전체 객체 수 리턴
+
+3)객체 삭제
+void clear()	//저장된 모든 객체 삭제
+E remove(int idx)	//주어진 인덱스에 저장된 객체를 삭제
+boolean remove(Object o) //주어진 객체를 삭제
+
+--------------------------------------------------------------------------
+
+//ArrayList<E> , LinkedList<E>
+
+-List<E> 인터페이스를 구현하는 대표적인 제네릭 클래스
+ ->ArrayList<E>, LinkedList<E>
+
+-List<E>인터페이스를 구현 클래스의 인스턴스 저장 특징
+ ->동일한 인스턴스의 중복 저장을 허용한다.
+ ->인스턴스의 저장 순서가 유지된다.
+
+1)ArrayList<E>
+
+import java.util.ArrayList;
+class IntroArrayList{
+	public static void main(String[] args){
+		ArrayList<Integer> list=new ArrayList<Integer>();
+		
+		/* 데이터의 저장 */
+		list.add(new Integer(11));
+		list.add(new Integer(22));
+		list.add(new Integer(33));
+		list.add(1,55); //11 55 22 33 순으로 저장됨.
+		
+		/* 데이터의 참조 */
+		System.out.println("1차 참조");
+		//방법1
+		for(int i=0; i<list.size(); i++)
+			System.out.println(list.get(i));	//0이 첫번째
+												//list.size() == 저장한 데이터 개수
+												//list.get(i) == i번째 인덱스에 저장된 데이터의 참조값 반환
+		//방법2
+		for(int num : list)
+			System.out.println(num);		
+		
+		
+		/* 데이터의 삭제 */
+		list.remove(0);
+		System.out.println("2차 참조");
+		for(int i=0; i<list.size(); i++)
+			System.out.println(list.get(i));	
+	}
+}
+
+import java.util.Arrays;
+import java.util.List;
+
+public class Main {	
+	public static void main(String[] args){	
+		//문자열을 List에 저장
+		List<String> list1=Arrays.asList("홍길동","신용권","김자바");
+		for(String name : list1)
+			System.out.println(name);
+		
+		//
+		Integer[] arrInt=new Integer[]{1,2,3};		
+		List<Integer> list2=Arrays.asList(arrInt);
+		for(int val:list2)
+			System.out.println(val);	
+		
+		//
+		list.tirmToSize(); //capacity 보다 
+	}	
+}
+
+
+<< 실행 결과 >>
+홍길동
+신용권
+김자바
+1
+2
+3
+
+
+
+/*연습문제*/
+1)Integer 인스턴스를 저장할 수 있는 ArrayList<E>를 생성하고 저장용량을 500으로 늘린다.
+list.ensureCapacity(500);
+
+2)ArrayList<E>에 저장되어 있는 인스턴스 수의 두 배로 저장용량을 늘린다.
+list.ensureCapacity(2*list.size());
+
+
+
+
+
+2)LinkedList<E>
+
+-데이터의 저장 방식
+ ->이름이 의미하듯이 '리스트'라는 자료구조를 기반으로 데이터를 저장한다.
+
+-사용방법
+ ->ArrayList<E> 의 사용방법과 거의 동일하다! 다만, 데이터를 저장하는 방식에서 큰
+   차이가 있을 뿐이다.
+ ->대부분의 경우 ArrayList<E>를 대체할 수 있다.
+
+import java.util.LinkedList;
+
+public class IntroLinkedList {
+	public static void main(String[] args) {
+		LinkedList<Integer> list=new LinkedList<Integer>();
+		
+		/* 데이터의 저장 */
+		list.add(new Integer(11));
+		list.add(new Integer(22));
+		list.add(new Integer(33));
+		
+		/* 데이터의 참조 */
+		System.out.println("1차 참조");
+		for(int i=0; i<list.size(); i++)
+			System.out.println(list.get(i));
+		
+		/* 데이터의 삭제 */
+		list.remove(0);
+		System.out.println("2차 참조");
+		for(int i=0; i<list.size(); i++)
+			System.out.println(list.get(i));
+	}
+} 
+ 
+--------------------------------------------------------------------------
+
+//ArrayList<E>와 LinkedList<E>의 차이점
+
+--ArrayList<E>의 특징,배열의 특징과 일치한다.
+-저장소의 용량을 늘리는 과정에서 많은 시간이 소요된다. ArrayList<E>의 단점
+-데이터의 삭제에 필요한 연산과정이 매우 길다.		ArrayList<E>의 단점
+-데이터의 참조가 용이해서 빠른 참조가 가능하다.		ArrayList<E>의 장점
+
+--LinkedList<E>의 특징, 리스트 자료구조의 특징과 일치한다.
+-저장소의 용량을 늘리는 과정이 간단하다.			LinkedList<E>의 장점
+-데이터의 삭제가 매우 간단하다.					LinkedList<E>의 장점
+-데이터의 참조가 다소 불편하다.					LinkedList<E>의 단점
+
+<<연습문제>>
+ArrayList<E>와 LinkedList<E>의 적절한 상황은 ? 
+1)저장하게 되는 데이터의 수가 대략적으로 예측 가능하며, 빈번한 데이터의 참조가 일어나는 상황에서 유용하게 사용할 수 있는 컬렉션 클래스는?
+=>ArrayList<E>
+
+2)저장하게 되는 데이터의 수가 예측 불가능하며, 빈번한 데이터의 저장 및 삭제가 일어나는 상황에서 유용하게 사용할 수 있는 컬렉션 클래스?
+=>LinkedList<E>
+
+
+
+e.g ) ArrayList와 LinkedList 실행 성능 비교
+import java.util.*;
+
+public class Main {	
+	public static void main(String[] args){		
+		List<String> list1=new ArrayList<String>();
+		List<String> list2=new LinkedList<String>();
+		
+		long startTime;
+		long endTime;
+		long arrTime;
+		long linkedTime;
+		//ArrayList 저장 
+		startTime=System.nanoTime();
+		for(int i=0;i<10000;i++){
+			list1.add(0,String.valueOf(i));
+		}
+		endTime=System.nanoTime();
+		arrTime=endTime-startTime;
+		System.out.println("ArrayList 걸린 시간 : "+(arrTime)+"ns");
+		
+		//LinkedList 저장
+		startTime=System.nanoTime();
+		for(int i=0;i<10000;i++){
+			list2.add(0,String.valueOf(i));
+		}
+		endTime=System.nanoTime();
+		linkedTime=endTime-startTime;
+		
+		System.out.println("LinkedList 걸린 시간 : "+(linkedTime)+"ns");
+		
+		System.out.println("차이 : "+(arrTime-linkedTime)+"ns");		
+	}	
+}
+
+
+
+<< 실행 결과 >>
+ArrayList 걸린 시간 : 12926506ns
+LinkedList 걸린 시간 : 1862610ns
+차이 : 11063896ns
+
+--------------------------------------------------------------------------
+
+//Iterator를 이용한 인스턴스의 순차적 접근
+
+--Iterator<E> 인터페이스
+
+-Collection<E> 인터페이스에는 iterator라는 이름의 메소드가 다음의 형태로 정의
+ ->Iterator<E> iterator() {....}
+-iterator 메소드가 반환하는 참조 값의 인스턴스는 Iterator<E> 인터페이스를 구현하고 있다.
+ =>Iterator를 구현하는 모든 반복자는, 저장의 방법에 상관없이 동일하게 얻을 수 있음
+-iterator 메소드가 반환한 참조 값의 인스턴스를 이용하면 컬렉션 인스턴스에 저장된 인스턴스의
+ 순차적 접근이 가능함.
+-iterator 메소드의 반환형이 Iterator<E>이니, 반환된 참조 값을 이용해서 Iterator<E>에
+ 선언된 함수들만 호출하면 된다.
+ 
+--Iterator<E> 인터페이스에 정의된 메소드
+-boolean hasNext() 	참조할 다음 번 요소(element)가 존재하면 true를 반환
+-E next()			다음 번 요소를 반환
+-void remove()		현재 위치의 요소를 삭제
+
+import java.util.Iterator;
+import java.util.LinkedList;
+public class IteratorUsage {
+	public static void main(String[] args) {
+		LinkedList<String> list=new LinkedList<String>();
+		list.add("First");
+		list.add("Second");
+		list.add("Third");
+		list.add("Fourth");
+		
+		Iterator<String> itr=list.iterator();
+		//iterator 메소드가 생성하는 인스턴스를 가리켜 '반복자'라 한다.
+		
+		System.out.println("반복자를 이용한 1차 출력과 \"Third\" 삭제");
+		while(itr.hasNext())
+		{
+			String curStr=itr.next();
+			System.out.println(curStr);
+			if(curStr.compareTo("Third")==0)
+				itr.remove();
+		}
+		
+		System.out.println("\n\"Third\" 삭제 후 반복자를 이용한 2차 출력 ");		
+		itr=list.iterator();
+		while(itr.hasNext())
+			System.out.println(itr.next());
+		
+		/*for-each 문을 통한 출력*/
+		for(String str : list) {
+			System.out.println(str);
+		}	
+	}
+}
+
+--------------------------------------------------------------------------
+//'반복자'를 사용하는 이유
+
+-"반복자를 사용하면, 컬렉션 클래스의 종류에 상관없이 동일한 형태의 데이터 참조방식을 유지할 수 있다."
+-따라서 컬렉션 클래스의 교체에 큰 영향이 없다.
+-컬렉션 클래스 별 데이터 참조방식을 별도로 확인할 필요가 없다.
+
+LinkedList<String> list=new LinkedList<String>();
+위의 예제에서 반복자를 사용했기 때문에 컬렉션 클래스를 HashSet<E>로 변경해야 할 때,
+HashSet<String> set=new HashSet<String>();
+으로 변경하면 끝!
+(만약 반복자를 사용하지 않고, List의 get()메소드를 호출해서 사용했으면 상당부분 바꿔줘야함)
+
+--------------------------------------------------------------------------
+
+//컬렉션 클래스를 이용한 정수의 저장
+ArrayList<int> arr=new ArrayList<int>();	//error!
+LinkedList<int> link=new LinkedList<int>();	//error!
+
+기본 자료형 정보를 이용해서 제네릭 인스턴스 생성 불가능! 따라서 Wrapper 클래스를 기반으로
+컬렉션 인스턴스를 생성한다.
+
+import java.util.Iterator;
+import java.util.LinkedList;
+
+public class PrimitiveCollection {
+	public static void main(String[] args) {
+		LinkedList<Integer> list=new LinkedList<Integer>();
+		list.add(10);		// Auto Boxing
+		list.add(20);		// Auto Boxing
+		list.add(30);		// Auto Boxing
+		
+		Iterator<Integer> itr=list.iterator();
+		
+		while(itr.hasNext())
+		{
+			int num=itr.next();		// Auto Unboxing
+			System.out.println(num);
+		}
+	}
+}
+
+=>Auto Boxing과 Auto Unboxing의 도움으로 정수 단위의 데이터 입출력이 매우 자연스럽다!
+
+--------------------------------------------------------------------------
+
+//Vector
+ArrayList와 동일한 내부구조를 가지고 있음
+
+List<E> list=new Vector<E>();
+(ArrayList와 다른점은 Vector는 동기화된(synchronized) 메소드로 구성되어 있기 때문에 멀티스레드가 동시에
+이 메소드들을 실행할 수 없고 하나의 스레드가 실행을 완료해야만 다른 스레드를 실행할 수 있다. 
+=>멀티 스레드 환경에서 안전하게 객체를 추가, 삭제할 수 있다. 이것을 스레드가 안전(Thread Safe)하다고 말한다.)
+
+import java.util.Vector;
+import java.util.List;
+import java.util.Iterator;
+class Board {
+	String subject;
+	String content;
+	String writer;
+	public Board(String subject,String content,String writer) {
+		this.subject=subject;
+		this.content=content;
+		this.writer=writer;
+	}
+	public void showData() {
+		System.out.println(subject+"\t"+content+"\t"+writer);
+	}
+}
+public class VectorExample {
+	public static void main(String[] args) {
+		List<Board> list=new Vector<Board>();
+		/*Board 인스턴스 저장*/
+		list.add(new Board("제목1","내용1","글쓴이1"));
+		list.add(new Board("제목2","내용2","글쓴이2"));
+		list.add(new Board("제목3","내용3","글쓴이3"));
+		list.add(new Board("제목4","내용4","글쓴이4"));
+		list.add(new Board("제목5","내용5","글쓴이5"));
+		
+		/*인덱스가 2,3인 인스턴스 삭제*/
+		list.remove(2);
+		list.remove(3);
+		
+		for(int i=0;i<list.size();i++) {
+			list.get(i).showData();			
+		}
+	}
+}
+
+
+--------------------------------------------------------------------------
+
+//22-3 Set<E> 인터페이스를 구현하는 컬렉션 클래스들
+
+(Intro)
+Set : "기준 설정"이라는 중요한 요소가 들어감.
+
+Set<E> 인터페이스의 특성과 HashSet<E> 클래스
+-List<E>를 구현하는 클래스들과 달리 Set<E>를 구현하는 클래스들은 데이터의 저장순서를 유지하지 않는다.
+-List<E>를 구현하는 클래스들과 달리 Set<E>를 구현하는 클래스들은 데이터의 중복저장을 허용하지 않는다.
+ 단, 동일 데이터에 대한 기준은 프로그래머가 정의
+-즉, Set<E>를 구현하는 클래스는 "집합"의 성격을 지닌다.
+
+=>Set 컬렉션에는 HashSet,LinkedHashSet,TreeSet 등이 있음
+
+Set 컬렉션이 기본으로 제공하는 메소드
+1)객체 추가
+boolean add(E e)	// 주어진 객체를 저장. 성공적 저장 true, 중복 객체면 false
+
+2)객체 검색
+boolean contains(Object o)	//주어진 객체가 저장되어 있는지 여부
+isEmpty()	//컬렉션이 비어 있는지 조사
+Iterator<E> iterator()	//저장된 객체를 한 번씩 가져오는 반복자 리턴
+int size()	//저장되어 있는 전체 객체 수 리턴
+
+3)객체 삭제
+void clear()	//저장된 모든 객체를 삭제
+boolean remove(Object o) //주어진 객체를 삭제
+
+
+/*예제*/
+import java.util.Iterator;
+import java.util.HashSet;
+
+public class SetInterfaceFeature {
+	public static void main(String[] args) {
+		HashSet<String> hSet=new HashSet<String>();
+
+		hSet.add("First");
+		hSet.add("Second");
+		hSet.add("Third");
+		hSet.add("First");	
+		
+		System.out.println("저장된 데이터 수: "+hSet.size());	//3출력
+		
+		Iterator<String> itr=hSet.iterator();
+		while(itr.hasNext())
+			System.out.println(itr.next());
+	}
+}
+
+<<실행 결과 >>
+저장 된 데이터의 수 : 3
+Second
+Third
+First
+
+=>1)hSet.add("First");가 중복되므로 저장이 안됨.
+=>2)출력 순서가 저장한 순서와 다름.
+
+--------------------------------------------------------------------------
+
+//동일 인스턴스의 판단기준 관찰을 위한 예
+
+import java.util.Iterator;
+import java.util.HashSet;
+
+class SimpleNumber{
+	int num;
+	public SimpleNumber(int n){
+		num=n;
+	}
+	public String toString(){
+		return String.valueOf(num); //String.valueOf() == 기본자료형을 String 인스턴스로 변환
+	}
+}
+
+public class HashSetEqualityOne {
+	public static void main(String[] args) {
+		HashSet<SimpleNumber> hSet=new HashSet<SimpleNumber>();
+		hSet.add(new SimpleNumber(10));
+		hSet.add(new SimpleNumber(20));
+		hSet.add(new SimpleNumber(20));
+		
+		System.out.println("저장된 데이터 수: "+hSet.size());	//3출력
+		
+		Iterator<SimpleNumber> itr=hSet.iterator();
+		while(itr.hasNext())
+			System.out.println(itr.next());
+	}
+}
+<< 실행 결과 >>
+저장된 데이터의 수 : 3
+20
+10
+20
+
+=>인스턴스의 동등 ==>프로그래머가 정의
+
+HashSet<E> 클래스의 인스턴스 동등비교 방법
+;Object클래스에 정의되어 있는 equals 메소드의 호출결가와 HashCode 메소드의 호출결과를
+참조하여 인스턴스의 동등비교를 진행.
+
+=>Object클래스의 equals메소드는 참조값을 비교.
+
+--------------------------------------------------------------------------
+(why need hashCode Method?)
+//해시 알고리즘의 이해(데이터의 구분)
+
+1)데이터
+3, 5, 7, 12, 25, 31
+
+2)해시 알고리즘
+num%3		//해시 알고리즘은 이렇듯 간단하게 디자인 될 수도 있다.
+
+3)알고리즘 적용결과
+연산결과 0: 3,12
+연산결과 1: 7,25,31
+연산결과 2: 5 
+
+=>해시 알고리즘은 데이터의 분류에 사용이 된다. 데이터를 3으로 나머지 연산하였을때 얻게 되는
+반환 값을 '해시 값'으로 하여 총 세 개의 부류를 구성하였다.
+
+=>이렇게 분류해 놓으면, 데이터의 검색이 빨라진다. 정수 12가 저장되어있는지 확인한다고 했을때
+정수 12의 해시 값을 구한다. 그 다음에 해시 값에 해당하는 부류에서만 정수 12의 존재 유무를
+확인하면 된다.
+
+--------------------------------------------------------------------------
+//HashSet<E> 클래스의 동등비교
+
+(HashSet<E>의 인스턴스에 데이터의 저장을 명령하면, 우선 다음의 순서를 거치면서 동일 인스터스가
+ 되었는지 확인)
+1단계 :
+Object클래스의 hashCode 메소드의 반환 값을 해시 값으로 활용하여 검색의 그룹을 선택한다.
+
+2단계 :
+그룹 내의 인스턴스를 대상으로 Object클래스의 equals 메소드의 반환 값을 이용해서 동등비교
+
+=>따라서 아래의 두 메소드를 적절히 오버라이딩 해야함.
+public int hashCode();
+public boolean equals(Object obj);
+
+=>hashCode 메소드의 구현에 따라서 검색의 성능이 달라진다. 그리고 동일 인스턴스를 판단하는
+ 기준이 맞게 equals 메소드를 정의해야 한다.
+--------------------------------------------------------------------------
+
+//HashSet<E> 클래스의 활용의 예
+
+import java.util.Iterator;
+import java.util.HashSet;
+
+class SimpleNumber{
+	int num;
+	public SimpleNumber(int n){
+		num=n;
+	}
+	public String toString(){
+		return String.valueOf(num);
+	}
+	public int hashCode(){
+		return num%3; //%3의 연산이 해시 알고리즘이니, 해시 그룹은 세 부류로 나뉜다.
+	}
+	public boolean equals(Object obj){
+		SimpleNumber comp=(SimpleNumber)obj;
+		if(comp.num==num)
+			return true;
+		else
+			return false;		
+	}
+}
+public class HashSetEqualityTwo {
+	public static void main(String[] args) {
+		HashSet<SimpleNumber> hSet=new HashSet<SimpleNumber>();
+				
+		hSet.add(new SimpleNumber(10));
+		hSet.add(new SimpleNumber(20));
+		hSet.add(new SimpleNumber(20));
+		
+		System.out.println("저장된 데이터 수: "+hSet.size());
+		
+		Iterator<SimpleNumber> itr=hSet.iterator();
+		while(itr.hasNext())
+			System.out.println(itr.next());
+	}
+}
+
+<<실행 결과>>
+저장된 데이터의 수 : 2
+10
+20
+
+==>HashSet<E>를 활용하려면 hashCode()와 equals()를 오버라이딩 해야 할 생각을 가져야함
+
+<<연습문제>>
+Person클래스의 age와 name을 저장할 때 이름과 나이가 같을 경우 중복 저장하지 않도록 hashCode()와 equals()메소드 오버라이딩하기
+public int hashCode() {
+		return name.hashCode()+age%7;
+	}
+	
+	public boolean equals(Object obj) {
+		if(obj instance of Person){
+			Person comp=(Person)obj;			
+			return name.equals(comp.name)&&comp.age==age;
+		} else {
+			return false;
+		}
+	}
+
+--------------------------------------------------------------------------
+
+//TreeSet<E> 클래스의 이해와 활용
+
+-TreeSet<E> 클래스는 트리라는 자료구조를 기반으로 데이터를 저장한다.
+-데이터를 정렬된 순서로 저장하며, HashSet<E>와 마찬가지로 데이터의 중복저장 않는다.
+-정렬의 기준은 프로그래머가 직접 정의한다. (같냐 다르냐도 프로그래머가 정의하므로 정렬도!)
+
+=>TreeSet이 제공하는 검색 관련 메소드
+리턴타입		메소드			설명
+E 			first()			제일 낮은 객체를 리턴
+E			last()			제일 높은 객체를 리턴
+E			lower(E e)		주어진 객체보다 바로 아래 객체를 리턴
+E			higher(E e)		주어진 객체보다 바로 위 객체를 리턴
+E			floor(E e)		주어진 객체와 동등한 객체가 있으면 리턴(없으면 주어진 객체의 바로 아래 객체 리턴)
+E			ceiling(E e)	주어진 객체와 동등한 객체가 있으면 리턴(없으면 주어진 객체의 바로 위 객체를 리턴)
+E			pollFirst()		제일 낮은 객체를 꺼내오고 컬렉션에서 제거
+E			pollLast()		제일 높은 객체를 꺼내오고 컬렉션에서 제거
+
+
+import java.util.Iterator;
+import java.util.TreeSet;
+
+public class SortTreeSet {
+	public static void main(String[] args) {
+		TreeSet<Integer> sTree=new TreeSet<Integer>();
+		/*총 5개의 인스턴스를 저장(Auto Boxing 된 인스턴스) > 저장될 때마다 정렬됨*/
+		sTree.add(1);
+		sTree.add(2);
+		sTree.add(4);
+		sTree.add(3);
+		sTree.add(2);
+		
+		System.out.println("저장된 데이터 수: "+sTree.size());
+		
+		/*iterator 메소드가 반환하는 반복자는 정렬된 데이터를 오름차순으로 참조*/
+		Iterator<Integer> itr=sTree.iterator();
+		while(itr.hasNext())
+			System.out.println(itr.next());		
+	}
+}
+<<실행 결과>>
+저장 된 데이터 수 : 4
+1
+2
+3
+4
+
+
+import java.util.TreeSet;
+
+public class Main {
+	public static void main(String[] args) throws Exception{
+		TreeSet<Integer> scores=new TreeSet<>();
+		scores.add(new Integer(87));
+		scores.add(new Integer(98));
+		scores.add(new Integer(75));
+		scores.add(new Integer(95));
+		scores.add(new Integer(80));
+		
+		Integer score=null;
+		
+		score=scores.first();
+		System.out.println("가장 낮은 점수 : "+score);
+		
+		score=scores.last();
+		System.out.println("가장 높은 점수 "+score);
+		
+		score=scores.lower(new Integer(95));
+		System.out.println("95점 아래 점수 : "+score);
+		
+		score=scores.higher(new Integer(95));
+		System.out.println("95점 위의 점수 : "+score);
+		
+		score=scores.floor(new Integer(95));
+		System.out.println("95점 이거나 바로 아래 점수 : "+score);
+		
+		score=scores.ceiling(new Integer(85));
+		System.out.println("85점 이거나 바로 위의 점수 : "+score);
+		
+		System.out.println();
+		System.out.println("[scores.pollFirst() 가장 낮은 점수부터 제거]");
+		while(!scores.isEmpty()){
+			score=scores.pollFirst();
+			System.out.println(score+"(남은 객체 : "+scores.size()+")");
+		}
+		
+		
+	}
+}
+
+
+<< 실행 결과 >>
+가장 낮은 점수 : 75
+가장 높은 점수 98
+95점 아래 점수 : 87
+95점 위의 점수 : 98
+95점 이거나 바로 아래 점수 : 95
+85점 이거나 바로 위의 점수 : 87
+
+[scores.pollFirst() 가장 낮은 점수부터 제거]
+75(남은 객체 : 4)
+80(남은 객체 : 3)
+87(남은 객체 : 2)
+95(남은 객체 : 1)
+98(남은 객체 : 0)
+
+
+-TreeSet이 가지고 있는 정렬 관련 메소드
+리턴타입				메소드					설명
+Iterator<E>			descendingIterator()	내림차순으로 정렬된 Iterator를 리턴
+NavigableSet<E>		descendingSet()			내림차순으로 정렬된 NavigableSet을 반환
+
+=>NavigableSet도 TreeSet과 같은 메소드 제공
+=>
+NavigableSet<E> descendingSet=treeSet.descendingSet();
+NavigableSet<E> ascendingSet=descendingSet.descendingSet();
+
+=>TreeSet이 제공하는 범위 검색
+1)NavigableSet<E> headSet(E toElement,boolean inclusive)
+//주어진 객체보다 낮은 객체들을 NavigableSet으로 리턴(주어진 객체 포함 여부는 두 번째 매개값에 따라 달라짐)
+2)NavigableSet<E> tailSet(E toElement,boolean inclusive)
+//주어진 객체보다 높은 객체들을 NavigableSet으로 리턴(주어진 객체 포함 여부는 두 번째 매개값에 따라 달라짐)
+3)NavigableSet<E> subSet(E fromElement,boolean fromInclusive,E to Element,boolean toInclusive)
+//시작과 끝으로 주어진 객체 사이의 객체들을 NavigableSet으로 리턴(시작 끝 포함여부는 두,네 번째 매개값)
+
+
+
+import java.util.NavigableSet;
+import java.util.TreeSet;
+
+public class Main {
+	public static void main(String[] args) throws Exception{
+		TreeSet<Integer> scores=new TreeSet<>();
+		scores.add(new Integer(87)); scores.add(new Integer(98)); scores.add(new Integer(75));
+		scores.add(new Integer(95)); scores.add(new Integer(80));
+			
+		//내림차순 정렬
+		System.out.println("[내림차순 정렬]");
+		NavigableSet<Integer> descendingSet=scores.descendingSet();
+		for(Integer score:descendingSet)
+			System.out.print(score+" ");
+		System.out.println();
+				
+		//오름차순 정렬
+		System.out.println("[오름차순 정렬]");
+		NavigableSet<Integer> ascendingSet=descendingSet.descendingSet();
+		for(Integer score:ascendingSet)
+			System.out.print(score+" ");		
+		System.out.println();
+		
+		//85<score
+		System.out.println("[87>score]");
+		NavigableSet<Integer> head=scores.headSet(new Integer(87),false);
+		for(Integer score:head)
+			System.out.print(score+" ");		
+		System.out.println();
+		
+		//85>=score		
+		System.out.println("[87<=score]");
+		NavigableSet<Integer> tail=scores.tailSet(new Integer(87),true);
+		for(Integer score:tail)
+			System.out.print(score+" ");		
+		
+		//80<=score<95
+		System.out.println("[80<=score<95]");
+		NavigableSet<Integer> sub=scores.subSet(80,true, 95, false);
+		for(Integer score:sub)
+			System.out.print(score+" ");
+		
+	}
+}
+
+
+<< 실행 결과 >>
+[내림차순 정렬]
+98 95 87 80 75 
+[오름차순 정렬]
+75 80 87 95 98 
+[87>score]
+75 80 
+[87<=score]
+87 95 98 
+[80<=score<95]
+80 87 
+--------------------------------------------------------------------------
+
+//정렬의 기준을 정하는 Comparable<T> 인터페이스1
+
+(Intro)
+class Person {
+	private int age;
+	private String name;
+	public Person(String name,int age) {
+		this.name=name;
+		this.age=age;
+	}
+}
+을 정렬할때 이름순? 나이순? 정렬의 기준을 나름대로 프로그래머가 정의!
+=>자바에서 아래의 인터페이스 구현을 통해 정렬의 기준을 프로그래머가 직접 정의할 것을 요구
+interface Comparable<T> {
+	int compareTo(T obj);
+}
+
+-TreeSet<E> 인스턴스에 저장이 되려면 Comparable<T> 인터페이스를 구현해야 한다.
+-Comparable<T> 인터페이스의 유일한 메소드는 int compareTo(T obj); 이다.
+-compareTo 메소드는 다음의 기준으로 구현을 해야한다.
+ 1)인자로 전달된 obj가 작다면 양의 정수를 반환해라.
+ 2)인자로 전달된 obj가 크다면 음의 정수를 반환해라.
+ 3)인자로 전달된 obj가 같다면 0을 반환해라. =>'작다','크다','같다'의 기준은 프로그래머가 결정!
+
+=>TreeSet<E>는 compareTo 메소드의 호출결과를 참조하여 정렬
+=>TreeSet<E>에 저장되는 인스턴스는 반드시 Comparable<T> 인터페이스를 구현해야함.
+ 
+import java.util.Iterator;
+import java.util.TreeSet;
+
+class Person implements Comparable<Person>{
+    String name;
+    int age;
+
+    public Person(String name, int age){
+        this.name=name;
+        this.age=age;
+    }
+    public void showData() {
+    	System.out.printf("%s %d \n", name, age);
+    }
+    public int compareTo(Person p){ //Comparable인터페이스에 정의 된 메소드
+	//프로그래머가 정의한 기준
+        if(age>p.age) 		//인자로 전달된 p가 작으니 양수 반환
+            return 1;
+        else if(age<p.age)	//인자로 전달된 p가 크니 음수 반환
+            return -1;
+        else	
+            return 0;		//인자로 전달된 p와 같으니 0을 반환
+    }
+}
+public class ComparablePerson {
+	public static void main(String[] args) {
+		TreeSet<Person> sTree=new TreeSet<Person>();
+		sTree.add(new Person("Lee", 24));
+		sTree.add(new Person("Hong", 29));
+		sTree.add(new Person("Choi", 21));
+		
+		Iterator<Person> itr=sTree.iterator();
+		while(itr.hasNext())
+			itr.next().showData();
+	}
+}
+
+=>Person클래스의 compareTo 메소드는 정렬이 기준을
+'나이가 많고 적음'으로 구현하였다.
+=>iterator()는 오름차순을 기준으로 반환
+
+--------------------------------------------------------------------------
+//정렬의 기준을 정하는 Comparable<T> 인터페이스1
+
+import java.util.Iterator;
+import java.util.TreeSet;
+
+class MyString implements Comparable<MyString> {
+	String str;	//정렬의 기준
+	
+	public MyString(String str) {
+		this.str=str;
+	}
+	
+	public int getLength() {
+		return str.length();
+	}
+	
+	public String toString() {
+		return str;
+	}
+	
+	/*문자열 길이가 크면 큰것, 작으면 작은것으로 기준을 정의*/
+	public int compareTo(MyString mStr) {
+		if(getLength()>mStr.getLength()) {
+			return 1;
+		} else if (getLength()<mStr.getLength()) {
+			return -1;
+		} else {
+			return 0;
+		}
+		
+		//return getLength()-mStr.getLength();
+	}
+	
+}
+
+public class ComparableMyString {
+	public static void main(String[] args) {
+		TreeSet<MyString> sTree=new TreeSet<MyString>();
+		
+		sTree.add(new MyString("Orange"));
+		sTree.add(new MyString("Apple"));
+		sTree.add(new MyString("Dog"));
+		sTree.add(new MyString("Individual"));
+		
+		
+		Iterator<MyString> itr=sTree.iterator(); 			//오름차순으로
+		//Iterator<MyString> itr=sTree.descendingIterator(); //내림차순으로
+		while(itr.hasNext()) {
+			System.out.println(itr.next());
+		}		
+	}
+}
+
+<< 실행 결과 >>
+Dog
+Apple
+Orange
+Individual
+
+--------------------------------------------------------------------------
+//Comparator<T> 인터페이스를 기반으로 TreeSet<E>정렬 기준 제시하기
+
+사전편찬 순이아니라 문자열길이로 정렬의 기준을 삼으면 위와같이 MyString으로 정의해야됨
+=>사전편찬 순서 말고 길이 순으로 문자열을 정렬하도록 우리가 기준을 정할 수 있음
+
+interface Comparator<T> {
+	int compare(T obj1,T obj2);	//Obj1이 크면 양수, obj2가 크면 음수, 같으면 0
+	boolean equals(Object obj);
+}
+
+/*예제*/
+
+import java.util.Iterator;
+import java.util.TreeSet;
+import java.util.Comparator;
+
+class StrLenComparator implements Comparator<String> {
+	public int compare(String str1,String str2) {
+		if(str1.length()>str2.length()) {
+			return 1;
+		} else if(str1.length()<str2.length()) {
+			return -1;
+		} else {
+			return 0;
+		}
+		
+		//return str1.length()-str2.length();
+	}
+}
+
+public class IntroComparator {
+	public static void main(String[] args) {
+		TreeSet<String> tSet=new TreeSet<String>(new StrLenComparator());
+		
+		tSet.add("Orange");
+		tSet.add("Apple");
+		tSet.add("Dog");
+		tSet.add("Individual");
+		
+		Iterator<String> itr=tSet.iterator();
+		while(itr.hasNext()) {
+			System.out.println(itr.next());
+		}		
+	}
+}
+
+<<실행 결과>>
+Dog
+Apple
+Orange
+Individual
+
+or	=>익명 객체 구현해서 가능
+TreeSet<Person> tSet=new TreeSet<>(
+				new Comparator<Person>(){
+					@Override
+					public int compare(Person p1,Person p2){
+						return (p1.age)-(p2.age);
+					}
+				}
+		);
+
+-TreeSet<E> api보면 생성자에 comparator인자로 전달받는 생성자 있음.
+TreeSet(Comparator<? super E> comparator) 
+Constructs a new, empty tree set, sorted according to the specified comparator.
+
+=>TreeSet<String> tSet=new TreeSet<String>(new StrLenComparator());
+Comparator<String>을 구현하는 StrLenComparator의 인스턴스가 매개변수로 전달됨
+=>StrLenComparator클래스의 compare()메소드를 기준으로 저장한다.
+
+--------------------------------------------------------------------------
+//Map(K,V) 인터페이스를 구현하는 컬렉션 클래스들
+;HashMap,Hashtable,LinkedHashMap,Properties,TreeMap 등이 존재
+
+-Map<K,V> 인터페이스를 구현하는 컬렉션 클래스는 key-value 방식의 데이터 저장을 한다.
+-value는 저장할 데이터를 의미하고, key는 value를 찾는 열쇠를 의미한다.
+-Map<K,V>를 구현하는 대표적인 클래스로는 HashMap<K,V>와 TreeMap<K,V>가 있다.
+-TreeMap<K,V>는 정렬된 형태로 데이터가 저장된다.
+
+=>Map 인터페이스 기본 제공 메소드
+
+1)객체 추가
+V put(K key,V value)	//주어진 키와 값을 추가, 저장되면 값을 리턴
+
+2)객체 검색
+boolean containsKey(Object key)	//주어진 키가 있는지 여부 조사
+boolean containsValue(Object value)	//주어진 값이 있는지 여부 조사
+Set<Map.Entry<K,V>> entrySet()	//키와 값의 쌍으로 구성된 모든 Map.Entry 객체를 Set에 담아서 리턴
+V get(Object key)	//주어진 키가 있는 값을 리턴
+boolean isEmpty()	//컬렉션이 비어 있는지 여부
+Set<K> keySet()		//모든 키를 Set객체에 담아서 리턴
+int size()			//저장된 키의 총 수를 리턴
+Collection<V> values()	//저장된 모든 값을 Collection에 담아서 리턴
+
+3)객체 삭제
+void clear()	//모든 Map.Entry(키와 값)를 삭제
+V remove(Object key) //주어진 키와 일치하는 Map.Entry를 삭제하고 값을 리턴
+
+
+-맵 객체를 얻어오는 방법
+
+1)keySet() 메소드 이용
+Map<K,V> map=~;
+Set<K> keySet=map.keySet();
+Iterator<K> keyIterator=keySet.iterator();
+while(keyIterator.hasNext()){
+	K key=keyIterator.next();
+	V value=map.get(key);
+}
+
+2)entrySet() 메소드 이용
+Set<Map.Entry<K,V>> entrySet=map.entrySet();
+Iterator<Map.Entry<K,V>> entryIterator=entrySet.iterator();
+while(entryIterator.hasNext())
+	Map.Entry<K,V> entry=entryIterator.next();
+	K key=entry.getKey();
+	V value=entry.getValue();
+}
+
+
+
+--------------------------------------------------------------------------
+//1)HashMap<K,V> 클래스
+
+import java.util.HashMap;
+
+public class IntroHashMap {
+	public static void main(String[] args) {
+		HashMap<Integer, String> hMap=new HashMap<Integer, String>();
+		//key에 해당하는 자료형 Integer, Value에 해당하는 자료형 String으로 인스턴스생성
+
+		hMap.put(new Integer(3), "나삼번");		
+		hMap.put(5, "윤오번");	
+		hMap.put(8, "박팔번");	
+		//put메소드에는 (key,value)
+		
+		System.out.println("6학년 3반 8번 학생: "+hMap.get(new Integer(8)));
+		System.out.println("6학년 3반 5번 학생: "+hMap.get(5));	//Auto-Boxing
+		System.out.println("6학년 3반 3번 학생: "+hMap.get(3));
+		//참조할때 키값으로 찾고 key에 해당하는 value를 반환
+		
+		hMap.remove(5);		/* 5번 학생 전학 감 */
+		System.out.println("6학년 3반 5번 학생: "+hMap.get(5));	//키에 해당하는 value가 없으면 null반환
+	}
+}
+
+<<실행 결과>>
+8번 학생 : 박팔번
+5번 학생 : 윤오번
+3번 학생 : 나삼번
+5번 학생 : null
+
+=>Hash는 key를 비교할 때 사용!
+
+
+/*이름을 Key로 Integer를 value로 HashMap 활용 예제 */
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+
+public class Main {	
+	public static void main(String[] args){		
+		//Map콜렉션 생성
+		Map<String,Integer> map=new HashMap<String,Integer>();
+		
+		//객체 저장
+		map.put("신용권",85);
+		map.put("홍길동",90);
+		map.put("동장군",80);
+		map.put("홍길동",95);	//키가 같으므로 value를 95로 변경
+		System.out.println("총 Entry 수 : "+map.size());
+
+		//객체 찾기
+		System.out.println("\t홍길동 : "+map.get("홍길동"));	//이름(키)값으로 검색
+		System.out.println();
+		
+		//객체를 하나씩 처리
+		Set<String> keySet=map.keySet();
+		Iterator<String> keyIterator=keySet.iterator();
+		
+		while(keyIterator.hasNext()){
+			String key=keyIterator.next();
+			System.out.println("\t"+key+" : "+map.get(key));
+		}
+		System.out.println();
+		
+		//객체 삭제
+		map.remove("홍길동"); //키로 Map.Entry 제거
+		System.out.println("총 Entry 수 : "+map.size());
+		
+		//객체를 하나씩 처리
+		Set<Map.Entry<String,Integer>> entrySet=map.entrySet();
+		Iterator<Map.Entry<String,Integer>> entryIterator=entrySet.iterator();
+		while(entryIterator.hasNext()){
+			Map.Entry<String,Integer> entry=entryIterator.next();
+			String key=entry.getKey();
+			Integer value=entry.getValue();
+			System.out.println("\t"+key+" : "+value);
+		}
+		System.out.println();
+		
+		//객체 전체 삭제
+		map.clear();
+		System.out.println("총 Entry 수 : "+map.size());
+		
+		
+	}	
+}
+
+
+
+<< 실행 결과 >>
+총 Entry 수 : 3
+	홍길동 : 95
+
+	홍길동 : 95
+	신용권 : 85
+	동장군 : 80
+
+총 Entry 수 : 2
+	신용권 : 85
+	동장군 : 80
+
+총 Entry 수 : 0
+
+--------------------------------------------------------------------------
+//Hashtable
+;HashMap과 별 차이X BUT Hashtable은 동기화된(synchronized) 메소드로 구성
+=>멀티 스레드 환경에서 안전하게 객체를 추가,삭제할 수 있음.
+
+
+/*	로그인 예제 	*/
+
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Scanner;
+
+public class Main {
+	public static void main(String[] args) {
+		// 1.HashtableMap에 아이디와 비밀번호 저장
+		Map<String, String> map = new Hashtable<>();
+
+		map.put("Zaccoding1", "zac1");
+		map.put("Zaccoding2", "zac2");
+		map.put("Zaccoding3", "zac3");
+		map.put("Zaccoding4", "zac4");
+		map.put("Zaccoding5", "zac5");
+		map.put("Zaccoding6", "zac6");
+		Scanner sc = new Scanner(System.in);
+		while (true) {			
+			System.out.print("ID : ");
+			String id = sc.nextLine();
+			System.out.print("PassWord : ");
+			String pass = sc.nextLine();
+			System.out.println();
+			
+			if(id.equals("-1"))
+				break;
+						
+			if(map.containsKey(id)){
+				if(map.get(id).equals(pass)){
+					System.out.println("로그인 되었습니다.");
+					break;
+				}else{
+					System.out.println("비밀번호가 일치하지 않습니다.");
+				}				
+			}else{
+				System.out.println("입력하신 아이디가 존재하지 않습니다.");
+			}
+		}
+	}
+}
+
+--------------------------------------------------------------------------
+
+//Properties
+;Hashtable의 하위 클래스 => 키와 값을 String 타입으로 제한
+=>애플리케이션의 옵션 정보, 데이터베이스 연결 정보 , 국제화(다국어) 정보가 저장된 프로퍼티(~.properties) 
+  파일을 읽을 때 주로 사용
+  
+=>Property 파일은 = 기호로 연결되어 있는 텍스트 파일 // ISO 8859-1 문자셋으로 저장
+=>한글은 유니코드(Unicode)로 변환되어 저장
+e.g)
+country=대한민국	=> country=\uB300\uD55c\uBBFC\uAD6D
+language=한글		=> language=\uD55C\uAE00
+
+=>
+이클립스는 마우스 올리면 한글 보임
+cmd에서는
+<JDK설치폴더>\bin\native2ascii.exe 툴을 이용
+=>native2ascii.exe 원본.properties 변경.properties
+
+
+/*  키=값으로 구성된 프로퍼티  : database.properties	*/
+driver=oracle.jdbc.OracleDriver;
+url=jdbc:oracle:thin:@localhost:1521:orcl
+username=scott
+password=tiger
+
+=>
+Properties properties = new Properties();
+properties.load(new FileReader("C:/~/database.properties"));
+//load() 메소드는 프로퍼티 파일로부터 데이터를 읽기 위해 FileReader 객체를 매개값으로 받음
+
+=>프로퍼티 파일은 일반적으로 클래스 파일(~.class)과 함께 저장
+=>클래스 파일 기준으로 상대 경로를 이용해서 프로퍼티 파일의 경로를 얻으려면 Class의 getResource() 메소드를 이용
+=> getResource() : 주어진 파일의 상대 경로를 URL 객체로 리턴 // getPath() : 파일의 절대 경로를 리턴
+
+=>클래스 파일과 동일한 위치에 있는 "database.properties" 파일을 읽고 Properties 객체를 생성하는 코드
+String path=클래스.class.getResource("database.properties").getPath();
+path=URLDecorder.decode(path,"utf-8");	//경로에 한글이 있을 경우 한글을 복원
+Properties properties=new Properties();
+properties.load(nwe FileReader(path));
+
+=>A.class가 com.mycompany 패키지 & database.properties 파일은 com.mycompany.config 패키지
+String path=A.class.getResource("config/database.properties").getPath();
+
+=>
+Properties 객체에서 해당 키의 값을 읽으려면 getProperty() 메소드 사용
+(get()메소드도 가능하지만, Object 타입으로 리턴 -> (String) 강제 타입 변환)
+String value=properties.getProperty("key");
+
+
+import java.io.FileReader;
+import java.net.URLDecoder;
+import java.util.Properties;
+
+public class Main {
+	public static void main(String[] args) throws Exception{
+		Properties properties=new Properties();
+		String path=Main.class.getResource("database.properties").getPath();
+		path=URLDecoder.decode(path,"utf-8");
+		properties.load(new FileReader(path));
+		
+		String driver=properties.getProperty("driver");
+		String url=properties.getProperty("url");
+		String username=properties.getProperty("username");
+		String password=properties.getProperty("password");
+		
+		
+		System.out.println("driver : "+driver);
+		System.out.println("url : "+url);
+		System.out.println("username : "+username);
+		System.out.println("password : "+password);		
+	}
+}
+
+
+<< 실행 결과 >>
+driver : oracle.jdbc.OracleDriver;
+url : jdbc:oracle:thin:@localhost:1521:orcl
+username : scott
+password : tiger
+
+
+--------------------------------------------------------------------------
+
+//TreeMap<K,V> 
+;TreeMap은 이진 트리를 기반으로 한 Map 컬렉션.
+(TreeSet과 차이점은 키와 값이 저장된 Map.Entry가 저장됨)
+
+1)
+=>TreeMap이 가지고 있는 검색 관련 메소드
+리턴타입			메소드					설명
+ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+Map.Entry<K,V>	firstEntry()			제일 낮은 Map.Entry를 리턴
+Map.Entry<K,V>	lastEntry()				제일 높은 Map.Entry를 리턴
+Map.Entry<K,V>	lowerEntry(K key)		주어진 키보다 바로 아래 Map.Entry를 리턴
+Map.Entry<K,V>	higherEntry(K key)		주어진 키보다 바로 위 Map.Entry를 리턴
+Map.Entry<K,V>	floorEntry(K key)		주어진 키와 동등한 키가 있으면 해당 Map.Entry를 리턴(없으면 키 바로 아래 리턴)
+Map.Entry<K,V>	ceilingEntry(K key)		주어진 키와 동등한 키가 있으면 해당 Map.Entry를 리턴(없다면 키 바로 위 리턴)
+Map.Entry<K,V>	pollFirstEntry()		제일 낮은 Map.Entry를 꺼내오고 컬렉션에서 제거
+Map.Entry<K,V>	pollLastEntry()			제일 높은 Map.Entry를 꺼내오고 컬렉션에서 제거
+
+
+2)
+=>TreeMap이 가지고 있는 정렬 관련 메소드
+NavigableSet<K> descendingKeySet()	//내림차순으로 정렬된 키의 NavigableSet 을 리턴
+NavigableMap<K,V> descendingMap()	//내림차순으로 정렬된 Map.Entry의 NavigableMap을 리턴
+
+
+
+3)
+=>TreeMap이 가지고 있는 범위 검색 관련 메소드
+NavigableMap<K,V>	headMap(K toKey,boolean inclusive)	
+//주어진 키보다 낮은 Map.Entry들을 NavigableMap<K,V>으로 리턴 (주어진 키의 포함여부는 두번째 매개값에 따라 결정)
+NavigableMap<K,V>	tailMap(K toKey,boolean inclusive)
+//주어진 키보다 높은 Map.Entry들을 NavigableMap<K,V>으로 리턴 (주어진 키의 포함여부는 두번째 매개값에 따라 결정)
+NavigableMap<K,V>	subMap(K fromKey,boolean fromInclusive,K toKey,boolean toInclusive)
+
+
+
+
+import java.util.Map;
+import java.util.NavigableMap;
+import java.util.Set;
+import java.util.TreeMap;
+
+public class Main {
+	public static void main(String[] args) throws Exception{
+		TreeMap<Integer,String> scores=new TreeMap<Integer,String>();
+		scores.put(new Integer(87), "홍길동");
+		scores.put(new Integer(98), "이동수");
+		scores.put(new Integer(75), "박길순");
+		scores.put(new Integer(95), "신용권");
+		scores.put(new Integer(80), "김자바");
+		
+		Map.Entry<Integer,String> entry=null;
+				
+		entry=scores.firstEntry();
+		System.out.println("가장 낮은 점수 : "+entry.getKey()+"-"+entry.getValue());		
+		entry=scores.lastEntry();
+		System.out.println("가장 높은 점수 : "+entry.getKey()+"-"+entry.getValue());
+		System.out.println();
+		
+		entry=scores.lowerEntry(new Integer(95));
+		System.out.println("95점 아래 점수 : "+entry.getKey()+"-"+entry.getValue());		
+		entry=scores.higherEntry(new Integer(95));
+		System.out.println("95점 위 점수 : "+entry.getKey()+"-"+entry.getValue());
+		System.out.println();
+		entry=scores.floorEntry(new Integer(95));
+		System.out.println("95점 이거나 바로 아래 점수 : "+entry.getKey()+"-"+entry.getValue());	
+		entry=scores.ceilingEntry(new Integer(95));
+		System.out.println("95점 이거나 바로 위 점수 : "+entry.getKey()+"-"+entry.getValue());
+		System.out.println();
+		
+		System.out.println("[NavigableMap을 이용한 내림차순 정렬]");
+		NavigableMap<Integer,String> descendingMap=scores.descendingMap();
+		Set<Map.Entry<Integer,String>> descendingEntrySet=descendingMap.entrySet();
+		for(Map.Entry<Integer,String> entry2:descendingEntrySet){
+			System.out.print(entry2.getKey()+"-"+entry2.getValue()+" / ");
+		}
+		System.out.println();
+		
+		System.out.println("[NavigableMap을 이용한 오름차순 정렬]");
+		NavigableMap<Integer,String> acendingMap=descendingMap.descendingMap();
+		Set<Map.Entry<Integer,String>> ascendingEntrySet=acendingMap.entrySet();
+		for(Map.Entry<Integer,String> entry2:ascendingEntrySet){
+			System.out.print(entry2.getKey()+"-"+entry2.getValue()+" / ");
+		}
+		System.out.println("\n");
+	
+		System.out.println("[score>=95]");
+		NavigableMap<Integer,String> naviMap=scores.tailMap(95,true);
+		for(Map.Entry<Integer,String> entry2: naviMap.entrySet()){
+			System.out.print(entry2.getKey()+"-"+entry2.getValue()+" / ");
+		}
+		System.out.println();
+		
+		System.out.println("[80<=score<95]");
+		naviMap=scores.subMap(80,true,95,false);
+		for(Map.Entry<Integer,String> entry2: naviMap.entrySet()){
+			System.out.print(entry2.getKey()+"-"+entry2.getValue()+" / ");
+		}
+		System.out.println();
+		
+		System.out.println("[score<80]");
+		naviMap=scores.headMap(80,false);
+		for(Map.Entry<Integer,String> entry2: naviMap.entrySet()){
+			System.out.print(entry2.getKey()+"-"+entry2.getValue()+" / ");
+		}
+		System.out.println("\n");
+				
+		
+		System.out.println("[제일 낮은 점수부터 poll]");
+		while(!scores.isEmpty()){
+			entry=scores.pollFirstEntry();
+			System.out.println(entry.getKey()+"-"+entry.getValue()+"(남은 인스턴스 수 : "+scores.size()+")");
+		}	
+		
+	}
+}
+
+
+
+<< 실행 결과 >>
+가장 낮은 점수 : 75-박길순
+가장 높은 점수 : 98-이동수
+
+95점 아래 점수 : 87-홍길동
+95점 위 점수 : 98-이동수
+
+95점 이거나 바로 아래 점수 : 95-신용권
+95점 이거나 바로 위 점수 : 95-신용권
+
+[NavigableMap을 이용한 내림차순 정렬]
+98-이동수 / 95-신용권 / 87-홍길동 / 80-김자바 / 75-박길순 / 
+[NavigableMap을 이용한 오름차순 정렬]
+75-박길순 / 80-김자바 / 87-홍길동 / 95-신용권 / 98-이동수 / 
+
+[score>=95]
+95-신용권 / 98-이동수 / 
+[80<=score<95]
+80-김자바 / 87-홍길동 / 
+[score<80]
+75-박길순 / 
+
+[제일 낮은 점수부터 poll]
+75-박길순(남은 인스턴스 수 : 4)
+80-김자바(남은 인스턴스 수 : 3)
+87-홍길동(남은 인스턴스 수 : 2)
+95-신용권(남은 인스턴스 수 : 1)
+98-이동수(남은 인스턴스 수 : 0)
+
+
+
+
+import java.util.TreeMap;
+import java.util.Iterator;
+import java.util.NavigableSet;
+public class IntroTreeMap {
+	public static void main(String[] args) {
+		TreeMap<Integer, String> tMap=new TreeMap<Integer, String>();
+
+		tMap.put(1, "data1");		
+		tMap.put(3, "data3");	
+		tMap.put(5, "data5");	
+		tMap.put(2, "data2");	
+		tMap.put(4, "data4");	
+		//key값이 정렬되면서 저장
+		
+		NavigableSet<Integer> navi=tMap.navigableKeySet();
+		//인터페이스 NavigableSet<E>를 구현하는 인스턴스(인스턴스의 참조 값)가 반환
+		//이때 E는 자료형이 Integer가 되며 반환된 인스턴스에는 위의 저장한 데이터들의 key정보가 저장.
+		
+		System.out.println("오름차순 출력...");
+		Iterator<Integer> itr=navi.iterator();
+		//NavigableSet<E>인터페이스는Set<E>인터페이스를 상속 => 반복자를 얻기 위한 iterator()메소드 호출 가능
+		//=>이렇게 저장된 모든 key에 접근이 가능.
+		while(itr.hasNext())
+			System.out.println(tMap.get(itr.next())); //반복자로 키값 반환 -> 키값으로 value를 반환 & 출력
+		
+		System.out.println("내림차순 출력...");
+		itr=navi.descendingIterator();
+		while(itr.hasNext())
+			System.out.println(tMap.get(itr.next()));	
+	}
+}
+
+//TreeMap<K,V>의 전체데이터 검색
+TreeMap<K,V>는 Collection<E>가 아닌 Map<K,V>를 구현하는 컬렉션 클래스
+TreeMap<K,V>에 저장된 전체 데이터의 참조 과정에서 호출한 navigableKeySet()메소드가
+반환하는 인스턴스가 Set<E>인터페이스를 구현한다는 사실. key는 중복이 불가능하기 때문에 '집합'의
+성격을 띄므로 이러한 key를 저장하는 인스턴스는 Set<E> 인터페이스를 구현하고 있는 것이다.
+
+
+
+--------------------------------------------------------------------------
+
+//LIFO와 FIFO컬렉션
+
+/1.Stack 클래스
+리턴타입		메소드			설명
+E			push(E item)	주어진 객체를 스택에 넣는다.
+E			peek()			스택의 맨 위 객체를 가져온다.(스택에서 제거 X)
+E			pop()			스택의 맨 위 객체를 가져온다.(스택에서 제거 O)
+
+
+/2.Queue 인터페이스
+리턴타입		메소드			설명
+boolean		offer(E e)		주어진 객체를 넣는다.
+E			peek()			객체를 하나 가져온다.(큐에서 제거X)
+E			poll()			객체를 하나 가져온다.(큐에서 제거O)
+
+
+e.g)
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.Stack;
+
+public class Main {
+	public static void main(String[] args) throws Exception{
+		Stack<Integer> stack=new Stack<>();
+		Queue<Integer> queue=new LinkedList<>();
+		
+		stack.push(1); stack.push(2); stack.push(3); stack.push(4);
+		queue.offer(1); queue.offer(2); queue.offer(3); queue.offer(4);		
+				
+		System.out.println("넣은 순서 : 1,2,3,4");			
+		System.out.println("[Stack test]");
+		int i=1;
+		while(!stack.isEmpty()){
+			System.out.println(i+"`s pop : "+stack.pop());
+			i++;
+		}
+		System.out.println();		
+		System.out.println("[Queue test]");
+		i=1;
+		while(!queue.isEmpty()){
+			System.out.println(i+"`s pop : "+queue.poll());
+			i++;
+		}		
+	}
+}
+
+
+<< 실행 결과 >>
+넣은 순서 : 1,2,3,4
+[Stack test]
+1`s pop : 4
+2`s pop : 3
+3`s pop : 2
+4`s pop : 1
+
+[Queue test]
+1`s pop : 1
+2`s pop : 2
+3`s pop : 3
+4`s pop : 4
+
+
+--------------------------------------------------------------------------
+
+//동기화된 컬렉션
+;컬렉션 프레임워크의 대부분의 클래스들은 싱글 스레드 환경에서 사용할 수 있도록 설계
+=>Vector와 Hashtable은 동기화된(synchronized)된 메소드로 구성
+BUT ArrayList,HashSet,HashMap 은 동기화된 메소드로 구성X -> 멀티 스레드 환경에서 안전하지 않음
+=>싱글 스레드 환경에서 사용하다가 멀티 스레드 환경으로 전달할 필요가 있음
+=>비동기화된 메소드를 동기화된 메소드로 래핑하는 Collections의 synchronizedXXX() 메소드를 제공
+
+리턴 타입		메소드(매개변수)							설명
+List<T>		synchronizedList(List<T> list)		List를 동기화된 List로 리턴
+Map<K,V>	synchronizedMap(Map<K,V> map)		Map을 동기화된 Map으로 리턴
+Set<T>		synchronizedSet(Set<T> set)			Set을 동기화된 Set으로 리턴
+
+e.g)
+1)ArrayList
+List<T> list=Collections.synchronizedList(new ArrayList<T>());
+
+2)HashSet
+Set<E> set=Collections.synchronizedSet(new HashSet<E>());
+
+3)HashMap
+Map<K,V> map=Collections.synchronizedMap(new HashMap<K,V>());
+
+
+e.g)
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+class MyClass {
+	ArrayList<Integer> list=new ArrayList<Integer>(200);
+	List<Integer> syncList=Collections.synchronizedList(new ArrayList<Integer>(200));
+	public MyClass(){}
+	
+	public void add1(int idx){
+		list.add(idx,1);		
+	}	
+	public void add2(int idx){		
+		syncList.add(idx,1);
+	}
+}
+
+class MyThread extends Thread{
+	MyClass inst;
+	public MyThread(MyClass inst){
+		this.inst=inst;
+	}
+	@Override
+	public void run(){
+		for(int i=0;i<50;i++){
+			inst.add1(i);
+			inst.add2(i);
+		}
+	}
+}
+public class Main {
+	public static void main(String[] args) throws Exception {
+		MyClass inst=new MyClass();
+		MyThread thread1=new MyThread(inst);
+		MyThread thread2=new MyThread(inst);
+		MyThread thread3=new MyThread(inst);
+		MyThread thread4=new MyThread(inst);
+		
+		thread1.start();
+		thread2.start();
+		thread3.start();
+		thread4.start();
+		
+		thread1.join();
+		thread2.join();
+		thread3.join();
+		thread4.join();
+		
+		System.out.println("저장 개수(비동기화) : "+inst.list.size());
+		System.out.println("저장 개수(동기화) : "+inst.syncList.size());
+	}
+}
+
+
+<< 실행 결과 >>
+저장 개수(비동기화) : 199
+저장 개수(동기화) : 200
+
+--------------------------------------------------------------------------
+
+//병렬 처리를 위한 컬렉션
+;동기화된(synchronized) 컬렉션은 멀티 스레드 환경에서 하나의 스레드가 요소를 안전하게 처리하도록 도와줌
+BUT 전체 요소를 빠르게 처리X(하나의 스레드가 요소를 처리할 때 전체 잠금이 발생 & 다른 스레드는 대기)
+=>멀티 스레드가 컬렉션의 요소를 병렬적으로 처리할 수 있도록 컬렉션 제공 
+=>java.util.concurrent 패키지의 ConcurrentHashMap(Map 구현 클래스) // ConcurrentLinkedQueue(Queue구현클래스)
+
+
+-ConcurrentHashMap
+;부분(segment) 잠금을 사용
+(e.g : 10개 요소 저장되어 있을 경우, 
+		전체 잠금 : 1개를 처리할 동안 전체 10개의 요소를 다른 스레드가 접근하지 못하는 것
+		부분 잠금 : 처리하는 요소가 포함된 부분만 잠금 & 나머지 부분은 다른 스레드가 변경할 수 있도록 하는 것이 부분 잠금)
+
+=>
+Map<K,V> map=new ConcurrentHashMap<K,V>();
+
+
+-ConcurrentLinkedQueue
+;락-프리(lock-free) 알고리즘을 구현한 컬렉션
+(락-프리 : 여러 개의 스레드가 동시에 접근할 경우, 잠금을 사용하지 않고도 최소한 하나의 스레드가 안전하게 요소를 저장하거나 얻도록 해줌)
+		
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
+class MyThread extends Thread{
+	Map<Integer,Integer> map;
+	public MyThread(Map<Integer,Integer> map){
+		this.map=map;
+	}
+	@Override
+	public void run(){
+		for(int i=0;i<1000;i++){
+			for(int j=0;j<1000;j++){
+				map.put(i,i);
+			}
+		}
+	}
+}
+public class Main {
+	public static void main(String[] args) throws Exception {
+		Map<Integer,Integer> map=Collections.synchronizedMap(new HashMap<Integer,Integer>());
+		MyThread thread1=new MyThread(map);
+		MyThread thread2=new MyThread(map);
+		MyThread thread3=new MyThread(map);
+		MyThread thread4=new MyThread(map);
+	
+		long startTime=System.nanoTime();
+		
+		thread1.start();
+		thread2.start();
+		thread3.start();
+		thread4.start();
+		
+		thread1.join();
+		thread2.join();
+		thread3.join();
+		thread4.join();
+		
+		long endTime=System.nanoTime();
+		long diff1=endTime-startTime;
+		System.out.println("메소드 동기화 경과 시간 : "+(diff1));
+		
+		map=new ConcurrentHashMap<Integer,Integer>();
+		thread1=new MyThread(map);
+		thread2=new MyThread(map);
+		thread3=new MyThread(map);
+		thread4=new MyThread(map);
+	
+		startTime=System.nanoTime();
+		
+		thread1.start();
+		thread2.start();
+		thread3.start();
+		thread4.start();
+		
+		thread1.join();
+		thread2.join();
+		thread3.join();
+		thread4.join();
+		endTime=System.nanoTime();
+		
+		long diff2=endTime-startTime;
+		System.out.println("병렬 처리 경과 시간 : "+(diff2));
+				
+		System.out.println("차이 : "+(diff1-diff2));
+	}
+}
+
+
+
+<< 실행  결과 >>
+메소드 동기화 경과 시간 	: 309062261
+병렬 처리 경과 시간 		:  85123133
+차이 					: 223939128
+
+
+
+
+
+
+
+
+		
+
+
+
+
+
+
+--------------------------------------------------------------------------
+--------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

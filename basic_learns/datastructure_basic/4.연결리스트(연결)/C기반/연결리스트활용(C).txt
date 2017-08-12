@@ -1,0 +1,150 @@
+#include <Windows.h>
+#include <stdio.h>
+#include "DLinkedList.h"
+
+int WhoIsPrecede(int d1, int d2)
+{
+	if (d1 < d2)
+		return 0;    // d1이 정렬 순서상 앞선다.
+	else
+		return 1;    // d2가 정렬 순서상 앞서거나 같다.
+}
+
+enum {STORE=1,SEARCH,DEL,SHOWALL,EXIT};
+
+void showMenu();
+void inputData(List*plist);
+void searchData(List* plist);
+void removeData(List* plist);
+void showAllData(List* plist);
+void deleteAll(List* plist);
+
+
+int main(void)
+{
+	// List의 생성 및 초기화  ////////////
+	List list;
+	int data;
+	ListInit(&list);
+	SetSortRule(&list, WhoIsPrecede);
+	int choice;
+	while (1) {
+		showMenu();
+		scanf("%d", &choice);
+		switch (choice) {
+		case STORE:
+			inputData(&list);
+			break;
+		case SEARCH:
+			searchData(&list);
+			break;
+		case DEL:
+			removeData(&list);
+			break;
+		case SHOWALL:
+			showAllData(&list);
+			break;
+		case EXIT:
+			printf("프로그램을 종료합니다.\n");
+			deleteAll(&list);
+			return 0;
+		default:
+			printf("잘못된 입력 : ");
+		}
+		system("pause");
+		system("cls");
+	}
+
+}
+
+void showMenu() {
+	printf("1.데이터 저장\n");
+	printf("2.데이터 검색\n");
+	printf("3.데이터 삭제\n");
+	printf("4.전체 데이터 출력\n");
+	printf("5.프로그램 종료\n");
+	printf("선택 : ");
+}
+
+
+void inputData(List*plist) {
+	int data;
+	printf("저장할 데이터 입력 : ");
+	scanf("%d", &data);
+	LInsert(plist, data);
+	printf("--저장 완료--\n");
+}
+
+void searchData(List* plist) {
+	int data,storedData;
+	if (LFirst(plist, &storedData)) {
+		printf("검색할 데이터 입력 : ");
+		scanf("%d", &data);
+		if (data == storedData) {
+			printf("%d가 존재합니다.\n", data);
+			return;
+		}
+		while (LNext(plist, &storedData)) {
+			if (data == storedData) {
+				printf("%d가 존재합니다.\n", data);
+				return;
+			}		
+		}
+		printf("%d가 존재하지 않습니다.\n", data);
+		return;
+	}
+	else {
+		printf("저장 된 데이터 없음.\n");
+	}
+}
+
+void removeData(List* plist) {
+	int data, storedData;
+	if (LFirst(plist, &storedData)) {
+		printf("삭제할 데이터 입력 : ");
+		scanf("%d", &data);
+		if (data == storedData) {
+			LRemove(plist);
+			return;
+		}
+		while (LNext(plist, &storedData)) {
+			if (data == storedData) {
+				LRemove(plist);
+				return;
+			}
+		}
+		printf("%d가 존재하지 않습니다.\n", data);
+		return;
+	}
+	else {
+		printf("저장 된 데이터 없음.\n");
+	}
+}
+
+void showAllData(List* plist) {
+	int data;
+	if (LFirst(plist, &data)) {
+		printf("\n\n----전체 데이터 출력----\n\n");
+		printf("%d ->", data);
+		while (LNext(plist, &data)) {
+			printf("%d ->", data);
+		}
+		printf("\b\b        \n");
+	}
+	else {
+		printf("저장 된 데이터 없음.\n");
+	}
+}
+
+void deleteAll(List* plist) {
+	int data;
+	if (LFirst(plist, &data)) {
+		LRemove(plist);
+		printf("%d삭제 완료\n", data);
+		while (LNext(plist, &data)) {
+			printf("%d삭제 완료\n", data);
+			LRemove(plist);
+		}
+	}	
+	free(plist->head);
+}

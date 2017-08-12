@@ -1,0 +1,234 @@
+//→  ◎  Ω
+#include <stdio.h>
+#include <Windows.h>
+#include <conio.h>
+#include <stdlib.h>
+#include <time.h>
+#define LEFT 75
+#define RIGHT 77
+#define UP 72
+#define DOWN 80
+void gotoxy(int x, int y) {
+ COORD pos = { x,y };
+ SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), pos);
+}
+typedef struct {
+ int x;
+ int y;
+}Move;
+
+int Set_Quiz(void);
+void resultOfGame(int);
+void color(int color, int bgcolor) { //color 글씨색깔. bgcolor 바탕 색깔. 
+ color &= 0xf;
+ bgcolor &= 0xf;
+ SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), (bgcolor << 4) | color);
+}
+
+
+int main(void)
+{
+ //맵 출력하기
+ int map[10][10]{
+  { 1,0,1,0,1,0,1,0,1,0 },
+  { 1,0,1,0,1,0,1,0,1,0 },
+  { 1,0,1,0,1,0,1,0,1,0 },
+  { 1,0,1,0,1,0,1,0,1,0 },
+  { 1,0,1,0,1,0,1,0,1,0 },
+  { 1,0,1,0,1,0,1,0,1,0 },
+  { 1,0,1,0,1,0,1,0,1,0 },
+  { 1,0,1,0,1,0,1,0,1,0 },
+  { 1,0,1,0,1,0,1,0,1,0 },
+  { 1,0,1,0,1,0,1,0,1,0 }
+ };
+ int i, j, result;
+ int k;
+ //캐릭터 좌표표시(초기 2,0)
+ Move hero = { 2,0 };
+ //맵 출력
+ for (i = 0; i < 10; i++) {
+  for (j = 0; j < 10; j++) {
+   if (map[i][j] == 0) printf("  ");
+   else printf("▧");
+  }
+  printf("\n");
+ }
+ for (i = 2; i <= 12; i += 4) {
+  gotoxy(i, 9);
+  printf("→");
+  gotoxy(i + 4, 0);
+  printf("◎");
+ }
+ gotoxy(16, 9);
+ printf("★"); //엔딩 포인트
+ gotoxy(hero.x, hero.y); //현재 캐릭터 좌표로 이동
+ printf("Ω"); //초기 캐릭터 출력
+ while (1) {
+  if (getch()) { //키보드 입력을 기다린다
+   gotoxy(hero.x, hero.y); //캐릭터의 움직이기 전 좌표
+   printf("  "); //움직이고 난 뒤 공백을 출력해준다.
+   switch (getch()) {
+   case LEFT:
+    if (map[hero.y][hero.x / 2 - 1] != 0) break;
+    hero.x -= 2;
+    break;
+   case RIGHT:
+    if (map[hero.y][hero.x /2+1] != 0) break;
+    hero.x += 2;
+    break;
+   case UP:
+    if (map[hero.y - 1][hero.x / 2] != 0) break;
+    hero.y -= 1;
+    break;
+   case DOWN:
+    if (map[hero.y + 1][hero.x / 2] != 0) break;
+    hero.y += 1;
+    break;
+   }
+   gotoxy(hero.x, hero.y);
+   printf("Ω");
+   //캐릭터가 워프 포인트
+   //→  ◎  Ω
+   if (hero.x == 2 && hero.y == 9) {
+    result = Set_Quiz();
+    //정답을 맞추면
+    if (result == 1) {
+     gotoxy(hero.x, hero.y);
+     printf("→");
+     hero.x += 4;
+     hero.y = 0;
+     gotoxy(hero.x, hero.y);
+     printf("Ω");
+    }
+    //정답이 틀리면
+    else {
+     resultOfGame(0);
+     return 0;
+    }
+   }
+   if (hero.x == 6 && hero.y == 9) {
+    result = Set_Quiz();
+    //정답을 맞추면
+    if (result == 1) {
+     gotoxy(hero.x, hero.y);
+     printf("→");
+     hero.x += 4;
+     hero.y -= 9;
+     gotoxy(hero.x, hero.y);
+     printf("Ω");
+    }
+    //정답이 틀리면
+    else {
+     gotoxy(hero.x, hero.y);
+     printf("◎");
+     hero.x -= 4;
+     hero.y = 0;
+     gotoxy(hero.x, hero.y);
+     printf("Ω");
+    }
+   }
+   if (hero.x == 10 && hero.y == 9) {
+    result = Set_Quiz();
+    //정답을 맞추면
+    if (result == 1) {
+     gotoxy(hero.x, hero.y);
+     printf("→");
+     hero.x += 4;
+     hero.y = 0;
+     gotoxy(hero.x, hero.y);
+     printf("Ω");
+    }
+    //정답이 틀리면
+    else {
+     gotoxy(hero.x, hero.y);
+     printf("◎");
+     hero.x -= 4;
+     hero.y += 9;
+     gotoxy(hero.x, hero.y);
+     printf("Ω");
+    }
+   }
+   if (hero.x == 16 && hero.y == 9) {
+    resultOfGame(1);
+    return 0;
+   }
+  }
+ }
+ return 0;
+}
+
+
+void printQuiz(void)
+{
+ int i = 0, j = 0, k;
+ for (k = 0; k < 3; k++) {
+  gotoxy(20, 2);
+  //color(i, j);
+  printf("*******암산 게임********");
+  Sleep(400);
+  gotoxy(20, 2);
+  printf("                         ");
+  Sleep(400);
+ }
+ gotoxy(20, 2);
+ printf("*******암산 게임********");
+}
+
+//퀴즈 내기 맞추면 1 반환 // 틀리면 0 반환
+int Set_Quiz(void)
+{
+ srand((unsigned)time(NULL));
+ int x1, x2, answer, guess;
+ int i = 6;
+ x1 = rand() % 100 + 1;
+ x2 = rand() % 100 + 1;
+ answer = x1 + x2;
+
+ printQuiz();
+
+ while (1) {
+  gotoxy(20, 4);
+  i--;
+  printf("Count Down : %d", i);
+  gotoxy(20, 3);
+  printf("%d + %d ?  :", x1, x2);
+  fflush(stdin);
+  if (_kbhit()) {
+   gotoxy(33, 3);
+   scanf("%d", &guess);
+   break;
+  }
+  if (i == 1) {
+   Sleep(500);
+  }
+  if (i == 0) {
+   gotoxy(20, 4);
+   printf("                       ");
+   return 0;
+  }
+  Sleep(1000);
+ }
+ //기존 이전 단계에서 했던 정답 지우기
+ gotoxy(20, 3);
+ printf("                         ");
+ gotoxy(20, 4);
+ printf("                       ");
+
+
+ if (answer == guess) { return 1; }
+ else { return 0; }
+}
+
+void resultOfGame(int result)
+{
+ if (result == 1) {
+  gotoxy(20, 6);
+  printf("*****Stage Clear*****\n\n\n");
+ }
+ else {
+  gotoxy(20, 6);
+  printf("*****Mission Failed*****\n\n\n");
+ }
+}
+
+ 

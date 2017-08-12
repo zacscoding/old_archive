@@ -1,0 +1,50 @@
+
+public class ArrayQueue<E> implements Queue<E> {
+	//instance variables
+	private static final int CAPACITY=100;
+	private E[] data;	//generic array used for storage
+	private int f=0;	//index of the front element
+	private int sz=0;	//current number of elements;
+	
+	//constructors
+	public ArrayQueue(){
+		this(CAPACITY);
+	}
+	public ArrayQueue(int capacity){
+		data=(E[])new Object[capacity];		
+	}	
+	
+	//methods
+		
+	public int size(){	//O(1)
+		return sz;
+	}
+	
+	public boolean isEmpty(){	//O(1)
+		return sz==0;
+	}
+	
+	public void enqueue(E e) throws IllegalStateException{
+		//O(1)
+		if(sz==data.length)
+			throw new IllegalStateException("Queue is full");
+		int avail=(f+sz)%data.length;
+		data[avail]=e;
+		sz++;				
+	}	
+	
+	public E First(){	//O(1)
+		if(isEmpty())
+			return null;
+		return data[f];
+	}	
+	public E dequeue(){	//O(1)
+		if(isEmpty())
+			return null;
+		E answer=data[f];
+		data[f]=null;	//dereference to help garbage collection
+		f=(f+1)%data.length;
+		sz--;
+		return answer;
+	}	
+}

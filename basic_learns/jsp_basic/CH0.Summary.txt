@@ -1,0 +1,166 @@
+-----------CH0.Summary -----------------
+
+//JSP에서 자바코드를 사용하고자 할때 쓰는 기호
+	- <%!	%>	: declaration	; 선언문
+	- <%	%>	: scriptlet		; 스크립트릿
+	- <%=	%>	: expression	; 표현식
+
+
+//JSP 지시어
+	-<%@ page ..	%>	; page 지시어
+	-<%@ include ..	%>	; include 지시어
+	-<%@ taglib ..	%>	; taglib지시어
+
+//page 지시어
+	속성				설명																기본값
+	language			스크립트 요소에서 사용할 언어 설정									java		language="java"								
+
+	extends				상속받을 클래스를 설정												없음		extends="클래스명"	<<상속시 기본 jspBase 클래스 상속 안하게됨.
+
+	contentType			JSP가 생성할 문서의 MIME 타입과 캐릭터 인코딩을 지정				text/html
+
+	import				JSP 페이지에서 사용할 자바 클래스를 지정							없음		import="패키지/클래스명"	
+
+	session				JSP 페이지가 세션을 사용할지의 여부를 지정							true	
+
+	buffer				JSP 페이지의 출력 버퍼 크기를 지정									최소 8kb
+						"none" 출력버퍼 사용X / "?kb"
+
+	autoFlush			출력 버퍼가 다 찼을 경우 자동으로 버퍼에 있는 데이터를				true
+						출력 스트림에 보내고 비울지 여부를 나타냄 false면 에러 발생
+
+	info				JSP 페이지에 대한 설명 입력											없음
+
+	errorPage			JSP 페이지를 실행하는 도중에 에러가 발생할 때 보여줄 페이지 지정	없음
+
+	isErrorPage			현재 페이지가 에러가 발생될 때 보여주는 페이지인지의 여부를 지정	false
+
+	pageEncoding		JSP 페이지 소스 코드의 캐릭터 인코딩을 지정
+
+	isELIgnored			true : 표현 언어 해석하지 않고 문자열로 처리 						false
+						// false : 표현 언어 지원   
+
+	defferedSyntax		#{문자가 문자열 값으로 사용됫는 것을 허용할지의 여부 지정			false
+	AllowedAsLiteral
+
+	trimDirective		출력 결과에서 템플릿 텍스트의 공백 문자를 제거할지의 여부 지정		false	
+	Whitespaces
+
+	isThreadSafe		스레드에 안전하게 동기화 되어있는지 지정
+
+//JSP 내장객체
+
+	내장 객체 분류			내장객체			설명							~_jsp.java파일
+	입출력 관련 객체		1)request		클라이언트 요청 정보를 저장			javax.servlet.http.HttpServletRequest
+							2)response		응답정보를 저장						javax.servlet.http.HttpServletResponse
+							3)out			JSP페이지가 생성하는 결과 출력할때	javax.servlet.jsp.JspWriter
+											사용하는 출력 스트림
+					
+	서블릿 관련 객체		8)page			JSP페이지에서 구현한 자바 클래스 	java.lang.Object
+											인스턴스
+							6)config		JSP페이지에 대한 설정정보 저장		javax.servlet.ServletConfig
+					
+	외부 환경 정보를		4)session		HTTP 세션 정보를 저장				javax.servlet.http.HttpSession
+	제공					5)application	웹 어플리케이션에 대한 정보를 저장	javax.servlet.ServletContext
+							6)pageContext	JSP페이지에 대한 정보 저장			javax.servlet.jsp.PageContext
+
+	에외 관련 객체			9)exception		익셉션 객체(에러페이지에만 사용) 	java.lang.Throwable 
+
+
+//SCOPE(기본 객체와 영역)
+	-PAGE 영역 			: 하나의 jsp 페이지를 처리할 때 사용되는 영역 	> pageContext 기본 객체
+	-REQUEST 영역		: 하나의 HTTP 요청을 처리할 때 사용되는 영역 	> request 기본 객체
+	-SESSION 영역		: 하나의 웹 브라우저와 관련된 영역			> session 기본 객체
+	-APPLICATION 영역	: 하나의 웹 어플리케이션과 관련된 영역		> application 기본 객체
+
+
+//페이지의 흐름을 나타내는 태그
+	- include 
+	- forward 
+
+//액션태그
+	- useBean
+	- setProperty
+	- getProperty
+
+//JSP life cycle
+
+
+-----------
+-----------
+-----------
+-----------
+-----------
+---------------------------------------------------------------------------------------------
+-----------
+-----------
+-----------
+-----------
+-----------
+-----------
+---------------------------------------------------------------------------------------------
+-----------
+-----------
+-----------
+-----------
+-----------
+-----------
+---------------------------------------------------------------------------------------------
+-----------
+-----------
+-----------
+-----------
+-----------
+-----------
+------
+------
+------
+------
+------
+------
+------
+------
+------
+------
+------
+------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

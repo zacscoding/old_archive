@@ -1,0 +1,50 @@
+-------ch15--------
+
+//15-1
+
+class Box
+{
+	public void Wrap()
+	{
+		System.out.println("Box.Wrap()!");
+	}
+}
+
+class PaperBox extends Box
+{
+	public void Wrap(){
+		System.out.println("PaperBox.Wrap()!");
+	}
+}
+
+class GoldPaperBox extends PaperBox
+{
+	public void Wrap(){
+		System.out.println("GoldPaperBox.Wrap()!");
+	}
+}
+public class InstanceOfTest {
+	public static void main(String[] args)
+	{
+		Box b1=new Box();
+		PaperBox b2=new PaperBox();
+		GoldPaperBox b3=new GoldPaperBox();
+		
+		System.out.println("--new Box()--");
+		wrapBox(b1);	//Box.simpleWrap()!
+		System.out.println("");
+		System.out.println("--new PaperBox()--");
+		wrapBox(b2);	//PaperBox.paperWrap()!
+		System.out.println("");
+		System.out.println("--new GoldPaperBox()--");
+		wrapBox(b3);	//GoldPaperBox.goldWrap()!
+		System.out.println("");
+		
+		
+	}
+	public static void wrapBox(Box box)
+	{
+		box.Wrap();
+	}
+
+}

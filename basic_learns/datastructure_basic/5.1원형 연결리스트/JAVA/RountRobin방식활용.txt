@@ -1,0 +1,23 @@
+
+public class CircularMain {
+	public static void main(String[] args) {
+		CircularlyLinkedList<String> list = new CircularlyLinkedList<String>();
+		String pro1="process1";
+		String pro2="process2";
+		String pro3="process3";
+		
+		list.addLast(pro1);
+		list.addLast(pro2);
+		list.addLast(pro3);
+		int size=list.size();
+		for(int i=0;i<5;i++){
+			System.out.println("-------"+(i+1)+"번째 로테이션.."+"-------");
+			for(int j=0;j<size;j++){
+				String name=list.removeFirst();
+				System.out.println(name+"프로세스 실행중...");
+				list.addLast(name);
+			}
+			System.out.println("");
+		}		
+	}
+}

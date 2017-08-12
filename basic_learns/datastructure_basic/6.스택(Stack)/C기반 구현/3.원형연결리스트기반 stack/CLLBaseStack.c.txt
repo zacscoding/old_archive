@@ -1,0 +1,40 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include "CLLBaseStack.h"
+#include "CLinkedList.h"
+
+void StackInit(Stack* pstack) {
+	pstack->list = (List*)malloc(sizeof(List));
+	ListInit(pstack->list);
+}
+
+int SIsEmpty(Stack* pstack) {	
+	if (LCount(pstack->list)==0)
+		return TRUE;
+	else
+		return FALSE;
+}
+
+void SPush(Stack* pstack, Data data) {
+	LInsertFront(pstack->list, data);
+}
+
+Data SPop(Stack* pstack) {
+	Data rdata = NULL;
+	if (LFirst(pstack->list, &rdata)) {
+		LRemove(pstack->list);		
+	}
+
+	return rdata;
+}
+
+Data SPeek(Stack* pstack) {
+	if (SIsEmpty(pstack)) {
+		printf("Stack Memory Error!");
+		exit(-1);
+	}
+	Data rdata;
+	LFirst(pstack->list, &rdata);
+	return rdata;
+
+}

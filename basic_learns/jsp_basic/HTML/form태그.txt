@@ -1,0 +1,22 @@
+//<form> 태그
+
+-형식 : <form> 태그의 기본 형식
+<form method="get/post" action="호출할 서블릿">
+
+속성		설명
+method	어떤 방시긍로 데이터를 넘겨 줄 것인지를 결정한다.
+		get과 post 방식 중에서 하나를 선택한다.
+		post는 사용자가 입력한 내용을 발송할 때 그 내용을 공개하지 않는다.
+		get은 사용자가 입력한 결과를 알 수 있도록 내용을 공개한다.
+		
+action	전송(submit)버튼을 누르면 action 속성 다음에 기술한 URL에 지정한 파일로 이동한다.
+
+
+-전송 버튼
+<input type="submit" value="전송">
+
+-취소 버튼
+<input type="reset" value="취소">
+
+-텍스트 박스
+<input type="text" name="텍스트 박스 이름">

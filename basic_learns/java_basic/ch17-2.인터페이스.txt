@@ -1,0 +1,504 @@
+-------------------ch17-2. 인터페이스-----------------------
+--------------------------------------------------
+//17-2 Interface
+--------------------------------------------------
+(intro)
+
+문법적으로 이해하는 것을 어렵지 않음 // 적용하고 활용하려면 많은 이해가 필요
+
+(상황) + 그림
+홍만이가 해야할 프로젝트가 80 중 30을 A사에 외주
+그런데 모든 클래스는 연결성을 띄고 있음 그래서
+
+A영역 <--> interface <--> B영역와 같이 나눈 영역을 연결해주는 개념이 interface
+==>Java에서는 interface라는 문법적 요소를 제공
+
+다중상속은 객체지향에 불필요는 없지만, 간접적 효과는 필요하다고 해서 그 중심이 interface
+
+==>interface의 역할
+1)접점 2)마커 3)간접적인 다중상속 4)상수
+--------------------------------------------------
+문제의 상황
+1)프로젝트 담당자인 홍만군의 요구사항 1.
+-이름과 주민등록 번호를 저장하는 기능의 클래스가 필요하다.
+-이 클래스에는 주민등록 번호를 기반으로 사람의 이름을 찾는 기능이 포함되어야 한다.
+
+2)프로젝트 담당자인 홍만군의 요구사항2.
+-주민등록번호와 이름의 저장 -> void addPersonalInfo(String perNum,String name)
+-주민등록번호를 이요한 검색 -> String searchName(String perNum)
+
+=>기능이 필요해서 메소드 이름을 정의 & A사에게 요구
+
+3)홍만군이 생각한 프로젝트 진행의 문제점
+
+문제1)
+"나도 프로젝트를 진행해야 하는데, A사가 클래스를 완성할 ?까지 기다리고만 있을 수는 없잔아! 그리고 나중에
+내가 완성한 결과물과 A사가 완성한 결과물을 하나로 묶을 때 문제가 발생하면 어떻게 하지? A사와 나 사이에 조금더
+명확한 약속이 필요할 것 같은데"
+
+
+문제2)
+"내가 요구한 기능의 메소드들이 하나의 클래스에 담겨있지 않으면 어떻게 하지? A사에서 몇 개의 클래스로
+기능을 완성하건, 나는 하나의 인스턴스로 모든 일을 처리하고 싶은데! 무엇보다 나는 A사가 완성해 놓은
+기능들을 활용만 하고 싶다고! 어떻게 구현했는지는 관심 없다고!"
+
+----------------------------------------------------------
+
+==>클래스를 하나 정의해야겠다. 그리고 A사에는 이클래스를 상속해서 기능을 완성해 달라고 요구하고, 난 이 클래스를 기준으로
+프로젝트를 진행해야겠다!
+
+//문제 해결을 위해 정의한 클래스
+abstract class PersonalNumberStorage{
+	public abstract void addPersonalInfo(String perNum,String name);
+	public abstract string searchName(String perNum);
+}
+
+
+=>
+
+class AbstractInterface{
+	public static void main(String[] args)
+	{
+		PersonalNumberStorage storage=new (A사가 구현할 클래스 이름);
+		storage.addPersonalInfo("김기동","950000-112233");
+		
+		System.out.println(storage.searchName("950000-112233"));
+	}
+}
+
+=>A사의 프로젝트 진행에 관계없이,  PersonalNumberStorage의 정의로 인해서 진행할 수 있음
+
+
+=========>
+-클래스 PersonalNumberStorage는 인터페이스의 역할을 하는 클래스이다.
+-인터페이스는 두 결과물의 연결고리가 되는 일종의 약속 역할을 한다.
+-인터페이스의 정의로 인해서 홍만군은 홍만군대로, A사는 A사대로 더 이상 추가 논의 없이 프로젝트가 진행할 수 있었다.
+-인터페이스의 정의되었기 때문에 프로젝트를 하나로 묶는 과정도 문제가 되지 않는다.
+
+
+
+========>interface의 활용
+
+interface PersonalNumberStorage{
+	public void addPersonalInfo(String perNum,String name);
+	public string searchName(String perNum);
+}
+
+//모든 메소드들은 public abstract 이다. void addPersonalInfo(..) 가능 (public abstract 생략)
+  BUT 많은 개발자들이 명확히 하기 표현하기 위해 public abstract 추가
+
+==>
+-인터페이스 내에 선언된 변수는 무조건 public static final로 선언된다.
+-인터페이스 내에 선언된 메소드는 무조건 public abstract로 선언된다.
+-인터페이스도 참조변수 선언 가능하고, 메소드 오버라이딩 원칙도 그대로 적용.
+==>interface는 상속한다 X 구현한다 라고 함
+
+
+//메소드 오버라이딩 과정에서의 접근제어 지시자
+"메소드를 오버라이딩 하는 과정에서 접근의 허용범위를 좁히는 방식으로는 접근제어 지시자를 변경할 수 없다."
+ 상위클래스가 public 이면 하위클래스는 public만 가능 
+ 상위클래스가 private이면 하위클래스는 private~public 가능
+
+-----------------------------------------------------------------------
+
+//인터페이스의 선언
+
+interface 인터페이스명{
+	//상수
+	타입 상수명=값; //public static final 생략 시 컴파일 타임에 자동으로 추가 됨\
+				//static{} 블록이 없어서 선언과 동시에 초기화 해야함
+	
+	//추상 메소드
+	타입 메소드명(매개변수,..);	
+	
+	//디폴트 메소드
+	default 타입 메소드명(매개변수,..){..}	 //java8부터 추가 직접 실행할 수 없음(interface.method();불가능)
+									 //=>실행할 수 있는 인스턴스가 있어야함. & 오버라이딩 가능
+	
+	//정적 메소드
+	static 타입 메소드명(매개변수) {...}	
+	
+	//static 클래스
+	static class ClassName{..}
+}
+	
+	
+e.g)
+interface RemoteControl{
+	//상수
+	int MAX_VOLUME=10;
+	int MIN_VOLUME=0;
+	
+	//추상 메소드
+	void turnOn();
+	void turnOff();
+	void setVolume(int volume);
+	
+	//디폴트 메소드
+	default void setMute(boolean mute){
+		if(mute)
+			System.out.println("무음 처리 합니다.");
+		else
+			System.out.println("무음 해제 합니다.");
+	}
+	
+	//정적 메소드
+	static void changeBattery(){
+		System.out.println("베터리를 교환합니다.");
+	}
+	
+}
+
+class Television implements RemoteControl{	
+	int volume;
+	
+	//추상 메소드 정의
+	public void turnOn(){
+		System.out.println("TV를 켭니다.");
+	}
+	public void turnOff(){
+		System.out.println("TV를 끕니다.");
+	}	
+	public void setVolume(int volume){
+		if(volume>MAX_VOLUME)
+			this.volume=MAX_VOLUME;
+		else if(volume<MIN_VOLUME)
+			this.volume=MIN_VOLUME;
+		else
+			this.volume=volume;
+		System.out.println("현재 볼륨 : "+this.volume);
+	}
+	
+	
+}
+
+public class InterfaceExample {
+	public static void main(String[] args){
+		Television tv=new Television();
+		tv.turnOn();
+		tv.setVolume(5);
+		tv.setVolume(15);
+		tv.setMute(true);
+		tv.setMute(false);
+		tv.turnOff();
+		
+	}
+}
+
+-----------------------------------------------------------------------
+
+//interface의 특성
+
+1)Class에서 다중 구현이 가능
+public interface MyInterface{
+	public void myMethod();
+}
+
+public interface YourInterface{
+	public void yourMethod();
+}
+==>클래스는 위의 두 메소드를 동시에 구현할 수 있다(추상 메소드는 전부 오버라이드 or 추상클래스 선언)
+class OurClass implements MyInterface,YourInterface{
+	public void myMethod(){...}
+	public void yourMethod(){...}
+}
+
+2)인터페이스 상속
+
+2-1)일반 상속 가능
+public interface SuperInterf{
+	public void supMethod();
+}
+public interface SubInterf extends SuperInterf{	//extends가 사용!
+	public void subMethod();
+}
+
+2-2)다중 상속 가능
+interface A1{
+	void method1();
+}
+interface A2{
+	void method2();
+}
+
+interface A3 extends A1,A2{
+	void method3();
+}
+
+
+-----------------------------------------------------------------------
+
+//interface 기반의 상수 표현
+
+public class Week{
+	public static final int MON=1;	
+	public static final int TUE=2;	
+	public static final int WED=3;	
+	public static final int THU=4;	
+	public static final int FRI=5;	
+	public static final int SAT=6;	
+	public static final int SUN=7;	
+}
+
+==>
+
+public interface Week{
+	int MON=1,TUE=2,WED=3,THU=4,FRI=5,SAT=6,SUN=7;	//컴파일 타입에 자동으로 public static final이 삽입
+}
+
+
+public static void main(String[] args)
+{
+	switch(sel)
+	{
+	case Week.MON :
+	~~
+	break;
+	case Week.Tue :
+	~~
+	...
+}
+
+
+
+----------------------------------------------------------
+
+//익명 구현 객체
+;UI 프로그래밍의 이벤트처리 or 임시 작업 스레드를 만들기 위해 많이 활용
+
+인터페이스 변수=new 인터페이스(){
+	//인터페이스 선언된 추상 메소드의 실체 메소드 선언
+}
+
+=>예제
+interface MyInterface{
+	void thisMethod();
+	
+}
+
+public class AnonymousInterface {
+	public static void main(String[] args){
+		MyInterface inter1=new MyInterface(){
+			public void thisMethod(){
+				System.out.println("inter1 메소드");				
+			}
+		};
+		
+		MyInterface inter2=new MyInterface(){
+			public void thisMethod(){
+				System.out.println("inter2 메소드");
+			}
+		};
+		
+		inter1.thisMethod();	
+		inter2.thisMethod();		
+	}
+}
+
+<< 실행 결과 >>
+inter1 메소드
+inter2 메소드
+
+==>익명 클래스의 인스턴스도 클래스로부터 생성된다. (bin 폴더 들어가면)
+MyInterface.class
+AnonymousInterface$1.class	<<inter1 인스턴스
+AnonymousInterface$2.class	<<inter2의 인스턴스
+AnonymousInterface.class
+가 생성됨
+
+
+----------------------------------------------------------
+
+//디폴트 메소드와 인터페이스 확장
+
+1)디폴트 메소드의 필요성
+상황:
+			MyInterface //void method1(){} 만 정의
+	↓──────────↓────────────
+ClassA		ClassB
+
+ClassA와 ClassB가 MyInterface를 구현해서 사용중.
+추가적으로 ClassC가 method1()과 method2() 가 필요함
+MyInterface에 abstract method2()를 추가하면 기존에 사용하던 ClassA,ClassB 는 컴파일 에러
+=>default method2()로 정의해서 ClassC에서 MyInterface 구현 & 사용
+
+
+---------------------------
+
+
+2)디폴트 메소드가 있는 인터페이스 상속
+-디폴트 메소드를 단순히 상속만 받는다.
+-디폴트 메소드를 재정의(Override)해서 실행 내용을 변경한다.
+-디폴트 메소드를 추상 메소드로 재선언한다.
+
+예제)
+부모 인터페이스
+public interface ParentInterface{
+	public void method1();	//추상 메소드
+	public default void method2(){//실행문}
+}
+
+
+
+1)디폴트 메소드를 단순히 상속만 받는다.
+
+public interface ChildInterface1 extends ParentInterface{
+	public void method2();	
+}
+ChildeInterface1은 추상메소드 : method1,2 디폴트 메소드 method2
+
+==> 활용 예제
+ChildInterface1 ci1=new ChildInterface1(){
+			@Override
+			public void method1(){//}
+			@Override
+			public void method3(){//}
+};
+ci1.method1();
+ci1.method2();	//default 메소드
+ci1.method3();
+
+
+
+2)디폴트 메소드를 재정의(Override)해서 실행 내용을 변경한다.
+
+public interface ChildInterface2 extends ParentInterface{
+	@Override
+	public default void method2(){//실행문}	//재정의
+	public void method3();
+}
+
+==> 활용 예제
+ChildInterface2 ci2=new ChildInterface2(){
+			@Override
+			public void method1(){//}
+			@Override
+			public void method3(){//}
+};
+ci2.method1();
+ci2.method2();	//재정의 한 default 메소드
+ci2.method3();
+
+
+3)디폴트 메소드를 추상 메소드로 재선언한다.
+
+public interface ChildInterface3 extends ParentInterface{
+	@Override
+	public void method2();	//추상 메소드로 재선언
+	public void method3();
+}
+
+==> 활용 예제
+ChildInterface3 ci3=new ChildInterface2(){
+			@Override
+			public void method1(){//}
+			@Override
+			public void method2(){//}
+			@Override
+			public void method3(){//}
+			
+};
+ci2.method1();
+ci2.method2();
+ci2.method3();
+
+
+----------------------------------------------------------
+
+
+//interface를 통한 또다른 효과 -Maker
+
+interface UpperCasePrintable{
+	// 비어 있음
+}
+
+class ClassPrinter {
+	public static void print(Object obj){
+		String org=obj.toString();
+		if(obj instanceof UpperCasePrintable){	//if문장으로 클래스들을 구분하고 있음
+												//==>interface는 maker의 역할을 하고 있음		
+			org=org.toUpperCase();
+		}
+		//예를들어 특이한 클래스가 하나 있으면 그것에 대해서만 특이한 메소드를 호출할때 구분해줌		
+		System.out.println(org);
+	}
+}
+
+class PointOne implements UpperCasePrintable{
+	private int xPos, yPos;
+	
+	PointOne(int x, int y)	{
+		xPos=x;
+		yPos=y;
+	}
+	
+	public String toString()	{
+		String posInfo="[x pos:"+xPos + ", y pos:"+yPos+"]";
+		return posInfo;
+	}
+}
+
+=>무엇인가를 표시하는(클래스의 특성을 표시하는)용도로도 인터페이스는 사용된다.
+  i.e " 다른 클래스와의 구별을 위한 특별한 표시의 목적으로 사용되었다."
+=>이러한 경우, 인터페이스의 이름은 ~able로 끝나는 것이 보통이다.(표준 클래스)
+=>이러한 경우, 인터페이스는 비어 있을 수도 있다.
+=>instanceof 연산자를 통해서 클래스의 특성을 파악할 수 있다.
+
+----------------------------------------------------------
+
+//interface를 통한 다중상속의 효과
+
+public class Test {
+	public static void main(String[] args){
+		IPTV iptv=new IPTV();
+		iptv.powerOn();
+		TV tv=iptv;
+		Computer comp=iptv;
+	}
+}
+
+//이 부분만 놓고 보면 IPTV 클래스가 TV클래스를, 그리고 Computer클래스를 동시에 상속하고
+  있는 것처럼 보인다. 그러나 자바는 다중 상속을 지원하지 않는다!
+
+class TV{
+	public void onTV(){
+		System.out.println("영상 출력 중 ");
+	}
+}
+
+interface Computer{
+	public void dataReceive();
+}
+
+class ComputerImpl{
+	public void dataReceive(){
+		System.out.println("영상 데이터 수신 중");
+	}
+}
+
+class IPTV extends TV implements Computer{
+	ComputerImpl comp=new ComputerImpl();
+	public void dataReceive(){
+		comp.dataReceive();
+	}
+	public void powerOn(){
+		dataReceive();
+		onTV();
+	}
+}
+
+----------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+

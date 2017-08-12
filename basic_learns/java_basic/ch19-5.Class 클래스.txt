@@ -1,0 +1,282 @@
+-------------------ch19-5.Class 클래스 -------------------
+:메타 데이터 (클래스의 이름, 생성자 정보, 필드 정보, 메소드 정보)
+=>클래스와 인터페이스의 메타 데이터를 java.lang.Class 클래스로 관리한다.
+
+-------------------------------------------------------------------------------------
+
+//1. Class 객체 얻기( getClass(), forName() )
+
+/*  클래스의 Class 객체를 얻고 Class의 메소드를 이용해서 클래스의 전체 이름과 간단한 이름 & 페키지 이름 출력 예제   */
+
+package chap11;
+
+public class Main{
+	public static void main(String[] args){
+		
+		String str=new String("Zaccc");
+		Class clazz1=str.getClass();
+		
+		System.out.println(clazz1.getName());
+		System.out.println(clazz1.getSimpleName());
+		System.out.println(clazz1.getPackage().getName());
+		System.out.println("");
+		
+		try{
+			Class clazz2=Class.forName("java.lang.String");	
+			//클래스를 찾지 못하면ClassNotFouhndException 예외 발생
+			System.out.println(clazz2.getName());
+			System.out.println(clazz2.getSimpleName());
+			System.out.println(clazz2.getPackage().getName());
+		}catch(ClassNotFoundException e){
+			e.printStackTrace();
+		}			
+	}	
+}
+
+
+<< 실행 결과 >>
+java.lang.String
+String
+java.lang
+
+java.lang.String
+String
+java.lang
+
+-------------------------------------------------------------------------------------
+
+//2.리플렉션 ( getDeclaredConstructors(), getDeclaredFields(), getDeclaredMethod() )
+;java.lang.Class 객체를 이용하면 클래스의 생성자,필드,메소드 정보를 알 수 있음 => Reflection
+
+Constructor[] constructors=class.getDeclaredConstructors();	
+Field[] fields=class.getDeclaredFields();
+Method[] methods=class.getDeclaredMethods();
+
+=>Constructor,Field,Method는 java.lang.reflect 패키지에 포함된 클래스
+=>상속된 멤버도 얻고 싶으면 getFields(); getMethods(); 사용(public 으로 선언된 것만)
+
+
+
+/*  정보를 보여줄 Member 클래스 */
+
+package chap11;
+
+public class Member {
+	 private String name;
+	 private int age;
+	 public String phoneInfo;
+	 
+	 public Member(){}
+	 public Member(String name,int age,String phone){
+		 this.name=name;
+		 this.age=age;
+		 phoneInfo=phone;
+	 }
+	 public void showInfo(){
+		 System.out.println("이름 : "+name);
+		 System.out.println("나이 : "+age);
+		 System.out.println("전화번호 : "+phoneInfo);
+	 }
+	 
+	 public void addAge(){
+		 add();
+	 }
+	 
+	 private void add(){
+		 this.age++;
+	 }
+}
+
+
+
+/* 클래스 정보 출력하는 예제  */
+package chap11;
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+
+public class Main {
+	public static void main(String[] args){		
+		Member member=new Member();
+		Class clazz=member.getClass();
+		
+		
+		System.out.println("[클래스 이름]");
+		System.out.println(clazz.getName());
+		System.out.println();
+		
+		System.out.println("[생성자 정보]");
+		Constructor[] constructors=clazz.getDeclaredConstructors();
+		for(Constructor constructor : constructors){
+			System.out.print(constructor.getName()+"(");
+			Class[] parameters=constructor.getParameterTypes();
+			printParameters(parameters);
+			System.out.println(")");			
+		}
+		System.out.println();
+		
+		//필드 타입과 필드 이름을 출력
+		System.out.println("[필드 정보]");
+		Field[] fields=clazz.getDeclaredFields();
+		for(Field field : fields){
+			System.out.println(field.getType().getSimpleName()+" "+field.getName());
+		}
+		System.out.println("fields[0].getType() : "+fields[0].getType());	
+		System.out.println();
+		
+		//메소드 이름과 매개 변수를 출력
+		Method[] methods=clazz.getDeclaredMethods();
+		for(Method method:methods){
+			System.out.print(method.getName()+"(");
+			Class[] parameters=method.getParameterTypes();
+			printParameters(parameters);
+			System.out.println(")");
+		}				
+	}
+	
+	//매개 변수 정보를 출력하는 메소드
+	private static void printParameters(Class[] parameters){	
+		for(int i=0;i<parameters.length;i++){
+			System.out.print(parameters[i].getName());
+			if(i<parameters.length-1)
+				System.out.print(",");
+		}
+	}
+	
+}
+
+
+
+
+<< 실행 결과 >>
+[클래스 이름]
+chap11.Member
+
+[생성자 정보]
+chap11.Member()
+chap11.Member(java.lang.String,int,java.lang.String)
+
+[필드 정보]
+String name
+int age
+String phoneInfo
+fields[0].getType() : class java.lang.String
+
+add()
+addAge()
+showInfo()
+
+
+-------------------------------------------------------------------------------------
+
+//3.동적 객체 생성 ( newInstance() )
+;Class 인스턴스를 이용하면 new 연산자를 사용하지 않아도 동적으로 인스턴스를 생성
+(코드 작성 시에 클래스 이름을 결정할 수 없고, 런타임 시에 클래스 이름이 결정되는 경우에 매우 유용함)
+
+	try{			
+			Class clazz=Class.forName("런타임 시 결정되는 클래스 이름");
+			Object obj=(Action)clazz.newInstance();
+			action.excute();
+		}catch(ClassNotFoundException e){
+		}catch(InstantiationException e){			
+		}catch(IllegalAccessException e){			
+		}
+		
+=>
+newInstance() 메소드는 기본 생성자를 호출해서 객체를 생성하기 때문에 반드시 기본 생성자가 존재해야한다.
+(매개 변수가 있는 생성자를 호출하고 싶다면, 리플렉션으로 Constructor 객체를 얻어 newInstance() 메소드를 호출)
+
+=>예외 발생
+InstantiationException : 해당 클래스가 추상클래스 or 인터페이스
+
+IllegalAccessException : 클래스나 생성자가 접근 제한자로 인해 접근할 수 없는 경우 발생
+
+
+/*newInstance의 사용 예제*/
+
+public interface Action {
+	public void excute();
+
+}
+
+public class SendAction implements Action{
+	@Override
+	public void excute(){
+		System.out.println("데이터를 보냅니다.");
+	}
+}
+
+public class ReceiveAction implements Action{
+	@Override
+	public void excute(){
+		System.out.println("데이터를 받습니다.");
+	}
+}
+
+public class Main {
+	public static void main(String[] args){
+		try{
+			//case1)
+			Class clazz=Class.forName("chap11.SendAction");
+			//case2)
+			//Class clazz=Class.forName("chap11.ReceiveAction");
+			Action action=(Action)clazz.newInstance();
+			action.excute();
+		}catch(ClassNotFoundException e){
+			e.printStackTrace();
+		}catch(InstantiationException e){
+			e.printStackTrace();
+		}catch(IllegalAccessException e){
+			e.printStackTrace();
+		}
+				
+	}
+}
+
+<< 실행 결과 case1 >>
+데이터를 보냅니다.
+
+<< 실행 결과 case2 >>
+데이터를 받습니다.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

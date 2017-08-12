@@ -1,0 +1,397 @@
+-----------CH17.서블릿기초-----------------
+;다양한 웹 프레임워크의 출현으로 서블릿을 직접 개발해야하는 경우는 흔치X
+BUT 자바 웹 개발자라면 서블릿이 무엇이고 서블릿의 동작 방식을 이해하는 것은 필수
+=>이장에서 다룰 내용
+-서블릿 이란
+-서블릿 구현
+-서블릿 매핑 설정
+-초기화 파라미터
+-URL 패턴 매핑 규칙
+
+---------------------------------------------------------------------------------------------
+
+//01 서블릿 기초
+;서블릿은 JSP 표준이 나오기 전에 만들어진 표준으로 자바로 Web APP를 개발할 수 있도록 하기 위해 만들어짐
+일반 적인 서블릿 개발 과정
+1.서블릿 규약에 따라 자바 코드를 작성한다.
+2.자바 코드를 컴파일해서 클래스 파일을 생성한다.
+3.클래스 파일을 /WEB-INF/classes 폴더에 패키지에 알맞게 위치시킨다.
+4.web.xml 파일에 서블릿 클래스를 설정한다.
+5.톰캣 등의 컨테이너를 실행한다.
+6.위의 브라우저에서 확인한다.
+
+-----------
+
+/01-1 서블릿의 전송 방식
+get 방식 : 주소 창을 타고 넘어가기 때문에 서버로 보내는 데이터를 사용자가 그대로 볼 수 있음. -> 보안 취약 & 255자 이하의 적은 양의 데이터를 전송
+post 방식 : html header를 타고 넘어가기 때문에 보안에 강함 -> 255자 이상의 대용량의 데이터를 전송
+
+e.g1)get 방식(기본 디폴트 값, method 속성 생략시 get으로 )
+<form method="get" action="CallServlet">
+	<input type="submit" value="전송">
+</form>
+
+e.g2)post 방식
+<form method="post" action="CallServlet">
+	<input type="submit" value="전송">
+</form>
+
+=> 폼 태그에 서블릿 이름을 추가
+=> WAS(톰켓 앤진)가 운영체제와 같은 시스템 프로그램이므로 .class인 파일을 톰캣이 가지고 있다가 
+   요청이 들어오면 해당 서블릿 클래스들을 찾아서 실행
+   
+   
+-----------
+
+/01-2 Get vs Post 방식
+일반적으로 로그인과 같은 방식은 post
+<a>태그를 통해서 페이지 이동은 get
+
+---------------------------------------------------------------------------------------------
+
+//02 예제 프로젝트 생성
+
+-----------
+
+/2.1 서블릿 구현
+
+
+/* eg : chap17/src/example/NowServlet.java	*/
+package example;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Date;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+public class NowServlet extends HttpServlet{
+	@Override
+	protected void doGet(HttpServletRequest request,HttpServletResponse response) throws ServletException,IOException{
+		response.setContentType("text/html; charset=utf-8");
+		PrintWriter out=response.getWriter();
+		out.println("<html>");
+		out.println("<head><title>현재시간</title></head>");
+		out.println("<body>");
+		out.println("현재 시간은");
+		out.println(new Date());
+		out.println("입니다.");
+		out.println("</body></html>");		
+	}
+}
+
+
+=> 서블릿 클래스를 구현하려면 먼저 HttpServlet 클래스를 상속받은 클래스를 작성
+=> 처리하고자 하는 HTTP 방식(method)에 따라 알맞은 메소드를 재정의해서 구현
+
+위의 e.g : 서블릿이 GET 방식의 요청을 처리해야하는 경우 -> doGet() 메소드를 재정의
+doGet()의 두 파라미터 : HttpServletRequest , HttpServletResponse -> JSP 의 request ,response 기본 객체에 해당
+=>재정의한 메소드는 request를 이용해서 웹 브라우저의 요청 정보를 읽거나, response를 이용해서 응답을 전송할 수 있음.
+재정의한 메소드에서 해야할 것
+1)setContentType() 메소드를 이용해서 응답의 컨텐츠 타입을 지정
+response.setContentType("text/html; charset=utf-8"); // 타입이 text/html , 캐릭터 셋이 utf-8
+==JSP에서 page 디렉티브의 contentType 속성값과 동일
+2)응답 결과를 웹 브라우저에 전송
+response.getWriter() // 문자열 데이터를 출력할 수 있는 PrintWriter를 구해야함
+
+-----------
+
+/2.2 web.xml로 매핑하기
+;서블릿 클래스 생성 -> web.xml 파일에 서블릿 클래스 등록
+1)서블릿으로 사용할 클래스
+2)서블릿과 URL 간의 매핑
+
+
+web.xml에 아래와 같은 설정 추가
+
+  <servlet>
+  	<servlet-name>now</servlet-name>
+  	<servlet-class>example.NowServlet</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+  	<servlet-name>now</servlet-name>
+  	<url-pattern>/now</url-pattern>
+  </servlet-mapping>
+
+1)example.NowServlet 클래스를 "now"라는 이름의 서블릿으로 등록
+2)/now라는 URL을 now라는 이름의 서블릿(NowServlet)이 처리.
+ (<url-pattern>은 한 번 이상 사용 가능)
+ 
+
+
+<< 실행 결과 : http://localhost:8080/chap17/now >>
+현재 시간은 Mon Nov 14 21:07:45 KST 2016 입니다. 
+    
+-----------
+
+/2.3 애노테이션으로 매핑하기
+;서블릿 2.5 버전까지는 web.xml 파일에 서블릿으로 등록해야 했음 
+ -> 3.0 부터는 @WebServlet 애노테이션을 사용하면 web.xml에 따로 등록하지 않아도됨.
+
+/*	eg:@WebServlet 애너테이션 적용 : chap17/src/example/HelloServlet.java	*/
+
+
+
+package example;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+@WebServlet(urlPatterns="/hello")
+public class HelloServlet extends HttpServlet{
+	@Override
+	protected void doGet(HttpServletRequest request,HttpServletResponse response) throws ServletException,IOException{
+		request.setCharacterEncoding("utf-8");
+		response.setContentType("text/html; charset=utf-8");
+		
+		PrintWriter out=response.getWriter();
+		
+		out.println("<html>");
+		out.println("<head><title>인사</title></head>");
+		out.println("<body>");
+		out.println("안녕하세요");
+		out.println(request.getParameter("name"));
+		out.println("님");
+		out.println("</body></html>");		
+	}
+}
+
+<< 실행 결과 : http://localhost:8080/chap17/hello?name=zac >>
+안녕하세요 zac 님 
+
+
+=>@Webservlet 애노테이션은 urlPatterns 속성을 갖음
+2개 이상 URL 패턴을 처리하도록 하고 싶으면
+@Webservlet(urlPatterns={"/hello","/hello1"})
+
+=>
+서블릿 용도에 따라서 web.xml 설정 // @WebServlet 애노테이션
+web.xml : URL 경로가 바뀔 경우 web.xml파일만 변경
+@WebServlet : urlPatterns 속성값을 변경하고 다시 컴파일
+
+-----------
+
+/2.4 HTTP 각 방식별 구현 메소드
+;HTTP는 GET,POST,HEAD,PUT,DELETE의 방식을 지원
+(일반적으로 웹에서 사용되는 & 웹 브라우저가 지원하는 방식은 GET,POST)
+
+@Override
+protected void doGet(HttpServletRequest request,HttpServletResponse response) 
+		throws ServletException,IOException{
+		....//GET방식에 대한 처리.예,폼 출력하기
+}
+		
+@Override
+protected void doPost(HttpServletRequest request,HttpServletResponse response) 
+		throws ServletException,IOException{
+		....//POST방식에 대한 처리.예,폼 데이터 처리하기
+}		
+
+-----------
+
+/2.5 서블릿 로딩과 초기화
+
+1)최초 요청
+웹브라우저						톰캣				
+			-->1.최초요청-->		-->2.객체생성-->	NowServlet
+								-->3.init()-->
+			<--5.결과 <--			-->4.매소드 -->
+			
+2)두번째 요청
+
+웹브라우저						톰캣				
+			-->1.두번째요청-->						NowServlet
+								-->2.매소드 -->
+			<--3.결과 <--			
+
+			
+웹 컨테이너가 서블릿 객체를 생성하고 init() 메소드를 호출하는 과정을 '서블릿 로딩' 과정 이라고 함.
+
+//GenericServlet 구현
+public void init(ServletConfig config) throws ServletException{
+	this.config=config;
+	this.init();
+}
+public void init() throws ServletException{
+}
+
+=>서블릿을 초기화할때 메소드 init() 메소드 오버라이딩 하면됨 (ServletConfig 변경하고 싶으면 위의 init()도 오버라이딩)
+=>초기화 작업은 상대적으로 시간 오래 걸림
+=>웹 컨테이너를 처음 구동하는 시점에 초기화를 진행하는 것이 좋음.
+
+<servlet>
+	<servlet-name>DBCPInit</servlet-name>
+	<servlet-class>jdbc.DBCPInit</servlet-class>
+	<load-on-startup>1</load-on-startup>
+</servlet>
+
+=><load-on-startup>태그를 설정하면, 웹 어플리케이션을 실행할 때 서블릿을 로딩하고 그다음부터는 생성된 객체를 사용
+=> <load-on-startup> 태그는 값을 기준으로 오름차순으로 서블릿을 로딩
+
+e.g)Config 서블릿을 먼저 로딩하고 DBCPInit 서블릿을 로딩하는 예제
+<servlet>
+	<servlet-name>Config</servlet-name>
+	<servlet-class>config.ConfigInit</servlet-class>
+	<load-on-startup>1</load-on-startup>
+</servlet>
+
+<servlet>
+	<servlet-name>DBCPInit</servlet-name>
+	<servlet-class>jdbc.DBCPInit</servlet-class>
+	<load-on-startup>2</load-on-startup>
+</servlet>
+
+e.g)@Webservlet 애노테이션 사용하는 예제
+@WebServlet(urlPatterns="/hello",loadOnStartup=1)
+public class InitServlet extends HttpServlet{
+..
+}
+
+-----------
+
+/2.6 초기화 파라미터
+;14장의 DBCPInit 코드를 보면, init() 메소드안에 있는 loadJDBCDrive(); initConnectionPool();
+메소드는 JDBC 드라이버 클래스 이름과 JDBC URL ,DB사용자 정보가 코드에 있기 때문에  변경 시 코드를 직접 수정해야함
+=>
+서블릿은 코드를 직접 변경하지 않고 사용할 값을 변경할 수 있는 방법(==초기화 파라미터를 사용하는 것)을 제공
+
+e.g)web.xml
+<servlet>
+	<servlet-name>DBCPInit2</servlet-name>
+	<servlet-class>jdbc.DBCPInit2</servlet-class>
+	<init-param>
+		<param-name>jdbcdriver</param-name>
+		<param-value>com.mysql.jdbc.Driver</param-value>
+	</init-param>
+	<init-param>
+		<param-name>poolName</param-name>
+		<param-value>chap14</param-value>
+	</init-param>
+	<load-on-startup></load-on-startup>
+</servlet>
+
+
+=>DBCPInit2.java 코드에서 getInitParameter() 메소드를 통해 value를 읽을 수 있음
+String dirverClass=getInitParameter("jdbcdriver");
+try{
+	Class.forName(driverClass);
+	....
+
+String poolName=getInitParameter("poolName"); 
+위와 같이 이용하면 됨.
+
+=>getInitParameter()는 매개변수로 전달된 것과 param-name이 일치하지 않으면 null 리턴
+String poolName=getInitParameter("poolName");
+if(poolName==null) poolName="pool";
+
+
+=>@WebServlet 애노테이션에서 초기값 사용 방법
+@WebServlet(urlPatterns={"/hello","/hello1"},
+	initParams={
+		@WebInitParam(name="greeting" value="hello"),
+		@WebInitParam(name="title",value="제목")
+	}
+)
+
+
+=>
+1)web.xml 사용 시 클래스 수정 없이 web.xml의 초기화 값만 변경하면 됨
+2)@WebServlet 사용 시 초기화 설정 변경때마다 자바 코드 수정
+
+---------------------------------------------------------------------------------------------
+
+//03 URL 패턴 매핑 규칙
+1)web.xml : <servlet-mapping> 태그는 <url-pattern> 태그를 사용해서 서블릿과 URL을 매핑
+2)@WebServlet : urlPatterns 속성을 이용해서 서블릿과 URL 매핑
+
+-서블릿 규약에 따른, URL 패턴의 규칙
+-'/' 로 시작하고 '/*' 로 끝나는 url-pattern은 경로 매핑을 위해서 사용한다.
+-'*.'로 시작하는 url-pattern은 확장자에 대한 매핑을 할 때 사용한다.
+-오직 '/'만 포함하는 경우 어플리케이션의 기본 서블릿으로 매핑한다.
+-이 규칙 외, 나머지 다른 문자열은 정확한 매핑을 위해서 사용한다.
+
+e.g)
+URL 패턴			매핑 서블릿
+/foo/bar/*		servlet1
+/baz/*			servlet2	
+/catalog		servlet3	
+*.bop			servlet4
+
+요청경로					일치 URL 패턴		요청 처리 서블릿
+/foo/bar/index.html		/foo/bar/*		servlet1
+/foo/bar/index.bop		/foo/bar/*		servlet1
+/baz					/baz/*			servlet2	
+/baz/index.html			/baz/*			servlet2
+/catalog				/catalog		servlet3	
+/catalog/rececar.bop	*.bop			servlet4
+/index.bop				*.bop			servlet4
+
+
+
+-NOTE-
+;서블릿 3에 추가된 주요 기능 중의 하나로 비동기 서블릿.
+http://javacan.tistory.com/entry/Servlet-3-Async 글 참고
+
+
+
+---------------------------------------------------------------------------------------------
+
+//04 입력폼에서 한글 처리하기
+
+=> 서블릿은 영어권인 미국에서 만들어져서 영어를 제외한 타국 언어들은 별도의 처리를 해야만 함.
+
+1.톰켓의 server.xml 설정
+
+<Connector URIEncoding="UTF-8" ....
+
+2.Servlet
+
+public class ServeletClass extends HttpServlet{
+	...
+	//GET요청
+	@Override
+	protected void doGet(HttpServletRequest request,HttpServletResponse response) throws ServletException, IOException{
+		response.setContentType("text/html ; charset=utf-8");
+		...
+	}
+	
+	//POST요청
+	protected void doPost(HttpServletRequest request,HttpServletResponse response) throws ServletException, IOException{
+	request.setCharacterEncoding("UTF-8");
+	doPost(request,response); //GET과 로직 수행이 같으면
+	}
+	...
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

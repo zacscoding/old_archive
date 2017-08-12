@@ -1,0 +1,1022 @@
+-------------------------ch11--------------------------------------
+11장. 연산자 오버로딩2
+
+---------------------------------------------------------------------
+(Intro)
+#include <iostream>
+using std::cout; using std::endl;
+
+class A
+{
+public:
+	int num;
+	A(int n) : num(n) {}
+	void ShowData()
+	{
+		cout << "num = " << num << endl;
+	}
+};
+
+int main(void)
+{
+	A a1(10);
+	A a2(1);
+	cout << "--a1.showData--" << endl;
+	a1.ShowData();	//10출력
+	cout << "--a1=a2 해준 뒤--" << endl;
+	a1 = a2;	//1출력
+	a1.ShowData();
+
+	return 0;
+}
+
+==> a1=a2;
+==> a2의 멤버를 a1에 대입하는 구나 하고 당연하게 생각(C언어에서 구조체)
+==> 그런데 C++에서는 기본자료형 외에는 연산 불가능.
+==> a1.operator=(a2); 이렇게 해석됨
+==> 써주지 않아도 자동으로 됨 ==> 디폴트 대입 연산자
+==> 멤버 대 멤버의 복사
+==> 특정한 경우 지정해줘야함
+---------------------------------------------------------------------
+
+//복사 생성자 와 대입 연산자의 호출 시기 차이.
+
+Point pos1(5,7);
+1)
+Point pos2=pos1; //Point pos2(pos1); => 복사 생성자 호출
+
+2)
+Point pos2(9,10);
+pos2=pos1; //pos2.operator=(pos1); => 대입 연산자 호출
+
+---------------------------------------------------------------------
+
+//e.g) 디폴트 대입 연산자
+class First
+{
+private:
+	int num1, num2;
+public:
+	First(int n1 = 0, int n2 = 0)
+		:num1(n1), num2(n2) {}
+};
+
+==> 디폴트 대입 연산자 :
+First& operator=(const First& ref)
+{
+	num1=ref.num1;
+	num2=ref.num2;
+	return *this;
+}
+
+//반환형이 참조값인 이유 : f1=f2=f3 와 같은 경우
+
+---------------------------------------------------------------------
+
+//디폴트 대입 연산자의 문제점
+
+//깊은 복사생성자 생략
+class Person
+{
+private:
+	char *name;
+	int age;
+public:
+	Person(char *myname, int myage)
+	{
+		name = new char[strlen(myname) + 1];
+		strcpy(name, myname);
+		age = myage;
+	}
+	~Person()
+	{
+		delete[]name;
+	}
+
+};
+
+int main()
+{
+ Person man1("Lee",29);
+ Person man2("Yoon",22);
+ man2=man1;
+}
+
+==>
+man2=man1
+==man2.operator=(man1);
+==>문제점 1) man2가 가리키던 name(Yoon)은 메모리 누수
+==>문제점 2) "Lee"를 man1.name 과 man2.name이 같음 ==>소멸시 오류
+
+==>깊은 복사를 한다고 가정(사용니즈에 따라 다를 수 있음)
+	
+	Person& operator=(Person& ref)
+	{
+		//1.메모리누수를 막기 위한 메모리 해제 연산
+		delete []name;	
+		//2.소멸자 실행시 중복된 메모리 해제를 막기 위한 연산(깊은 복사)
+		name = new char[strlen(ref.name) + 1];
+		strcpy(name, ref.name);
+		age = ref.age;
+		//man1=man2=man3; 와같은 연산이 가능하도록 참조형으로 반환
+		return *this;
+	}
+
+
+==> 복사생성자, 대입연산자를 정의하는게 귀찮을 수 있지만,
+==> Copy & Paste 로 해결할 수 있음!!!
+---------------------------------------------------------------------
+
+//상속 구조에서의 대입 연산자 호출
+
+#include <iostream>
+using std::cout; using std::endl;
+
+class First
+{
+private:
+	int num1, num2;
+public:
+	First(int n1 = 0, int n2 = 0)
+		:num1(n1), num2(n2) {}
+	void ShowData()
+	{
+		cout << num1 << ',' << num2 << endl;
+	}
+
+	First& operator=(const First& ref)
+	{
+		cout << "Frist& operator=()" << endl;
+		num1 = ref.num1;
+		num2 = ref.num2;
+		return *this;
+	}
+
+};
+
+class Second : public First
+{
+private:
+	int num3, num4;
+public:
+	Second(int n1, int n2, int n3 = 0, int n4 = 0)
+		:First(n1, n2), num3(n3), num4(n4) {}
+	void ShowData()
+	{
+		First::ShowData();
+		cout << num3 << ',' << num4 << endl;
+	}
+	//Second& operator=(const Second& ref)
+	//{
+	//	cout << "Second& operator=()" << endl;
+	//	num3 = ref.num3;
+	//	num4 = ref.num4;
+	//	return *this;
+	//}
+
+};
+
+int main(void)
+{
+	Second s1(1, 2, 3, 4);
+	Second s2(0, 0, 0, 0);
+	s1 = s2;
+	//s1.operator=(s2); ==>Second 클래스의 operator 실행
+	s1.ShowData();
+
+	return 0;
+}
+
+==>s1.ShowData(); 하면 0 , 0, 0 , 0 잘나옴
+==>주석 해제하면 1, 2, 0 , 0 나옴
+==>유도 클래스의 대입 연산자 정의에서, 명시적으로 기초 클래스의 대입연산자 호출문을
+   삽입하지 않으면, 기초 클래스의 대입 연산자는 호출되지 않아서, 기초 클래스의 멤버변수는
+   멤버 대 멤버의 복사 대상에서 제외된다.
+
+==>
+	Second& operator=(const Second& ref)
+	{
+		cout << "Second& operator=()" << endl;
+		First::operator=(ref);
+		num3 = ref.num3;
+		num4 = ref.num4;
+		return *this;
+	}
+
+==>클래스의 대입연산자를 디폴트 대입 연산자가 아닌 명시적으로 정의할 경우 base클래스까지
+   정의해 줘야한다.
+
+
+
+---------------------------------------------------------------------
+
+//이니셜라이저의 성능 향상 도움
+
+
+
+class BBB
+{
+private :
+	AAA mem;
+public:
+	BBB(const AAA& ref) : mem(ref) {}
+};
+
+class CCC
+{
+private:
+	AAA mem;
+public:
+	CCC(const AAA&ref)
+	{
+		mem = ref;
+	}
+};
+
+
+1.CCC 클래스
+ 1)AAA클래스의 객체 mem생성 => mem();생성자 호출 및 실행
+ 2)대입 연산자 실행
+==>void 생성자 , 대입연산자 총2번 실행
+
+2.BBB클래스
+ 1)AAA클래스의 객체 mem생성과 동시에 ref를 인자로 받는 복사 생성자 호출
+   (즉 AAA mem=ref; ==AAA mem(ref);)
+==>복사 생성자만 실행
+
+---------------------------------------------------------------------
+
+//11-2 배열의 인덱스 연산자 오버로딩
+
+(Intro)
+arr[2]	//일반 배열 
+obj[2]	
+==>[] -> operator[] -> obj.operator[](2);
+
+//배열보다 나은 배열 클래스
+(기존 배열이 못하는 것을 하게 할 수 있음. 항상은 아님)
+
+int arr[3]={1,2,3};
+arr[-1] // arr[-2] ...
+==>기본 배열은 접근에 대한 경계검사를 진행하지 않는다.
+==>arrObject[-1]; 과 같은경우 적절한 시그날을 줄 수있음
+
+---------------------------------------------------------------------
+
+//배열 클래스의 예(기본 배열 int arr[]에 인덱스 검사 기능 추가한 클래스)
+
+#include <iostream>
+#include <cstdlib>
+using std::cout; using std::endl;
+
+class BoundCheckIntArray
+{
+private :
+	int * arr;
+	int arrLen;
+public:
+	BoundCheckIntArray(int size)
+		:arrLen(size)
+	{
+		arr = new int[arrLen];
+	}
+	//반환형이 int 참조형
+	int& operator[](int idx)
+	{
+		//기존배열과 다른 부분!(경계검사)
+		if (idx<0 || idx>=arrLen) {
+			cout << "Array index out of bound exception" << endl;
+			exit(1);
+		}
+		return arr[idx];
+	}
+
+	~BoundCheckIntArray()
+	{
+		delete[]arr;
+	}
+};
+
+int main(void)
+{
+	BoundCheckIntArray a(5);	
+
+	for (int i = 0; i < 5; i++) {
+		a[i] = (i + 1) * 11;
+	}
+	for (int i = 0; i < 6; i++) {
+		cout << a[i] << endl;
+	}
+
+	return 0;
+}
+
+==> a[3]=10;
+==a.operator[](3)
+==(arr[3]의 참조변수)=10;
+
+
+//배열 클래스의 안전성 확보
+
+
+배열클래스 예에서 멤버변수에 동적할당하니까 복사생성자, 대입연산자 생각해볼 수 있음.
+BUT C언어에서 배열대 배열 복사 가능?? 불가능(가능하게 만들 수 있지만, 기본적인 문법으로는 불가능)
+왜냐하면 배열은 데이터를 보관하는 저장소의 일종이고 저장소에 저장된 데이터는 '유일성'이 보장 
+==>그것을 또 다른 저장소에 복사하는 일은 흔치 않음
+
+class BoundCheckIntArray
+{
+private :
+	int * arr;
+	int arrLen;
+	BoundCheckIntArray(const BoundCheckIntArray& ref) {}
+	BoundCheckIntArray& operator=(const BoundCheckIntArray&ref) {}
+
+==>복사생성자, 대입연산자를 private로 선언해서 안전성을 확보하는게 좋을 수 있다는 견해.
+---------------------------------------------------------------------
+
+//const 함수를 이용한 오버로딩의 활용
+
+
+	int& operator[] (int idx)
+	{
+		if(idx<0 || idx>=arrlen)
+		{
+			cout<<"Array index out of bound exception"<<endl;
+			exit(1);
+		}
+		
+		return arr[idx];
+	}
+
+	int operator[] (int idx) const
+	{
+		if(idx<0 || idx>=arrlen)
+		{
+			cout<<"Array index out of bound exception"<<endl;
+			exit(1);
+		}
+		
+		return arr[idx];
+	}
+
+Arr obj;
+const Arr&ref=obj;와 같이 선언 -> obj를 참조자로 받아서 참조만 하고, ref를 통해 데이터 변경은 
+원하지 않음. 혹시라도 바꾸면, 컴파일 에러를 일으키도록 하겠다.
+==>ref[3]과 같이 쓰면
+==>const 참조자를 선언했으므로 int& operator[] (int idx) 호출 불가능!
+==>int operator[] (int idx) const 로 호출
+==>반환값이 참조값이 아닌, 복사해서 int 형태로 반환함.
+==>일반적으로 operator[] 함수는 const함수와 일반함수가 동시에 정의됨!
+
+---------------------------------------------------------------------
+//경계검사를 하니 int형 배열 클래스
+
+#include <iostream>
+#include <cstdlib>
+using std::cout; using std::endl;
+
+class BoundCheckIntArray
+{
+private:
+	int* arr;
+	int arrLen;
+	BoundCheckIntArray(const BoundCheckIntArray& ref) {}
+	BoundCheckIntArray& operator=(const BoundCheckIntArray& ref) {}
+public:
+	BoundCheckIntArray(int len) :arrLen(len)
+	{
+		arr = new int[len];
+	}
+
+	int operator[](int idx) const
+	{
+		if (idx<0 || idx>arrLen) {
+			cout << "Array index out of bound exception" << endl;
+		}
+		return arr[idx];
+	}
+
+	int& operator[](int idx)
+	{
+		if (idx<0 || idx>arrLen) {
+			cout << "Array index out of bound exception" << endl;
+		}
+		return arr[idx];
+	}
+
+	int getArrLen() const
+	{
+		return arrLen;
+	}
+
+	~BoundCheckIntArray()
+	{
+		delete[]arr;
+	}
+};
+
+void ShowAllData(const BoundCheckIntArray& ref)
+{
+	int len = ref.getArrLen();
+	for (int idx = 0; idx < len; idx++) {
+		cout << ref[idx] << endl;
+	}
+}
+
+int main(void)
+{
+	BoundCheckIntArray arr(5);
+	for (int i = 0; i < 5; i++) {
+		arr[i] = (i + 1) * 11;
+	}
+	ShowAllData(arr);
+
+	return 0;
+}
+
+
+---------------------------------------------------------------------
+
+//객체의 저장을 위한 배열 클래스1
+(다양한 예제를 소개한다는데 의미가 있음)
+
+
+//Point 객체를 저장하는 배열 기반의 클래스 예제
+class BoundCheckPointArray 
+{
+private:
+	Point * arr;
+	int arrlen;
+
+	BoundCheckPointArray(const BoundCheckPointArray& arr) { }
+	BoundCheckPointArray& operator=(const BoundCheckPointArray& arr) { }
+
+public:
+	BoundCheckPointArray(int len) :arrlen(len)
+	{
+		arr=new Point[len];	//Point 객체 len개 만큼 동적할당 & void 생성자 호출
+	}
+	Point& operator[] (int idx)
+	{
+		if(idx<0 || idx>=arrlen)
+		{
+			cout<<"Array index out of bound exception"<<endl;
+			exit(1);
+		}
+		
+		return arr[idx];
+	}
+	Point operator[] (int idx) const 
+	{
+		if(idx<0 || idx>=arrlen)
+		{
+			cout<<"Array index out of bound exception"<<endl;
+			exit(1);
+		}
+		
+		return arr[idx];
+	}
+	int GetArrLen() const 
+	{
+		return arrlen;
+	}
+	~BoundCheckPointArray()
+	{
+		delete []arr;
+	}
+};
+
+int main(void)
+{
+	BoundCheckPointArray arr(3);
+	arr[0]=Point(3, 4);
+	arr[1]=Point(5, 6);
+	arr[2]=Point(7, 8);
+
+	for(int i=0; i<arr.GetArrLen(); i++)
+		cout<<arr[i];
+
+	return 0;
+}
+
+
+===>
+arr[0]=Point(3, 4);
+=> Point(3,4) 임시 객체 생성  
+=> arr[0] == arr.operator[](0) 
+=> 0번째 객체를가리키는(동적할당에서 len만큼 생성된 Point객체 중) 참조값반환
+=> (반환된 참조값) = (Point(3,4)의 임시객체) -> Point객체 대입 연산자 이루어짐
+
+==>엄청 비효율적!!!
+
+---------------------------------------------------------------------
+
+//객체의 저장을 위한 배열 클래스2
+
+typedef Point * POINT_PTR;
+
+class BoundCheckPointPtrArray 
+{
+private:
+	POINT_PTR * arr;	//Point ** arr;
+	int arrlen;
+
+	BoundCheckPointPtrArray(const BoundCheckPointPtrArray& arr) { }
+	BoundCheckPointPtrArray& operator=(const BoundCheckPointPtrArray& arr) { }
+
+public:
+	BoundCheckPointPtrArray(int len) :arrlen(len)
+	{
+		arr=new POINT_PTR[len];
+	}
+	POINT_PTR& operator[] (int idx)
+	{
+		if(idx<0 || idx>=arrlen)
+		{
+			cout<<"Array index out of bound exception"<<endl;
+			exit(1);
+		}
+		
+		return arr[idx];
+	}
+	POINT_PTR operator[] (int idx) const 
+	{
+		if(idx<0 || idx>=arrlen)
+		{
+			cout<<"Array index out of bound exception"<<endl;
+			exit(1);
+		}
+		
+		return arr[idx];
+	}
+	int GetArrLen() const 
+	{
+		return arrlen;
+	}
+	~BoundCheckPointPtrArray()
+	{
+		delete []arr;
+	}
+};
+
+
+//typedef로 선언 된 것을 하나의 자료형으로 인식할 수 있을 수 있어야됨
+
+---------------------------------------------------------------------
+
+//11.3 그 이외의 연산자 오버로딩
+
+-new 연산자가 하는 일
+1. 메모리 공간의 할당
+2. 생성자의 호출
+3. 할당하고자 하는 자료형에 맞게 반환된 주소 값의 형 변환
+
+==>사용자는 1.메모리 공간의 할당 만 결정.
+==>즉 new연산자가 기본적으로 하는 일 + 필요에 따라서 확장하는 new연산자 오버로딩임!
+
+-delete 연산자가 하는일
+1.소멸자 호출
+2.해제
+
+==>해제를 우리가 하겠다.
+
+==>new 연산자와 delete 연산자를 오버로딩 하고 있는 함수는 자동 static으로 선언이 된다.
+==>class로 접근 가능!
+
+
+결론 :
+new와 delete가 하는 일 중 메모리의 할당 및 해제를 사용자가 직접하는게
+new,delete 연산자 오버로딩
+
+==>
+void* operator new(size_t size) {...}
+void* operator delete(void *adr) {...}
+
+---------------------------------------------------------------------
+
+//new,delete 연산자 오버로딩 예제
+
+#include <iostream>
+using namespace std;
+
+class Point
+{
+private:
+	int xpos, ypos;
+public:
+	Point(int x = 0, int y = 0) : xpos(x), ypos(y) 
+	{
+		cout << "Point(int,int) 생성자 호출" << endl;
+	}
+	~Point()
+	{
+		cout << "~Point() 소멸자 호출" << endl;
+	}
+
+	friend ostream& operator<<(ostream& os, const Point& pos);
+
+	//매개변수 , 반환형 변경할 수 X
+	//typedef unsigned int size_t;
+	void * operator new (size_t size)
+	{
+		cout << "operator new : " << size << endl;
+		void * adr = new char[size];
+		return adr;
+	}
+
+	void operator delete (void * adr)
+	{
+		cout << "operator delete ()" << endl;
+		delete[]adr;
+		//할당시 배열의 형태로 할당(1BYTE씩)
+		//인자를 전달받는 형태가 void포인터 -> BYTE단위로 DELETE하는것임.
+		//==>배열의 형태로 DELETE해야함
+		
+		//delete[] ((char*)adr);	//컴파일러가 void형을 대상으로 delete하지않을경우
+	}
+};
+
+ostream& operator<<(ostream& os, const Point& pos)
+{
+	os << '[' << pos.xpos << ", " << pos.ypos << ']' << endl;
+	return os;
+}
+
+int main(void)
+{
+	Point * ptr = new Point(3, 4);
+	//new Point(3,4) ==> 클래스에서 new 연산자 오버로딩 있음.
+	//=>컴파일러가 Point클래스의 메모리 할당에 필요한 n바이트 계산 & 오버로딩 정의한 인자로 넘김
+	//=>new 연산자 오버로딩 함수 실행 & 메모리 할당 & void 주소값 반환
+	//==>컴파일러가 생성된 메모리 주소를 바탕으로 생성자 호출해서 메모리 공간을 대상으로 초기화
+	//==>반환된 주소값을 class형으로 형변환 된 주소 값 반환
+	cout << *ptr;
+	delete ptr;
+	return 0;
+
+	//new Point(3,4); 가 가능한 이유 => new, delete는 static임
+}
+
+---------------------------------------------------------------------
+
+//operator new & operator new[]
+
+new Point	>> void * operator new (size_t size)
+new Point[3]	>> void * operator new[](size_t size)
+
+delete arr	>>void operator delete (void * adr)
+delete[] arr	>>void operator delete[](void * adr)
+
+==>서로 다르게 호출됨
+
+---------------------------------------------------------------------
+
+//포인터 연산자 오버로딩
+
+#include <iostream>
+using namespace std;
+
+class Number
+{
+private:
+	int num;
+public:
+	Number(int n) : num(n) {  }
+	void ShowData() { cout << num << endl; }
+
+	Number * operator->()
+	{
+		return this;
+	}
+
+	Number & operator*()
+	{
+		return *this;
+	}
+};
+
+int main(void)
+{
+	Number num(20);
+	num.ShowData();
+
+	(*num) = 30;
+	//(*num) => num.operator*()
+	//(num의 참조형태가 반환)=30 ==> num=30; (대입은 뒤에서)
+	
+	num->ShowData();
+	//num->
+	//==num.operator->() ==>포인터반환	//약속임
+	//(num.operator->( ))->ShowData();
+	//(&num)->ShowData();
+
+		
+	(*num).ShowData();
+
+	return 0;
+}
+
+
+==>Number라는 클래스가 실제 Point역할을 하는 것이 아닌데,
+   포인터 처럼 쓰고 있음. 적절하지 않은 예제.
+   단순히 어떻게 연산이 되는지 소개
+==>스마트 포인터
+---------------------------------------------------------------------
+
+
+//스마트 포인터(Smart Pointer)
+  (Point의 역할을 하는 객체를 가리켜 스마트 포인터)
+
+
+//예제 
+
+class SmartPtr
+{
+private:
+	Point * posptr;	
+	//Point 객체를 가리키는 포인터를 멤버변수로
+public:
+	SmartPtr(Point * ptr) : posptr(ptr)
+	{  }
+
+	Point& operator*() const
+	{
+		return *posptr;
+	}
+	Point* operator->() const
+	{
+		return posptr;
+	}
+	~SmartPtr()
+	{
+		delete posptr;
+	}
+	//스마트 포인터가 가리키는 객체를 동적할당 해제
+};
+
+int main(void)
+{
+	SmartPtr sptr1(new Point(1, 2));
+	//sptr1객체는 Point객체 1,2를 가리킴
+
+	cout << *sptr1;
+	//*sptr1 == sptr1.operator*() ==sptr1이 가리키는 객체의 참조변수로 반환
+	//cout<<(Point객체(2,3을가지는)) 
+	//위의 cout<<point는 오버로딩이 되어있음
+
+
+	sptr1->SetPos(10, 20);
+	//( sptr1.operator->() ) ->SetPos(10,20);
+	//( Point 객체의 주소값) -> SetPos(10,20);을 실행
+
+	cout << *sptr1;
+
+	return 0;
+}
+
+
+//스마트포인터인 이유: new Point(1,2)를 알아서 해제하도록 되어있음.
+//이 기능 외에 다양한 스마트한 기능이 존재. 하지만 이해를 위해서 이정도만
+
+---------------------------------------------------------------------
+
+// () 연산자의 오버로딩과 펑터(Functor)
+
+(intro)
+()의 사용
+1.fct()
+2.(int)num
+==>함수의 호출 오버로딩, 형변환의 오버로딩
+---------------------------------------------------------------------
+
+1.
+e.g)
+adder(2,4); //adder가 객체 이면??
+=>adder.operator() <<여기까지 함수 이름
+=>adder.operator()(2,4)
+
+e.g)
+simple('A');	//simple이 객체이면?
+=>simple.operator() <<여기까지 함수 이름
+=>simple.operator()('A');
+
+//예제
+class Adder
+{
+public:
+	//오버로딩
+	int operator()(const int &n1, const int &n2)
+	{
+		return n1+n2;
+	}
+	double operator()(const double &e1, const double &e2)
+	{
+		return e1+e2;
+	}
+	Point operator()(const Point &pos1, const Point &pos2)
+	{
+		return pos1+pos2;
+	}
+};
+
+int main(void)
+{
+	Adder adder;
+	cout<<adder(1, 3)<<endl;
+	cout<<adder(1.5, 3.7)<<endl;
+	cout<<adder(Point(3, 4), Point(7, 9));
+	return 0;
+}
+
+==>함수처럼 작동하는 클래스를 "Function Object" 또는 "Functor" 라고 부름
+
+---------------------------------------------------------------------
+
+//Functor의 위력
+#include <iostream>
+using namespace std;
+
+class SortRule
+{
+public:
+	virtual bool operator()(int num1, int num2) const =0;
+};
+
+class AscendingSort : public SortRule   // 오름차순
+{
+public:
+	bool operator()(int num1, int num2) const
+	{
+		if(num1>num2)
+			return true;
+		else 
+			return false;
+	}
+};
+
+class DescendingSort : public SortRule    // 내림차순
+{
+public:
+	bool operator()(int num1, int num2) const
+	{
+		if(num1<num2)
+			return true;
+		else 
+			return false;
+	}
+};
+
+
+
+class DataStorage    // for int data	//단순히 데이터 저장을 위해 설계 된 클래스
+{
+private:
+	int * arr;
+	int idx;
+	const int MAX_LEN;
+public:
+	DataStorage(int arrlen) :idx(0), MAX_LEN(arrlen)
+	{
+		arr=new int[MAX_LEN];
+	}
+	void AddData(int num)
+	{
+		if(MAX_LEN<=idx)
+		{
+			cout<<"더 이상 저장이 불가능합니다."<<endl;
+			return;
+		}
+		arr[idx++]=num;
+	}
+	void ShowAllData()
+	{
+		for(int i=0; i<idx; i++)
+			cout<<arr[i]<<' ';
+		cout<<endl;
+	}
+	void SortData(const SortRule &functor)	//
+	{
+		for(int i=0; i<(idx-1); i++)
+		{
+			for(int j=0; j<(idx-1)-i; j++)
+			{
+				if(functor(arr[j], arr[j+1]))	//if else로 분기되는게 아니라
+				{				//처음부터 끝까지 실행
+					int temp=arr[j];
+					arr[j]=arr[j+1];
+					arr[j+1]=temp;
+				}
+			}
+		}
+	}
+};
+
+int main(void)
+{
+	DataStorage storage(5);
+	storage.AddData(40);
+	storage.AddData(30);
+	storage.AddData(50);
+	storage.AddData(20);
+	storage.AddData(10);
+
+	storage.SortData(AscendingSort());
+	storage.ShowAllData();
+
+	storage.SortData(DescendingSort());
+	storage.ShowAllData();
+	return 0;
+}
+
+---------------------------------------------------------------------
+2.
+
+//임시객체로의 자동 형 변환
+
+	Number num;
+	num = 30;의해석
+
+1)num.operator=(30) X
+2)num=임시객체(30으로 생성자를 호출 한)
+==>num.operator=(임시객체);
+
+결론 : 
+
+기본자료형 데이터가 객체화 되어야할때, 자기 자신을 인자로 받을 수 있는 
+생성자가 있다면 그 생성자를 형태로 임시객체 생성 & 대입
+
+
+
+//형 변환 연산자의 오버로딩
+
+
+#include <iostream>
+using namespace std;
+
+class Number
+{
+private:
+	int num;
+public:
+	Number(int n = 0) : num(n)
+	{
+		cout << "Number(int n=0)" << endl;
+	}
+	Number& operator=(const Number &ref)
+	{
+		cout << "operator=()" << endl;
+		num = ref.num;
+		return *this;
+	}
+	operator int()    // 형 변환 연산자의 오버로딩
+	//변환할 자료형의 일부를 함수이름에 묶어둠
+	//==>만약 Number 객체가 int형으로 변환이 필요할때 호출되는 함수!
+	{
+		return num;
+	}
+	void ShowNumber() { cout << num << endl; }
+};
+
+int main(void)
+{
+	Number num1;
+	num1 = 30;
+	//1.다른 데이터를 임시객체로 변환 예제
+	//1)num=Number(30);
+	//2)num.operator=(Number(30));
+	//==>A형 객체가 와야 할 위치에 B형 데이터(또는객체)가 왔을경우, B형 데이터를 인자로
+	//   전달받는 A형 클래스의 생성자 호출을 통해서 A형 임시객체를 생성한다.
+	
+	//2.객체를 다른 데이터로 변환하는 예제
+	Number num2 = num1 + 20;
+	//num1+20;
+	//1)num1.operator+(20); 가능 근데 위에 정의 x
+	//2)num1을 int형으로 변환이 필요함
+	//operator int() 호출
+	//num1의 num값 반환 => int형 num값+20;
+	num2.ShowNumber();
+	return 0;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

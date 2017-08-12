@@ -1,0 +1,127 @@
+-------------------ch19-7.정규 표현식과 Pattern 클래스-----------------------
+
+정규 표현식(Regular Expression)
+//1.정규 표현식 저장 방법
+
+기호			설명
+						[abc]		a,b,c 중 하나의 문자
+[]			한개의 문자	[^abc]		a,b,c 이외의 하나의 문자
+						[a-zA-Z]	a~z,A~Z 중 하나의 문자
+\d			한 개의 숫자, [0-9]와 동일
+\s			공백
+\w			한 개의 알파벳 또는 한개의 숫자, [a-zA-Z_0-9]와 동일
+?			없음 또는 한 개
+*			없음 또는 한 개 이상
++			한 개 이상
+{n}			정확히 n개
+{n,}		최소한 n개
+{n,m}		n개에서 m개까지
+()			그룹핑
+
+
+e.g)02-123-1234 또는 010-1234-5678과 같은 전화번호를 정규식으로 표현
+(02|010)-\d{3,4}-\d{4}
+
+설명)
+(02|010)	:02 또는 010
+-			:-포함
+\d{3,4}		:3자리 또는 4자리 숫자
+-			:-포함
+\d{4}		:4자리 숫자
+
+
+e.g)white@naver.com과 같은 이메일을 위한 정규 표현식
+\w+@\w+\.\w+(\.\w+)?
+
+설명)
+\w+			: 한 개 이상의 알파벳 또는 숫자
+@			: @
+\w+			: 한 개 이상의 알파벳 또는 숫자
+\.			:.
+\w+			: 한개 이상의 알파벳 또는 숫자
+(\.\w+)?	: \.\w+이 없거나 한번 더 올 수 있음.
+
+cf) . : 모든 문자 중에서 한 개의 문자		\. : .
+
+-------------------------------------------------------------------------------------
+
+//Pattern 클래스
+java.util.regex.Pattern 클래스의 정적 메소드인 matches() 를 통해 문자열을 정규 표현식으로 검증할 수 있음.
+boolean result=Pattern.mathes("정규식","검증할 문자열");
+
+e.g) 패턴을 검증하는 예제
+
+import java.util.regex.Pattern;
+
+public class Main {
+	public static void main(String[] args){
+		String regExp="(02|010)-\\d{3,4}-\\d{4}";
+		String[] number={"010-123-4567","010-12345-1111"};			
+		
+		for(int i=0;i<2;i++){
+			boolean result=Pattern.matches(regExp, number[i]);
+			if(result)
+				System.out.println(number[i]+"은 전화번호 정규식과 일치합니다.");
+			else
+				System.out.println(number[i]+"은 전화번호 정규식과 일치하지 않습니다...");
+		}
+		
+		regExp="\\w+@\\w+\\.\\w+(\\.\\w+)?";
+		String[] mail={"Zaccoding@naver.com","Zakim23@navercom"};		
+		for(int i=0;i<2;i++){
+			boolean result=Pattern.matches(regExp,mail[i]);
+			if(result)
+				System.out.println(mail[i]+"은 이메일 정규식과 일치합니다.");
+			else
+				System.out.println(mail[i]+"은 이메일 정규식과 일치하지 않습니다...");
+		}		
+	}
+}
+
+
+<< 실행 결과 >>
+010-123-4567은 전화번호 정규식과 일치합니다.
+010-12345-1111은 전화번호 정규식과 일치하지 않습니다...
+Zaccoding@naver.com은 이메일 정규식과 일치합니다.
+Zakim23@navercom은 이메일 정규식과 일치하지 않습니다...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,191 @@
+-------------------ch19-10.Data,Calendar 클래스-----------------------
+;시스템의 날짜 및 시각을 읽을 수 있도록 java.util.Date, java.util.Calendar 클래스 제공
+
+Date vs Calendar
+=>윤년 여부 더 확실한게 Calendar
+-------------------------------------------------------------------------------------
+
+//1.Date 클래스
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+public class Main {
+	public static void main(String[] args){
+		Date now =new Date();
+		String strNow1=now.toString();
+		System.out.println(strNow1);
+		
+		SimpleDateFormat sdf=new SimpleDateFormat("yyyy년 MM월 dd일 hh시 mm분 ss초");
+		String strNow2=sdf.format(now);
+		System.out.println(strNow2);
+	}
+}
+
+<< 실행 결과 >>
+Wed Nov 02 16:03:03 KST 2016
+2016년 11월 02일 04시 03분 03초
+
+
+-------------------------------------------------------------------------------------
+
+//2.Calendar 클래스
+;추상클래스(지역과 문화, 나라에 따라 다르므로) =>Calendar.getInstance() 메소드로 현재 운영체제에 설정된 시간대(Time Zone)을
+기준으로 한 Calendar 하위 객체를 얻음
+
+
+import java.util.Calendar;
+
+public class Main {
+	public static void main(String[] args){
+		Calendar now=Calendar.getInstance();
+		int year=now.get(Calendar.YEAR);		//년도를 리턴
+		int month=now.get(Calendar.MONTH)+1;	//월을 리턴	
+		int day=now.get(Calendar.DAY_OF_MONTH);	//일을 리턴
+		int week=now.get(Calendar.DAY_OF_WEEK);	//요일을 리턴
+		int amPm=now.get(Calendar.AM_PM);		//오전/오후를 리턴
+		int hour=now.get(Calendar.HOUR);		//시를 리턴
+		int minute=now.get(Calendar.MINUTE);	//분을 리턴
+		int second=now.get(Calendar.SECOND);	//초를 리턴
+		
+		System.out.println(year);
+		System.out.println(month);
+		System.out.println(day);
+		System.out.println(week);
+		System.out.println(amPm);
+		System.out.println(hour);
+		System.out.println(minute);
+		System.out.println(second);
+		
+	}
+}
+
+<< 실행 결과 : 2016년 11월 2일 4시 9분 39초 기준 수요일 >>
+2016
+11
+2
+4
+1
+4
+9
+39
+
+
+//운영체제의 시간대를 기준으로 Calendar 얻기
+
+import java.util.Calendar;
+
+public class Main {
+	public static void main(String[] args) {
+		Calendar now = Calendar.getInstance();
+		int year = now.get(Calendar.YEAR); // 년도를 리턴
+		int month = now.get(Calendar.MONTH) + 1; // 월을 리턴
+		int day = now.get(Calendar.DAY_OF_MONTH); // 일을 리턴
+		int week = now.get(Calendar.DAY_OF_WEEK); // 요일을 리턴
+
+		String strWeek = null;
+		switch (week) {
+		case Calendar.MONDAY:
+			strWeek="월";
+			break;
+		case Calendar.TUESDAY:
+			strWeek="화";
+			break;
+		case Calendar.WEDNESDAY:
+			strWeek="수";
+			break;
+		case Calendar.THURSDAY:
+			strWeek="목";
+			break;
+		case Calendar.FRIDAY:
+			strWeek="금";
+			break;
+		case Calendar.SATURDAY:
+			strWeek="일";
+			break;
+		default:
+			strWeek="일";
+			break;
+		}
+		
+		int amPm=now.get(Calendar.AM_PM);
+		String strAmPm=null;
+		if(amPm==Calendar.AM)
+			strAmPm="오전";
+		else
+			strAmPm="오후";
+		
+		int hour=now.get(Calendar.HOUR);
+		int minute=now.get(Calendar.MINUTE);
+		int second=now.get(Calendar.SECOND);
+		
+		System.out.print(year+"년 ");
+		System.out.print(month+ "월 ");
+		System.out.println(day+"일 ");
+		System.out.print(strWeek+"요일 ");
+		System.out.println(strAmPm+" ");
+		System.out.print(hour+"시 ");
+		System.out.print(minute+"분 ");
+		System.out.println(second+"초 ");
+	}
+}
+
+
+<< 실행 결과 >>
+2016년 11월 2일 
+수요일 오후 
+4시 19분 12초 
+
+-------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

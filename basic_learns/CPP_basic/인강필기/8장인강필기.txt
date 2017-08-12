@@ -1,0 +1,759 @@
+ch 08 인강
+(7장
+1)상속 + a 문법
+2)Control
+
+
+
+//7-6 상속을 하는 이유
+
+*문제의 도입
+ -운송 수단에 관련된 클래스 정의
+ -자동차(car), 열차(train) , 선박(ship) , 비행기(Airplane) 등등
+
+)
+
+
+
+
+//8-1 상속의 조건
+
+/*
+-public 상속은 is-a 관계가 성립되도록 하자.
+(실무에서 95%가 public 상속 -> protected, private 상속은 다루지x(나중에 필요할때 public을 이해하면 나머지 2개도 이해하기 쉬움))
+
+e.g)
+Person는 Student이다 => is-a 성립x
+Student는 Person이다 => is-a 성립o
+(Student is a Person , 학생은 사람이다)
+
+-Why is-a?
+가정 : 근로학생 -> 학생 -> 사람
+
+----1.
+Person의 모든 특성을 Student 특성을 가져감 (멤버 변수, 함수)
+=>Student클래스는 Person보다 더 커짐
+----
+----2.
+Person클래스를 만들때, 특정 인물의 특성이 아니라, 모든 사람을 대표할 수 있는 특성을 지니게끔 구성 => 범위 : 모든사람
+Student클래스를 만들때는 범위 : 모든 학생
+근로학생 클래스의 범위 : 모든 근로학생
+==>범위가 적을 수록 공통적 특성을 더 많이 가짐.
+==>즉, 내려갈 수록 범위는 좁아지고 기능은 많아짐.
+==>is-a 관계가 성립해야함.
+==>아래로 내려갈 수록 구체화(specialization) , 올라갈 수록 일반화(generalization)
+(내려가는 것 : 사람->학생->근로학생, 올라가는 것: 근로학생 -> 학생 ->사람)
+----
+
+
+-잘못된 상속의 예:
+Person -> Student
+=>Student클래스의 기능 1: study
+=>Person 클래스 객체 5개 생성 -> study 기능 가지고 있음
+=>BUT 모든 사람은 study를 하지않음(직장인, 등등)
+
+*/
+
+
+/*
+-HAS-A(소유) 관계에 의한 상속!
+ -경찰은 몽둥이를 소유한다.
+ -The Police have a cudgel.
+ -hasa1.cpp
+==>Police 객체가 Cudgel몽둥이의 기능을 소유했기 때문에!!
+==>Police is a Cudgel 성립(X)
+==>But Police has a Cudgel 성립(O)
+
+
+-HAS-A(관계)에 의한 상속 그리고 대안!
+ -포함 관계를 통해서 소유 관계를 표현
+ -객체 멤버에 의한 포함 관계의 형성(hasa2.cpp)
+ -객체 포인터 멤버에 의한 포함 관계의 형성(hasa3.cpp)
+ -hasa2.cpp, hasa3.cpp
+
+
+/*
+hasa2.cpp
+*/
+#include <iostream>
+using std::endl;
+using std::cout;
+
+class Cudgel  //몽둥이
+{
+public:
+	Cudgel() {
+		cout << "Cudgel  생성자 함수 호출" << endl;
+	}
+	void Swing() { cout << "Swing a cudgel!" << endl; }
+};
+
+
+class Police //몽둥이를 소유하는 경찰
+{
+	Cudgel cud;	//void 생성자를 지녀야함
+	//Cudgel cud(10); 불가능(java,c#은 가능)
+public:
+	Police() {
+		cout << "Police 생성자 함수 호출" << endl;
+	}
+	void UseWeapon() { cud.Swing(); }
+};
+
+int main()
+{
+	Police pol;
+	//1.Police클래스 객체를 위한 메모리 할당
+	//2.Cudgel cud객체 메모리할당 + 생성
+	//3.Police 생성자 호출~>
+	pol.UseWeapon();
+
+	return 0;
+}
+
+
+/*
+hasa3.cpp
+*/
+#include <iostream>
+using std::endl;
+using std::cout;
+
+class Cudgel  //몽둥이
+{
+public:
+	void Swing() { cout << "Swing a cudgel!" << endl; }
+};
+
+
+class Police //몽둥이를 소유하는 경찰
+{
+	Cudgel* cud;
+public:
+	Police() {
+		cud = new Cudgel;
+	}
+	~Police() {
+		delete cud;
+	}
+	void UseWeapon() { cud->Swing(); }
+};
+
+int main()
+{
+	Police pol;
+	//1.pol이름으로 메모리 할당
+	//2.cud라는 포인터 변수 생성
+	//3.Police 생성자 호출
+	//4.cud라는 void 생성자 객체 동적으로 생성
+	//(인자필요하면 cud=new Cudgel(10);
+	//pol은 stack // cud는 heap
+	
+	pol.UseWeapon();
+
+	return 0;
+}
+
+
+
+==>hasa2.cpp , hasa3.cpp
+의 물리적인 메모리할당은 다르지만 논리적으로 포함관계를 나타냄
+(둘다 포함관계, 특성 알아야함 // haja3이 좀더 중요)
+
+
+
+==>HAS-A는 상속과 대안 가능 => 대안이 더 좋음
+경찰이 몽둥이가 아니라 권총이라는 무기를 소유
+=>hasa2,hasa3는 둘 다 논리적으로 같은 포함관계. but hasa3는
+포인터로 가리키므로 좀더 느슨하다고 할 수 있음. 그래서 포함관계가 바뀔때 좀더 유동적으로 변동 가능.
+
+
+결론:
+HAS-A관계는 상속에 의해서도 표현 되지만, 대안이 있으면 대안을 사용하는 것을 즐겨한다!
+
+
+*/
+
+
+
+
+//8-2 상속된 객체와 포인터 관계
+
+
+
+/*
+
+* 객체 포인터
+ -객체의 주소 값을 저장할 수 있는 포인터
+ -AAA클래스의 포인터는 AAA객체 뿐만 아니라, AAA 클래스를 상속하는 Derived 클래스 객체의 주소값도 저장가능
+ -CPointer1.cpp
+
+-PartTimeStd -> Student -> Person 이라는 상속 관계 가정
+==>PTR 객체, S 객체, P 객체 생성
+==>Person * p = P 객체 (가능) // Person *p = S객체 (가능) // Person * p =PTS 객체 (가능)
+==>Student* p=P 객체 (불가능 : 모든 객체가 Student는 아니므로) 
+// Student* p=S객체 (가능) //Student* p=PTS 객체 (가능)
+
+/*
+CPointer1.cpp
+*/
+#include <iostream>
+using std::endl;
+using std::cout;
+
+class Person
+{
+public:
+	void Sleep() {
+		cout << "Sleep" << endl;
+	}
+};
+
+class Student : public Person
+{
+public:
+	void Study() {
+		cout << "Study" << endl;
+	}
+};
+
+class PartTimeStd : public Student
+{
+public:
+	void Work() {
+		cout << "Work" << endl;
+	}
+};
+
+int main(void)
+{
+	Person* p1 = new Person;
+	Person* p2 = new Student;
+	Person* p3 = new PartTimeStd;
+
+	p1->Sleep();
+	p2->Sleep();
+	p3->Sleep();
+
+	delete p1;
+	delete p2;
+	delete p3;
+
+	return 0;
+}
+
+
+
+
+
+
+
+
+* 객체 포인터 권한
+ -포인터를 통해서 접근할 수 있는 객체 멤버의 영역
+ -AAA클래스의 객체 포인터는 가리키는 대상에 상관없이 AAA클래스 내에 선언된 멤버에만 접근
+ -CPointer2.cpp
+
+
+e.g)
+#include <iostream>
+using std::endl;
+using std::cout;
+
+//상속 관계 클래스 C -> B -> A
+class A 
+{
+public:
+	void a() {
+		cout << "a()" << endl;
+	}
+};
+
+class B : public A
+{
+public:
+	void b() {
+		cout << "b()" << endl;
+	}
+};
+
+class C : public B
+{
+public:
+	void c() {
+		cout << "c()" << endl;
+	}
+};
+
+int main(void)
+{
+	C* pc = new C;//new C();
+	B* pb = pc;	//C클래스의 포인터, B클래스의 포인터, A클래스의 포인터 다 가능
+	A* pa = pb;
+
+	//같은 주소를 가리킴
+	//cout << pc << endl;
+	//cout << pb << endl;
+	//cout << pa << endl;
+	
+	//1. C클래스 포인터 pc를 통한 접근
+	pc->a();	//가능
+	pc->b();	//가능
+	pc->c();	//가능
+	
+	//2.B클래스 포인터 pb 를 통한 접근
+	pb->a();
+	pb->b();
+	//pb->c(); //컴파일 에러
+	//컴파일러는 pb라는 포인터는 B클래스의 포인터 & C 클래스라는 객체라는 것을 모름
+	//Class B에는 a(),b()함수가 있어서 컴파일 타임에 문제 X 
+	//Class C라는 것은 런타임 중에 알게됨 
+
+	//3.A클래스 포인터 pa를 통한 접근
+	pa->a();
+	//pa->b();	//컴파일 에러
+	//pa->c();	//컴파일 에러
+	
+	
+
+
+	delete pc;
+	return 0;
+}
+
+
+
+
+*/
+
+
+
+
+
+
+
+//8-2 Empoloyee problem 해결
+
++그림 + EmployeeManager3.cpp
+
+
+
+
+
+//8-3 상속된 객체와 참조 관계
+
+
+/*
+//레퍼런스도 중요함 BUT 일부 개발자들은 f(n); 할때 call-by-reference, call-by-value 에 대해 모호해짐
+
+*객체 레퍼런스
+ -객체를 참조할 수 있는 레퍼런스
+ -클래스 포인터의 특성과 일치!
+ -CReference1.cpp
+
+*객체 레퍼런스의 권한
+ -객체를 참조하는 레퍼런스의 권한
+ -클래스 포인터의 권한과 일치!
+ -Creference2.cpp
+
+==> 포인터와 똑같음 !!
+
+e.g
+/*
+CReference2.cpp
+*/
+#include <iostream>
+using std::endl;
+using std::cout;
+
+class Person
+{
+public:
+	void Sleep() {
+		cout << "Sleep" << endl;
+	}
+};
+
+class Student : public Person
+{
+public:
+	void Study() {
+		cout << "Study" << endl;
+	}
+};
+
+class PartTimeStd : public Student
+{
+public:
+	void Work() {
+		cout << "Work" << endl;
+	}
+};
+
+int main(void)
+{
+	PartTimeStd p;
+	p.Sleep();
+	p.Study();
+	p.Work();
+
+	Person& ref = p;
+	ref.Sleep();
+	//	ref.Study(); // Error의 원인
+	//	ref.Work();  // Error의 원인
+
+	return 0;
+}
+*/
+
+
+
+
+
+
+//8-4 Static Binding & Dynamic Biding
+
+
+/*
+
+*오버라이딩(Overriding)의 이해	//주의!!)오버로딩과 다름 주의
+ -Base 클래스에 선언된 멤버와 같은 형태의 멤버를 Derived 클래스에서 선언
+ -Base 클래스의 멤버를 가리는 효과!
+ -보는 시야(Pointer)에 따라서 달라지는 효과!
+ -Overriding1.cpp, Overriding2.cpp
+==>오버라이딩과 재정의는 다른말!(오버라이딩의 특성이 재정의임) //우리나라 말로 억지로 번역하지 말기
+
+
+
+
+/*
+Overriding2.cpp
+*/
+#include <iostream>
+using std::endl;
+using std::cout;
+
+class AAA
+{
+public:
+	void fct() {
+		cout << "AAA" << endl;
+	}
+};
+
+class BBB : public AAA
+{
+public:
+	void fct() { //AAA 클래스의 fct() 함수를 오버라이딩.
+		cout << "BBB" << endl;
+	}
+};
+
+int main(void)
+{
+/* Overriding1.cpp
+	BBB b;
+	//BBB클래스 안의 객체 b를 생성하면, BBB클래스의 fct() , AAA클래스의 fct() 도 존재
+	//AAA클래스의 fct()는 가려짐 => 은닉되어짐
+	//Overriding에 의해 은닉되어짐.특성.
+	b.fct();
+*/
+
+//Overiding2.cpp
+BBB* b = new BBB;
+	b->fct();
+
+	AAA* a = b;
+	a->fct();
+
+	delete b;
+	return 0;
+
+	return 0;
+}
+
+
+
+*멤버 함수를 가상(virtual)으로 선언하기
+ -오버라이딩 되는 경우의 특징은?
+ -virtual의 특성도 상속된다.
+ -Overriding3.cpp, Overriding4.cpp
+
+/*
+Overriding3.cpp
+*/
+#include <iostream>
+using std::endl;
+using std::cout;
+
+class AAA
+{
+public:
+	virtual void fct() {
+		cout << "AAA" << endl;
+	}
+};
+
+class BBB : public AAA
+{
+public:
+	void fct() {
+		cout << "BBB" << endl;
+	}
+};
+
+int main(void)
+{
+	BBB* b = new BBB;
+	b->fct();
+
+	AAA* a = b;
+	a->fct();
+	//AAA클래스의 관점으로 AAA::fct()라는 함수를 접근했지만, 가상 함수임
+	//==>BBB의 fct()함수가 호출
+	//오버라이딩 BBB클래스의 포인터 이든, AAA클래스의 포인터로 fct()를 가리키면
+	//BBB클래스의 fct()를 가리킴 => 오버라이딩 특성 2) 재정의
+	//C++은 은닉,재정의 선택  Java는 은닉은 불가능
+	delete b;
+	return 0;
+}
+
+
+
+/*
+Overriding4.cpp
+*/
+#include <iostream>
+using std::endl;
+using std::cout;
+
+class AAA
+{
+public:
+	virtual void fct() {//단독으로 존재한다면 의미 X	(컴파일 에러는 안남)
+						//virtual이라는 키워드는 상속되어질때만 의미를 가짐							
+		cout << "AAA" << endl;
+	}
+};
+
+class BBB : public AAA
+{
+public:
+	void fct() {    // == virtual void fct() 가독성을 위해 써줌
+		cout << "BBB" << endl;
+	}
+};
+
+class CCC : public BBB
+{
+public:
+	void fct() {
+		cout << "CCC" << endl;
+	}
+};
+
+
+int main(void)
+{
+	//CCC클래스의 객체 생성 -> BBB의 fct() , AAA의 fct() 있음
+	BBB* b = new CCC;
+	b->fct();	//BBB클래스의 포인터 b의 fct()호출하려고 갔더니 virtual 
+				//==>CCC클래스의 fct()호출
+	AAA* a = b;
+	a->fct();	//AAA클래스의 fct() & virtual => BBB클래스의 fct() & virtual
+				//CCC클래스의 fct()호출
+	delete b;
+	return 0;
+}
+
+
+
+
+
+*Static Binding vs Dynamic Binding
+ -315페이지 예제
+가정 :상속관계 : C -> B -> A  & 각 함수 f()가지고 있고 A클래스의 f()는 virtual
+
+1)Static Binding
+A.a;
+a.f(); ==>A클래스의 f()호출
+
+
+2)Dynamic Binding
+A* pa=new ???
+pa->f();
+==>???의 객체를 알아야 f()호출
+
+
+
+
+
+
+*오버라이딩 된 함수의 호출
+ -오버라이딩 된 함수의 호출이 필요한 이유
+  -연습문제 8-3 관련
+ -Overriding5.cpp
+
+/*
+Overriding5.cpp
+*/
+#include <iostream>
+using std::endl;
+using std::cout;
+
+class AAA
+{
+public:
+	virtual void fct() {
+		cout << "AAA" << endl;
+	}
+};
+
+class BBB : public AAA
+{
+public:
+	void fct() {
+		AAA::fct();  // 방법 1. 
+		cout << "BBB" << endl;
+	}
+};
+
+
+int main(void)
+{
+	AAA* a = new BBB;
+	cout << "첫 번째 시도" << endl;
+	a->fct();
+
+	cout << "두 번째 시도" << endl;
+	a->AAA::fct(); 
+	// 방법 2. (전혀 사용할 용도가 X)	
+
+	delete a;
+	return 0;
+}
+
+
+
+
+*순수(pure) 가상 함수와 추상 클래스
+
+ - Employee 클래스의 GetPay 함수
+ - 추상 클래스 : 순수 가상 함수 지니는 클래스
+ - 추상 클래스는 객체화될 수 없다.
+
+
+	virtual int GetPay()=0;
+	//GetPay는 Derived클래스의 GetPay()를 호출하기 위해 존재.
+	//=0;의미 : 선언만 했고 정의는 안했다고 컴파일러가 인식
+
+==>기존에 virtual int GetPay(){return 0;} 가짜 가상 함수. 
+==>virtual int GetPay()=0; 을 씀으로써 순수 가상 함수(진짜 가상 함수)가 됨.
+==>하나 이상 가상 함수를 가리켜 추상 클래스 라고 함.
+==>Employee는 추상클래스 객체화가 될 수 없다.(컴파일 에러) BUT 포인터 선언은 가능
+
+
+
+
+
+*상속하고 있는 클래스 객체 소멸 문제점
+ -VirtualDest.cpp
+
+//문제점
+
+/*
+VirtualDest.cpp
+*/
+#include <iostream>
+using std::endl;
+using std::cout;
+
+class AAA
+{
+	char* str1;
+public:
+	AAA(char* _str1) {
+		str1 = new char[strlen(_str1) + 1];
+		strcpy(str1, _str1);
+	}
+	~AAA() {			// virtual ~AAA()
+		cout << "~AAA() call!" << endl;
+		delete[]str1;
+	}
+	virtual void ShowString() {
+		cout << str1 << ' ';
+	}
+};
+
+class BBB : public AAA
+{
+	char* str2;
+public:
+	BBB(char* _str1, char* _str2) : AAA(_str1) {
+		str2 = new char[strlen(_str2) + 1];
+		strcpy(str2, _str2);
+	}
+	~BBB() {
+		cout << "~BBB() call!" << endl;
+		delete[]str2;
+	}
+	virtual void ShowString() {
+		AAA::ShowString();
+		cout << str2 << endl;
+	}
+};
+
+/***** main function **************/
+int main()
+{
+	//Case1
+	//BBB * b = new BBB("Good", "morning");
+	//b->ShowString();
+	//cout << "-----객체 소멸 직전----" << endl;
+	//delete b;
+	//BBB클래스의 소멸자, AAA클래스의 소멸자 호출이 되서 문제 X
+	
+	//Case2
+	AAA * a = new BBB("Good", "evening");
+	a->ShowString();
+	cout << "-----객체 소멸 직전----" << endl;
+	delete a;
+	//AAA객체의 포인터로 BBB클래스의 객체를 생성해서 참조할때,
+	//AAA클래스의 소멸자만 호출! =>BBB클래스 객체의 소멸자는 호출X => 메모리 유출
+
+	return 0;
+}
+
+//해결 방안
+virtual void ~AAA(){...}
+void ~BBB(){..}
+
+==>1.대신 호출 2. 이어서 호출
+
+*/
+
+//OOP 프로젝트
+
+OOP프로젝트 5단계
+
+-7장의 내용
+-전역함수를 하나의 클래스로 묶는다.
+
+OOP 프로젝트 6단계
+-신용계좌
+ *입금시 바로 1%의 이자가 추가로 더해짐
+-기부 계좌
+ *입금 시 1%에 해당이 되는 금액이 사회에 기부 된다.
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,27 @@
+원형 연결 리스트 ADT
+
+// instance variables
+private Node<E> tail;
+private int size; 
+
+// access Methods
+public int size() //리스트의 요소 수를 반환
+public boolean isEmpty() //비어있으면 true 반환
+public E first() 	//첫번째 E 반환
+public E last() 	//마지막 E반환
+	
+// update Methods
+public void rotate()		//tail은 tail->next가 됨	
+public void addFirst(E e) 	//리스트의 맨 앞에 추가
+public void addLast(E e) 	// 리스트의 맨 뒤에 추가
+public E removeFirst() 		// 리스트의 맨앞 요소를 제거 & 반환
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,215 @@
+//ch10. 클래스 변수와 클래스 메소드
+
+--------------------------------------------------------------------
+//10.1 static 변수(클래스 변수)
+-인스턴스의 생성과 상관없이 초기화되는 변수
+-하나만 선언되는 변수
+-public으로 선언되면 누구나 어디서든 접근 가능!
+
+e.g)
+class InstCnt
+{
+	static int instNum=0;
+	public InstCnt()
+	{
+		instNum++;
+		System.out.println("인스턴스 생성 : "+instNum);
+	}
+}
+public class Main{
+	public static void main(String[] args)
+	{
+		InstCnt cnt1=new InstCnt();	//1출력
+		InstCnt cnt2=new InstCnt();	//2출력
+		InstCnt cnt3=new InstCnt();	//3출력
+				
+	}	
+}
+
+==>
+Static으로 선언된 변수는 메모리 공간에 하나만 존재하며, 어디서나 접근이 가능한
+변수이다. 단 어디서나 접근이 가능 하려면 static 변수도 public 으로 선언되어야 한다.
+
+--------------------------------------------------------------------
+
+//static 변수의 접근방법
+(클래스 내부에서 접근하는 방법 // 외부에서 접근하는 방법
+
+class AccessWay
+{
+	static int num=0;
+	static	//static초기화 블럭(클래스가 메모리에 로드될 때 한번만 수행)
+	{
+	}
+
+	AccessWay()
+	{
+		incrCnt();
+	}
+	public void incrCnt()
+	{
+		num++;		//방법1
+	}
+}
+
+public class ClassVarAccess
+{
+	public static void main(String[] args)
+	{
+		AccessWay way=new AccessWay();
+		way.num++;	//방법2(인스턴스 이름을 이용한 접근방법)	
+				//way라는 참조변수가 가리키는 인스턴스의 클래스 안에 정의되어있는 static변수 num에 접근
+		AccessWay.num++;	//방법3(클래스의 이름을 이용한 접근)
+		//AccesWay, ClassVarAccess와 동일 패키지(default 패키지) & static int num의 접근제어 지시자가 default로(동일 패키지 내에서의 접근 허용)선언 
+		System.out.println("num= "+AccessWay.num);
+	}	
+}
+
+
+--------------------------------------------------------------------
+//static 변수의 초기화 블록
+class MyClass{
+	public static int num;
+	public static double num2;
+	static{
+		num=1;
+		num2=3.14;
+	}
+	....
+}
+--------------------------------------------------------------------
+
+//static 변수의 초기화 시점
+
+-JVM은 실행과정에서 필요한 클래스의 정보를 메모리에 로딩한다.
+e.g)
+A.class , B.class , main.class (안에 main()함수존재)
+JVM 순서 :
+1)main.class만 메모리 공간에 올려서 프로그램 실행
+=>main클래스 내부에서 A클래스와 B클래스를 사용했으면
+2)A.class, B.class를 로딩(메모리 공간에 올림) & 실행
+-->바로 이 Loading 시점에서 static 변수가 초기화 된다.
+
+
+==>Why class 변수?
+1)클래스가 로딩될때 메모리에 초기화
+2)인스턴스보다는 클래스와 관계가 깊어서
+
+--------------------------------------------------------------------
+
+//static 변수의 활용의 예
+-동일한 클래스의 인스턴스 사이에서의 데이터 공유가 필요할 때 static변수는 유용하게 활용된다.
+-클래스 내부, 또는 외부에서 참조의 목적으로 선언된 변수는 static final로 선언한다.(e.g : 원의 PI)
+
+--------------------------------------------------------------------
+
+//10-2 static 메소드(클래스 메소드)
+
+-static 메소드의 기본적인 특성과 접근방법은 static 변수와 동일하다
+
+class NumberPrinter
+{
+	public static void showInt(int n)
+	{
+		System.out.println(n);
+	}
+	public static void showDouble(double n)
+	{
+		System.out.println(n);
+	}	
+}
+public class ClassMethod {
+	public static void main(String[] args){
+		NumberPrinter.showInt(20);	//클래스의 이름을 통한 호출
+		NumberPrinter np=new NumberPrinter();
+		np.showDouble(3.15);		//인스턴스의 이름을 통한 호출
+				
+	}
+}
+
+
+
+==>
+1)인스턴스 변수가 존재 => 인스턴스 생성할 가치가 있는 클래스
+2)인스턴스 변수가 포함되어 있지 않으면, 인스턴스 생성할 필요x
+==>
+메소드내에서 인스턴스 변수를 참조하지 않는다.
+즉, 메소드내에 있는 매개변수를 사용하는 것이 전부이면 static 선언이 옳음
+
+
+//static 메소드의 인스턴스 변수 접근?
+
+-static 메소드는 인스턴스에 속하지 않기 때문에 인스턴스 멤버에 접근이 불가능하다.
+class AAA
+{
+	int num1;
+	static int num2;
+	static void changeNum()
+	{
+		//num1++;	//문제발생
+		//1)논리 : 인스턴스3개가 존재하면 각각 num1존재. num1++;라는게 어느 인스턴스인지 알 수 X
+		//==>논리적 오류
+			
+		num2++;		//문제X
+	}
+}
+
+1)논리적 오류 
+: 인스턴스 3개가 존재하면 각각 멤버필드로 num1이 존재& static 메소드 공유
+  num1++;라는게 어느 인스턴스의 num1 ? ==>알수 x ==>논리적 오류
+
+2)물리적오류
+: static 메소드는 jvm이 클래스 로딩 시 메모리 공간 할당. 그때 일반 멤버변수 num1???
+
+--------------------------------------------------------------------
+
+//10.3 System.out.println & public static void main
+
+//System.out.println
+
+  -System.out.println
+=>System : 클래스 이름 // out : static 참조 변수 // println : 참조변수를 통해 접근하는 메소드
+
+//System하고 out 이란?
+-System : java.lang 패키지에 묶여있는 클래스의 이름
+ import java.lang.*; 자동 삽입되므로 System 이란 이름을 직접 쓸 수 있음
+
+-out : static 변수이되 인스턴스를 참조하는 참조변수
+ PrintStream이라는 클래스의 참조변수
+public class System extends Object
+{
+	public static final PrintStream out;
+	...
+}
+
+
+//public static void main
+
+  -public static void main()
+=>main은 프로그램의 시작과 끝을 나타냄.
+=>main메소드는 한번만 호출되면 됨
+=>static은 클래스와 독립적임 & 시작하자마자 호출하자
+=>어디에 존재하느냐는 중요하지 않음
+
+
+
+//main 메소드의 위치에 따른 실행방식의 차이
+1)
+c:\JavaStudy>java Employer	//Employer클래스에 main메소드가 정의되었을때
+2)
+c:\JavaStudy>java Employee	//Employee클래스에 main메소드가 정의되었을때
+
+
+//main 메소드 내에서도 자신이 속한 클래스의 인스턴스 생성이 가능
+class AAA
+{
+	public static void makeAAA()
+	{
+		AAA a1=new AAA();
+	}
+}
+
+==>모든 메소드는 자신이 속한 클래스의 인스턴스 생성이 가능하다
+이는 main메소드도 마찬가지 
+==>main메소드는 어디서든 존재할 수 있음.
+--------------------------------------------------------------------

@@ -1,0 +1,67 @@
+
+
+import java.io.IOException;
+import java.io.PrintWriter;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+@WebServlet("/JoinServlet")
+public class JoinServlet extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+	
+	protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+		req.setCharacterEncoding("UTF-8");
+		res.setContentType("text/html; charset=utf-8");
+		
+		String[] interests = req.getParameterValues("interest");
+		
+		PrintWriter out = res.getWriter();
+		out.println("<html><body>");
+		displayInfo(out,"이름",req.getParameter("name"));
+		displayInfo(out,"주민등록번호",req.getParameter("personNumberHead")+" - "+req.getParameter("personNumberTail"));
+		displayInfo(out,"아이디",req.getParameter("id"));
+		displayInfo(out,"비밀번호",req.getParameter("pwd"));
+		displayInfo(out,"이메일",req.getParameter("emailId")+"@"+req.getParameter("emailAddr"));
+		displayInfo(out,"우편번호",req.getParameter("addrNumber"));
+		displayInfo(out,"주소",req.getParameter("addrHear")+" "+req.getParameter("addrTail"));
+		displayInfo(out,"핸드폰번호",req.getParameter("phoneNumber"));
+		displayInfo(out,"직업", req.getParameter("job"));
+		displayInfo(out,"이메일 수신 여부",req.getParameter("chk_email"));
+		if(interests == null){
+			out.println("관심분야 : 선택사항없음");
+		}else{
+			out.println("관심분야 : <b><br><br>");
+			for(String interest : interests)
+				out.println(interest+" ");
+			out.println("</b><br><br>");
+		}
+		out.println("<a href='javascript:history.go(-1)'>홈으로</a>");
+		out.println("</body></html>");
+		out.close();
+	}
+	
+	private void displayInfo(PrintWriter out,String message,String content) throws IOException {
+		out.println(message+" : <b> ");
+		if(content == null)
+			out.println("선택한것 없음</b><br>");
+		else
+			out.println(content+"</b><br>");
+	}
+	
+}
+
+
+
+
+
+
+
+
+
+
+
+

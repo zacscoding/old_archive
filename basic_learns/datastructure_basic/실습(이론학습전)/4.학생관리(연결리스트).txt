@@ -1,0 +1,348 @@
+
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct node {
+ char name[50];
+ int age;
+ char address[50];
+ int kor, eng, mat;
+ struct node *link;
+}NODE;
+
+void print_menu(void);  //메뉴 출력 함수
+void add(NODE **);      //1.학생 등록 함수
+void search(NODE**); //2.학생 검색 함수
+void infor(NODE**);  //3.학생 목록 함수
+void modify(NODE **);   //4.학생 수정 함수
+void del(NODE **);      //5.학생 삭제 함수 
+char get_class(int); //학생의 등급을 구하는 함수
+void out_infor(NODE *p); //학생 정보를 상세히 출력하는 함수
+void sub_modify(NODE*);  //학생 정보를 변경하는 함수
+
+
+int main(void)
+{
+ NODE *list = NULL; //연결리스트의 시작 포인터
+ NODE *next, *p;
+ int choice = NULL;
+
+ while (1) {
+  print_menu();
+  scanf("%d", &choice);
+  while (getchar() != '\n'); //엔터 버퍼 지우기
+
+  if (choice <= 0 || choice > 6) {
+   system("cls");
+  }
+  else if (choice == 6) {
+   break;
+  }
+  else if (choice == 1) {
+   add(&list);
+  }
+  else if (choice == 2) {
+   search(&list);
+  }
+
+  else if (choice == 3) {
+   infor(&list);
+  }
+  else if (choice == 4) {
+   modify(&list);
+  }
+  else if (choice == 5) {
+   del(&list);
+  }
+ }
+
+
+ //동적할당 삭제
+ p = list;
+ while (p) {
+  next = p->link;
+  free(p);
+  p = next;
+ }
+
+ return 0;
+}
+
+//메뉴 출력
+void print_menu(void)
+{
+ puts(" < < < = = = = 메뉴 = = = = > > >");
+ putchar('\n');
+ puts("1.학생 등록");
+ puts("2.학생 검색");
+ puts("3.학생 목록");
+ puts("4.학생 수정");
+ puts("5.학생 삭제");
+ puts("6.종료");
+ printf("선택 :");
+}
+
+
+//1.학생 등록 함수
+void add(NODE **qlist)
+{
+ NODE *p, *q, *prev;
+ p = (NODE *)malloc(sizeof(NODE));
+
+ if (p == NULL) {
+  printf("동적할당오류\n");
+  return;
+ }
+ system("cls");
+ printf("학생 이름 입력 :");
+ gets_s(p->name);
+ printf("%s 학생 나이 입력 :", p->name);
+ scanf("%d", &p->age);
+ while (getchar() != '\n');
+ printf("%s 학생 주소 입력 :", p->name);
+ gets_s(p->address);
+ printf("%s 학생 국어 점수 :", p->name);
+ scanf("%d", &p->kor);
+ printf("%s 학생 영어 점수 :", p->name);
+ scanf("%d", &p->eng);
+ printf("%s 학생 수학 점수 :", p->name);
+ scanf("%d", &p->mat);
+
+ if (*qlist == NULL) {
+  *qlist = p;
+  p->link = NULL;
+ }
+ else {
+  q = *qlist;
+  while (q) {
+   prev = q;
+   q = q->link;
+  }
+  prev->link = p;
+  p->link = NULL;
+ }
+ puts("학생 정보 입력 완료");
+ system("pause");
+ system("cls");
+}
+
+//2.학생 검색함수
+void search(NODE** qlist)
+{
+ NODE *p = *qlist;
+ char name[50];
+ int total, s; double average; char grade;
+
+ system("cls");
+ printf("검색할 이름 입력 : ");
+ gets_s(name);
+
+ while (p) {
+  //검색 데이터가 존재하는 경우
+  if (strcmp(p->name, name) == 0) {
+   puts("학생 정보 검색 완료");
+   out_infor(p);
+   system("pause");
+   system("cls");
+   return;
+  }
+  p = p->link;
+ }
+ puts("검색하고자 하는 학생이 존재하지 않습니다.");
+ system("pause");
+ system("cls");
+}
+
+
+//3.학생 목록 함수
+void infor(NODE** qlist)
+{
+
+ NODE *p = *qlist;
+
+ system("cls");
+ puts("< < = = = = = information = = = = = = > >");
+ putchar('\n');
+ printf("%12s%12s%12s\n", "학생이름", "학생나이", "학생주소");
+ while (p) {
+  printf("%12s%12d%12s\n", p->name, p->age, p->address);
+  p = p->link;
+ }
+
+ printf("<학생 개개인의 점수는 검색을 이용하세요 !!>\n");
+ system("pause");
+ system("cls");
+}
+
+//4.학생 수정 함수
+void modify(NODE **qlist)
+{
+ NODE *p = *qlist;
+ char name[50];
+ int select;
+
+ system("cls");
+ printf("수정할 학생 이름은? ");
+ gets_s(name);
+
+ while (p) {
+  //수정할 데이터가 존재하는 경우
+  if (strcmp(p->name, name) == 0) {
+   system("cls");
+   sub_modify(p);
+  }
+  p = p->link;
+ }
+ printf("찾는 학생이 없습니다\n");
+ return;
+}
+
+
+//5.학생 삭제함수
+void del(NODE **qlist)
+{
+ NODE *p = *qlist;
+ NODE *tmp = *qlist;
+ char name[50];
+
+ system("cls");
+ printf("삭제할 학생 이름 : ");
+ gets_s(name);
+
+ //삭제 데이터가 리스트의 첫번째 인 경우
+ if (strcmp(p->name, name) == 0) {
+  *qlist = p->link;
+  free(p);
+  puts("삭제 완료");
+  system("pause");
+  system("cls");
+  return;
+ }
+ p = p->link;
+ while (p) {
+  if (strcmp(p->name, name) == 0) {
+   tmp->link = p->link;  //이전 구조체, 다음 구조체 연결
+   free(p); //찾는 구조체 동적할당 해제
+   puts("삭제 완료");
+   system("pause");
+   system("cls");
+   return;
+  }
+  tmp = p;
+  p = p->link;
+ }
+ system("cls");
+ printf("찾는 학생이 없습니다.\n");
+ system("pause");
+ system("cls");
+}
+
+//학생 등급을 정하는 함수
+char get_class(int s)
+{
+ switch (s) {
+ case 10:
+ case 9:
+  return 'A';
+ case 8:
+  return 'B';
+ case 7:
+  return 'C';
+ case 6:
+  return 'D';
+ default:
+  return 'F';
+ }
+}
+
+//학생 정보를 출력하는 함수
+void out_infor(NODE *p)
+{
+ int total, s; double average; char grade;
+ total = (p->kor) + (p->eng) + (p->mat);
+ average = total / 3.0;
+ s = get_class((int)average / 10);
+ puts("< < = = = = = information = = = = = = > >");
+ printf("학생 이름 : %s\n", p->name);
+ printf("학생 나이 : %-3d세\n", p->age);
+ printf("학생 주소 : %s\n", p->address);
+ printf("국어 점수 : %d 점\n", p->kor);
+ printf("영어 점수 : %d 점\n", p->kor);
+ printf("수학 점수 : %d 점\n", p->kor);
+ printf("합계 점수 : %d 점\n", total);
+ printf("평균 점수 : %.2lf 점\n", average);
+ printf("학생 등급 : %c 등급\n", s);
+
+}
+
+//학생 정보를 수정하는 함수 (세부적)
+void sub_modify(NODE* p)
+{
+ int select, tmp;
+ char buffer[50];
+
+ while (1) {
+  out_infor(p);
+  printf("\n\n");
+  printf("수정할 항목을 선택하시오\n");
+  printf("1.이름  2.나이  3.주소  4.점수  5.수정종료\n");
+  printf("선택 : ");
+  scanf("%d", &select);
+
+  while (getchar() != '\n');//엔터버퍼 지우기
+
+  if (select < 1 || select>5) {
+   system("pause");
+  }
+  else if (select == 1) {
+   printf("현재 이름 : %s\n", p->name);
+   strcpy(buffer, p->name);
+   printf("수정할 이름 : ");
+   gets_s(p->name);
+   printf("%s -> %s 로 이름 수정 완료\n", buffer, p->name);
+   system("pause");
+   system("cls");
+  }
+
+  else if (select == 2) {
+   printf("현재 나이 : %d 세\n", p->age);
+   tmp = p->age;
+   printf("수정할 나이 : ");
+   scanf("%d", &p->age);
+   printf("%d 세 -> %d 세 로 나이 수정 완료\n", tmp, p->age);
+   system("pause");
+   system("cls");
+  }
+
+  else if (select == 3) {
+   printf("현재 주소 : %s\n", p->address);
+   strcpy(buffer, p->address);
+   printf("수정할 주소 : ");
+   gets_s(p->address);
+   printf("%s -> %s 로 이름 수정 완료\n", buffer, p->address);
+   system("pause");
+   system("cls");
+  }
+  else if (select == 4) {
+   printf("현재 점수\n");
+   printf("국어 : %d 영어 : %d 수학 : %d\n", p->kor, p->eng, p->mat);
+   printf("수정할 국어 점수 : ");
+   scanf("%d", &p->kor);
+   printf("수정할 영어 점수 : ");
+   scanf("%d", &p->eng);
+   printf("수정할 수학 점수 : ");
+   scanf("%d", &p->mat);
+   puts("점수 수정 완료");
+   system("pause");
+   system("cls");
+  }
+  else if (select == 5) {
+   printf("수정을 종료합니다.\n");
+   system("pause");
+   system("cls");
+   break;
+  }
+ }
+} 

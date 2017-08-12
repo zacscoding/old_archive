@@ -1,0 +1,567 @@
+---------------------ch05.배열----------------------------------
+
+//1.배열의 선언 및 초기화 , 출력 , 복사
+
+import java.util.Arrays;
+
+public class ArrayTest {
+	public static void main(String[] args){
+		//1.배열의 선언 및 초기화
+		//배열을 선언하면 초기값이 자동으로 생성(정수0, 실수 0.0 , 논리형 false)
+		//1)
+		int arr1[]; //==int[] arr1;
+		arr1=new int[5];		
+		//2)
+		int arr2[]=new int[]{1,2,3,4,5};
+		//3)
+		int arr3[]={1,2,3,4,5};	//new int[] 생략가능(Since 1.5) 쓰지말기!!!! //1)과 같이 int arr1[];하고 arr1={1,2,3,4,5};는 불가능
+		//4)		
+		int arr4[]=new int[0];	//자바는 배열의 인덱스가 0인 배열도 생성 가능!
+		
+		
+	
+		//2.배열의 출력
+		//1)for문을 이용한 출력
+		//배열의 길이 ==배열이름.length
+		for(int i=0;i<arr1.length;i++){
+			System.out.print(arr1[i]);
+		}
+		System.out.println();
+		
+		//2)Arrays.toString(배열의이름) 메소드
+		System.out.println(Arrays.toString(arr2));
+		
+		System.out.println(arr1);	
+		//[I@15db9742 [I == 1차원 int배열, 15db9742==내부주소 	// byte [B	//short [S	//long [J
+		//Double [D		//float은 [F
+
+		
+		//3.배열의 복사
+		//배열의 복사	
+	
+//		//1)for문을 이용한 복사
+//		int[] arr=new int[]{1,2,3,4,5};
+//		int[] tmp=new int[arr.length*2];
+//		for(int i=0;i<arr.length;i++){
+//			tmp[i]=arr[i];
+//		}
+//		arr=tmp;	//동적할당된 배열을 가리키는 참조변수가 업으면 JVM의 가비지 컬렉터에 의해서 자동적으로 메모리에서 제거
+
+//		//2)System.arraycopy()를 이용한 복사
+//		char[] abc=new char[]{'A','B','C','D'};
+//		char[] num=new char[]{'1','2','3'};
+//		char[] result=new char[abc.length+num.length];
+//		System.arraycopy(abc,0,result,0,abc.length);
+//						//abc [0] 에서 result [0]으로 abc.length개의 데이터를 복사
+//		System.arraycopy(num,0,result,abc.length,num.length);
+//						//num[0]에서 result[abc.length]으로 num.length개의 데이터 복사
+//		System.out.println(result);	//ABCD123 출력
+
+	}
+
+}
+
+//배열의 활용
+
+/*
+ * 10개의 수를 입력받아 SelectSort 하기
+ */
+import java.util.*;
+public class ArrayTest1 {
+ public static void main(String[] args){
+  Scanner in=new Scanner(System.in);
+  int arr1[]=new int[10];
+  
+  //10개의 수 입력 받기
+  for(int i=0;i<arr1.length;i++){
+   System.out.print(i+1+"번째 수 입력 : ");
+   arr1[i]=in.nextInt();
+  }
+  //원본 출력하기
+  System.out.println("-- 원본 출력--");
+  System.out.print("arr1["+arr1.length+"] = [");
+  for(int i=0;i<arr1.length-1;i++){
+   System.out.print(arr1[i]+" ");     
+  }
+  System.out.println(arr1[arr1.length-1]+"]");
+  
+  //선택정렬
+  for(int i=0;i<arr1.length-1;i++){
+   for(int j=i;j<arr1.length;j++){
+    if(arr1[i]>arr1[j]){
+     int tmp=arr1[i];
+     arr1[i]=arr1[j];
+     arr1[j]=tmp;
+    }
+   }
+  }
+  
+  //버블소트
+  
+  //정렬 후 출력하기
+  System.out.println("-- 선택 정렬 후 --");
+  System.out.print("arr1["+arr1.length+"] = [");
+  for(int i=0;i<arr1.length-1;i++){
+   System.out.print(arr1[i]+",");     
+  }  
+  System.out.println(arr1[arr1.length-1]+"]");
+ }
+
+}
+
+
+
+/*
+ * 동적으로 배열의 크기 할당하는 예제
+ */
+
+import java.util.*;
+public class ArrayTest2 {
+ public static void main(String[] args){
+  Scanner in=new Scanner(System.in);
+  
+  System.out.print("인원수를 입력 : ");
+  int inwon=in.nextInt();
+  
+  int kor[]=new int[inwon]; //배열선언시 배열의 크기는 상수 뿐 아니라 변수로도 가능하다
+  
+  for(int i=0;i<kor.length;i++){
+   System.out.print(i+1+"번째 국어 점수 : ");
+   kor[i]=in.nextInt();
+  }
+  for(int i=0;i<kor.length;i++){
+   System.out.println(kor[i]);
+   
+  }
+  
+  
+  
+ }
+}
+
+
+
+
+
+/*
+ * 이름과 전화번호를 입력 받고 출력해주는 프로그램
+ */
+import java.util.*;
+import java.io.*;
+public class ArrayTest3 {
+ public static void main(String[] args) throws IOException{
+  Scanner in=new Scanner(System.in);
+  System.out.print("인원수를 입력 하세요 : ");
+  int num=in.nextInt();
+
+  String name[]=new String[num];
+  String phone[]=new String[num];  
+  
+  for(int i=0;i<num;i++){
+   System.out.print(i+1+"번째 사람의 이름을 입력하세요 : ");
+   name[i]=in.next();
+   System.out.print(i+1+"번째 사람의 번호를 입력하세요 : ");
+   phone[i]=in.next();
+  }
+  
+  for(int i=0;i<num;i++){
+   System.out.println("이름 : "+name[i]+" 전화 번호"+phone[i]);   
+  }
+  
+ }
+}
+
+ 
+
+
+/*
+ * 인원수를 입력 받아서 그 인원수 만큼
+ * 이름, 국어점수 ,영어점수, 수학점수를 입력받고
+ * 이름과 총합,순위를 출력해주는 프로그램
+ */
+import java.util.*;
+
+public class ArrayTest4 {
+ public static void main(String[] args){
+  Scanner in=new Scanner(System.in);
+  System.out.print("인원을 입력하세요 : ");
+  int num=in.nextInt();
+  String name[]=new String[num];
+  int kor[]=new int[num];
+  int eng[]=new int[num];
+  int math[]=new int[num];
+  int rank[]=new int[num];
+  int rankIndex[]=new int[num];
+  int total[]=new int[num];
+  
+  //입력받기
+  for(int i=0;i<num;i++){
+   System.out.print(i+1+"번째 이름입력 : ");
+   name[i]=in.next();
+   System.out.print("국어 영어 수학 점수를 입력 (순서대로 공백으로 구분) : ");
+   kor[i]=in.nextInt();eng[i]=in.nextInt();math[i]=in.nextInt();
+   total[i]=kor[i]+eng[i]+math[i]; 
+  }
+  //인덱스 초기화
+  for(int i=0;i<num;i++){
+   rankIndex[i]=i+1;
+  }
+  /*
+  //학생을 1~n 등까지 순서대로 가정
+  //rankIndex 정렬
+  for(int i=0;i<num-1;i++){
+   for(int j=i;j<num;j++){
+    if(total[i]<total[j]){
+     int tmp=rankIndex[i];
+     rankIndex[i]=rankIndex[j];
+     rankIndex[j]=tmp;
+    }    
+   }
+  }
+  //rank 결정
+  for(int i=0;i<num;i++){
+   rank[i]=rankIndex[i];
+  }
+  */  
+  for(int i=0;i<num;i++){
+   rank[i]=1;
+   for(int j=0;j<num;j++){
+    if(total[i]<total[j]){
+     rank[i]++;
+    }    
+   }
+  }
+  
+  //출력하기  
+  for(int i=0;i<num;i++){
+   System.out.printf("이름 : %s 국어점수 : %d 영어점수 %d 수학점수 %d ",name[i],kor[i],eng[i],math[i]);
+   System.out.printf("총합 : %d 순위 %d\n",total[i],rank[i]);
+  }
+    
+ }
+
+}
+
+
+
+
+/*
+*방의 개수를 입력받아 입실과 퇴실기능을 하는 프로그램
+*/
+
+import java.util.*;
+
+public class ArrayTest2 {
+	public static void main(String[] args){
+		Scanner in=new Scanner(System.in);
+		System.out.print("방의 개수를 입력 : ");
+		int numOfRoom=in.nextInt();
+		boolean[] room=new boolean[numOfRoom];	//공실 false , 입실상태 true
+		
+		while(true){
+			System.out.print("1.입실 2.퇴실 3.정보보기 4.종료 : ");
+			int choice=in.nextInt();
+			if(choice==4) break;
+			int num;
+			switch(choice){
+			case 1:
+				System.out.print("입실 하실 방을 입력하세요 : ");
+				num=in.nextInt();
+				if(room[num-1]==true){//입실상태이면
+					System.out.println(num+"호실은 사용 중 입니다.");					
+				}else{
+					room[num-1]=true;
+					System.out.println(num+"호실에 입실하였습니다.");
+					
+				}
+				break;
+			case 2:
+				System.out.print("퇴실 하실 방을 입력하세요 : ");
+				num=in.nextInt();
+				if(room[num-1]==true){//입실상태이면
+					room[num-1]=false;
+					System.out.println(num+"호실에서 퇴실하였습니다.");					
+				}else{//공실이면					
+					System.out.println(num+"호실은 현재 공실입니다.");					
+				}
+				break;
+			case 3:
+				for(int i=0;i<numOfRoom;i++){
+					if(room[i]==true){
+						System.out.println(i+1+"번째 방은 입실 상태입니다.");
+					}else{
+						System.out.println(i+1+"번째 방은 공실 상태입니다.");
+					}
+				}
+				break;
+				default:
+					System.out.println("잘못입력하였습니다.");
+					break;
+			
+			}
+		}
+		System.out.println("프로그램을 종료합니다.");
+		
+		
+	}
+}
+
+
+
+//Math.random()
+//Math.random(); //0~0.9999999999
+//0 ~ n-1 : n을 곱한다 (기본) (난수 n개 생성)
+
+ 
+
+//1 ~ n : n을 곱하고 1을 더한다
+//e.g int ran=(int)(Math.random()*n)+1;
+
+//0 ~ n : n+1을 한후 곱한다
+//2 ~ n : n-1을 한 후 곱하고 2를 더한다.
+
+/*
+*UP&DOWN게임
+*/
+
+import java.util.*;
+public class ArrayTest2 {
+	public static void main(String[] args){
+		Scanner in=new Scanner(System.in);
+		int answer=(int)(Math.random()*100)+1;
+		int guess,count=0;
+		while(true){
+			System.out.print("1-100까지의 수를 입력 하세요(정답 :"+answer+") :");
+			guess=in.nextInt();
+			count++;
+			if(guess==answer){
+				System.out.println("정답입니다. (시도횟수 : "+count+")");
+				break;
+			}else if(answer>guess){
+				System.out.println("UP입니다.");
+			}else{
+				System.out.println("DOWN입니다.");
+			}
+		}		
+		
+		
+	}
+}
+
+
+
+
+
+//2.String배열
+
+public class StringTest1 {
+	public static void main(String[] args){
+
+		//2.1 string배열의 선언과 생성 및 초기화
+		String[] name=new String[3];	//3개의 문자열을 담을 수 있는 배열을 생성
+		name[0]=new String("Kim");
+		name[1]="Park";
+		name[2]="Lee";
+		
+		String[] name2=new String[]{"Kim","Lee","Park"};
+		
+		for(int i=0;i<name2.length;i++){
+			System.out.println(name2[i]);
+		}
+		
+		//2.2 char배열과 String클래스 차이점
+		String str="java";
+		str=str+8;	//java8이라는 새로운 문자열이 str에 저장
+		System.out.print(str);
+
+		//String 주요 메소드
+		String str="abcdef";
+		String str2="abcdefg";
+		//char charAt(int index) //문자열에서 해당 위치(index)에 있는 문자를 반환한다.
+		System.out.println(str.charAt(2)); //c나옴
+		
+		//int length()	//문자열의 길이를 반환
+		System.out.println(str.length());//6
+		
+		//String substring(int from,int to) //문자열에서 해당 범위(from~to)에 있는 문자열을 반환한다.(to는 범위에 포함되지 않음)
+		System.out.println(str.substring(1,3));//bc 
+		
+		//boolean equals(String str)	//문자열의 내용이 가틍ㄴ지 확인한다. 같으면 true, 다르면 false
+		System.out.println(str.equals(str2));	//false (길이까지 확인)
+		
+		//char [] toCharArray() //문자열을 문자배열(char[]_로 변환해서 반환한다.
+
+
+
+		//2.3커맨드 라인을 통해 입력 받기
+		//c:\jdk1.8\work\ch5>java MainTest abc 123
+		//=> args[0]="abc", args[1]="123"
+		
+
+
+
+
+		
+		
+	}
+}
+
+
+
+//다차원 배열
+
+
+public class ArrayTest {
+	public static void main(String[] args){
+		//3.1) 2차원 배열의 선언과 인덱스
+		int [][] score1;
+		//==int score1[][]; //==int [] score1[];
+		score1=new int[4][3];
+		//Stack에 score1 할당 => 힙에 int[4] (포인터) 할당(연속 X) => 힙에 int[3]x4개 할당
+		//==> score1.length == 4 // score1[0].length=3 
+		//int [][] score2=new int[][] {
+		//	{1,2,3},
+		//	{4,5,6}
+		//};
+
+		
+		
+		//3.2)2차원 배열의 초기화
+		//for문을 이용한 초기화
+		for(int i=0;i<score1.length;i++){
+			for(int j=0;j<score1[i].length;i++){
+				score1[i][j]=10;				
+			}
+		}
+		//배열의 합 구하기
+		int sum=0;
+		for(int[] tmp : score1){	//score의 각 요소(1차원배열주소)를 tmp에 저장
+			for(int i : tmp){		//tmp는 1차원 배열을 가리키는 참조변수
+				sum+=i;
+			}
+		}
+		System.out.println("sum = "+sum);
+	
+		
+
+		//3.3 가변 배열
+		//int[][]score = new int[5][3];	//5행3열의 2차원 배열 생성
+		//==>
+		int [][]score = new int[5][];	
+		score[0]=new int[4];
+		score[1]=new int[3];
+		score[2]=new int[2];
+		score[3]=new int[2];
+		score[4]=new int[3];
+		//==>가변적으로 5x? 매트릭스를 생성할 수 있음.
+		//초기화도 가변적으로 할 수 있음
+
+
+	}
+}
+
+
+
+
+
+
+
+//for문 sum 구하는 예제
+
+public class ArrayTest2 {
+	public static void main(String[] args){
+		
+		int[][] score=new int[][]{
+				{100,100,100},
+				{20,20,20},
+				{30,30,30},
+				{40,40,40}
+		};	//4x3 배열 생성
+		int sum=0;
+		
+		for(int i=0;i<score.length;i++){
+			for(int j=0;j<score[i].length;j++){
+				System.out.printf("score[%d][%d] = %d \n",i,j,score[i][j]);
+			}
+		}
+		
+		for(int [] tmp : score){
+			for(int i : tmp){
+				sum+=i;
+			}
+		}
+		
+		System.out.println("sum = "+sum);
+		
+	}
+
+}
+
+
+//좌표에 x표하기 (입력한 2차원 좌표의 위치에 X를 표시)
+import java.util.*;
+public class ArrayTest3 {
+	public static void main(String[] args){
+		//3.4)다차원 배열의 활용
+		final int SIZE=10;
+		int x=0,y=0;
+		
+		char[][] board=new char[SIZE][SIZE];
+		byte[][]shipBoard={
+			//	 1 2 3 4 5 6 7 8 9
+				{0,0,0,0,0,0,1,0,0},	//1
+				{1,1,1,1,0,0,1,0,0},	//2	
+				{0,0,0,0,0,0,1,0,0},	//3
+				{0,0,0,0,0,0,1,0,0},	//4
+				{0,0,0,0,0,0,0,0,0},	//5
+				{1,1,0,1,0,0,0,0,0},	//6
+				{0,0,0,1,0,0,0,0,0},	//7
+				{0,0,0,1,0,0,0,0,0},	//8
+				{0,0,0,0,0,1,1,1,0}		//9			
+		};
+		
+		//1행에 행번호를 1열에 열번호를 저장
+		for(int i=1;i<SIZE;i++){
+			board[i][0]=board[0][i]=(char)(i+'0');
+		}
+		
+		Scanner scanner=new Scanner(System.in);
+		
+		while(true){
+			System.out.print("좌표를 입력하세요.(종료는 00)<");
+			String input=scanner.nextLine();
+			
+			if(input.length()==2){	//두글자 입력
+				x=input.charAt(0)-'0';
+				y=input.charAt(y)-'0';
+				
+				if(x==0&&y==0){
+					break;
+				}			
+			}
+				
+			if(input.length()!=2||x<=0||x>=SIZE||y<=0||y>=SIZE){
+				System.out.println("잘못된 입력입니다. 다시 입력해주세요.");
+				continue;
+			}
+			
+			//shipBoard[x-1][y-1]의 값이 1이면 'O'을 board[x][y]에 저장
+			board[x][y]=shipBoard[x-1][y-1]==1?'O':'X';
+			
+			for(int i=0;i<SIZE;i++){
+				System.out.println(board[i]);	//board[i]는 1차원 배열
+			}
+			System.out.println();	
+			
+		}			
+	}
+}
+
+
+
+
+
+
+
+
+

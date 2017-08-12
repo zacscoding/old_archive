@@ -1,0 +1,153 @@
+-----------CH23.파일전송-----------------
+
+//summary
+
+1.www.servlets.com/cos/
+	->cos-26Dec2008.zip
+	->cos.jar 임포트
+
+2.form 태그의 method는 반드시 post ( get은 255자 이상 X )
+3.post 방식의 전송은 2가지 있다(enctype)
+	- application/x-www-form-urlencoded : default > 파일 이름만 전송
+	- multipart/form-data	: 파일이름 + 파일내용까지 전송
+4.<input 속성의 type="file"....>
+5.파일을 받는 곳에서는 MultipartRequest 클래스를 객체로 만들어서 받는다.
+6.업로드 실패시 IOException이 발생하게 된다.
+
+---------------------------------------------------------------------------------------------
+
+//1.파일 업로드에 사용되는 COS 라이브러리
+
+<form name="사용자지정" method="post" enctype="multipart/form-data">
+	<input type="file" name="사용자지정">
+</form>
+
+
+
+/*	01_uploard.jsp	*/
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+
+
+<form action="upload.do" method="post" enctype="multipart/form-data">
+<pre>
+글쓴이 : <input type="text" name="name"><br>
+제   목 : <input type="text" name="title"><br>
+파   일 : <input type="file" name="uploadFile"><br>
+</pre>
+<input type="submit" value="전송">
+</form>
+
+
+</body>
+</html>
+
+
+/*	package com.oreilly.servlet.MultiPartRequest	*/
+	.....
+	public MultipartRequest(HttpServletRequest request, //MultipartRequest와 연결할 request 객체 
+							String saveDirectory,		//서버 측에 저장될 경로
+							int maxPostSize,			//최대 파일 크기
+							String encoding,			//파일의 인코딩 방식(파일 이름이 한글일 경우 매개 변수 값을 utf-8로 줌
+							FileRenamePolicy policy) 	//파일 중복 처리를 위한 매개 변수,policy는 중복 처리를 해주는 매개 변수로서 'b.bmp' 파일을 업로드 하였는데
+							throws IOException {		//다시 같은 파일을 업로드 할 경우 'b1.bmp'등으로 자동으로 파일 중복 처리를 해준다. 매개 변수 값으로는
+														//'new DefaultFileRenamePolicy()'를 사용
+	....
+
+=> MultipartRequest의 유용한 메소드
+getParameterNames()		//폼에서 전송한 파라미터의 이름을 Enumeration 타입으로 리턴
+getParameterValues()	//폼에서 전송된 파라미터들을 배열로 받아옴
+getParameter()			//객체에 있는 해당 파라미터의 값을 가져옴
+getFileName()			//파일을 여러 개 업로드 할 경우 그 값들을 Enumeration 타입으로 리턴
+getFilesystemName()		//서버에 실제로 업로드 된 파일의 이름을 의미한다.
+getOriginalFileName()	//클라이언트가 업로드한 파일의 원본 이름을 의미한다.
+getContentType()		//업로드 파일의 컨텐트 타입을 얻을 때 사용
+getFile()				//서버에 업로드 된 파일의 정보를 객체로 얻어낼 때 사용
+
+	
+-----------
+-----------
+-----------
+-----------
+-----------
+-----------
+---------------------------------------------------------------------------------------------
+-----------
+-----------
+-----------
+-----------
+-----------
+-----------
+---------------------------------------------------------------------------------------------
+-----------
+-----------
+-----------
+-----------
+-----------
+-----------
+---------------------------------------------------------------------------------------------
+-----------
+-----------
+-----------
+-----------
+-----------
+-----------
+------
+------
+------
+------
+------
+------
+------
+------
+------
+------
+------
+------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,57 @@
+
+/*	/WebContent/param.js	*/
+
+
+function check(){
+	if(document.frm.id.value == ""){
+		alert("아이디를 입력해주세요.");
+		document.frm.id.focus();
+		return false;
+	}else if(document.frm.age.value == ""){
+		alert("나이를 입력해주세요.");
+		document.frm.age.focus();
+		return false;
+	}else if (isNan(document.frm.age.value)){
+		alert("숫자로 입력해주세요.");
+		document.frm.age.focus();
+		return false;
+	}else{
+		return true;
+	}
+}
+
+/*	/WebContent/param.jsp	*/
+
+
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>서블릿</title>
+<script type="text/javascript" src="param.js"></script>
+</head>
+<body>
+---------get 요청 처리------------<br/>
+<form  method="get" action="ParamServlet" name ="frm>
+	이름 : <input type="text" name="id"><br><br>
+	나이 : <input type="text" name="age"><br><br>
+	<input type="submit" value="전송" onclick="return check()">
+	<input type="reset" value="리셋">	
+</form>
+<br><br><br><br>
+
+
+---------post 요청 처리------------<br/>
+<form  method="post" action="ParamServlet" name ="frm>
+	이름 : <input type="text" name="id"><br><br>
+	나이 : <input type="text" name="age"><br><br>
+	<input type="submit" value="전송" onclick="return check()">
+	<input type="reset" value="리셋">	
+</form>
+
+
+
+</body>
+</html>

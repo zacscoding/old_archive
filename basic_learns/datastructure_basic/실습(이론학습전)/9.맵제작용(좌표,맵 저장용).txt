@@ -1,0 +1,200 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <Windows.h>
+#include <conio.h>
+#include <time.h>
+#define LEFT 75
+#define RIGHT 77
+#define UP 72
+#define DOWN 80
+#define WIDTH 20
+#define HEIGHT 20
+
+typedef struct {
+	int x;
+	int y;
+}Move;
+
+void gotoxy(int, int);
+void printHero(int, int);
+void delPrevState(int, int);
+void printMap(void);
+void printCoordMap(void);
+void printGuide(void);
+void printState(int, int);
+void saveFile(void);
+
+int map[HEIGHT][WIDTH];
+
+int main(void)
+{
+	int i, j;
+	char b;
+	for (i = 0; i < HEIGHT; i++) {
+		map[i][0] = 1;
+		map[i][WIDTH - 1] = 1;
+	}
+	//포인터 초기 좌표 (2,0)
+	Move hero = { 2,0 };
+	while (1) {
+		gotoxy(0, 0);
+		printMap(); //맵 상태 출력
+		printGuide(); //가이드 출력
+		printHero(hero.x, hero.y); //포인터 출력
+		printState(hero.x, hero.y);
+		b = getch();
+		//방향키 입력
+		if (b == -32) { //방향키 입력(224인데 char여서 -32)
+			delPrevState(hero.x, hero.y);
+			switch (getch()) {
+			case LEFT:
+				if (hero.x == 0) break;
+				hero.x -= 2;
+				break;
+			case RIGHT:
+				if (hero.x == 80) break;
+				hero.x += 2;
+				break;
+			case UP:
+				if (hero.y == 0) break;
+				hero.y -= 1;
+				break;
+			case DOWN:
+				if (hero.y == 30) break;
+				hero.y += 1;
+				break;
+			}
+			printHero(hero.x, hero.y);
+		}
+		//1입력
+		else if (b == 49) {
+			if (hero.x / 2 <= WIDTH&&hero.y < HEIGHT) {
+				map[hero.y][hero.x / 2] = 1;
+			}
+		}
+		//2 입력
+		else if (b == 50) {
+			if (hero.x / 2 <= WIDTH&&hero.y < HEIGHT) {
+				map[hero.y][hero.x / 2] = 0;
+			}
+		}
+		//e 입력
+		else if (b == 101) {
+			break;
+		}
+		//s 입력
+		else if (b == 115) {
+			saveFile();
+		}
+		printCoordMap();
+	}
+	gotoxy(0, HEIGHT * 2);
+	return 0;
+}
+
+void gotoxy(int x, int y) {
+	COORD pos = { x,y };
+	SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), pos);
+}
+void printHero(int x, int y)
+{
+	gotoxy(x, y);
+	printf("◎");
+}
+
+void printMap(void)
+{
+	int i, j;
+	//맵 출력
+	for (i = 0; i <HEIGHT; i++) {
+		for (j = 0; j < WIDTH; j++) {
+			if (map[i][j] == 0) printf("  ");
+			else printf("▧");
+		}
+		printf("\n");
+	}
+}
+
+void delPrevState(int x, int y)
+{
+	gotoxy(x, y);
+	printf("  ");
+}
+
+void printGuide(void)
+{
+	gotoxy(0, HEIGHT+3);
+	printf("<<      Map Guide      >>");
+	gotoxy(0, HEIGHT + 4);
+	printf(" <1> : add      <2> : del");
+	gotoxy(0, HEIGHT + 5);
+	printf(" <s> : save map <e> : exit");
+}
+
+void printState(int x, int y)
+{
+	gotoxy(0,HEIGHT + 7);
+	printf("                       ");
+	gotoxy(0, HEIGHT + 7);
+	printf(" Map     : [%d][%d]", y, x / 2);
+	gotoxy(0, HEIGHT + 8);
+	printf(" Pointer : <%d,%d>", x, y);
+}
+
+void printCoordMap(void)
+{
+	int i, j, k = 2, l = 2;
+	gotoxy(WIDTH * 2+5, 0);
+	printf("  << Values of array[%d][%d] >>", WIDTH, HEIGHT);
+
+	gotoxy(WIDTH * 2+5, 1);
+	//배열 (row)  0~9부터
+	for (i = 0; i < WIDTH; i++) {
+		printf("%2d", i);
+	}
+	//배열 (col)
+	for (i = 0; i < HEIGHT; i++) {
+		gotoxy(WIDTH * 2+3, l);
+		printf("%2d", i);
+		l++;
+	}
+
+	for (i = 0; i < HEIGHT; i++) {
+		gotoxy(WIDTH * 2+5, k);
+		for (j = 0; j < WIDTH; j++) {
+			printf("%2d", map[i][j]);
+		}
+		k++;
+	}
+}
+
+void saveFile(void)
+{
+	FILE *fp = NULL;
+	char fname[20];
+	gotoxy(0, HEIGHT+10);
+	printf("file name <e.g : d:\\\\test\\\\test.txt> :");
+	gets_s(fname);
+	int i, j;
+
+	if ((fp = fopen(fname, "w")) == NULL) {
+		gotoxy(0,HEIGHT + 12);
+		printf("                                                      ");
+		fprintf(stderr, "error");
+		return;
+	}
+
+	for (i = 0; i < HEIGHT; i++) {
+		fputc('{', fp);
+		for (j = 0; j < WIDTH; j++) {
+			fprintf(fp, "%d", map[i][j]);
+			fputc(',', fp);
+		}
+		fputs("},\n", fp);
+	}
+	gotoxy(0, HEIGHT+12);
+	printf("                                                      ");
+	gotoxy(0, HEIGHT +12);
+	printf("completed");
+	fclose(fp);
+}

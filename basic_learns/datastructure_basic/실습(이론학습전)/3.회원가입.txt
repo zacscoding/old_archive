@@ -1,0 +1,213 @@
+
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct member {
+ char id[20];
+ char passwd[20];
+ struct member *link;
+}MEMBER;
+
+void print_menu(); //메뉴출력 함수
+void f_logon(MEMBER **);//로그온 함수
+void f_join(MEMBER **);//회원가입 함수
+void f_del(MEMBER **);//탈퇴함수
+
+int main(void)
+{
+ MEMBER *list = NULL;
+ MEMBER *p,*next;
+ int choice=NULL;
+
+ while (1) {
+  print_menu();
+  scanf("%d", &choice);
+  while (getchar() != '\n');//엔터 버퍼 지우기
+
+if(choice<1||choice>4){
+
+system("pause");
+
+system("cls");
+
+}
+ else if (choice == 4) {
+   break;
+  }
+
+  else if (choice == 1) {
+   f_logon(&list);
+  }
+
+  else if (choice == 2) {
+   f_join(&list);
+  }
+  else if (choice == 3) {
+   f_del(&list);
+  }
+
+ }
+
+ //동적할당 삭제
+ p = list;
+ while (p) {
+  next = p->link;
+  free(p);
+  p = next;
+ }
+
+}
+
+//메뉴 출력
+void print_menu()
+{
+ puts("원하는 기능을 선택하세요.");
+ puts("1. 로그온");
+ puts("2. 회원 가입");
+ puts("3. 회원 탈퇴");
+ puts("4. 종료");
+ printf("Select...");
+}
+
+
+//로그인
+void f_logon(MEMBER **qlist)
+{
+ MEMBER *p = *qlist;
+ char id[20];
+ char passwd[20];
+ printf("ID : ");
+ gets_s(id);
+ printf("Password : ");
+ gets_s(passwd);
+
+ //id가 데이터에 있나 확인하는 while문
+ while (p) {
+  //id가 존재하는 경우
+  if (strcmp(p->id, id) == 0) {
+   //비밀번호도 맞는 경우
+   if (strcmp(p->passwd, passwd) == 0) {
+    puts("인증을 통과했습니다.");
+    puts("감사합니다.");
+    system("pause");
+    system("cls");
+    return;
+   }
+   //비밀번호가 틀리는 경우
+   else {
+    puts("틀렸습니다!!!");
+    system("pause");
+    system("cls");
+    return;
+   }
+  }
+  p = p->link;
+ }
+
+ //id가 없는 경우
+ puts("등록되지 않은 ID 입니다.");
+ system("pause");
+ system("cls");
+ return;
+
+}
+
+//회원가입
+void f_join(MEMBER **qlist)
+{
+ MEMBER *p = (MEMBER *)malloc(sizeof(MEMBER));
+ MEMBER *q, *tmp;
+
+ if (p == NULL) {
+  printf("동적할당오류\n");
+  return;
+ }
+
+ printf("ID : ");
+ gets_s(p->id);
+
+ //동일 ID검색
+ q = *qlist;
+ while (q) {
+  //동일 ID가 존재하는 경우
+  if (strcmp(q->id, p->id) == 0) {
+   printf("사용중인 ID입니다.\n");
+   printf("등록실패");
+   free(p);
+   system("pause");
+   system("cls");
+   return;
+  }
+  q = q->link;
+ }
+
+ printf("Password : ");
+ gets_s(p->passwd);
+
+ if (*qlist == NULL) {
+  *qlist = p;
+ }
+
+ else {
+  q = *qlist;
+  while (q) {
+   tmp = q;
+   q = q->link;
+  }
+  tmp->link = p;
+ }
+ p->link = NULL;
+ printf("\n등록 성공\n");
+ system("pause");
+ system("cls");
+}
+
+
+//회원삭제
+void f_del(MEMBER **qlist)
+{
+ MEMBER *p = *qlist;
+ MEMBER *tmp;
+ char id[20];
+ char passwd[20];
+ printf("ID : ");
+ gets_s(id);
+ printf("Password : ");
+ gets_s(passwd);
+
+ if (p == NULL) {
+  puts("탈퇴실패!!!");
+  system("pause");
+  system("cls");
+  return;
+ }
+
+ //첫리스트를 삭제할 경우
+ if ((strcmp(p->id, id) == 0) && (strcmp(p->passwd, passwd)) == 0) {
+  *qlist = p->link; //2번째 node 주소를 list에 넣음
+  free(p);
+  printf("\n");
+  puts("탈퇴 성공");
+  system("pause");
+  system("cls");
+
+  return;
+ }
+
+ while (p) {
+  if (strcmp(p->id, id) == 0 && strcmp(p->passwd, passwd) == 0) {
+   tmp->link = p->link;
+   free(p);
+   printf("\n");
+   puts("탈퇴 성공");
+   return;
+  }
+  tmp = p;
+  p = p->link;
+ }
+ puts("탈퇴실패");
+ system("pause");
+ system("cls");
+} 

@@ -1,0 +1,180 @@
+
+
+//→  ◎  Ω
+#include <stdio.h>
+#include <Windows.h>
+#include <conio.h>
+#include <stdlib.h>
+#include <time.h>
+#define LEFT 75
+#define RIGHT 77
+#define UP 72
+#define DOWN 80
+#define DEBUG 1
+void gotoxy(int x, int y) {
+ COORD pos = { x,y };
+ SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), pos);
+}
+typedef struct {
+ int x;
+ int y;
+}Move;
+
+typedef struct {
+ int hour;
+ int minute;
+ int second;
+}TIME;
+
+void printGuide(void);
+void printEnding(TIME *, TIME*);
+void SetTime(TIME *);
+
+
+int main(void)
+{
+ TIME s_time = { 0 };
+ TIME *pe_time = (TIME*)malloc(sizeof(TIME));
+ SetTime(&s_time);
+
+ //맵 출력하기
+ int map[10][10]{
+  { 1,1,1,1,1,1,1,1,1,1 },
+  { 1,0,0,0,0,0,0,0,0,1 },
+  { 1,0,0,0,0,0,0,0,0,1 },
+  { 1,0,0,0,0,0,0,0,0,1 },
+  { 1,0,0,0,0,0,0,0,0,1 },
+  { 1,0,0,0,0,0,0,0,0,1 },
+  { 1,0,0,0,0,0,0,0,0,1 },
+  { 1,0,0,0,0,0,0,0,0,1 },
+  { 1,0,0,0,0,0,0,0,0,1 },
+  { 1,1,1,1,1,1,1,1,0,1 }
+ };
+ int i, j, result;
+ int k;
+ //캐릭터 좌표표시(초기 2,0)
+ Move hero = { 2,1 };
+ //공 좌표표시(초기 4,0)
+ Move ball = { 4,6 };
+ //맵 출력
+ for (i = 0; i < 10; i++) {
+  for (j = 0; j < 10; j++) {
+   if (map[i][j] == 0) printf("  ");
+   else printf("▧");
+  }
+  printf("\n");
+ }
+ gotoxy(16, 9);
+ printf("★"); //엔딩 포인트
+ gotoxy(hero.x, hero.y); //현재 캐릭터 좌표로 이동
+ printf("Ω"); //초기 캐릭터 출력
+ gotoxy(ball.x, ball.y);//초기 공 출력
+ printf("●"); //초기 공 출력
+
+
+ while (1) {
+  printGuide();
+  if (getch()) { //키보드 입력을 기다린다
+   gotoxy(hero.x, hero.y); //캐릭터의 움직이기 전 좌표
+   printf("  "); //움직이고 난 뒤 공백을 출력해준다.
+   switch (getch()) {
+   case LEFT:
+    if (map[hero.y][hero.x / 2 - 1] != 0) break;
+    if (hero.x - 2 == ball.x&&hero.y == ball.y) {
+     if (map[ball.y][ball.x / 2 - 1] != 0) { break; }
+     else {
+      gotoxy(ball.x, ball.y);
+      printf("  ");
+      hero.x -= 2;
+      ball.x -= 2;
+      break;
+     }
+    }
+    hero.x -= 2;
+    break;
+   case RIGHT:
+    if (map[hero.y][hero.x / 2 + 1] != 0) break;
+    if (hero.x + 2 == ball.x&&hero.y == ball.y) {
+     if (map[ball.y][ball.x / 2 + 1] != 0) { break; }
+     else {
+      gotoxy(ball.x, ball.y);
+      printf("  ");
+      hero.x += 2;
+      ball.x += 2;
+      break;
+     }
+    }
+    hero.x += 2;
+    break;
+   case UP:
+    if (map[hero.y - 1][hero.x / 2] != 0) break;
+    if (hero.x == ball.x&&hero.y - 1 == ball.y) {
+     if (map[ball.y - 1][ball.x / 2] != 0) break;
+     gotoxy(ball.x, ball.y);
+     printf("  ");
+     hero.y -= 1;
+     ball.y -= 1;
+     break;
+    }
+    hero.y -= 1;
+    break;
+   case DOWN:
+    if (map[hero.y + 1][hero.x / 2] != 0) break;
+    if (hero.x == ball.x&&hero.y + 1 == ball.y) {
+     if (map[ball.y + 1][ball.x / 2] != 0) break;
+     else {
+      gotoxy(ball.x, ball.y);
+      printf("  ");
+      hero.y += 1;
+      ball.y += 1;
+      break;
+     }
+    }
+    hero.y += 1;
+    break;
+   }
+#if(DEBUG)
+   gotoxy(0, 12);
+   printf("Hero : <%d,%d>", hero.x, hero.y);
+   gotoxy(0, 13);
+   printf("Ball : <%d,%d>", ball.x, ball.y);
+#endif
+   gotoxy(hero.x, hero.y);
+   printf("Ω");
+   gotoxy(ball.x, ball.y);
+   printf("●");
+
+   if (ball.x == 16 && ball.y == 9) {
+    SetTime(pe_time);
+    printEnding(&s_time,pe_time);
+    return 0;
+   }
+  }
+ }
+ free(pe_time);
+ return 0;
+}
+
+void printGuide(void)
+{
+ gotoxy(30, 1);
+ printf("*****How to play*****");
+ gotoxy(30, 3);
+ printf(" < ↑ > : go to upper  < ↓ > : go to below");
+ gotoxy(30, 4);
+ printf(" < → > : go to right  < ← > : go to left");
+}
+
+void printEnding(TIME *s, TIME*e)
+{
+ gotoxy(30, 6);
+ printf("*****Stage Clear*****");
+ gotoxy(30, 7);
+ printf("Playing Time : %d : %d : %d\n\n\n", (s->hour) - (e->hour), (s->minute) - (e->minute), (s->second) - (e->second));
+}
+
+
+void SetTime(TIME *p)
+{
+ sscanf(__TIME__, "%d:%d:%d", &(p->hour), &(p->minute), &(p->second));
+} 

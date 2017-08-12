@@ -1,0 +1,2109 @@
+ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ14장ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+미완 : 3 
+
+
+//1번
+#include <stdio.h>
+
+
+void set_proverb(char **q, int n)
+{
+ static char *proverb[10] = {
+  "0aaa",
+  "1bbb",
+  "2ccc",
+  "3ddd",
+  "4eee",
+  "5fff",
+  "6ggg",
+  "7hhh",
+  "8iii",
+  "9jjj",
+ };
+ *q = proverb[n];
+}
+
+int main(void)
+{
+ int choice;
+ char *p;
+
+
+ printf("몇 번째 속담을 선택하시겠습니까?");
+ scanf("%d", &choice);
+
+ set_proverb(&p, choice);
+
+ printf("%s\n", p);
+
+ return 0;
+
+}
+
+
+
+//2번
+
+#include <stdio.h>
+
+int get_sum(int[], int);
+
+int main(void)
+{
+ int arr[3][6] = {
+  {10,10,10,10,10},
+  { 10,10,10,10,10 },
+  { 10,10,10,10,10 }
+ };
+ int row_size, cols_size;
+ int i,total_sum=0;
+
+ row_size = sizeof(arr) / sizeof(arr[0]);
+ cols_size = sizeof(arr[0]) / sizeof(int);
+ 
+ for (i = 0; i < row_size; i++) {
+  total_sum += get_sum(arr[i], cols_size);
+ }
+
+ printf("%d %d배열 전체의 합은 : %d입니다.\n", row_size, cols_size, total_sum);
+
+ return 0;
+
+}
+
+int get_sum(int array[], int size)
+{
+ int sum = 0;
+ int i;
+ for (i = 0; i < size; i++) {
+  sum += array[i];
+ }
+ return sum;
+}
+
+
+//3번
+
+
+//4번
+
+#include <stdio.h>
+
+void set_max_ptr(int m[], int size, int **pmax);
+
+int main(void)
+{
+ int m[6] = { 5,6,1,3,7,9 };
+ int size = sizeof(m) / sizeof(int);
+ int max_num;
+ int *pm;
+ pm = &max_num;
+ 
+ set_max_ptr(m, size, &pm);
+
+ printf("배열의 가장 큰 값 : %d\n", max_num);
+
+ return 0;
+}
+
+void set_max_ptr(int m[], int size, int **pmax)
+{
+ int i;
+ **pmax = m[0];
+ for (i = 1; i < size; i++) {
+  if (**pmax < m[i]) **pmax = m[i];
+ }
+}
+
+
+//5번
+
+
+#include <stdio.h>
+#include <string.h>
+#define SIZE 3
+
+void sort_strings(char *[],int);
+
+int main(void)
+{
+ char *s[SIZE] = {
+  "mycopy",
+  "src",
+  "dst",
+ };
+ int i;
+ char *tmp;
+
+
+ sort_strings(s,SIZE);
+
+ for (i = 0; i < SIZE; i++) {
+  printf("s[%d]=%s\n", i, s[i]);
+ }
+ return 0;
+
+
+}
+
+void sort_strings(char *s[],int size)
+{
+ char *tmp;
+ int i,j;
+ for (i = 0; i < size - 1; i++) {
+  for (j = i + 1; j < size; j++) {
+   if (strcmp(s[i], s[j]) >= 0) {
+    tmp = s[i];
+    s[i] = s[j];
+    s[j] = tmp;
+   }
+  }
+ }
+
+
+}
+
+
+//6번
+
+
+#include <stdio.h>
+
+double get_average(int list[], int n);
+
+int main(void)
+{
+ int list[3][5] = {
+  {75,80,75,65,95},
+  {65,50,85,90,90 },
+  { 90,75,80,85,85 },
+ };
+ int i;
+ double average;
+ 
+ for (i = 0; i < 3; i++) {
+  average = 0.0;
+  average=get_average(list[i], 5);
+  printf("%d학생의 평균 : %.2lf\n", i+1, average);
+ }
+
+
+ return 0;
+
+}
+
+double get_average(int list[], int n)
+{
+ int *p = list;
+ int total=0, i;
+ for (i = 0; i < n; i++) {
+  total += *(p + i);
+ }
+
+ 
+ return total / (double)n;
+
+}
+ 
+
+//7번
+
+#include <stdio.h>
+#define WIDTH 10
+#define HEIGHT 10
+
+void brighten_image(int p[HEIGHT][WIDTH], int h, int w);
+void reverse_image(int p[HEIGHT][WIDTH], int h, int w);
+int main(void)
+{
+	int image[HEIGHT][WIDTH] = {
+		{0,0,0,0,9,0,0,0,0,0},
+		{ 0,0,0,9,9,0,0,0,0,0 },
+		{ 0,0,9,0,9,0,0,0,0,0 },
+		{ 0,0,0,0,8,0,0,0,0,0 },
+		{ 0,0,0,0,9,0,0,0,0,0 },
+		{ 0,0,0,0,7,0,0,0,0,0 },
+		{ 0,0,0,0,8,0,0,0,0,0 },
+		{ 0,0,0,0,9,0,0,0,0,0 },
+		{ 0,0,0,0,9,0,0,0,0,0 },
+		{ 0,0,6,6,9,7,7,0,0,0 },
+	};
+	brighten_image(image, HEIGHT, WIDTH);
+	reverse_image(image, HEIGHT, WIDTH);
+
+	return 0;
+}
+
+void brighten_image(int p[HEIGHT][WIDTH], int h, int w)
+{
+	int x, y;
+	for (y = 0; y < h; y++) {
+		for (x = 0; x < w; x++) {
+			if ((p[x][y]) < 5) p[x][y] = 255;
+			else p[x][y] = 0;
+		}
+
+	}
+}
+
+void reverse_image(int p[HEIGHT][WIDTH], int h, int w)
+{
+	int x, y;
+	for (y = 0; y < h; y++) {
+		for (x = 0; x < w; x++) {
+			p[x][y] = 255 - pa[x][y];
+		}
+	}
+
+}
+
+
+//8번
+
+
+#include <stdio.h>
+#include <string.h>
+#define ROWS 3
+#define COLS 10
+
+
+void array_copy(char array1[], char array2[], int size);
+
+int main(void)
+{
+	char arr1[ROWS][COLS] = {
+		"Hello",
+		"I am",
+		"Zac :D"
+	};
+	char arr2[ROWS][COLS] = { '\0' };
+	int i;
+	
+	for (i = 0; i < ROWS; i++) {
+		array_copy(arr1[i], arr2[i], COLS);
+	}
+
+	for (i = 0; i < ROWS; i++) {
+		printf("%s\n", arr2[i]);
+	}
+	return 0;
+}
+
+void array_copy(char *p1, char *p2, int size)
+{
+	int i;
+	for (i = 0; i < size; i++) {
+		*(p2 + i) = *(p1 + i);
+	}
+	
+}
+
+//9번
+
+
+
+
+
+
+
+
+ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ15장ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+
+미완 : 6번(비트연산자 보기)
+
+
+//1번
+
+(a)
+#ifdef DEBUG
+  printf("result=%f\n", result);
+#endif
+
+(b)
+#if(DEBUG==2)
+  printf("result=%f\n", result);
+#endif
+
+
+(c)
+#if(DEBUG==2&&LEVEL==3)
+  printf("result=%f\n", result);
+#endif
+
+
+(d)
+printf("line : %d.result=%f\n",__LINE__, result);
+
+
+(e)//미완
+#include <stdio.h>
+#define POWER_TYPE 1
+
+#if(POWER_TYPE==0)
+int power(int x, int y)
+#elif(POWER_TYPE==1)
+double power(int x, int y)
+#endif
+{
+ double result = 1.0;
+ int i;
+ for (i = 0; i < y; i++) {
+  printf("result=%lf\n", result);
+  result *= x;
+ }
+
+ return result;
+}
+
+int main(void)
+{
+ int a, b;
+ scanf("%d%d", &a, &b);
+
+#if(POWER_TYPE==0)
+ printf("결과 : %d\n", (power(a, b)));
+#elif(POWER_TYPE==1)
+ printf("결과 : %lf\n", (power(a, b)));
+#endif
+ return 0;
+}
+
+
+(f)
+#if(0)
+  printf("result=%lf\n", result);
+#endif
+
+
+
+//2번
+
+#include <stdio.h>
+#define GET_MIN(x,y,z) (x<y)?((x<z)?(x):(z)):((y<z)?(y):(z))
+
+int main(void)
+{
+ int a, b, c;
+
+ printf("3개의 정수를 입력하시오 :");
+ scanf("%d%d%d", &a, &b, &c);
+
+ printf("최소값은 %d입니다.\n", GET_MIN(a, b, c));
+
+ return 0;
+}
+
+
+
+//3번
+
+
+
+#include <stdio.h>
+#define ARRAY_INIT(array,size,value) {int i;for(i=0;i<size;i++){*(array+i)=value;}}
+
+//#define ARRAY_INIT(array,size,value) {int i;for(i=0;i<size;i++){array[i]=value;}}
+
+
+int main(void)
+{
+ int arr[10];
+ int i;
+ ARRAY_INIT(arr, 10, 1);
+
+ for (i = 0; i < 10; i++) {
+  printf("arr[%d]=%d\n", i, arr[i]);
+ }
+
+ return 0;
+}
+
+
+
+//4번
+
+#include <stdio.h>
+#define PI 3.141592
+#define get_volume(r,h) r*r*h*PI
+
+int main(void)
+{
+ double r, h;
+ double vol;
+
+ printf("반지름과 높이를 입력 하시오:");
+ scanf("%lf %lf", &r, &h);
+
+ vol = get_volume(r, h);
+
+ printf("원기둥의 부피는 %lf입니다.\n", vol);
+
+ return 0;
+
+}
+
+
+//5번
+
+#include <stdio.h>
+#include <string.h>
+
+#define IS_SPACE(c) (c==' '|c=='\t'|c=='\n')?(1):(0)
+
+int main(void)
+{
+ char text[50];
+ int res;
+ int size, i;
+ int count = 0;
+ char c = ' ';
+
+
+ 
+ printf("문자열을 입력하시오 :");
+ gets_s(text);
+
+ size = strlen(text);
+ res = IS_SPACE(c);
+
+
+ for (i = 0; i < size; i++) {
+  if ( (res=IS_SPACE(text[i]))== 1) {
+   count++;
+  }
+ }
+ printf("공백 문자의 개수는 %d입니다.\n", count);
+
+ return 0;
+}
+
+
+
+//6번
+
+
+#include <stdio.h>
+
+#define SET_BIT(n,pos) ((n)|  (  1   <<  (pos) ) ) 	//a
+#define CLR_BIT(n,pos) ((n )& ( (~1) <<  (pos) ) )	//b
+#define GET_BIT(n,pos) ((n )& ( (~1) <<  (pos) ) )	//c 
+int main(void)
+{
+
+	printf("%d\n", SET_BIT(9, 2));
+	printf("%d\n", CLR_BIT(9, 1));
+
+	return 0;
+}
+
+
+
+//7번
+
+#include <stdio.h>
+#define GET_BIT(n,pos) ((n )& ((1) << (pos)))	
+void display_bit(int value);
+
+int main(void)
+{
+	int n;
+	printf("정수값을 입력 하시오:");
+	scanf("%d", &n);
+	display_bit(n);
+
+	return 0;
+}
+
+void display_bit(int value)
+{
+	int i;
+
+	//총 32비트 중 value를 2진수로 나타내고 (1)<<pos에서 pos 가 31이면 100~~0000 , 30이면 010~00000 이런식.
+	//그러면 value의 2진수에서 1인 값만 pos랑 & AND연산에 의해 1 값이 나옴 .
+
+	for (i = 31; i >= 0; i--) {
+		if (GET_BIT(value, i)) {
+			printf("1");
+		}
+		else {
+			printf("0");
+		}
+	}
+	printf("\n");
+}
+
+
+
+//8번
+
+
+#include <stdio.h>
+
+void display_bit(int value,int,int);
+
+int main(void)
+{
+	int n,L_R,d;
+	printf("정수값을 입력 하시오:");
+	scanf("%d", &n);
+	printf("왼쪽 이동은 0, 오른쪽 이동은 1을 입력하시오: ");
+	scanf("%d", &L_R);
+	printf("이동시킬 거리 : ");
+	scanf("%d",&d);
+
+	display_bit(n,L_R,d);
+
+	return 0;
+}
+
+void display_bit(int value,int dir,int size)
+{
+	int i;
+	printf("이동 전 :");
+	for (i = 31; i >= 0; i--) {
+		if (value&((1) << (i))) {
+			printf("1");
+		}
+		else {
+			printf("0");
+		}
+	}
+	printf("\n이동 후 :");
+
+	if (dir == 0) {
+		for (i = 0; i < size; i++) {
+			value *= 2;
+		}
+		for (i = 31; i >= 0; i--) {
+			if (value&((1) << (i))) {
+				printf("1");
+			}
+			else {
+				printf("0");
+			}
+		}
+		printf("\n");
+	}
+	else {
+		for (i = 0; i < size; i++) {
+			value /= 2;
+		}
+		for (i = 31; i >= 0; i--) {
+			if (value&((1) << (i))) {
+				printf("1");
+			}
+			else {
+				printf("0");
+			}
+		}
+		printf("\n");
+	}
+		
+}
+
+
+
+
+//9번
+
+
+
+#include <stdio.h>
+#include <string.h>
+
+
+
+
+int main(void)
+{
+	char text[20];
+	char *pt;
+	int size, i;
+
+	printf("문자열을 입력하시오:");
+	gets_s(text);
+
+	pt = text;
+	size = strlen(text);
+	for (i = 0; i < size; i++) {
+		text[i] = text[i] ^ (1 << 5);
+	}
+
+	printf("결과 문자열 : %s\n", text);
+
+	return 0;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ16장ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+
+
+//1번
+
+#include <stdio.h>
+
+int main(void)
+{
+ FILE *fp1, *fp2;
+ char fname1[50], fname2[50];
+ char c1,c2;
+
+ printf("첫번째 파일 이름:");
+ gets_s(fname1);
+
+
+ printf("두번째 파일 이름:");
+ gets_s(fname2);
+
+ if ((fp1 = fopen(fname1, "r")) == NULL || (fp2 = fopen(fname2, "r")) == NULL) {
+  fprintf(stderr, "파일을 열 수 없습니다.\n");
+  return 1;
+ }
+ while ((!feof(fp1)) && (!feof(fp2))) {
+  c1 = fgetc(fp1); c2 = fgetc(fp2);
+  if (c1 != c2) {
+   printf("두 파일은 서로 다릅니다.\n");
+   goto A;
+  }
+ }
+ printf("두 파일은 서로 같습니다.\n");
+ A:
+ fclose(fp1);
+ fclose(fp2);
+
+ return 0;
+
+}
+
+
+
+//2번
+
+
+#include <stdio.h>
+#include <ctype.h>
+
+int main(void)
+{
+ FILE *fp1, *fp2;
+ char fname1[50], fname2[50];
+ char c1, c2;
+
+
+ printf("입력 파일 :");
+ gets_s(fname1);
+ 
+ printf("출력 파일 :");
+ gets_s(fname2);
+
+ if ((fp1 = fopen(fname1, "r")) == NULL || (fp2 = fopen(fname2, "w")) == NULL) {
+  fprintf(stderr, "파일 열 수 없음\n");
+  return 1;
+ }
+ while (!(feof(fp1))) {
+  c1 = fgetc(fp1);
+  if (islower(c1)) {
+   c2 = toupper(c1);
+  }
+  else {
+   c2 = c1;
+  }
+  fputc(c2, fp2);
+ }
+ fclose(fp1);
+ fclose(fp2);
+
+ return 0;
+}
+
+
+
+//3번
+
+
+#include <stdio.h>
+
+int main(void)
+{
+ FILE *fp1, *fp2;
+ char fname1[50], fname2[50];
+ int a;
+
+ printf("입력 파일 :");
+ scanf("%s", fname1);
+
+ printf("복사 파일 :");
+ scanf("%s", fname2);
+
+ if ((fp1 = fopen(fname1, "rb")) == NULL || (fp2 = fopen(fname2, "wb")) == NULL) {
+  fprintf(stderr, "파일 열 수 없음\n");
+  return 1;
+ }
+
+ while (!(feof(fp1))) {
+  fread(&a, sizeof(int), 1, fp1);
+  fwrite(&a, sizeof(int), 1, fp2);
+ }
+
+ fclose(fp1);
+ fclose(fp2);
+
+ return 0;
+}
+
+ 
+//4번
+
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int main(void)
+{
+ char fname1[100], fname2[100];
+ FILE *fp1, *fp2;
+ char buffer1[256], buffer2[256];
+ char diff_str[256];
+
+ printf("첫번째 파일 이름 :");
+ gets_s(fname1);
+
+
+ printf("두번째 파일 이름 :");
+ gets_s(fname2);
+
+ if ((fp1 = fopen(fname1, "r")) == NULL || (fp2 = fopen(fname2, "r")) == NULL) {
+  fprintf(stderr,"파일 열 수 없음.\n");
+  exit(1);
+ }
+
+
+ while (  (!feof(fp1))  && (!feof(fp2))  ) {
+  fgets(buffer1, 256, fp1);
+  fgets(buffer2, 256, fp2);
+  if (strstr(buffer1, buffer2) == NULL) {
+   puts("----두 파일이 서로 다릅니다.----");
+   printf("%s : %s\n", fname1, buffer1);
+   printf("%s : %s\n", fname2, buffer2);
+   return 0;
+  }
+ }
+ printf("두 파일은 같습니다.\n");
+
+ return 0;
+}   
+
+
+
+
+
+//5번
+
+
+#include <stdio.h>
+#include <stdlib.h>
+#define DEBUG 1
+#define SIZE 2
+
+typedef struct student {
+ char name[20];
+ int score1, score2, score3;
+ double average;
+}STUDENT;
+
+int main(void)
+{
+ FILE *fp1, *fp2;
+ char fname1[80];
+ char fname2[80];
+ char buffer[256];
+ int i;
+ STUDENT s[SIZE];
+
+ printf("입력 파일:");
+ scanf("%s", fname1);
+
+ printf("출력 파일:");
+ scanf("%s", fname2);
+
+ if ((fp1 = fopen(fname1, "r")) == NULL || (fp2 = fopen(fname2, "w")) == NULL) {
+  fprintf(stderr, "파일 열기 실패.\n");
+  exit(1);
+ }
+ // printf("%d", sizeof("이름\t국어\t영어\t수학")); //20byte
+ fseek(fp1, 20L, SEEK_SET);
+ for (i = 0; i < SIZE; i++) {
+  fscanf(fp1, "%s %d %d %d", &s[i].name, &s[i].score1, &s[i].score2, &s[i].score3);
+  s[i].average = (s[i].score1 + s[i].score2 + s[i].score3) / 3.0;
+ }
+
+ fputs("이름\t평균\n", fp2);
+ for (i = 0; i < SIZE; i++) {
+  fprintf(fp2, "%s\t%.2lf\n", s[i].name, s[i].average);  
+ }
+
+
+#if(DEBUG==1)
+ printf("%s %d %d %d\n", s[0].name, s[0].score1, s[0].score2, s[0].score3);
+ printf("%s %d %d %d\n", s[1].name, s[1].score1, s[1].score2, s[1].score3);
+#endif
+ fclose(fp1);
+ fclose(fp2);
+
+ return 0;
+}
+
+
+
+
+//6번
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+
+int main(void)
+{
+ FILE *fp;
+ char fname[80];
+ int count, c;
+
+
+ printf("파일 이름을 입력해주세요 : ");
+ scanf("%s", fname);
+
+ if ((fp = fopen(fname, "r")) == NULL) {
+  fprintf(stderr, "파일 열 수 없음.");
+  exit(1);
+ }
+
+ count = 0;
+ while (!(feof(fp))) {
+  c = fgetc(fp);
+  if (isprint(c) != NULL) {
+   count++;
+  }
+ }
+
+
+ printf("인쇄가능한 문자 : %d개\n", count);
+ fclose(fp);
+
+ return 0;
+
+}
+
+
+
+//7번
+
+#include <stdio.h>
+#include <stdlib.h>
+
+int main(void)
+{
+	FILE *fp;
+	char fname[20];
+	char buffer[256];
+
+	printf("파일 이름을 입력하시오:");
+	gets_s(fname);
+
+	if ((fp = fopen(fname, "w")) == NULL)
+	{
+		fprintf(stderr, "파일 열기 실패.\n");
+		exit(1);
+	}
+	while (1) {
+		gets_s(buffer);
+		if (buffer[0] == '\0' || buffer[0] == ' ' || buffer[0] == '\n') {
+			break;
+		}
+		fprintf(fp, "%s\n", buffer);		
+	}
+	fclose(fp);
+
+	return 0;
+}
+
+//8번
+
+
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+void get_rand(double *,int);
+void put_text(const double*,int);
+void put_bin(const double*,int);
+
+
+int main(void)
+{
+	double a[100];
+	double *pa = a;
+	get_rand(pa,100);
+	
+	put_text(pa,100);
+	put_bin(pa,100);
+
+	return 0;
+}
+
+void get_rand(double *p, int size)
+{
+	srand((unsigned)time(NULL));
+	int i;
+	for (i = 0; i < size; i++) {
+		*(p+i) = rand()+rand()%1000000*0.00001;
+	}
+
+}
+
+void put_text(const double* p, int size)
+{
+	FILE *fp;
+	int i;
+	if ((fp = fopen("e:\\test.txt", "w")) == NULL) {
+		fprintf(stderr, "파일 열기 실패\n");
+		exit(1);
+	}
+	for (i = 0; i < size; i++) {
+		fprintf(fp, "%lf ", *(p + i));
+	}
+	fclose(fp);
+}
+
+
+void put_bin(const double* p,int size)
+{
+	FILE *fp;
+	int i;
+	if ((fp = fopen("e:\\test.bin", "wb")) == NULL) {
+		fprintf(stderr, "파일 열기 실패\n");
+		exit(1);
+	}
+	for (i = 0; i < size; i++) {
+		fwrite(p + i, 8, size, fp);
+	}
+	fclose(fp);
+
+}
+
+
+//9번
+
+
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <windows.ui.xaml.hosting.h>
+
+
+int main(int argc, char *argv[])
+{
+	FILE *fp1, *fp2, *fp3;
+	char buffer[256];
+	if (argc != 4) {
+		printf("프로그램명 txt1 txt2 txt3을 입력해주세요.\n");
+		exit(1);
+	}
+
+	if ((fp1 = fopen(argv[1], "r")) == NULL) {
+		fprintf(stderr, "txt1을 열 수 없음.\n");
+		exit(1);
+	}
+	if ((fp2 = fopen(argv[2], "r")) == NULL) {
+		fprintf(stderr, "txt2을 열 수 없음.\n");
+		exit(1);
+	}
+
+	if ((fp3 = fopen(argv[3], "a+")) == NULL) {
+		fprintf(stderr, "txt2을 열 수 없음.\n");
+		exit(1);
+	}
+
+	while (!feof(fp1)) {
+		fgets(buffer, 256, fp1);
+		fputs(buffer, fp3);
+	}
+	fputc('\n', fp3);
+	while (!feof(fp2)) {
+		fgets(buffer, 256, fp2);
+		fputs(buffer, fp3);
+	}
+
+	fclose(fp1);
+	fclose(fp2);
+	fclose(fp3);
+
+	return 0;
+}
+
+
+
+//10번
+
+
+#include <stdio.h>
+#include <stdlib.h>
+
+int main(void)
+{
+	FILE *fp;
+	char fname[50];
+	char buffer[256];
+	int line = 1;
+
+	printf("원본 파일 이름을 입력 해주세요 : ");
+	gets_s(fname);
+
+	if ((fp = fopen(fname, "r+")) == NULL) {
+		fprintf(stderr, "파일 열기 실패.");
+		exit(1);
+	}
+
+	while (!feof(fp)) {
+		fgets(buffer, 256, fp);
+		printf("%6d: %s", line++, buffer);
+	}
+	fclose(fp);
+	
+
+	return 0;
+
+}
+
+
+//라인 넘버해서 복사하기
+
+#include <stdio.h>
+#include <stdlib.h>
+
+int main(void)
+{
+	FILE *fp,*fp2;
+	char fname[50],fname2[50];
+	char buffer[256];
+	int line = 1;
+
+	printf("원본 파일 이름을 입력 해주세요 : ");
+	gets_s(fname);
+	printf("복사 파일 이름을 입력 해주세요 : ");
+	gets_s(fname2);
+
+	if ((fp = fopen(fname, "r+")) == NULL|| (fp2 = fopen(fname2, "w")) == NULL) {
+		fprintf(stderr, "파일 열기 실패.");
+		exit(1);
+	}
+
+	while (!feof(fp)) {
+		fgets(buffer, 256, fp);
+		fprintf(fp2, "%6d: %s", line++, buffer);
+	}
+	fclose(fp);
+	fclose(fp2);
+
+	return 0;
+
+}
+
+
+
+//11번
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct BOOK {
+	char title[20];
+	char author[20];
+	char publish[50];
+}BOOK;
+
+void print_menu(void);
+
+int main(void)
+{
+	FILE *fp;
+	char fname[30] = "e:\\book.txt";
+	char buffer[256],word[50];
+	int choice;
+
+	if ((fp = fopen(fname, "w+")) == NULL) {
+		fprintf(stderr, "파일 열기 실패\n");
+		exit(1);
+	}
+
+	while (1) {
+		print_menu();
+		scanf("%d", &choice);
+
+		if (choice == 3) break;
+		else if (choice == 1) {
+			BOOK s;
+			printf("도서의 이름 : ");
+			scanf("%s", s.title);
+			while (getchar() != '\n');
+			printf("저자 : ");
+			scanf("%s", s.author);
+			while (getchar() != '\n');
+			printf("출판사명 : ");
+			scanf("%s", s.publish);
+			
+			fprintf(fp, "도서의 이름 : %s , 저자 : %s , 출판사명 : %s\n", s.title, s.author, s.publish);
+		}
+		else if (choice == 2) {
+			while (getchar() != '\n');
+			printf("찾을 저자 입력 :");
+			scanf("%s", word);
+
+			fseek(fp, 0L, SEEK_SET);
+
+			while (!feof(fp)) {
+				fgets(buffer,256,fp);
+				if (strstr(buffer, word)) {
+					printf("%s\n", buffer);
+				}
+			}
+		}
+	}
+
+	fclose(fp);
+	return 0;
+}
+
+void print_menu(void)
+{
+	puts("메뉴");
+	puts("1.추가");
+	puts("2.탐색");
+	puts("3.종료");
+	printf("번호를 입력하시오 : ");	
+}
+
+
+//솔루션 답 (구조체로 품)
+
+#include <stdio.h>
+#include <string.h>
+
+#define TITLE_SIZE 50
+#define NAME_SIZE 50
+#define PUBLISHER_SIZE 50
+
+typedef struct BOOK {
+	char title[TITLE_SIZE];
+	char author[NAME_SIZE];
+	char publisher[PUBLISHER_SIZE];
+}BOOK;
+
+void add_record(BOOK library[], int count);
+void menu();
+int get_input();
+void search_record(BOOK library[], int count);
+void print_record(BOOK library[], int count);
+
+int main(void)
+{
+	int num, count = 0;
+	BOOK library[30] = { '\0' };
+	while (1) {
+		menu();
+		num = get_input();
+		switch (num) {
+		case 1:
+			add_record(library, count);
+			count++;
+			continue;
+		case 2:
+			print_record(library, count);
+			continue;
+		case 3:
+			search_record(library, count);
+			continue;
+		case 4:
+			return -1;
+		}
+	}
+
+	return 0;
+
+}
+
+void menu()
+{
+	puts("================");
+	puts(" 1. 추가");
+	puts(" 2. 출력");
+	puts(" 3. 검색");
+	puts(" 4. 종료");
+	puts("================");
+}
+
+int get_input()
+{
+	int num;
+	printf("선택 : ");
+	scanf("%d", &num);
+	return num;
+}
+
+void add_record(BOOK library[], int count)
+{
+	int type;
+	while (getchar() != '\n');
+	printf("도서의 이름:");
+	gets_s(library[count].title);
+	printf("저자:");
+	gets_s(library[count].author);
+	printf("출판사:");
+	gets_s(library[count].publisher);
+
+}
+
+void print_record(BOOK library[], int count)
+{
+	int i;
+	while (getchar() != '\n');
+	for (i = 0; i < count; i++) {
+		printf("제목 : %s\n", library[i].title);
+		printf("저자 : %s\n", library[i].author);
+		printf("출판사 : %s\n", library[i].publisher);
+	}
+}
+
+
+void search_record(BOOK library[], int count)
+{
+	int i;
+	char title[TITLE_SIZE];
+	while (getchar() != '\n');
+	printf("제목 : ");
+	gets_s(title);
+
+	for (i = 0; i < count; i++) {
+		if (strcmp(title, library[i].title) == 0) {
+			printf("출판사는 %s\n", library[i].publisher);
+			return;
+		}
+	}
+	printf("찾는 책이 테이블에 없습니다.\n");
+
+
+}
+
+
+
+//12번
+
+
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int main(void)
+{
+	FILE *fp;
+	char fname[50], word[20], buffer[500];
+	int line = 1;
+
+	printf("파일 이름 : ");
+	gets_s(fname);
+
+	if ((fp = fopen(fname, "r")) == NULL) {
+		fprintf(stderr, "파일 열 수 없음");
+		exit(1);
+	}
+
+	while (1) {		
+		printf("탐색할 단어(종료 엔터) : ");
+		gets_s(word);
+		fseek(fp, 0L, SEEK_SET);
+		if (word[0] == '\0') {
+			break;
+		}
+		else {
+			while (!feof(fp)) {
+				fgets(buffer, 500, fp);
+				if (strstr(buffer, word)) {
+					printf("%s:%4d %s", fname, line++, buffer);
+				}
+				line++;
+			}
+		}		
+	}
+
+	fclose(fp);
+
+	return 0;
+}
+
+
+
+
+
+//13번
+
+
+
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+int main(void)
+{
+	FILE *fp1, *fp2;
+	char word1[50], word2[50];
+	char fname1[50], fname2[50];
+	char buffer[256],buffer2[256];
+	char *p;
+
+	printf("원본 파일 입력 :");
+	gets_s(fname1);
+	printf("새로운 파일 입력 :");
+	gets_s(fname2);
+
+	if ((fp1 = fopen(fname1, "r")) == NULL || (fp2 = fopen(fname2, "w")) == NULL) {
+		fprintf(stderr, "파일 열 수 없음.\n");
+		exit(1);
+	}
+
+	printf("변경 전 단어: ");
+	gets_s(word1);
+	printf("변경 후 단어: ");
+	gets_s(word2);
+		
+
+	while (fgets(buffer,100,fp1)!=NULL) {
+		char *pos = strtok(buffer, " ");
+		while (pos != NULL) {
+			if (strcmp(word1, pos) == 0) {
+				fprintf(fp2,"%s ",word2);
+			}
+			else {
+				fprintf(fp2, "%s ", pos);
+			}
+			pos = strtok(NULL, " ");
+		}
+	
+
+	}
+
+	fclose(fp1);
+	fclose(fp2);
+
+	return 0;
+}
+
+
+
+
+
+
+ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ17장ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+
+
+
+//1번
+
+#include <stdio.h>
+#include <stdlib.h>
+
+int main(void)
+{
+	int *p;
+	int n,i;
+	int sum = 0;
+	
+	printf("정수의 개수 :");
+	scanf("%d", &n);
+
+	p = (int*)malloc(n * sizeof(int));
+
+	if (p == NULL) {
+		printf("동적 메모리 할당 오류");
+		exit(1);
+	}
+
+	for (i = 0; i < n; i++) {
+		printf("정수 입력 :");
+		scanf("%d", &p[i]);
+	}
+
+	for (i = 0; i < n; i++) {
+		sum += p[i];
+	}
+	printf("합은 %d입니다.\n", sum);
+
+	free(p);
+
+	return 0;
+}
+
+
+
+
+
+
+//2번
+
+
+#include <stdio.h>
+#include <stdlib.h>
+
+#define S_SIZE 100
+
+int main(void)
+{
+	char *p;
+	char text[S_SIZE];
+	int count;
+
+	printf("문자열 개수 : ");
+	scanf("%d",&count);
+
+	p = (char*)malloc((count)*(sizeof(text)));
+
+	if (p == NULL) {
+		printf("동적할당 오류");
+		exit(1);
+	}
+	printf("%d개의 문자열을 저장할 수 있는 공간이 할당되었습니다.\n", count);
+
+	free(p);
+
+	return 0;
+}
+
+
+
+
+//3번
+
+SOL1)//구조체 n개 생성해서 입력 받고 출력하기
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct DATA {
+	char name[30];
+	char phone[30];
+}DATA;
+
+int main(void)
+{
+	DATA *p;
+	int count,i;
+	int line = 0;
+	
+	printf("주소의 개수 : ");
+	scanf("%d", &count);
+	while (getchar() != '\n');
+
+	
+	p = (DATA *)malloc(count * sizeof(DATA));
+
+	if (p == NULL) {
+		printf("동적 할당 오류\n");
+		exit(1);
+	}
+	
+	//주소저장
+	for (i = 0; i < count; i++) {
+		printf("이름 입력 :");
+		gets_s(p[i].name);
+		printf("휴대 전화 입력 :");
+		gets_s(p[i].phone);
+	}
+
+	//주소 출력
+	puts("===============================");
+	printf("%-6s    %s\n", "이름", "휴대폰 번호");
+	puts("===============================");
+	for (i = 0; i < count; i++) {
+		line++;
+		printf("%d.%-4s  %s\n", line, p[i].name, p[i].phone);
+	}
+	puts("===============================");
+	
+	free(p);	
+	return 0;
+}
+
+
+
+
+
+
+SOL2)//구조체 1개씩 생성해서 연결리스트 만들기
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct DATA {
+	char name[30];
+	char phone[30];
+	struct DATA *link;
+}DATA;
+
+void print_data(DATA *plist);
+
+int main(void)
+{
+	DATA *list=NULL;
+	DATA *prev, *p, *next;
+	int count,i;
+	char buffer[30];
+	
+	printf("주소의 개수 : ");
+	scanf("%d", &count);
+	while (getchar() != '\n');
+
+	//주소저장
+	for (i = 0; i < count; i++) {
+
+		p = (DATA*)malloc(sizeof(DATA));
+		
+		if (p == NULL) {
+			printf("동적 할당 실패\n");
+			exit(1);
+		}
+
+		printf("이름을 입력하시오:");
+		gets_s(buffer);
+		strcpy(p->name, buffer);
+	
+		printf("휴대폰 번호 입력 :");
+		gets_s(buffer);
+		strcpy(p->phone, buffer);
+				
+		if (list == NULL) {
+			list = p;
+		}
+		else {
+			prev->link = p;
+		}
+		prev = p;
+		p->link = NULL;
+	}
+
+	print_data(list);
+	
+	p = list;
+	
+	while (p) {
+		next = p->link;
+		free(p);
+		p = next;
+	}
+
+	return 0;
+}
+
+void print_data(DATA *plist)
+{
+	DATA *p;
+	int line=0;
+	puts("===============================");
+	printf("%-6s    %s\n", "이름", "휴대폰 번호");
+	puts("===============================");
+	p = plist;
+	while (p) {
+		line++;
+		printf("%d.%-4s  %s\n",line, p->name, p->phone);
+		p = p->link;
+	}
+	puts("===============================");
+}
+
+
+
+
+//4번
+
+
+#include <stdio.h>
+#include <stdlib.h>
+
+#define S_SIZE 50
+
+char *get_word();
+
+int main(void)
+{
+	char *p;
+
+	
+	p=get_word();
+	printf("동적 메모리에 저장된 단어는 %s입니다.\n",p);
+
+	free(p);
+	
+	return 0;
+}
+
+char *get_word()
+{
+	char *q;
+	q = (char *)malloc(sizeof(char[S_SIZE]));
+	if (q == NULL) {
+		printf("동적 할당 실패\n");
+		exit(1);
+	}
+	printf("단어를 입력하세요 : ");
+	scanf("%s", q);
+	return q;
+
+}
+
+
+
+//5번
+
+
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct NODE {
+	int num;
+	struct NODE *link;
+}NODE;
+
+int main(void)
+{
+	NODE *list = NULL;
+	NODE *prev, *p, *next;
+	int n;
+
+	//동적할당으로 공간 확보하고 데이터 저장하기
+	while (1) {
+		printf("양의 정수를 입력하세요(종료-1) : ");
+		scanf("%d", &n);
+
+		if (n == -1) break;
+
+		p =(NODE*)malloc(sizeof(NODE));
+		p->num = n;
+
+		if (list == NULL) {
+			list = p;
+		}
+		else {
+			prev->link = p;
+		}
+		p->link = NULL;
+		prev = p;
+	}
+
+	//출력하기 
+	p = list;
+	while (p) {
+		printf("%d->", p->num);
+		p = p->link;
+	}
+	printf("NULL\n");
+
+	//동적할당 삭제하기
+	p = list;
+	while (p) {
+		next = p->link;
+		free(p);
+		p = next;
+	}
+
+	return 0;
+}
+
+
+
+
+//6번
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct NODE {
+	char name[20];
+	char phone[20];
+	struct NODE *link;
+}NODE;
+
+void print_menu(void);
+
+
+
+int main(void)
+{
+	NODE *list = NULL;
+	NODE *prev, *p, *next;
+	char buffer[20];
+	int choice, line = 0;
+
+	while (1) {
+		print_menu();
+		scanf("%d", &choice);
+		while (getchar() != '\n');
+
+		if (choice == 5) break;
+
+		else if (choice == 1) {
+			//초기화시 데이터가 있으면
+			if (list != NULL) {
+				p = list;
+				while (p) {
+					next = p->link;
+					free(p);
+					p = next;
+				}
+			}
+			//초기화시 데이터가 없으면
+			else {
+				p = (NODE *)malloc(sizeof(NODE));
+				if (p == NULL) {
+					printf("동적할당오류\n");
+					exit(1);
+				}
+
+				printf("이름 : ");
+				gets_s(p->name);
+				printf("휴대전화 : ");
+				gets_s(p->phone);
+
+				list = p;
+				prev = p;
+				p->link = NULL;
+				printf("추가되었습니다.\n");
+			}
+		}
+
+		else if (choice == 2) {
+			if (list == NULL) {
+				printf("초기화를 진행해주세요.\n");
+			}
+			else {
+				//마지막 노드를 찾는다
+				p = list;	
+				while (p) {
+					prev = p;
+					p = p->link;
+				}
+				
+				p = (NODE*)malloc(sizeof(NODE));
+				if (p == NULL) {
+					printf("동적할당오류\n");
+					exit(1);
+				}
+
+				printf("이름 : ");
+				gets_s(p->name);
+				printf("휴대전화 : ");
+				gets_s(p->phone);
+
+				prev->link = p;
+				prev = p;
+				p->link = NULL;
+				printf("추가 되었습니다.\n");
+			}
+		}
+
+		else if (choice == 3) {
+			printf("찾을 번호를 입력하세요:");
+			gets_s(buffer);
+			p = list;
+			while (p) {
+				if ((strstr(p->phone, buffer))) {
+					printf("이름 : %s , 번호 : %s\n", p->name, p->phone);
+				}
+				p = p->link;
+			}
+		}
+		else if (choice == 4) {
+			p = list;
+			while (p) {
+				line++;
+				printf("%d- 이름 : %s // 번호 : %s\n", line, p->name, p->phone);
+				p = p->link;
+			}
+		}
+	}
+
+	p = list;
+	while (p) {
+		next = p->link;
+		free(p);
+		p = next;
+	}
+
+
+	return 0;
+}
+
+void print_menu(void)
+{
+	puts("------------------");
+	puts("1.초기화");
+	puts("2.전화 번호 추가");
+	puts("3.전화 번호 탐색");
+	puts("4.전체 데이터 출력");
+	puts("5.종료");
+	puts("------------------");
+}
+
+
+
+
+
+//7번
+
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct NODE {
+	int num;
+	char name[30];
+	char year[20];
+	struct NODE *link;
+}NODE;
+
+void print_menu(void);
+void print_data(NODE *);
+
+
+int main(void)
+{
+	NODE *list = NULL;
+	NODE *prev, *p, *next, *temp;
+	int choice, num, adnum;
+
+
+	while (1) {
+		print_menu();
+		scanf("%d", &choice);
+		while (getchar() != '\n');
+		//종료선택
+		if (choice == 8) {
+			break;
+		}
+		//시스템 클리어 선택
+		else if (choice == 7) {
+			system("cls");
+		}
+		//초기화 선택
+		else if (choice == 1) {
+			//기존에 데이터가 있으면 동적 할당 다 없앰
+			if (list != NULL) {
+				p = list;
+				while (p) {
+					next = p->link;
+					free(p);
+					p = next;
+				}
+			}
+
+			
+			num = 1;
+			p = (NODE*)malloc(sizeof(NODE));
+			if (p == NULL) {
+				printf("동적 할당 실패 \n");
+				exit(1);
+			}
+
+			printf("영화 제목을 입력하시오 : ");
+			gets_s(p->name);
+			printf("영화의 개봉 연도를 입력하시오 : ");
+			gets_s(p->year);
+
+			p->num = num;
+
+			list = p;
+			p->link = NULL;
+			prev = p;
+		}
+
+
+		else if (choice == 2) {
+			if (list == NULL) {
+				printf("초기화를 진행해주세요.\n");
+				exit(1);
+			}
+
+			//마지막 노드를 찾기
+
+			p = list;
+			while (p) {
+				prev = p;
+				p = p->link;
+			}
+
+			p = (NODE *)malloc(sizeof(NODE));
+
+			if (p == NULL) {
+				printf("동적 할당 실패 \n");
+				exit(1);
+			}
+
+			printf("영화 제목을 입력하시오 : ");
+			gets_s(p->name);
+			printf("영화의 개봉 연도를 입력하시오 : ");
+			gets_s(p->year);
+			p->num = (prev->num) + 1;
+
+			prev->link = p;
+			prev = p;
+			p->link = NULL;
+		}
+		//영화 정보 출력
+		else if (choice == 3) {
+			print_data(list);
+			printf("\n");
+		}
+
+
+		//영화 내용 수정
+		else if (choice == 4) {
+
+			print_data(list);
+			printf("수정할 번호를 입력하세요 : ");
+			scanf("%d", &adnum);
+			while (getchar() != '\n');
+			p = list;
+			while (1)
+			{
+				if (p->num == adnum) break;
+				else p = p->link;
+			}
+			printf("수정할 내용의 제목을 입력 하세요: ");
+			gets_s(p->name);
+			printf("수정한 연도를 입력하세요 : ");
+			gets_s(p->year);
+		}
+
+		//영화 정보 삽입
+		else if (choice == 5) {
+
+			print_data(list);
+			printf("삽입할 번호를 입력하세요 : ");
+			scanf("%d", &adnum);
+			while (getchar() != '\n');
+			p = list;
+			while (1)
+			{
+				if (p->num == (adnum - 1)) break;
+				else p = p->link;
+			}
+			prev = p;
+			next = p->link;
+
+			p = (NODE *)malloc(sizeof(NODE));
+			if (p == NULL) {
+				printf("동적 할당 실패 \n");
+				exit(1);
+			}
+			printf("영화 제목을 입력하시오 : ");
+			gets_s(p->name);
+			printf("영화의 개봉 연도를 입력하시오 : ");
+			gets_s(p->year);
+			p->num = next->num;
+
+			prev->link = p;
+			p->link = next;
+
+			p = next;
+
+			while (p) {
+				(p->num) += 1;
+				p = p->link;
+			}
+		}
+
+		//영화 정보 삭제 
+		else if (choice == 6) {
+			print_data(list);
+			printf("삭제할 번호를 입력하세요 : ");
+			scanf("%d", &adnum);
+			while (getchar() != '\n');
+			p = list;
+			while (1)
+			{
+				if (p->num == (adnum - 1)) break;
+				else p = p->link;
+			}
+			prev = p;
+			next = (p->link)->link;
+			temp = p->link;
+
+			p = p->link;
+			while (p) {
+				(p->num) -= 1;
+				p = p->link;
+			}
+			prev->link = next;
+			free(temp);
+		}
+	}
+	p = list;
+	while (p) {
+		next = p->link;
+		free(p);
+		p = next;
+	}
+
+	return 0;
+}
+
+
+void print_menu(void)
+{
+	puts("---------------------------------------------");
+	puts("1. 영화 정보 초기화 ");
+	puts("2. 영화 정보 추가   ");
+	puts("3. 영화 정보 출력   ");
+	puts("4. 영화 내용 수정   ");
+	puts("5. 영화 정보 삽입   ");
+	puts("6. 영화 정보 삭제   ");
+	puts("7. Clears ");
+	puts("8. 종료");
+	puts("---------------------------------------------");
+}
+
+void print_data(NODE *plist)
+{
+	NODE *p = plist;
+	system("CLS");
+	puts("------------현재까지 저장 된 데이터 ----------");
+	while (p) {
+		printf("%d. %s(%s)\n", p->num, p->name, p->year);
+		p = p->link;
+	}
+	puts("----------------------------------------------");
+}
+
+
+
+
+
+
+
+
+

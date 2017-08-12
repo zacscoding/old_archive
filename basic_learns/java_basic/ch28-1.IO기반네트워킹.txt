@@ -1,0 +1,958 @@
+-------------------ch28.네트워킹-----------------------
+//1.네트워크 기초
+
+/1.1 서버와 클라이언트
+서버(Server) : 서비스를 제공하는 프로그램
+클라이언트(Client) : 서비스를 제공 받는 프로그램
+
+클라이언트					서버
+		-->1.연결요청-->	2.연결수락
+		-->3.처리요청--> 	4.처리
+		<-5.응답(처리결과)-
+
+=>
+클라이언트/서버(C/S:client/server)는 한 개의 서버와 다수의 클라이언트로 구성되는 것이 보통.
+(P2P(peer to peer) : 두 개의 프로그램이 서버인 동시에 클라이언트 역할 e.g 1:1채팅, 파일 공유 프로그램..)		
+
+------
+
+/1.2 IP 주소와 포트(port)
+IP(Internet Protocol) , DNS (Domain Name Server) 
+
+=>한대의 컴퓨터에서 다양한 서버 프로그램들이 실행될 수 있음.
+(e.g : 웹(Web) 서버, DBMS, FTP 서버 등)
+=>IP주소 이외에 포트(port)번호를 통해 구별 가능
+=>포트 바인등(binding) : 서버는 시작할 때 고정적인 포트 번호를 가지고 있음 e.g)웹 서버 80번과 바인딩, FTP 서버는 21번과 바인딩
+=>클라이언트도 포트번호가 필요 -> 고정적X 운영체제가 자동으로 부여하는 동적 포트 번호를 사용
+
+구분명							범위				설명
+Well Know Port Numbers			0~1023			국제인터넷주소관리기구(ICANN)가 특정 애플리케이션용으로 미리 예약한 포트
+Registred Port Numbers			1024~49151		회사에서 등록해서 사용할 수 있는 포트
+Dynamic Or Private Port Numbers	49152~65535 	운영체제가 부여하는 동적 포트 또는 개인적인 목적으로 사용할 수 있는 포트
+
+------
+
+유니캐스트 : 1:1 ?
+멀티캐스트 : 지역방송,돈내야 보는거?
+브로드캐스트 : 라디오 -> 주파수만 맞으면 가능
+
+------
+
+/1.3 InetAddress 로 IP 주소 얻기
+=>자바는 IP 주소를 java.net.InetAddress 객체로 표현
+
+
+e.g) 로컬 컴퓨터의 IP와 네이버(www.naver.com)의 IP 정보 출력
+
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+
+
+public class Main {
+	public static void main(String[] args){
+		try{
+			InetAddress local=InetAddress.getLocalHost();
+			System.out.println(local.getHostName()+"`s IP address : "+local.getHostAddress());
+			
+			InetAddress[] iaArr=InetAddress.getAllByName("www.naver.com");	//DNS의 모든 IP 를 담은 InetAddress 배열
+			for(InetAddress remote : iaArr)
+				System.out.println(remote.getHostName()+" : "+remote.getHostAddress());
+					
+		}catch(UnknownHostException e){
+			e.printStackTrace();
+		}
+	}
+}
+
+<< 실행 결과 >>
+zac`s IP address : 220.87.72.80
+www.naver.com : 202.179.177.22
+www.naver.com : 202.179.177.21
+
+-------------------------------------------------------------------------------------
+
+//2. TCP 네트워킹
+;TCP(Transmission Control Protocol)는 연결 지향적(C-S가 연결된 상태에서 데이터를 주고받는 프로토콜) 프로토콜.
+=>클라이언트 연결 요청 & 서버가 연결 수락 -> 통신 선로 고정 & 모든 데이터는 고정된 통신 선로를 통해서 순차적 전달.
+=>
+장점 : 데이터를 정확하고 안정적으로 전달.
+단점 : 데이터 보내기 전 반드시 연결이 형성(가장 시간이 많이 걸리는 작업) // 고정된 통신 선로가 최단선(네트워크 길이 측면)이 아닐 경우
+      상대적으로 UDP(User Datagram Protocol)보다 데이터 전송 속도가 느릴 수 있음
+=>
+자바는 TCP 네트워킹을 위해 java.net.ServerSocket 과 java.net.Socket 클래스를 제공
+
+------
+
+/2.1 ServerSocket과 Socket의 용도
+;TCP 서버의 역할
+1)클라이언트의 연결 요청을 수락 -> java.net.ServerSocket 클래스
+2)연결된 클라이언트와 통신 -> java.net.Socket 클래스
+
+=>
+클라이언트 : 서버의 IP 주소와 바인딩 포트 번호로  Socket을 생성 & 연결 요청
+서버 : ServerSocket은 연결 요청을 해오면 accept() 메소드로 연결 수락 & 통신용 Socket 생성 & Socket을 통해 서로 데이터 주고 받음
+
+
+------
+
+/2.2 ServerSocket 생성과 연결 수락
+ServerSocket 생성방법
+1)
+ServerSocket serverSocket=new ServerSocket(5001);	//5001번 포트에 바인딩하는 ServerSocket 객체
+
+2)
+ServerSocket serverSocket=new ServerSocket();
+serverSocket.bin(new InetSocketAddress(5001));
+
+3)서버 PC에 멀티 IP 가 할당된 경우, 특정 IP 로 접속할 때만 연결 수락
+ServerSocket serverSocket=new ServerSocket();
+serverSocket.bin(new InetSocketAddress("localhost",5001));	//localhost에 특정 IP 입력
+
+=>해당 포트가 다른 포트에 이미 사용중이면, BindException 발생
+
+/*	다중 클라이언트 연결을 수락하는 가장 기본적인 코드	*/
+
+
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.net.ServerSocket;
+import java.net.Socket;
+
+public class ServerExample {
+	public static void main(String[] args){
+		ServerSocket serverSocket=null;
+		
+		try{
+			serverSocket=new ServerSocket();
+			serverSocket.bind(new InetSocketAddress("localhost",5001));	//ServerSocket 생성
+			
+			while(true){
+				System.out.println("[연결 기다림]");
+				Socket socket=serverSocket.accept();	//클라이언트 연결 수락(블로킹)
+				InetSocketAddress isa=(InetSocketAddress)socket.getRemoteSocketAddress();
+				System.out.println("[연결 수락함]"+isa.getHostName());
+				//isa.getHostName(); //클라이언트 IP 리턴
+				//isa.getPort(); // 클라이언트 포트 번호 리턴
+				//isa.toString(); // "IP:포트번호" 형태의 문자열 리턴
+			}
+			
+		}catch(Exception e){}
+		
+		if(!serverSocket.isClosed()){ //ServerSocket이 닫혀있지 않을 경우
+			try{
+				serverSocket.close();
+			}catch(IOException ex){}			
+		}		
+	}
+}
+
+------
+
+/2.3 Socket 생성과 연결 요청
+;클라이언트가 서버에 연결 요청하려면 java.net.Socket을 이용 
+=>Socket 객체를 생성 및 연결요청하는 방법
+
+try{
+	//방법1(객체 생성 + 연결요청)
+	Socket socket=new Socket("localhost",5001);	
+	//방법2(객체 생성 + 연결요청)
+	Socket socket=new Socket( new InetSocketAddress("localhost",5001) );	
+	//방법3(객체 생성 후 연결요청) ->도메인 쓸 때, IP를 얻어야 하므로
+	Socket socket=new Socket();	//객체생성
+	socket.connet( new InetSocketAddress("localhost",5001) );	//연결요청
+	
+}catch(UnknownHostException e){
+	//IP 표기 방법이 잘못되었을 경우
+}catch(IOException e){
+	//해당 포트의 서버에 연결할 수 없는 경우
+}
+
+
+/*	localhost 5001 포트로 연결을 요청하는 코드	*/
+
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.net.Socket;
+import java.net.UnknownHostException;
+
+public class ClientExample {
+	public static void main(String[] args){
+		Socket socket=null;
+		
+		try{
+			socket=new Socket();	//Socket 생성
+			System.out.println("[연결 요청]");
+			socket.connect(new InetSocketAddress("localhost",5001));	//연결 요청
+			System.out.println("[연결 성공]");
+		}catch(UnknownHostException e){
+			//잘못 표기된 IP 주소를 입력 했을때
+		}catch(IOException e){
+			//주어진 포트로 접속할 수 없을때 
+		}
+		
+		if(!socket.isClosed()){	//연결이 되어 있을 경우
+			try{
+				socket.close();	//연결 끊기
+			}catch(IOException e){}
+		}		
+	}
+}
+
+
+ServerExample 실행 후 ClientExample 실행
+
+<< 실행 결과 >>
+[연결 기다림]
+[연결 수락함]127.0.0.1
+
+------
+
+/2.4 Socket 데이터 통신
+;Socket 데이터 통신 그림
+
+e.g)
+1)클라이언트가 먼저 "Hellow Server"를 서버로 보내고 
+2)서버가 이 데이터를 받고 
+3)"Hellow Client"를 클라이언트로 보내면
+4)클라이언트가 이 데이터를 받음
+
+
+
+1) ClientExample
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.InetSocketAddress;
+import java.net.Socket;
+import java.net.UnknownHostException;
+
+public class ClientExample {
+	public static void main(String[] args){
+		Socket socket=null;		
+		try{
+			socket=new Socket();
+			System.out.println("[연결 요청]");
+			socket.connect(new InetSocketAddress("localhost",5001));
+			System.out.println("[연결 성공]");
+			
+			byte[] bytes=null;
+			String message=null;
+			
+			OutputStream os=socket.getOutputStream();
+			message="Hello Server";
+			bytes=message.getBytes("UTF-8");
+			os.write(bytes);
+			os.flush();
+			System.out.println("[데이터 보내기 성공]");
+			
+			InputStream is=socket.getInputStream();
+			bytes=new byte[100];
+			int readByteCount=is.read(bytes);
+			message=new String(bytes,0,readByteCount,"UTF-8");
+			System.out.println("[데이터 받기 성공]"+message);
+			
+			os.close();
+			is.close();			
+			
+		}catch(UnknownHostException e){
+			//잘못 표기된 IP 주소를 입력 했을때
+		}catch(IOException e){
+			//주어진 포트로 접속할 수 없을때 
+		}
+		
+		if(!socket.isClosed()){
+			try{
+				socket.close();
+			}catch(IOException e){}
+		}
+		
+	}
+}
+
+
+
+2)ServerExample
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.InetSocketAddress;
+import java.net.ServerSocket;
+import java.net.Socket;
+
+public class ServerExample{
+	public static void main(String[] args){
+		ServerSocket serverSocket=null;
+		
+		try{
+			serverSocket=new ServerSocket();
+			serverSocket.bind(new InetSocketAddress("localhost",5001));	//ServerSocket 생성
+			
+			while(true){
+				System.out.println("[연결 기다림]");
+				Socket socket=serverSocket.accept();	//클라이언트 연결 수락
+				InetSocketAddress isa=(InetSocketAddress)socket.getRemoteSocketAddress();
+				System.out.println("[연결 수락함]"+isa.getHostName());
+				
+				byte[] bytes=null;
+				String message=null;
+				
+				InputStream is=socket.getInputStream();
+				bytes=new byte[100];
+				int readByteCount=is.read(bytes);
+				
+				message=new String(bytes,0,readByteCount,"UTF-8");
+				System.out.println("[데이터 받기 성공]"+message);
+				
+				OutputStream os=socket.getOutputStream();
+				message="Hello Client";
+				bytes=message.getBytes("UTF-8");
+				os.write(bytes);
+				os.flush();
+				System.out.println("[데이터 보내기 성공]");
+				
+				is.close();
+				os.close();
+				socket.close();				
+			}			
+		}catch(Exception e){}
+		
+		if(!serverSocket.isClosed()){ //ServerSocket이 닫혀있지 않을 경우
+			try{
+				serverSocket.close();
+			}catch(IOException ex){}			
+		}		
+	}
+}
+
+<< 실행결과 :ServerExample >>
+[연결 기다림]
+[연결 수락함]127.0.0.1
+[데이터 받기 성공]Hello Server
+[데이터 보내기 성공]
+[연결 기다림]
+
+<< 실행결과 :ClinetExample >>
+[연결 요청]
+[연결 성공]
+[데이터 보내기 성공]
+[데이터 받기 성공]Hello Client
+
+
+=>
+데이터를 받기 위해 InputStream의 read() 메소드를 호출하면 상대방이 데이터를 보내기 전까지는 블로킹(blocking)상태.
+read() 메소드가 블로킹 해제되고 리턴되는 경우는 3가지
+
+1)상대방이 데이터를 보냄						리턴값 : 읽은 바이트 수
+2)상대방이 정상적으로 Socket의 close() 호출 				리턴값 : -1
+3)상대방이 비정상적으로 종료						IOException 발생
+
+
+------
+
+/2.5 스레드 병렬 처리
+;ServerSocket 과 Socket은 동기(블로킹)방식으로 구동
+=>accept(), connect(), read(), write() 는 별도의 작업 스레드를 생성해서 병렬적으로 처리하는 것이 좋음.
+
+------
+
+/2.6 채팅 서버 구현
+
+
+서버 클래스 구조
+import java.net.ServerSocket;
+import java.util.concurrent.ExecutorService;
+
+import javafx.application.Application;
+
+public class ServerExample extends Application{
+	ExecutorService executorService;
+	ServerSocket serverSocket;
+	List<Client> connections=new Vector<Client>();
+	
+	void startServer(){
+		//서버 시작 코드
+	}
+	
+	void stopServer(){
+		//서버 종료 코드
+	}
+	
+	class Client{
+		//데이터 통신 코드
+	}
+	
+	/////////////////////
+	//UI 생성 코드
+	
+}
+
+1)JavaFX 메인 클래스로 만들기 위해 Application을 상속받고 있음
+2)스레드풀인 ExecutorService 필드가 선언
+3)클라이언트의 연결을 수락하는 ServerSocket 필드가 선언
+4)연결된 클라이언트를 저장하는 List<Client> 타입의 Connections 필드가 선언 & 스레드에 안전한 Vector로 초기화
+6)startServer() 서버 시작 시 호출되는 메소드
+7)stopServer() 서버 종료 시 호출되는 메소드
+8)Client 클래스는 연결된 클라이언트를 표현하는데, 데이터 통신 코드를 포함한다.
+9)UI 생성코드는 레이아웃을 구성하고  ServerExample을 실행시킨다.
+
+
+//서버 코드
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.InetSocketAddress;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Vector;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.geometry.Insets;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.TextArea;
+import javafx.scene.layout.BorderPane;
+import javafx.stage.Stage;
+
+public class ServerExample extends Application{
+	ExecutorService executorService;
+	ServerSocket serverSocket;
+	List<Client> connections=new Vector<Client>();
+	
+	void startServer(){
+		//서버 시작 코드
+		
+		//CPU코어 수만큼 스레드를 만드는 ExecutorService 객체 얻기
+		executorService=Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+		
+		//ServerSocket 생성 및 포트 바인딩
+		try{
+			serverSocket=new ServerSocket();	//ServerSocket 객체 생성
+			serverSocket.bind(new InetSocketAddress("localhost",5001));	//로컬 컴퓨터 5001 포트와 바인딩
+		}catch(Exception e){
+			if(!serverSocket.isClosed()){
+				stopServer();
+				return;
+			}
+		}
+		
+		//연결을 수락하는 코드
+		Runnable runnable=new Runnable(){
+			@Override
+			public void run(){
+				Platform.runLater(()->{
+					displayText("[서버 시작]");
+					btnStartStop.setText("stop");					
+				});
+				
+				while(true){
+					try{
+						Socket socket=serverSocket.accept();//연결 수락
+						String message="[연결 수락:"+socket.getRemoteSocketAddress()+": "+Thread.currentThread().getName()+"]";
+						Platform.runLater(()->displayText(message));
+						
+						//Client 객체 저장
+						Client client=new Client(socket);
+						connections.add(client);
+						
+					}catch(Exception e){
+						if(!serverSocket.isClosed()){
+							stopServer();
+							break;
+						}
+					}
+					
+				}
+				
+			}				
+		};
+		executorService.submit(runnable);	//스레드풀에서 처리				
+	}
+	
+	void stopServer(){
+		//서버 종료 코드
+		try{
+			//모든 Socket 닫기
+			Iterator<Client> iterator=connections.iterator();
+			while(iterator.hasNext()){
+				Client client=iterator.next();
+				client.socket.close();
+				iterator.remove();
+			}
+			
+			//ServerSocket 닫기
+			if(serverSocket!=null && !serverSocket.isClosed()){
+				serverSocket.close();
+			}
+			
+			//ExecutorService 종료
+			if(executorService!=null && !executorService.isShutdown()){
+				executorService.shutdown();
+			}
+			
+			Platform.runLater(() -> {
+				displayText("[서버 멈춤]");
+				btnStartStop.setText("start");
+			});			
+		}catch(Exception e){}
+	}
+	
+	class Client{		
+		Socket socket;
+		
+		Client(Socket socket){
+			this.socket=socket;
+			receive();
+		}
+		
+		/* 데이터 통신 코드 */
+		
+		//데이터 받기
+		void receive(){
+			Runnable runnable=new Runnable(){
+				@Override
+				public void run(){
+					try{
+						while(true){
+							byte[] byteArr=new byte[100];
+							InputStream inputStream=socket.getInputStream();
+							
+							//클라이언트가 비정상 종료 했을 경우 IOException 발생
+							int readByteCount=inputStream.read(byteArr);
+							
+							//클라이언트가 정상적으로 Socket의 close()를 호출했을 경우
+							if(readByteCount==-1){
+								throw new IOException();
+							}
+							
+							String message="[요청 처리 : "+socket.getRemoteSocketAddress()+": "+Thread.currentThread().getName()+"]";
+							Platform.runLater(()->displayText(message));
+							
+							String data=new String(byteArr,0,readByteCount,"UTF-8");	//문자열로 바꾸기
+							for(Client client : connections){	//모든 클라이언트에게 보냄
+								client.send(data);
+							}							
+							
+						}
+					}catch(Exception e){
+						try{
+							connections.remove(Client.this);
+							String message="[클라이언트 통신 안됨: "+socket.getRemoteSocketAddress()+": "+Thread.currentThread().getName()+"]";
+							Platform.runLater(()->displayText(message));
+							socket.close();
+						}catch(IOException e2){}
+					}					
+					
+				}
+			};
+			
+			executorService.submit(runnable);	//스레드풀에서 처리
+			
+		}
+		
+		//데이터 전송
+		void send(String data){
+			Runnable runnable=new Runnable(){ //보내기 작업 생성
+				@Override
+				public void run(){
+					try{
+						//클라이언트로 데이터 보내기
+						byte[] byteArr=data.getBytes("UTF-8");
+						OutputStream outputStream=socket.getOutputStream();
+						outputStream.write(byteArr);
+						outputStream.flush();						
+					}catch(Exception e){
+						try{
+							String message="[클라이언트 통신 안됨 :"+socket.getRemoteSocketAddress()+": "+Thread.currentThread().getName()+"]";
+							Platform.runLater(() -> displayText(message));
+							connections.remove(Client.this);
+							socket.close();
+						}catch(IOException e2){}
+					}
+				}				
+			};
+			executorService.submit(runnable);	//스레드 풀에서 처리			
+		}		
+	}
+	
+	/////////////////////
+	//UI 생성 코드
+	TextArea txtDisplay;
+	Button btnStartStop;
+	@Override
+	public void start(Stage primaryStage) throws Exception{
+		BorderPane root=new BorderPane();
+		root.setPrefSize(500, 300);
+		
+		txtDisplay=new TextArea();
+		txtDisplay.setEditable(false);
+		BorderPane.setMargin(txtDisplay,new Insets(0,0,2,0));
+		root.setCenter(txtDisplay);
+		
+		btnStartStop=new Button("start");
+		btnStartStop.setPrefHeight(30);
+		btnStartStop.setMaxWidth(Double.MAX_VALUE);
+		
+		btnStartStop.setOnAction(e->{
+			if(btnStartStop.getText().equals("start")){
+				startServer();
+			}else if(btnStartStop.getText().equals("stop")){
+				stopServer();
+			}
+		});
+		root.setBottom(btnStartStop);
+		
+		Scene scene=new Scene(root);
+		primaryStage.setScene(scene);
+		primaryStage.setTitle("Server");
+		primaryStage.setOnCloseRequest(event->stopServer());
+		primaryStage.show();	
+	}
+	void displayText(String text){
+		txtDisplay.appendText(text+"\n");
+	}
+	
+	public static void main(String[] args){
+		launch(args);
+	}
+}
+
+
+------
+
+/2.7 채팅 클라이언트 구현
+
+import java.net.Socket;
+
+import javafx.application.Application;
+
+public class ClientExample extends Application{
+	Socket socket;
+	
+	void startClient(){
+		//연결 시작 코드
+	}
+	
+	void stopClient(){
+		//연결 끊기 코드
+	}
+	
+	void receive(){
+		//데이터 받기 코드
+	}
+	
+	void send(String data){
+		//데이터 보내기 코드		
+	}
+	
+	////////////////////////
+	//UI 생성 코드
+}
+
+
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.InetSocketAddress;
+import java.net.Socket;
+
+import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.geometry.Insets;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.BorderPane;
+import javafx.stage.Stage;
+
+public class ClientExample extends Application{
+	Socket socket;
+	
+	void startClient(){
+		Thread thread=new Thread(){
+			@Override
+			public void run(){
+				try{
+					socket=new Socket();
+					socket.connect(new InetSocketAddress("localhost",5001));
+					Platform.runLater(()->{
+						displayText("[연결 완료: "+socket.getRemoteSocketAddress()+"]");
+						btnConn.setText("stop");
+						btnSend.setDisable(false);
+					});
+				}catch(Exception e){
+					Platform.runLater(() -> displayText("[서버 통신 안됨]"));
+					if(!socket.isClosed())
+						stopClient();
+					return;
+				}
+				receive();	//서버에서 보낸 데이터 받기
+			}
+		};
+		thread.start();//스레드 시작
+	}
+	
+	void stopClient(){
+		try{
+			Platform.runLater(() -> {	//UI 변경
+				displayText("[연결 끊음]"); 
+				btnConn.setText("start");
+				btnSend.setDisable(true);	//send 버튼 비활성화
+			});
+			if(socket!=null && !socket.isClosed())
+				socket.close();
+		}catch(IOException e){}		
+	}
+	
+	void receive(){
+		while(true){
+			try{
+				byte[] byteArr=new byte[100];
+				InputStream inputStream=socket.getInputStream();
+				
+				//서버가 비정상적으로 종료했을 경우 IOException 발생
+				int readByteCount=inputStream.read(byteArr);
+				
+				//서버가 정상적으로 Socket의 close()를 호출했을 경우
+				if(readByteCount==-1)
+					throw new IOException();
+				
+				String data=new String(byteArr,0,readByteCount,"UTF-8");
+				
+				Platform.runLater(()->displayText("[받기 완료] "+data));				
+			}catch(Exception e){
+				Platform.runLater(() -> displayText("[서버 통신 안됨]"));
+				stopClient();
+				break;
+			}
+		}
+	}
+	
+	void send(String data){
+		Thread thread=new Thread(){
+			@Override
+			public void run(){
+				try{
+					byte[] byteArr=data.getBytes("UTF-8");
+					OutputStream outputStream=socket.getOutputStream();
+					outputStream.write(byteArr);
+					outputStream.flush();
+					Platform.runLater(()->displayText("[보내기 완료]"));
+				}catch(Exception e){
+					Platform.runLater( () -> displayText("[서버 통신 안됨]") );
+					stopClient();
+				}			
+			}
+		};
+		thread.start();		
+	}
+	
+	////////////////////////
+	//UI 생성 코드
+	TextArea txtDisplay;
+	TextField txtInput;
+	Button btnConn,btnSend;
+	@Override
+	public void start(Stage primaryStage) throws Exception{
+		BorderPane root=new BorderPane();
+		root.setPrefSize(500, 300);
+		
+		txtDisplay=new TextArea();
+		txtDisplay.setEditable(false);
+		BorderPane.setMargin(txtDisplay,new Insets(0,0,2,0));
+		root.setCenter(txtDisplay);
+		
+		BorderPane bottom=new BorderPane();
+		txtInput=new TextField();
+		txtInput.setPrefSize(60, 30);
+		BorderPane.setMargin(txtInput, new Insets(0,1,1,1));
+		
+		btnConn=new Button("start");
+		btnConn.setPrefSize(60, 30);
+		btnConn.setOnAction(e->{
+			if(btnConn.getText().equals("start"))
+				startClient();
+			else if(btnConn.getText().equals("stop"))
+				stopClient();			
+		});
+		
+		btnSend=new Button("send");
+		btnSend.setPrefSize(60, 30);
+		btnSend.setDisable(true);
+		btnSend.setOnAction(e->send(txtInput.getText()));
+		
+		
+		bottom.setCenter(txtInput);
+		bottom.setLeft(btnConn);
+		bottom.setRight(btnSend);
+		root.setBottom(bottom);
+		
+		Scene scene=new Scene(root);
+		primaryStage.setScene(scene);
+		primaryStage.setTitle("Client");
+		primaryStage.setOnCloseRequest(event->stopClient());
+		primaryStage.show();		
+	}	
+	
+	void displayText(String text){
+		txtDisplay.appendText(text+"\n");
+	}
+	
+	public static void main(String[] args){
+		launch(args);
+	}	
+}
+
+-------------------------------------------------------------------------------------
+
+8.UDP 네트워킹
+;UDP(User Datagram Protocol) 비연결 지향적 프로토콜
+=>비연결 지향적 : 데이터를 주고받을 때 연결 절차를 거치지 않고, 발신자가 일방적으로 데이터를 발신하는 방식
+=>연결 과정이 없기 때문에 TCP보다는 빠른 전송을 할 수 있지만, 데이터 전달의 신뢰성은 떨어짐
+=>java.net.DatagramSocket(발,수신점에 해당하는 클래스) 과 java.net.DatagramPacket(주고 받는 패킷 클래스) 클래스를 제공
+발신자										수신자
+	DatagramSocket -> DatagramPacket -> DatagramSocket
+
+발신자 : 
+=>DatagramSocket(포트번호) //단방향 시 포트번호 삭제하면 됨
+=>DatagramPacket(보낼데이터(byte형태) , 데이터의 길이 , 상대방 주소 , 포트번호);
+
+수신자 : 
+=>DatagramPacket(데이터를 받을 공간, 크기)
+=>DatagramSocket(포트번호)
+
+------
+
+/8.1 발신자 구현
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetSocketAddress;
+
+public class UdpSendExample {
+	public static void main(String[] args) throws Exception {
+		DatagramSocket datagramSocket=new DatagramSocket();
+		System.out.println("[발신 시작]");
+		
+		for(int i=1;i<3;i++){
+			String data="메시지"+i;
+			byte[] byteArr=data.getBytes("UTF-8");	//data를 UTF-8로 인코딩 & 바이트 배열에 저장
+			DatagramPacket packet=new DatagramPacket(byteArr,byteArr.length,new InetSocketAddress("localhost",5001));
+			//DatagramPacket의 생성자(전달 바이트,바이트 수 ,SocketAddress(수신자 IP와 포트 정보를 가진 추상 클래스)->InetSocketAddress)			
+			
+			datagramSocket.send(packet);
+			System.out.println("[보낸 바이트 수 ]"+byteArr.length+" bytes");
+		}
+		
+		System.out.println("[발신 종료]");
+		
+		datagramSocket.close();
+	}
+}
+
+------
+
+/8.2 수신자 구현
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+
+public class UdpReceiveExample extends Thread{
+	public static void main(String[] args) throws Exception{
+		DatagramSocket datagramSocket=new DatagramSocket(5001); //5001으로 바인딩한 포트 번호
+				
+		Thread thread=new Thread(){
+			@Override
+			public void run(){
+				System.out.println("[수신 시작]");
+				try{
+					while(true){
+						DatagramPacket packet=new DatagramPacket(new byte[100],100);
+						datagramSocket.receive(packet);
+						
+						String data=new String(packet.getData(),0,packet.getLength(),"UTF-8");
+						System.out.println("[받은 내용: "+packet.getSocketAddress()+"] "+data);
+					}
+				}catch(Exception e){
+					System.out.println("[수신 종료]");
+				}
+				
+			}
+		};
+		
+		thread.start();
+		Thread.sleep(10000);
+		datagramSocket.close();		
+	}
+}
+
+
+<< 실행결과 : 수신자 >>
+[수신 시작]
+[받은 내용: /127.0.0.1:54539] 메시지1
+[받은 내용: /127.0.0.1:54539] 메시지2
+[수신 종료]
+
+
+<< 실행결과 : 발신자 >>
+[발신 시작]
+[보낸 바이트 수 ]10 bytes
+[보낸 바이트 수 ]10 bytes
+[발신 종료]
+
+
+------
+
+브로드캐스트 : 1:다 통신
+ =>브로드캐스트 아이피 주소
+각각의 네트워크의 마지막 주소
+121.160.70.255
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

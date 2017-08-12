@@ -1,0 +1,456 @@
+//6장. static 멤버와 const 멤버
+
+
+//6-1 클래스와 const
+
+//const 키워드 복습1
+const double PI=3.14;
+PI=3.1415; 	//컴파일 오류
+
+const int val;	//쓰레기 값으로 상수화
+val=20;		//컴파일 오류
+
+//const 키워드 복습2
+
+int n=10;
+const int* pN=&n;	//pN이 가리키는 대상을 상수화
+*pN=20;	//컴파일 오류
+n=20; 	//가능
+
+int n1=10;
+int n2=20;
+
+int* const pN=&n1;	//pN이 상수화
+*pN=20;
+pN=&n2;	//컴파일 오류
+
+
+-----------------------
+
+
+/*
+*멤버 변수의 상수화, 그리고 초기화
+ -멤버 이니셜 라이저(member initializer)
+ -ConstMember1.cpp
+
+*const 멤버 함수
+ -멤버 변수의 값 변경 허용 않는다.
+ -멤버 변수 값의 변경에 대한 기회제공도 불가
+ -ConstMember2.cpp,ConstMember3.cpp
+
+
+
+/*const, 멤버 변수의 상수화 및 초기화 예제*/
+
+//e.g) 학생의 학번이라는 id는 값이 변하면 문제점 찾기 힘듬 -> 그래서 상수화가 필요 
+
+//1단계
+class Student
+{
+	const int id;	//id가 초기화 된 이후 바꾸지X	
+			//1)메모리 할당(id가 쓰레기 값으로 생성됨) 2)생성자 호출 =>컴파일 오류
+
+public:
+	Student(int _id, int _age, char* _name, char* _major)
+	{
+		id = _id;
+
+}
+
+//2단계
+public:
+	Student(int _id, int _age, char* _name, char* _major)
+	 : id(_id)
+	/생성자 호출 이전에 이루어짐(쓰레기 값으로 생성되기 전에 초기화됨)
+	{....}
+
+
+/*const, 멤버 함수의 예제*/
+
+
+void ShowData() const	//멤버 함수의 상수화 -> 멤버 변수의 조작 불가능
+		//const는 프로그램을 안정적으로 구성하도록 도움을 준다!
+{	
+	//age = 20;	//컴파일 에러
+	cout << "이름: " << name << endl;
+}
+
+
+//
+
+
+class Count
+{
+	int cnt;
+public:
+	//Count() : cnt(0) {}
+	//int* GetPtr() const {
+	//	return &cnt;  // Compile Error		
+	//}	//멤버 변수 cnt를 조작할 기회를 가짐(간접적으로 제공) => 컴파일 에러!
+	const int* GetPtr() const {
+		return &cnt; 
+	}
+	
+
+	void Increment() {
+		cnt++;
+	}
+
+	void ShowData() const {
+		ShowIntro();  // Compile Error
+		cout << cnt << endl;
+	}
+	
+	void ShowIntro() {
+		cout << "현재 count의 값 : " << endl;
+	}
+	//컴파일타임 : ShowData()를 상수화 -> ShowIntro()함수 호출 ->
+	//내부에 변수를 조작하는 가 를 보는 것이 아니라, 상수화 함수 인지 아닌지를 봄(가능성)
+	//==>void ShowIntro() const{} <<상수화하면 에러x
+};
+
+//==>const키워드를 이용해 코딩을 하다보면, 계속적으로 요구하게됨 
+//==>그때마다 const키워드를 삭제하기 보다는, 다른 함수에도 추가할 수 있는 연습하기
+
+
+*/
+
+
+/*
+*const 객체
+ -데이터의 변경이 허용되지 않는 객체
+ -const 함수 이외에는 호출 불가
+ -ConstObject.cpp
+
+*const와 함수 오버로딩
+ -const도 함수 오버로딩 조건에 포함
+ -constOverloading.cpp
+
+
+/*
+ConstObject.cpp
+*/
+#include <iostream>
+using std::cout;
+using std::endl;
+
+class AAA
+{
+	int num;
+public:
+	AAA(int _num) : num(_num) {}
+	//void Add(int n) {
+	//	num += n;
+	//}
+	//void ShowData() {
+	void ShowData() const{
+		cout << num << endl;
+	}
+};
+
+int main()
+{
+	const AAA aaa(10);
+	//aaa.Add(10);  // Compile Error
+	aaa.ShowData();  // Compile Error
+	//컴파일러는 Showdata()가 상수화 or not 만 검사
+	return 0;
+}
+
+
+/*
+ConstOverloading.cpp
+*/
+#include <iostream>
+using std::cout;
+using std::endl;
+
+class AAA
+{
+	int num;
+public:
+	AAA(int _num) : num(_num) {}
+
+	void ShowData() {
+		cout << "void ShowData() 호출" << endl;
+		cout << num << endl;
+	}
+	void ShowData() const {
+		cout << "void ShowData() const 호출" << endl;
+		cout << num << endl;
+	}
+};
+
+int main()
+{
+	const AAA aaa1(20);
+	AAA aaa2(70);
+
+	aaa1.ShowData();
+	aaa2.ShowData();
+	return 0;
+}
+
+
+==>항상 모든 함수에 const가 필요하면 붙이는 습관 가지기!
+
+*/ 
+
+
+
+
+
+//6-2 클래스와 static
+
+/*
+
+//객체 지향(Object Oriented)에는 전역이라는 개념이 X
+*static 멤버의 등장
+ -전역 변수와 전역 함수를 일부 대체하기 위해서 등장
+ -PersonCount1.cpp
+
+*static 키워드의 효과
+ -모든 객체가 공유할 수 있는 멤버
+ -PersonCount2.cpp, PersonCount3.cpp
+
+
+//1단계
+/*
+PersonCount1.cpp
+*/
+#include<iostream>
+using std::cout;
+using std::endl;
+
+int count = 1;
+//굳이 전역 변수를 사용해야하는가..
+class Person
+{
+	char name[20];
+	int age;
+public:
+	Person(char* _name, int _age)
+	{
+		strcpy(name, _name);
+		age = _age;
+		cout << count++ << "번째 Person 객체 생성" << endl;
+	}
+	void ShowData() {
+		cout << "이름: " << name;
+		cout << "나이: " << age;
+	}
+};
+
+int main(void)
+{
+	Person p1("Lee", 13);
+	Person p2("Hong", 22);
+
+	return 0;
+}
+
+
+//2단계
+/*
+PersonCount2.cpp
+*/
+#include<iostream>
+using std::cout;
+using std::endl;
+
+class Person
+{
+	char name[20];
+	int age;
+	int count;
+public:
+	Person(char* _name, int _age)
+	{
+		count = 1;	//각 객체의 count
+		strcpy(name, _name);
+		age = _age;
+		cout << count++ << "번째 Person 객체 생성" << endl;
+	}
+	void ShowData() {
+		cout << "이름: " << name;
+		cout << "나이: " << age;
+	}
+};
+
+int main(void)
+{
+	Person p1("Lee", 13);
+	Person p2("Hong", 22);
+
+	return 0;
+}
+
+
+//3단계
+
+/*
+PersonCount3.cpp
+*/
+
+#include<iostream>
+using std::cout;
+using std::endl;
+
+class Person
+{
+	char name[20];
+	int age;
+	static int count;
+public:
+	Person(char* _name, int _age)
+	{
+		strcpy(name, _name);
+		age = _age;
+		cout << count++ << "번째 Person 객체 생성" << endl;
+	}
+	void ShowData() {
+		cout << "이름: " << name;
+		cout << "나이: " << age;
+	}
+};
+
+int Person::count = 1; // static 멤버 초기화
+
+int main(void)
+{
+	Person p1("Lee", 13);
+	Person p2("Hong", 22);
+
+	return 0;
+}
+
+
+*static 멤버의 특징
+ -클래스 변수,클래스 함수라 한다.
+ -main 함수 호출 이전에 메모리 공간에 올라 가서 초기화(전역변수와 동일)
+ -선언된 클래스의 객체 내에 직접 접근 허용
+ -static 멤버 초기화문으로 초기화해야함
+ -외울 생각 말자! 이해하자!
+
+==>static int n;
+==>클래스에서는 1.직접접근 권한 2.가릴 수 있는 권한(AAA::n=10; 안됨)
+
+//
+
+
+*/
+
+
+
+
+
+
+//6-3 explicit & mutable
+
+/*
+
+*explicit
+ -명시적 호출만 허용한다.
+ -explicit.cpp
+
+/*
+explicit.cpp
+*/
+
+#include<iostream>
+using std::cout;
+using std::endl;
+
+class AAA
+{
+public:
+	explicit AAA(int n) {
+		cout << "explicit AAA(int n)" << endl;
+	}
+};
+
+int main(void)
+{
+	//AAA a1 = 10; //컴파일 에러
+	//혼란을 피하기 위해서
+
+	AAA a1(10);
+
+	return 0;
+}
+
+
+
+*mutable
+ -const에 예외를 둔다
+ -mutable.cpp
+//유용하지 x 가급적 쓰지 x
+
+/*
+mutable.cpp
+*/
+#include<iostream>
+using std::cout;
+using std::endl;
+
+class AAA
+{
+private:
+	mutable int val1;
+	//상수함수 내에서 멤버변수 조작이 가능
+	//이게 필요한 상황이 오면 1)함수의 const를 빼라 2)두 변수를 나눠서 함수2개로 만들어라
+	//안쓰는게 좋음
+	int val2;
+
+public:
+	void SetData(int a, int b) const
+	{
+		val1 = a;  // val1이 mutable이므로 OK!
+		val2 = b;  // Error!
+	}
+};
+
+int main(void)
+{
+	AAA a1;
+	a1.SetData(10, 20);
+	return 0;
+}
+
+*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

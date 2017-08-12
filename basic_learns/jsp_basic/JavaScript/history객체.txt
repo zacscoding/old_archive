@@ -1,0 +1,16 @@
+e.g)
+
+<script type="text/javascript">
+	alert("19세 미만이므로 입장 불가능")
+	history.go(-1)
+</script>
+
+=>
+속성
+length	//브라우저의 history 목록에 저장된 URL의 개수
+
+메소드
+back()		//한 단계 전 URL으로 이동
+forward()	//한 단계 뒤 URL로 이동
+go()		//지정된 단계의 URL로 이동
+

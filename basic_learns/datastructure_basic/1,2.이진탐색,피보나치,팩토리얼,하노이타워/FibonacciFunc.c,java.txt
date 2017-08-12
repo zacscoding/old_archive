@@ -1,0 +1,65 @@
+-------------------------------------------------------------------------
+/*C언어*/
+#include <stdio.h>
+
+int Fibo(int);
+int cache[20] = { 0, };
+int main(void) {
+	int num;
+	while (true) {
+		printf("피보나치수열의 항 입력(종료 -1) : ");
+		scanf("%d", &num);
+		if (num == -1) break;		
+		printf("%d번째 항 : %d\n",num, Fibo(num));
+	}	
+	return 0;	
+}
+
+int Fibo(int num) {
+	//기저사례
+	if (num == 1) return 0;
+	else if (num == 2) return 1;
+	//메모이제이션
+	if (cache[num] != 0) {
+		printf("캐시사용\n");
+		return cache[num];
+	}
+	//계산
+	return cache[num] = Fibo(num - 1) + Fibo(num - 2);
+}
+
+-------------------------------------------------------------------------
+/*자바로 구현*/
+import java.util.Scanner;
+
+public class FiboTest {
+	public static int[] cache=new int[20];
+	public static void main(String[] args) {
+		Scanner sc=new Scanner(System.in);
+		while(true){
+			System.out.print("피보나치 수열의 항 입력 (종료 : -1) : ");
+			int num=sc.nextInt();
+			if(num==-1){
+				break;
+			} 
+			System.out.println(num+"번째 항 : "+Fibo(num));		
+		}	
+	}
+	
+	public static int Fibo(int num){
+		if(num==0) return 0;
+		if(num==1) return 1;
+		
+		if(cache[num]!=0){
+			System.out.println("캐시 사용");
+			return cache[num];
+		}
+		return cache[num]=Fibo(num-1)+Fibo(num-2);
+	}
+}
+
+
+
+
+
+

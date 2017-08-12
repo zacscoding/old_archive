@@ -1,0 +1,85 @@
+public class CircularlyLinkedList<E> {
+	/*nested class*/
+	private static class Node<E> {
+		private E element;
+		private Node<E> next;
+
+		Node(E e, Node<E> n) {
+			element = e;
+			next = n;
+		}
+		public E getElement(){return element;}
+		public Node<E> getNext(){return next;}
+		public void setNext(Node<E> n){next=n;}
+	}
+
+	// instance variables
+	private Node<E> tail = null;
+	private int size = 0;
+	public CircularlyLinkedList() {}
+
+	// access Methods
+	/* 리스트의 요소 수를 반환 */
+	public int size() {
+		return size;
+	}
+	/* 리스트가 비어 있으면 true, 아니면 false */
+	public boolean isEmpty() {
+		return size==0;
+	}
+	/* 리스트의 첫번째 요소 반환 */
+	public E first() {
+		return tail.getNext().getElement();
+	}
+	/* 리스트의 마지막 요소 반환 */
+	public E last() {
+		return tail.getElement();
+	}
+
+	
+	// update Methods
+	public void rotate(){
+		if(tail!=null)
+			tail=tail.getNext();
+	}
+	
+	/* 리스트의 맨 앞에 추가 */
+	public void addFirst(E e) {
+		if(size==0){
+			tail=new Node<>(e,null);
+			tail.setNext(tail);
+		}else{
+			Node<E> newest=new Node<>(e,tail.getNext());
+			tail.setNext(newest);
+		}
+		size++;		
+	}
+	/* 리스트의 맨 뒤에 추가 */
+	public void addLast(E e) {
+		addFirst(e);
+		tail=tail.getNext();
+	}
+
+	/* 리스트의 맨앞 요소를 제거 & 반환 */
+	public E removeFirst() {
+		if(isEmpty()) return null;
+		Node<E> head=tail.getNext();
+		if(head==tail) tail=null;
+		else tail.setNext(head.getNext());
+		return head.getElement();		
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+

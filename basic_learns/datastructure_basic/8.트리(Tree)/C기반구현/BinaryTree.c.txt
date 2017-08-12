@@ -1,0 +1,82 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include "BinaryTree.h"
+
+//노드 생성
+BTreeNode * MakeBTreeNode(void) {
+	BTreeNode* newNode = (BTreeNode*)malloc(sizeof(BTreeNode));
+	newNode->left = NULL;
+	newNode->right = NULL;
+
+	return newNode;
+}
+
+//노드에 저장된 데이터를 반환
+BTData GetData(BTreeNode * bt) {
+	return (bt->data);
+}
+//노드에 데이터를 저장
+void SetData(BTreeNode * bt, BTData data) {
+	bt->data = data;
+}
+
+//왼쪽 서브 트리 주소 값 반환
+BTreeNode * GetLeftSubTree(BTreeNode * bt) {	
+	return bt->left;
+}
+//오른쪽 서브 트리 주소 값 반환
+BTreeNode * GetRightSubTree(BTreeNode * bt) {
+	return bt->right;
+}
+
+//왼쪽 서브트리로 연결
+void MakeLeftSubTree(BTreeNode * main, BTreeNode * sub) {
+	if (main->left != NULL)
+		free(main->left);
+	main->left = sub;
+}
+//오른쪽 서브트리로 연결
+void MakeRightSubTree(BTreeNode * main, BTreeNode * sub) {	
+	if (main->right != NULL)
+		free(main->right);
+	main->right = sub;
+}
+
+//전위 순회
+void PreorderTraverse(BTreeNode*bt, VisitFuncPtr action) {
+	if (bt==NULL)
+		return;
+	action(bt->data);
+	PreorderTraverse(bt->left, action);
+	PreorderTraverse(bt->right, action);
+}
+
+//중위 순회
+void InorderTraverse(BTreeNode*bt, VisitFuncPtr action) {
+	if (bt == NULL)
+		return;	
+	InorderTraverse(bt->left, action);
+	action(bt->data);
+	InorderTraverse(bt->right, action);
+}
+
+//후위 순회
+void PostorderTraverse(BTreeNode*bt, VisitFuncPtr action) {
+	if (bt == NULL)
+		return;
+	PostorderTraverse(bt->left, action);	
+	PostorderTraverse(bt->right, action);
+	action(bt->data);
+}
+
+//삭제
+void DeleteTree(BTreeNode *bt) {
+	if (bt == NULL)
+		return;
+	DeleteTree(bt->left);
+	DeleteTree(bt->right);
+
+	printf("del tree data : %d\n", bt->data);
+	free(bt);
+}
+

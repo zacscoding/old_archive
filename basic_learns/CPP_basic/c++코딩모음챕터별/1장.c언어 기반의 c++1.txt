@@ -1,0 +1,606 @@
+ㅡㅡㅡㅡㅡㅡㅡㅡch1 ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+
+/*파일 입출력 예제*/
+
+#include <iostream> //표준 헤더파일의 선언에서는 확장자를 생략하기로 약속
+
+int main(void)
+{
+	int num = 20;
+	std::cout << "Hello World!" << std::endl;
+	std::cout << "Hello " << "World!" << std::endl;
+	std::cout << num << ' ' << 'A';
+	std::cout << ' ' << 3.14 << std::endl;	//공백문자 출력 , 3.14 출력
+	
+	return 0;
+}
+
+/*두개의 정수(실수)를 받아 더하는 프로그램*/
+
+#include <iostream>
+
+int main(void)
+{
+//	int val1;
+	double val1;
+	std::cout << "첫 번째 숫자입력:";
+	std::cin >> val1;
+
+//	int val2;
+	double val2;	//중간에 지역변수 선언가능!
+	std::cout << "두 번째 숫자입력:";
+	std::cin >> val2;
+
+//	int result = val1 + val2;
+	double result = val1 + val2;
+	std::cout << "덧셈 결과 : " << result << std::endl;
+
+	return 0;
+
+}
+
+
+/*두개의 정수 입력을 받아 사이의 정수를 더하는 프로그램*/
+
+#include <iostream>
+
+int main(void)
+{
+	int val1, val2;
+	int result = 0;
+
+	std::cout << "두 개의 숫자입력: ";
+	std::cin >> val1 >> val2;	//탭,스페이스바,엔터 키와같은 공백으로 구별함.
+
+	if (val1 < val2)
+	{
+		for (int i = val1 + 1; i < val2; i++) {	//for문의 초기화 문장 내에서 변수 선언 가능
+			result += i;
+		}
+	}
+	else
+	{
+		for (int i = val2 + 1; i < val1; i++) {
+			result += i;
+		}
+	}
+
+	std::cout << "두 수 사이의 정수 합 : " << result << std::endl;
+
+	return 0;
+}
+
+
+
+
+/* 배열 기반의 문자열 입출력 예제*/
+
+#include <iostream>
+
+int main(void)
+{
+	char name[100];
+	char lang[200];
+
+	std::cout << "이름은 무엇입니까?";
+	std::cin >> name;
+
+	std::cout << "좋아하는 프로그래밍 언어는 무엇인가요? ";
+	std::cin >> lang;
+
+	std::cout << "내 이름은 " << name << "입니다.\n";
+	std::cout << "제일 좋아하는 언어는 " << lang << "입니다." << std::endl;
+
+	return 0;
+
+}
+
+
+
+
+/*
+함수의 오버로딩( function overloading )
+- 함수 오버로딩이란?
+  동일한 이름의 함수를 정의하는 것!
+
+- 함수 오버로딩의 조건
+   * 매개 변수의 개수 혹은 타입이 일치하지 않는다.
+   * 매개 변수의 자료형 순서가 달라야 한다.
+   * 반환형은 함수 호출방식과는 무관하므로 해당되지 않는다.
+
+- 함수 오버로딩이 가능한 이유
+   * C언어에서는 함수 호출 시 함수의 이름을 기준으로 호출 대상을 찾지만,
+     C++에서는 함수의 이름, 매개변수의 개수와 자료형을 기준으로 찾는다.
+   * 함수의 이름 + 매개 변수의 정보
+
+- 개요
+   * 함수의 이름을 동일하게 만들고, 전달하는 인자의 개수 에 따라서 
+     어떠한 함수를 호출할 것인지를 구분하는 방법
+   * C언어에서는 함수 호출 시 함수의 이름을 기준으로 호출 대상을 찾지만,
+     C++에서는 함수의 이름, 매개변수의 개수, 자료형을 기준으로 찾는다.
+   * 함수의 이름이 같더라도 매개변수의 자료형, 개수가 다르면 다른 함수이다.
+*/
+
+
+
+/* 함수의 오버로딩 예제*/
+//C에서는 함수이름으로, C++에서는 함수이름,매개변수 타입,개수로 함수를 구분!
+
+#include <iostream>
+
+void MyFunc(void)
+{
+	std::cout << "MyFunc(void) called" << std::endl;
+}
+
+void MyFunc(char c)
+{
+	std::cout << "MyFunc(char c) called" << std::endl;
+}
+
+void MyFunc(int a, int b)
+{
+	std::cout << "MyFunc(int a,int b) called" << std::endl;
+}
+
+int main(void)
+{
+	MyFunc();
+	MyFunc('A');
+	MyFunc(12,13);
+
+	return 0;
+}
+
+
+/*디폴트 매개변수*/
+
+/*
+디폴트 매개변수란?
+- Default Parmeter란 매개변수에 기본 값이 있는 함수를 말함
+- 함수 호출 시 전달되는 값이 있으면 전달된 값으로 대체되고 
+  전달되는 값이 없으면 자신의 기본 값을 사용하는 설정
+- 함수 오버로딩과 마찬가지로 Default Parameter 또한 하나의 함수가 
+  마치 여러 일을 하는 것처럼 정의할 수 있기 때문에 다형성(polymorphism)이 구현 됨
+
+디폴트 매개변수 규칙 1
+- 매개변수의 디폴트 값은 오른쪽에서부터 차례대로 할당
+
+  O => int func(int n1, int n2, int n3=10){  }
+  O => int func(int n1, int n2=5, int n3=10){  }
+  O => int func(int n1=1, int n2=5, int n3=10){  }
+
+  X => int func(int n1=1, int n2, int n3){  }
+	//func 하고 n2,n3만 전달할 수 X
+  X => int func(int n1=1, int n2=5, int n3){  }
+	//func 하고 n2,n3만 전달할 수 X
+
+  ※ 전달되는 인자가 왼쪽에서부터 채워지므로, 오른쪽이 빈 상태로 왼쪽의 매개변수에만 
+     일부 채워진 디폴트값은 의미를 갖지 못한다. 따라서 컴파일 에러를 일으킨다.
+
+디폴트 매개변수 규칙 2
+- 함수 선언과 정의를 나눠 쓸 경우 디폴트 값은 선언 부에만 사용 
+  그렇지 않으면 func()를 컴파일 할 수 없음.
+
+  int func(int n1=1, int n2=5);
+  int main(void){
+	cout<<func()<<endl;
+	cout<<func(5)<<endl;
+  }
+  int func(int n1, int n2){
+	return n1+n2;
+  }
+*/
+
+
+/* 매개변수의 디폴트 값 예제*/
+
+#include <iostream>
+
+//인자를 전달하지 않으면 num1=1,num2=2에 전달된 것으로 간주!
+int Adder(int num1 = 1, int num2 = 2)
+{
+	return num1 + num2;
+}
+
+int main(void)
+{
+	std::cout << Adder() << std::endl;
+	std::cout << Adder(5) << std::endl;	//5가 첫번째 매개변수로 전달
+	std::cout << Adder(3, 5) << std::endl;
+	return 0;
+}
+
+//함수의 선언시에는 디폴트 값은 함수의 선언 부분에만 위치!
+//그렇지 않으면 Adder()했을때 컴파일 오류.
+/*
+#include <iostream>
+
+int Adder(int num1 = 1, int num2 = 2);
+
+int main(void)
+{
+	std::cout << Adder() << std::endl;
+	std::cout << Adder(5) << std::endl;
+	std::cout << Adder(3, 5) << std::endl;
+	return 0;
+}
+
+int Adder(int num1, int num2)
+{
+	return num1 + num2;
+}
+*/
+
+
+/*매개변수의 디폴트 값 예제2*/
+
+#include <iostream>
+
+int BoxVolume(int length, int width = 1, int height = 1);
+
+int main(void)
+{
+	std::cout << "[3, 3, 3] : " << BoxVolume(3, 3, 3) << std::endl;
+	std::cout << "[5, 5, D] : " << BoxVolume(5, 5) << std::endl;
+	std::cout << "[7, D, D] : " << BoxVolume(7) << std::endl;
+//	std::cout << "[D, D, D] : " << BoxVolume() << std::endl;
+	
+	return 0;
+}
+
+int BoxVolume(int length, int width, int height)
+{
+	return length*width*height;
+}
+
+
+/*인라인 함수 예제1*/
+
+#include <iostream>
+
+inline int SQUARE(int x)
+{
+	return x*x;
+}
+
+int main(void)
+{
+	std::cout << SQUARE(5) << std::endl;
+	std::cout << SQUARE(12) << std::endl;
+
+	return 0;
+}
+
+
+/*템플릿 예제*/
+#include <iostream>
+
+template <typename T>
+inline T SQUARE(T x)
+{
+	return x*x;
+}
+
+int main(void)
+{
+	std::cout << SQUARE(5.5) << std::endl;
+	std::cout << SQUARE(12) << std::endl;
+	return 0;
+}
+
+
+/*인라인 함수 예제2*/
+//두개의 정수를 받아 합,차,곱,몫을 구하는 프로그램
+//1부터 매개변수 값 까지의 랜던수 발생해서 반환 
+// 매개변수 값 동안의 시간만큼 프로그램 실행 정지
+#include <iostream>
+#include <ctime>
+#include <cstdlib>
+#include <Windows.h>
+
+
+inline void cal(int x, int y)
+{
+	std::cout << "합 : " << x + y << std::endl;
+	std::cout << "차 : " << x - y << std::endl;
+	std::cout << "곱 : " << x*y << std::endl;
+	std::cout << "몫 :" << x / y << std::endl;
+}
+
+inline int RANDOMIZE(int x)
+{
+	srand(time(NULL));
+	return rand()%x + 1;
+}
+
+inline void delay(int x)
+{
+	for (int i = 0; i < x; i++) {
+		std::cout << i+1 << "초" << std::endl;
+		Sleep(1000);
+	}
+}
+
+int main(void)
+{
+	int x, y;
+	std::cout << "두개의 정수 입력 : ";
+	std::cin >> x >> y;
+	cal(x, y);
+
+	int a,ran;
+	std::cout << "입력 값까지 랜덤수 발생 : ";
+	std::cin >> a;
+	ran = RANDOMIZE(a);
+
+	std::cout << "Delay("<<ran<<"초) 작동" << std::endl;
+	delay(ran);
+
+
+}
+
+
+/*namespace 의 예제 */
+
+#include <iostream>
+
+namespace BestComImp1
+{
+	void SimpleFunc(void)
+	{
+		std::cout << "BestCom이 정의한 함수" << std::endl;
+	}
+}
+
+namespace ProgComImp1
+{
+	void SimpleFunc(void)
+	{
+		std::cout << "ProgCom이 정의한 함수" << std::endl;
+	}
+}
+
+int main(void)
+{
+	BestComImp1::SimpleFunc();	//::(범위지정 연산자(scope resolution operator)
+	ProgComImp1::SimpleFunc();
+
+	return 0;
+}
+
+
+
+/*이름공간 기반에서 함수의 선언과 정의를 구분하는 방법*/
+
+#include <iostream>
+
+namespace BestComImpl
+{
+	void SimpleFunc(void);
+}
+
+namespace ProgComImpl
+{
+	void SimpleFunc(void);
+}
+
+int main(void)
+{
+	BestComImpl::SimpleFunc();
+	ProgComImpl::SimpleFunc();
+
+	return 0;
+}
+
+void BestComImpl::SimpleFunc(void)
+{
+	std::cout << "BestCom이 정의한 함수" << std::endl;
+}
+
+void ProgComImpl::SimpleFunc()
+{
+	std::cout << "ProgCom이 정의한 함수" << std::endl;
+}
+
+
+
+/*이름공간 기반에서 함수의 선언과 정의를 구분하는 방법2*/
+
+
+#include <iostream>
+
+namespace BestComImpl
+{
+	void SimpleFunc(void);
+}
+namespace BestComImpl
+{
+	void PrettyFunc(void);
+}
+
+
+namespace ProgComImpl
+{
+	void SimpleFunc(void);
+}
+
+int main(void)
+{
+	BestComImpl::SimpleFunc();
+//	ProgComImpl::SimpleFunc();
+
+	return 0;
+}
+
+void BestComImpl::SimpleFunc(void)
+{
+	std::cout << "BestCom이 정의한 함수" << std::endl;
+	PrettyFunc();
+	ProgComImpl::SimpleFunc();
+}
+
+void BestComImpl::PrettyFunc(void)
+{
+	std::cout << "So Pretty!" << std::endl;
+}
+
+
+void ProgComImpl::SimpleFunc()
+{
+	std::cout << "ProgCom이 정의한 함수" << std::endl;
+}
+
+
+
+
+
+
+
+
+/*이름공간의 중첩 예제*/
+
+#include <iostream>
+
+namespace Parent
+{
+	int num = 2;
+	namespace SubOne
+	{
+		int num = 3;
+	}
+	namespace SubTwo
+	{
+		int num = 4;
+	}
+}
+
+int main(void)
+{
+	std::cout << Parent::num << std::endl;
+	std::cout << Parent::SubOne::num << std::endl;
+	std::cout << Parent::SubTwo::num << std::endl;
+
+	return 0;
+}
+
+
+
+
+
+/* using 예제1* /
+//using Hybrid::HybFunc; //사용하겠다 Hybrid의 공간의 HybFunc를 HybFunc란 이름으로만 가지고
+#include <iostream>
+
+namespace Hybrid
+{
+	void exfunc(void)
+	{
+		std::cout << "kkk" << std::endl;
+	}
+	void HybFunc(void)
+	{
+		std::cout << "So simple Function!" << std::endl;
+		std::cout << "In namespace Hybrid!" << std::endl;
+	}
+}
+
+int main(void)
+{
+	using Hybrid::HybFunc;
+	HybFunc();
+//	exfunc();
+	return 0;
+}
+
+
+
+
+/* using 예제2* /
+//using namespace를 할 수록 이름 충돌의 발생 확률이 높아짐.
+//상황을 판단해서 적절히 혼용해야함!
+
+
+#include <iostream>
+//using std::cout;
+//using std::cin;
+//using std::endl;
+using namespace std;
+
+void func(void)
+{
+	int x;
+	cout << "입력 : ";
+	cin >> x;
+	cout << x << endl;
+}
+
+int main(void)
+{
+	int num = 20;
+	cout << "Hello World!" << endl;
+	cout << "Hello " << "World!" << endl;
+	cout << num << ' ' << 'A';
+	cout << ' ' << 3.14 << endl;
+	func();
+	return 0;
+}
+
+
+
+
+/*이름공간의 별칭 지정하는 방법*/
+#include <iostream>
+using namespace std;
+
+namespace AAA
+{
+	namespace BBB
+	{
+		namespace CCC
+		{
+			int num1, num2;
+		}
+	}
+}
+
+int main(void)
+{
+	AAA::BBB::CCC::num1 = 20;
+	AAA::BBB::CCC::num2 = 30;
+
+	namespace ABC = AAA::BBB::CCC;
+	cout << ABC::num1 << endl;
+	cout << AAA::BBB::CCC::num2 << endl;
+
+	return 0;
+}
+
+
+
+/*범위지정 연산자(Scope Resolution Operator) 의 또다른 기능*/
+//현명한 프로그래머라면, 전역,지역변수의 이름을 다르게 설정!
+#include <iostream>
+
+int  val = 100; //전역변수
+
+void SimpleFunc(void)
+{
+	using std::cout;
+	using std::endl;
+
+	int val = 20;		//지역변수
+	val += 3;			//지역변수 val의 값 3 증가
+	::val += 7;			//전역변수 val의 값 7 증가
+
+	cout << "지역 변수 val : " << val << endl;
+	cout << "전역 변수 val : " << ::val << endl;
+
+}
+
+int main(void)
+{
+	SimpleFunc();
+
+	return 0;
+}

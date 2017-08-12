@@ -1,0 +1,313 @@
+-----------CH24.TemplateMethod패턴-----------------
+
+=>상황
+DB로부터 사용자 정보를 읽어와 로그인을 수행하는 DBLogin 클래스
+중앙서버로부터 사용자 정보를 읽어와 로그인을 수행하는 SSOLogin클래스 있다고 가정.
++ 밑의 login메소드의 주석부분만 두 클래스가 다름
+
+public void login() {
+	Dialog loginDialog = new LoginDialog();
+	while(true) {
+		
+		if(loginDialog.isCancle())
+			return;
+		String userID = loginDialog.getUserID();
+		String password = loginDialog.getPassword();
+		
+		//동일 코드 블록
+		try {
+			//사용자 정보 로딩
+			//입력한 정보와 동인한지 검사
+			//동일한 경우 인증 성공
+			//실패한 경우 예외 발생
+		} catch(Throwable e) {
+			//인증 처리 실패 메시지 출력
+		}			
+	}
+}
+
+========>
+public abstract class AbstractLogin {
+	public void login() {
+		Dialog loginDialog = new LoginDialog();
+		while(true) {
+			
+			if(loginDialog.isCancle())
+				return;
+			String userID = loginDialog.getUserID();
+			String password = loginDialog.getPassword();
+			
+			//동일 코드 블록
+			try {
+				authenticate(userId,password);
+			} catch(Throwable e) {
+				//인증 처리 실패 메시지 출력
+			}			
+		}
+	}
+	public abstract void authenticate(String userId,String password) throws Throwable;
+}
+
+
+/*	DBLogin	*/
+public class DBLogin extends AbstractLogin {
+	@Override
+	public void authenticate(String userId,String password) throws Throwable {
+		//DB로부터 사용자 정보를 읽어온다.
+		//암호,아이디 비교
+	}
+}	
+
+/*	 SSOLogin	*/
+public class SSOLogin extends AbstractLogin {
+	@Override
+	public void authenticate(String userId,String password) throws Throwable {
+		//중앙서버로부터 사용자 정보 가져옴
+		//암호,아이디 비교
+	}
+}
+
+
+---------------------------------------------------------------------------------------------
+
+//탬플릿 메소드 패턴 JDBC에 적용하기
+
+-문제점
+	Connection conn = null;
+    Statement stmt = null;
+    try {
+        conn = DriverManager.getConnection(...);
+        stmt = conn.createStatement();
+		int count = stmt.executeUpdate(someQuery);        ...
+    } catch(SQLException ex) {
+         // 예외 처리
+    } finally {
+         if (stmt != null) try { stmt.close(); } catch(SQLException ex) {}
+         if (conn != null) try { conn.close(); } catch(SQLException ex) {}
+    }
+=>
+	try {
+        // 커넥션 생성
+        
+        [로직실행]   		
+    } catch(SQLException ex) {
+         // 예외 처리
+    } finally {
+         // 자원반환
+    }
+
+-----------
+
+//1. Template Method 패턴 적용1 : State 단위 적용
+
+	Statement stmt = null;
+     try {
+		stmt = conn.createStatement();
+        // 로직과 관련된 코드
+        int count = stmt.executeUpdate("update member set email = 'a@a.com' where memberid = 'a'");
+    } finally {
+         if (stmt != null) try { stmt.close(); } catch(SQLException ex) {}
+    }
+===>
+1))Statement
+	public class QueryTemplate {
+		public int executeUpdate(Connection conn,String query) throws SQLException {
+			Statement stmt = null;
+			try {
+				stmt = conn.createStatement();
+				return stmt.executeUpdate(query);
+			} finally {
+				if(stmt!=null) try { stmt.close(); } catch(SQLException ex) {}
+			}
+		}
+	}
+	
+->	
+	QueryTemplate template = new QueryTemplate();
+	int count = template.executeUpdate(conn,"update member setemail = 'a@a.com' where memberid='a'");
+
+2)PreparedStatement
+	public class QueryTemplate {
+		public int execute(Connection conn,String query,Object[] parameters) throws SQLException {
+			PreparedStatement pstmt = null;
+			try {
+				pstmt=conn.preparedStatement(query);
+				for(int i=0;i<parameters.length;i++) {
+					if(parameters[i] instanceof String) {
+						pstmt.setString(i+1,(String)parameters[i]);
+					} else if(...) {
+						..
+					}
+				}
+				return pstmt.executeUpdate();
+			} finally {
+				if(stmt!=null) try { stmt.close(); } catch(SQLException ex) {}
+			}
+		}
+	}
+
+->	
+	QueryTemplate template = new QueryTemplate();
+	Object[] params = new Obejct[2];
+	param[0] = "a@a.com";
+	param[1] - "a";
+	int count = template.executeUpdate(conn,"update member set email = ? where memberid=?",params);
+	
+3)ResultSet
+	public List executeQuery(Connection conn, String query) throws SQLException {
+         Statement stmt = null;
+         try {
+             stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(query);
+             if (rs.next()) {
+                 List result = new java.util.ArrayList();
+                 do {
+                    // ResultSet으로부터 값을 읽어와
+					// 알맞은 객체에 담은 뒤,
+                    // 그 객체를 result에 추가
+                } while(rs.next());
+                 return result;
+             } else {
+                 return Collections.EMPTY_LIST;
+             }
+         } finally {
+             if (rs != null) try { rs.close(); } catch(SQLException ex) {}
+             if (stmt != null) try { stmt.close(); } catch(SQLException ex) {}
+         }
+     }
+
+-> ResultSet에 저장된 값을 가져오는 방법
+?ResultSet의 각 행의 값을 Object[]에 담기
+?ResultSet의 각 행의 값을 Map에 담기
+?ResultSet의 각 행의 값을 원하는 객체에 담기
+
+
+-----------
+
+//1. Template Method 패턴 적용2 : Connection 단위 적용
+
+-위의 쿼리문을 템플릿 메소드 패턴을 적용한 결과
+
+	Connection conn = null;
+	try {
+		conn = ...//커넥션 생성
+		conn.setAutoCommit(false);
+		
+		QueryTemplate template = new QueryTemplate();
+		int count = template.executeUpdate(conn,"update member set..");
+		int count1 = template.executeUpdate(conn, "update member_property set ..");
+		
+		conn.commit();
+	} catch(SQLException ex) {
+		conn.rollback();
+	} finally {
+		if(conn!=null) {
+			conn.setAutoCommit(true);
+			conn.close();
+		}
+	}
+
+=>여전히 Connection 부분에 중복 코드가 많음. Statement와 다르게 트랜잭션 시작-커밋 사이에 코드가 정해져 있지 않아서 어려움.
+-> 해결책
+
+	public Obejct executeInTransaction(Worker worker) throws SQLException {
+		Connection conn = null;
+		try {
+			conn = ../커넥션 구함
+			conn.setAutoCommit(false);
+			
+			Object returnValue = worker.work(conn);
+			
+			conn.commit();
+			return returnValue;
+		} catch(SQLException ex {
+			conn.rollback();
+		} finally {
+			if(conn!=null) try{ conn.close();} catch(SQLException ex){}
+		}
+
+public interface Worker {
+	public Object work(Connection conn) throws SQLException;
+}
+
+	QueryTemplate template = new QueryTemplate();
+	List resultList = (List)template.executeInTransaction(new Worker() {
+		@Override
+		public Object work(Connection conn) throws SQLException {
+			QueryTemplate t = new QueryTemplate();
+			int count = t.executeUpdate(conn,"query");
+			List result = t.executeQuery(conn,somequery);
+			...
+			return result;
+		}
+	});
+		
+
+
+
+
+
+-----------
+-----------
+-----------
+-----------
+-----------
+---------------------------------------------------------------------------------------------
+-----------
+-----------
+-----------
+-----------
+-----------
+-----------
+------
+------
+------
+------
+------
+------
+------
+------
+------
+------
+------
+------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,405 @@
+
+
+#include <stdio.h>
+#include <Windows.h>
+#include <conio.h>
+#include <time.h>
+#define LEFT 75
+#define RIGHT 77
+#define UP 72
+#define DOWN 80
+
+#define WIDTH 10
+#define HEIGHT 10
+#define MYTIME 2000
+#define DEBUG 0
+
+typedef struct {
+ int x;
+ int y;
+}Move;
+
+void printMap(void);
+void printMovingPoint1(int, int);
+void printMovingPoint2(int, int);
+void printHero(int, int);
+void delPrevState(int, int);
+void printEndPoint(int, int);
+void gotoxy(int, int);
+
+#if(!DEBUG)
+enum cal { ADD, SUB, MUL };
+int Set_Quiz(void);
+int printQuiz(int, int, int);
+void resultOfGame(int);
+#endif
+
+int map[HEIGHT][WIDTH]{
+ { 1,0,1,0,1,0,1,0,1 },
+ { 1,0,1,0,1,0,1,0,1 },
+ { 1,0,1,0,1,0,1,0,1 },
+ { 1,0,1,0,1,0,1,0,1 },
+ { 1,0,1,0,1,0,1,0,1 },
+ { 1,0,1,0,1,0,1,0,1 },
+ { 1,0,1,0,1,0,1,0,1 },
+ { 1,0,1,0,1,0,1,0,1 },
+ { 1,0,1,0,1,0,1,0,1 },
+ { 1,0,1,0,1,0,1,0,0 }
+};
+
+
+int main(void)
+{
+ int i, j, result;
+ char b;
+
+ //캐릭터 좌표표시(초기 2,0)
+ Move hero = { 2,0 };
+ //이동 전 포인트
+ Move moveP1[3] = {
+  { 2,9 },
+  { 6,9 },
+  { 10,9 }
+ };
+ //이동 후 포인트
+ Move moveP2[3] =
+ {
+  { 6,0 },
+  { 10,0 },
+  { 14,0 }
+ };
+ Move endPoint = { 16, 9 }; //엔딩 포인트
+
+#if(!DEBUG)
+ //초기  출력
+ printMap();
+ for (i = 0; i < 3; i++) {
+  printMovingPoint1(moveP1[i].x, moveP1[i].y);
+  printMovingPoint2(moveP2[i].x, moveP2[i].y);
+ }
+ printEndPoint(endPoint.x, endPoint.y);
+ printHero(hero.x, hero.y);
+#endif
+
+#if(DEBUG)
+ while (1) {
+  //초기 맵 + 포인터들 출력
+  gotoxy(0, 0);
+  printMap(); //맵 상태 출력
+  for (i = 0; i < 3; i++) { //무빙 포인터들 출력
+   printMovingPoint1(moveP1[i].x, moveP1[i].y);
+   printMovingPoint2(moveP2[i].x, moveP2[i].y);
+  }
+  //엔딩 포인터 출력
+  printEndPoint(endPoint.x, endPoint.y);
+
+  //포인터 출력
+  printHero(hero.x, hero.y);
+  //추가적인 메뉴들 출력
+
+
+  //디버그 모드 출력
+  gotoxy(0, HEIGHT + 2);
+  printf("<< DEBUG MOD >>\n");
+  printf("gotoxy(%d,%d)", hero.x, hero.y);
+  gotoxy(WIDTH * 3, 0);
+  printf("*******암산 게임********");
+  gotoxy(WIDTH * 3, 2);
+  printf("n + n = ? :");
+  gotoxy(WIDTH * 3, 6);
+  printf("*****Stage Clear*****\n\n\n");
+  b = getch();
+  //방향키 입력
+  if (b == -32) { //방향키 입력(224인데 char여서 -32)   
+   switch (getch()) {
+   case LEFT:
+    if (hero.x == 0) break;
+    delPrevState(hero.x, hero.y);
+    hero.x -= 2;
+    break;
+   case RIGHT:
+    if (hero.x == 80) break;
+    delPrevState(hero.x, hero.y);
+    hero.x += 2;
+    break;
+   case UP:
+    if (hero.y == 0) break;
+    delPrevState(hero.x, hero.y);
+    hero.y -= 1;
+    break;
+   case DOWN:
+    if (hero.y == 30) break;
+    delPrevState(hero.x, hero.y);
+    hero.y += 1;
+    break;
+   }
+  }
+  //종료
+  else if (b == 101) {
+   break;
+  }
+ }
+#endif
+
+#if(!DEBUG)
+ while (1) {
+  b = getch();
+  if (b == -32) { //키보드 입력을 기다린다
+   delPrevState(hero.x, hero.y);
+   switch (getch()) {
+   case LEFT:
+    if (map[hero.y][hero.x / 2 - 1] != 0) break;
+    hero.x -= 2;
+    break;
+   case RIGHT:
+    if (map[hero.y][hero.x / 2 + 1] != 0) break;
+    hero.x += 2;
+    break;
+   case UP:
+    if (map[hero.y - 1][hero.x / 2] != 0) break;
+    hero.y -= 1;
+    break;
+   case DOWN:
+    if (map[hero.y + 1][hero.x / 2] != 0) break;
+    hero.y += 1;
+    break;
+   }
+   printHero(hero.x, hero.y);
+  }
+  else if (b == 101) {
+   break;
+  }
+
+  //캐릭터가 이동 포인트0
+  if (hero.x == moveP1[0].x && hero.y == moveP1[0].y) {
+   result = Set_Quiz();
+   //정답을 맞추면
+   if (result == 1) {
+    printMovingPoint1(moveP1[0].x, moveP1[0].y);
+    hero.x = moveP2[0].x;
+    hero.y = moveP2[0].y;
+    printHero(hero.x, hero.y);
+   }
+   //정답이 틀리면
+   else {
+    resultOfGame(0);
+    break;
+   }
+  }
+  //캐릭터가 이동 포인트1
+  if (hero.x == moveP1[1].x && hero.y == moveP1[1].y) {
+   result = Set_Quiz();
+   //정답을 맞추면
+   if (result == 1) {
+    printMovingPoint1(moveP1[1].x, moveP1[1].y);
+    hero.x = moveP2[2].x;
+    hero.y = moveP2[2].y;
+    printHero(hero.x, hero.y);
+   }
+   //정답이 틀리면
+   else {
+    printMovingPoint2(hero.x, hero.y);
+    hero.x = 2;
+    hero.y = 0;
+    printHero(hero.x, hero.y);
+   }
+  }
+
+  if (hero.x == moveP1[2].x  && hero.y == moveP1[2].y) {
+   result = Set_Quiz();
+   //정답을 맞추면
+   if (result == 1) {
+    printMovingPoint1(hero.x, hero.y);
+    hero.x = moveP2[2].x;
+    hero.y = moveP2[2].y;
+    printHero(hero.x, hero.y);
+   }
+   //정답이 틀리면
+   else {
+    printMovingPoint2(hero.x, hero.y);
+    hero.x = moveP2[0].x;
+    hero.y = moveP2[0].y;
+    printHero(hero.x, hero.y);
+   }
+  }
+
+  if (hero.x == endPoint.x && hero.y == endPoint.y) {
+   resultOfGame(1);
+   break;
+  }
+ }
+#endif
+ return 0;
+}
+
+void printMap(void)
+{
+ int i, j;
+ //맵 출력
+ for (i = 0; i < HEIGHT; i++) {
+  for (j = 0; j < WIDTH; j++) {
+   if (map[i][j] == 0) printf("  ");
+   else printf("▧");
+  }
+  printf("\n");
+ }
+}
+
+void printHero(int x, int y)
+{
+ gotoxy(x, y);
+ printf("Ω");
+}
+
+void delPrevState(int x, int y)
+{
+ gotoxy(x, y);
+ printf("  ");
+}
+
+void printMovingPoint1(int x, int y)
+{
+ gotoxy(x, y);
+ printf("→");
+}
+
+void printMovingPoint2(int x, int y)
+{
+ gotoxy(x, y);
+ printf("◎");
+}
+
+void printEndPoint(int x, int y)
+{
+ gotoxy(x, y);
+ printf("★");
+}
+
+void gotoxy(int x, int y) {
+ COORD pos = { x,y };
+ SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), pos);
+}
+
+#if(!DEBUG)
+//퀴즈 내기 맞추면 1 반환 // 틀리면 0 반환
+int Set_Quiz(void)
+{
+ srand((unsigned)time(NULL));
+ int x1, x2, answer, guess, cal, tmp;
+ int i = 6;
+ cal = rand() % 3;
+ switch (cal) {
+ case ADD:
+  x1 = rand() % 100 + 1;
+  x2 = rand() % 100 + 1;
+  answer = x1 + x2;
+  break;
+ case SUB:
+  x1 = rand() % 100 + 1;
+  x2 = rand() % 100 + 1;
+  if (x1 < x2) {
+   tmp = x1;
+   x1 = x2;
+   x2 = tmp;
+  }
+  answer = x1 - x2;
+  break;
+ case MUL:
+  x1 = rand() % 8 + 2;
+  x2 = rand() % 8 + 2;
+  answer = x1*x2;
+  break;
+ }
+ guess = printQuiz(x1, x2, cal);
+
+ if (guess == answer) return 1;
+ else return 0;
+}
+
+int printQuiz(int x, int y, int cal)
+{
+ int i, j, k, guess;
+ char b;
+ char buffer[50] = { '\0' };
+
+ //이전 문제,정답,카운트 다운 지우기
+ gotoxy(WIDTH * 3, 1);
+ printf("                ");
+ gotoxy(WIDTH * 3, 2);
+ printf("                ");
+ for (k = 0; k < 3; k++) {
+  gotoxy(WIDTH * 3, 0);
+  printf("                         ");
+  Sleep(400);
+  gotoxy(WIDTH * 3, 0);
+  printf("*******암산 게임********");
+  Sleep(400);
+ }
+ gotoxy(WIDTH * 3, 0);
+ printf("*******암산 게임********");
+
+ gotoxy(WIDTH * 3, 2);
+ switch (cal) {
+ case ADD:
+  printf("%d + %d = ? :", x, y);
+  break;
+ case SUB:
+  printf("%d - %d = ? : ", x, y);
+  break;
+ case MUL:
+  printf("%d * %d = ? : ", x, y);
+  break;
+ }
+
+ j = 0;
+ i = MYTIME * 10;
+ while (1) {
+  if (i%MYTIME == 0) {
+   gotoxy(WIDTH * 3, 1);
+   printf("                 ");
+   gotoxy(WIDTH * 3, 1);
+   printf("Count Down : %d", i/MYTIME);
+  }
+  if (_kbhit()) {
+   b = getch();
+   //엔터
+   if (b == 13) {
+    sscanf(buffer, "%d", &guess);
+    break;
+   }
+   //백스페이스
+   else if (b == 8) {
+    if (j > 0) {
+     j--;
+     buffer[j] = '\0';
+    }
+   }
+   else {
+    sprintf(&buffer[j], "%c", b);
+    j++;
+   }
+   gotoxy(WIDTH * 3 + 11, 2);
+   printf("                                 ");
+   gotoxy(WIDTH * 3 + 15, 2);
+   printf("%s", buffer);
+  }
+
+  Sleep(1);
+  i--;
+ }
+
+ return guess;
+}
+
+void resultOfGame(int result)
+{
+ if (result == 1) {
+  gotoxy(WIDTH * 3, 6);
+  printf("*****Stage Clear*****\n\n\n");
+ }
+ else {
+  gotoxy(WIDTH * 3, 6);
+  printf("*****Mission Failed*****\n\n\n");
+ }
+}
+#endif

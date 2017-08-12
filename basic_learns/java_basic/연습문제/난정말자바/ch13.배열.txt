@@ -1,0 +1,122 @@
+-------ch13--------
+
+//13-1
+
+public class ArrayAndMethods {
+	public static int minValue(int[] ar)
+	{
+		int min=ar[0];
+		for(int i=1;i<ar.length;i++){
+			if(min>ar[i]) min=ar[i];
+		}
+		return min;
+	}
+	public static int maxValue(int[] ar)
+	{
+		int max=ar[0];
+		for(int i=1;i<ar.length;i++){
+			if(max<ar[i]) max=ar[i];
+		}
+		return max;
+	}
+	
+	public static void main(String[] args)
+	{
+		int arr[]=new int[]{1,2,10,15,27,14,38,20,17};
+		for(int i=0;i<arr.length;i++){
+			System.out.print(arr[i]+" ");
+		}
+		System.out.println("");
+		System.out.println("최대값 : "+maxValue(arr));
+		System.out.println("최소값 : "+minValue(arr));
+		
+	}
+
+}
+
+
+
+//13-2
+
+//문제1
+
+public class PartiallyFilledArray {
+	
+	public static void addTwoDArray(int[][] arr,int add)
+	{
+		for(int i=0;i<arr.length;i++){
+			for(int j=0;j<arr[i].length;j++){
+				arr[i][j]+=add;
+			}
+		}
+	}
+	
+	public static void showTwoDArray(int[][] arr)
+	{
+		for(int i=0;i<arr.length;i++){
+			for(int j=0;j<arr[i].length;j++){
+				System.out.print(arr[i][j]+" ");
+			}
+			System.out.println("");
+		}
+	}
+	
+	public static void main(String[] args)
+	{
+		int[][] arr=new int[3][];
+		arr[0]=new int[]{1,2};
+		arr[1]=new int[]{3,4,5};
+		arr[2]=new int[]{6,7,8,9};
+		System.out.println("------증가하기전-----");
+		showTwoDArray(arr);
+		System.out.println("------10 증가 후-----");
+		addTwoDArray(arr,10);
+		showTwoDArray(arr);
+		
+	}
+}
+
+
+
+
+
+
+//문제2
+
+
+//13-3
+
+
+public class Test {
+	public static void main(String[] args)
+	{
+		int arr[]=new int[]{10,15,18,25,17,5,19};
+		
+		System.out.println("최대값 : "+maxValue(arr));
+		System.out.println("최소값 : "+minValue(arr));
+		
+		
+	}
+	public static int minValue(int[] arr)
+	{
+		int min=arr[0];
+		for(int e : arr)
+		{
+			if(min>e) min=e;
+		}
+		return min;
+	}
+	
+	public static int maxValue(int[] arr)
+	{
+		int max=arr[0];
+		for(int e : arr)
+		{
+			if(max<e) max=e;
+		}
+		return max;
+	}
+	
+}
+
+

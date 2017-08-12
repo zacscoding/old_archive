@@ -1,0 +1,442 @@
+-------------------ch26.열거형-----------------------
+//26-1 열거형의 활용
+
+//인터페이스 기반의 상수 선언이 문제인 이유 : 자료형에 안전하지 못함
+
+interface Animal{
+	int DOG=1,CAT=2,BEAR=3;
+}
+
+interface Person{
+	int MAN=1,WOMAN=2,BABY=4;
+}
+
+public class NonSafeInterfaceConst{
+	public static void main(String[] args){
+		whoAreYou(Person.MAN);
+		whoAreYou(Animal.DOG);	//whoAreYou메소드는 남,여,아기를 구분하는 메소드
+								//BUT 인자로 DOG를 전달. 같은 int 이므로 가능
+		int myFried=Person.WOMAN;
+		if(myFried==Animal.CAT)
+			System.out.println("고양이 이놈!!");
+		else
+			System.out.println("고양이 인줄 알았음");		
+	}
+	public static void whoAreYou(int man){
+		switch(man){
+		case Person.MAN:
+			System.out.println("남자입니다.");
+			break;
+		case Person.WOMAN:
+			System.out.println("여자입니다.");
+			break;
+		case Person.BABY:
+			System.out.println("아기입니다.");
+			break;
+		}
+	}
+}
+
+//자료형을 부여하자
+
+class Animal{
+	private Animal(){}
+	public static final Animal DOG=new Animal();
+	public static final Animal CAT=new Animal();
+	public static final Animal BEAR=new Animal();	
+}
+
+class Person{
+	private Person(){}
+	public static final Person MAN=new Person();
+	public static final Person WOMAN=new Person();
+	public static final Person BABY=new Person();
+}
+
+
+public class ClassBaseDataTypeSet{
+	public static void main(String[] args){
+		Person man=Person.WOMAN;
+		
+		if(man==Person.MAN)
+			System.out.println("남성이군요");
+		else if(man==Person.WOMAN)
+			System.out.println("여성이군요");
+		else
+			System.out.println("안녕 아기야");
+		
+		/* 컴파일 에러
+		if(man==Animal.DOG)
+			System.out.println("사람이 강아지냐");
+		*/		
+	}	
+}
+
+=>자료형에 안전하다 그러나  switch문은 정수만 올 수 있어서 완전히 대체는 X & 선언이 불편함.
+
+//자료형 부여를 돕는 열거형
+
+enum Animal{
+	DOG,CAT,BEAR;
+}
+=>
+1)안에 선언된 DOG,CAT,BEAR는 Animal 클래스의 인스턴스(참조변수)이다.
+2)DOG,CAT,BEAR 이외에는 인스턴스 생성이 불가능하다.
+3)switch문의 레이블에 사용이 가능하다.
+4)DOG,CAT,BEAR는 데이터 영역에 들어감.
+
+enum Animal{
+	DOG,CAT,BEAR;
+}
+
+enum Person{
+	MAN,WOMAN,BABY;
+}
+
+
+public class EnumBasic{
+	public static void main(String[] args){
+		
+		whoAreYou(Person.MAN);
+		//whoAreYou(Animal.DOG);	//컴파일 에러
+		
+		Person myFriend=Person.WOMAN;
+		//Person Fried=Animal.CAT; //컴파일 에러
+		
+		/*
+		if(myFried==Animal.CAT)
+			System.out.println("고양이 이놈!");
+		else
+			System.out.println("고양이가 아니군요");
+		*/
+		
+				
+	}	
+	
+	public static void whoAreYou(Person man){
+		switch(man){
+		case MAN:	//Person.MAN 이 아님
+			System.out.println("남자입니다.");
+			break;
+		case WOMAN:
+			System.out.println("여자입니다.");
+			break;
+		case BABY:
+			System.out.println("아기입니다.");
+			break;
+		}
+	}
+}
+
+-------------------------------------------------------------------------------------------
+
+//26-2 열거형 클래스
+;열거형도 클래스다!!
+
+//생성자의 정의, 인스턴스 변수와 메소드 삽입
+
+enum City{
+	SEOUL(200),BUSAN(100),JEJU(50);	//열거형 City의 인스턴스 & 디폴트 생성자가 아닌 정수를 인자로 전달받는 생성자를 호출
+	
+	City(int popu){		//열거형은 private으로만 선언이 가능하다.아무런 선언이 없으면 private로 간주
+		population=popu;
+	}
+	
+	int population;	//인구 <<인스턴스 변수
+	public int getPopulation(){	//열거형도 클래스이므로 메소드 삽입 가능
+		return population;
+	}
+	
+}
+
+public class EnumInstMember{
+	public static void main(String[] args){
+		/*열거형 City의 인스턴스를 대상으로 인스턴스 메소드를 호출.*/
+		System.out.println("서울의 인구 : "+City.SEOUL.getPopulation());
+		System.out.println("부산의 인구 : "+City.BUSAN.getPopulation());
+		System.out.println("제주의 인구 : "+City.JEJU.getPopulation());
+	}		
+}
+
+<< 실행 결과 >>
+서울의 인구 : 200
+부산의 인구 : 100
+제주의 인구 : 50
+
+SEOUL,BUSAN,JEJU는 정확히 참조 변수는 아님(대상을 변경하지 못하므로)
+
+//모든 열거형 클래스가 상속하는 Enum 클래스
+
+
+import java.util.Scanner;
+
+enum City{
+	SEOUL(200),BUSAN(100),JEJU(50);	//열거형 City의 인스턴스 & 디폴트 생성자가 아닌 정수를 인자로 전달받는 생성자를 호출
+	
+	City(int popu){		//열거형은 private으로만 선언이 가능하다.아무런 선언이 없으면 private로 간주
+		population=popu;
+	}
+	
+	int population;	//인구 <<인스턴스 변수
+	public int getPopulation(){	//열거형도 클래스이므로 메소드 삽입 가능
+		return population;
+	}
+	
+}
+
+public class EnumValueOf{
+	public static void main(String[] args){
+		System.out.println("SEOUL,BUSAN,JEJU >> ");
+		Scanner keyboard=new Scanner(System.in);
+		
+		String where=keyboard.nextLine();
+		where=where.toUpperCase();
+		
+		City dest=City.valueOf(City.class,where); //밑의 설명
+				
+		switch(dest){
+		case SEOUL:
+			System.out.println("가시려는 서울의 인구 : "+dest.getPopulation());
+			break;
+		case BUSAN:
+			System.out.println("가시려는 부산의 인구 : "+dest.getPopulation());
+			break;
+		case JEJU:
+			System.out.println("가시려는 제주의 인구 : "+dest.getPopulation());
+			break;
+		}
+		
+	}		
+}
+
+<< 실행 결과 >>
+SEOUL,BUSAN,JEJU >> 
+seoul
+가시려는 서울의 인구 : 200
+
+City dest=City.valueOf(City.class,where);
+=>
+valueOf의 첫번 째 매개변수 : 열거형 클래스의 정보
+(City.class : 열거형 클래스인 City의 자료형 정보를 담고 있는 Class인스턴스의 참조변수)
+
+valueOf의 두번 째 매개변수 : 문자열("SEOUL","BUSAN","JEJU")중 하나 & 문자열과 동일한 인스턴스 반환
+(잘못 입력하면 IllegalArgumentException 예외 발생)
+
+=>dest에 valueOf에 의해 반환된 인스턴스 참조값 저장 & switch문 사용
+
+
+
+-------------------------------------------------------------------------------------------
+1)열거 타입 선언
+public enum Week {
+	MONDAY,
+	TUESDAY,
+	WEDNESDAY,
+	THURSDAY,
+	FRIDAY,
+	SATURDAY,
+	SUNDAY
+}
+
+2)열거 타입 변수
+Week today=Week.SUNDAY;
+
+=>힙 영역에 Week 객체 생성
+Week week1=Week.SUNDAY;	//Week.SUNDAY의 주소값 반환
+Week week2=Week.SUNDAY;	//Week.SUNDAY의 주소값 반환
+if(week1==week2)
+	System.out.println("같음");
+else
+	System.out.println("다름");
+
+3)Calendar 클래스를 이용한 enumeration 활용
+import java.util.Calendar;
+
+public class EnumWeekExample {
+	public static void main(String[] args){
+		Week today=null;
+		
+		Calendar cal=Calendar.getInstance();
+		int week=cal.get(Calendar.DAY_OF_WEEK);	//일(1)~토(7)까지의 숫자를 리턴
+		
+		switch(week){
+		case 1:
+			today=Week.SUNDAY;
+			break;
+		case 2:
+			today=Week.MONDAY;
+			break;
+		case 3:
+			today=Week.TUESDAY;
+			break;
+		case 4:
+			today=Week.WEDNESDAY;
+			break;
+		case 5:
+			today=Week.THURSDAY;
+			break;
+		case 6:
+			today=Week.FRIDAY;
+			break;
+		case 7:
+			today=Week.SATURDAY;
+			break;		
+		}
+		
+		System.out.println("오늘 요일 : "+today);
+		
+		if(today==Week.SUNDAY)
+			System.out.println("일요일에는 쉬어야지");
+		else
+			System.out.println("월-토는 열심히 공부해야지");
+		
+	}
+}
+
+
+
+
+4)열거 객체 메소드
+enum은 java.lang.Enum을 상속함
+
+리턴타입		메소드(매개변수)				설명
+───────────────────────────────────────────────
+String		name()					열거 객체의 문자열을 리턴	
+int			ordinal()				열거 객체의 순번(0부터 시작) 리턴
+int			compareTo()				열거 객체를 비교해서 순번 차이를 리턴
+열거 타입		valueOf(String name)	주어진 문자열의 열거 객체를 리턴
+열거 배열		values()				모든 열거 객체들을 배열로 리턴
+
+-name()메소드
+e.g)
+	Week today=Week.SUNDAY;
+	String str=today.toString();
+	String str2=today.name();
+	System.out.println(str);
+	System.out.println(str2);
+<< 실행 결과 >>
+SUNDAY
+SUNDAY
+
+
+-ordinal()메소드
+public enum Week {
+				//ordinal
+	MONDAY,		//0
+	TUESDAY,	//1	
+	WEDNESDAY,	//2
+	THURSDAY,	//3
+	FRIDAY,		//4
+	SATURDAY,	//5
+	SUNDAY		//6
+}
+e.g)
+	Week today=Week.SUNDAY;
+	int ordinal=today.ordinal();
+	System.out.println(ordinal);
+<< 실행결과 >>
+6
+
+
+-compareTo() 메소드
+;매개값으로 주어진 열거 객체를 기준으로 전후로 몇 번째 위치하는지 비교
+inst1.compareTo(inst2);
+==(inst2 순번) - (inst1 순번)
+
+e.g)
+	Week today1=Week.MONDAY;
+	Week today2=Week.WEDNESDAY;
+	System.out.println(today1.compareTo(today2));	//today1은 today2보다 2 앞서 있다.
+	System.out.println(today2.compareTo(today1));	//today2는 today1보다 2 뒤서 있다.
+<< 실행 결과 >>
+-2
+2
+
+
+
+-valueOf() 메소드 // 예외 : IllegalArgumentException, NullPointException
+;매개값으로 주어지는 문자열과 동일한 문자열을 가지는 열거 객체를 리턴
+(외부로부터 문자열을 입력받아 열거 객체로 변환할 때 유용히 사용)
+
+e.g)
+	Week weekDay=Week.valueOf("SATURDAY");	//열거 객체의 SATURDAY가 참조하는 인스턴스 반환
+	System.out.println(weekDay.ordinal());
+
+<< 실행 결과 >>
+5
+
+e.g)
+	try{
+		Week weekDay=Week.valueOf("asdfasdf");		
+	}catch(IllegalArgumentException e){
+		System.out.println("예외 발생");
+	}
+
+<< 실행 결과 >>
+예외 발생
+
+
+
+-values()메소드
+;열거 타입의 모든 열거 객체들을 배열로 만들어 리턴
+
+	Week[] days=Week.values();	//days는 stack -> 힙의 배열을 가리킴 & 배열은 Week 인스턴스 참조
+	for(Week day : days)
+		System.out.println(day);
+
+<< 실행 결과 >>
+MONDAY
+TUESDAY
+WEDNESDAY
+THURSDAY
+FRIDAY
+SATURDAY
+SUNDAY
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

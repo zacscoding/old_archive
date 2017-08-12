@@ -1,0 +1,762 @@
+-------------------------ch7--------------------------------------
+
+//7-1 상속에 들어가기에 앞서
+
+*상속을 정복하기 위한 접근 방식
+
+1단계: 상속과 더불어 다형성의 개념을 적용해야만 해결 가능한 문제를 먼저 제시한다.
+
+2단계: 상속의 문법적 요소를 하나씩 소개해 나간다. 그리고 그 과정에서 앞서 제시한 문제의 해결책을 함께 고민한다.
+
+3단계: 처음 제시한 문제를 상속을 적용하여 해결한다. 그리고 이 때 여러분의 감탄사를 기대한다.
+
+
+--------------------------------
+
+1단계 : 문제제기
+
+*OrangeMedia 급여 담당자의 요구사항
+ -급여 관리를 위해 직원 정보의 저장
+   *고용직(Permanent) : 연봉제(매달 급여가 결저오디어 있다)
+ -매달 지불되어야 할 급여 정보 확인
+ -EmployeeManager1.cpp
+
+
+/*EmployeeManager1.cpp*/
+
+#include <iostream>
+using std::cout; using std::endl;
+
+class PermanentWorker
+//entity 클래스(데이터) 
+//데이터 적인 측면이 강함. 
+//(e.g : 파워 종료 => 데이터 저장해야됨 => 데이터 저장의 기본 단위가 Permanent)
+{
+private:
+	char name[100];
+	int salary;		//매달 지불하는 금액
+public:
+	PermanentWorker(char *name, int money)
+		:salary(money)
+	{
+		strcpy(this->name, name);
+	}
+	int GetPay() const
+	{
+		return salary;
+	}
+	void ShowSalaryInfo() const
+	{
+		cout << "name : " << name << endl;
+		cout << "salary : " << GetPay() << endl;
+	}
+};
+
+
+class EmployeeHandler
+//컨트롤 클래스(사용자가 제공되어지는 기능적 측면)	 or 핸들러 클래스
+//프로그램의 전체적인 flow(흐름)을 담당(PermanentWorker를 보면 무슨 프로그램인지 알수 x
+//BUT EmployeeHandler(컨트롤 클래스)를 보면 어떤 프로그램인지 알 수 있음
+{
+private:
+	PermanentWorker * empList[50];
+	int empNum;
+public:
+	EmployeeHandler() : empNum(0)
+	{}
+	void AddEmployee(PermanentWorker* emp)//새로운 직원정보의 등록
+	{
+		empList[empNum++] = emp;
+	}
+	void ShowAllSalaryInfo() const	//모든 직원의 이번 달 급여정보 출력
+	{		
+		for (int i = 0; i < empNum; i++) {
+			empList[i]->ShowSalaryInfo();
+		}
+	}
+	void ShowTotalSalaryInfo() const	//이번 달 급여의 총액 출력
+	{
+		int sum = 0;
+		for (int i = 0; i < empNum; i++) {
+			sum += empList[i]->GetPay();
+		}
+		cout << "salary sum :" << sum << endl;
+	}
+	~EmployeeHandler()
+	{
+		for (int i = 0; i < empNum; i++) {
+			delete empList[i];
+		}
+	}
+};
+
+
+int main(void)
+{
+	//직원관리를 목적으로 설계된 컨트롤 클래스의 객체 생성
+	EmployeeHandler handler;
+
+	//직원등록
+	handler.AddEmployee(new PermanentWorker("KIM", 1000));
+	handler.AddEmployee(new PermanentWorker("LEE", 1500));
+	handler.AddEmployee(new PermanentWorker("JUN", 2000));
+
+	//이번 달에 지불해야 할 급여의 정보
+	handler.ShowAllSalaryInfo();
+
+	//이번 달에 지불해야 할 급여의 총합
+	handler.ShowTotalSalaryInfo();
+
+	return 0;
+}
+
+
+
+//위의 프로그램은 얼핏 보기에는 문제 X
+//모든 소프트웨어의 설계에 있어서 중요시하는 것 중 하나
+-요구사항의 변경에 대응하는 프로그램의 유연성
+-기능의 추가에 따른 프로그램의 확장성
+(요구사항의 변경에 대한 프로그램의 유연성과 확장성의 확보는 쉽지 않음. 다만 조금이라도 더 유연하고
+조금이라도 더 확장성이 좋게 프로그램을 디자인 하도록 노력! 
+i.e+변경되는 요구사항에 얼마나 잘 프로그램을 변경하는가 중요!!)
+
+
+
+===>문제 제기
+
+*요구 사항의 변경
+ -급여의 형태 다양화
+ -판매직(Sales Person) : 연봉제 + 인센티브제
+ -임시직(Temporary) : 일한 시간 x 시간당 급여
+
+---------------'오렌지미디어 급여관리 확장성 문제'라고 인식 => ch8에서 해결. 7장은 문법에 focus
+
+
+
+
+//7-2 상속의 문법적인 이해 
+
+*상속의 예
+ -"철수는 아버지로부터 좋은 목소리와 큰 키를 물려 받았다." //물질적 + 이외의 특성
+==>철수는 자신이 지니고 있는 고유의 특성 이외에 아버지로부터 물려 받은 좋은 목소리 & 큰 키라는 또다른 특성을 함께 지님
+
+
+==>과정
+1.첫째 : 메모리 공간 할당
+2.둘째 : Base 클래스의 생성자 실행
+3.셋째 : Derived 클래스의 생성자 실행
+(호출은 Derived가 먼저 되지만, 실행은 Base가 먼저 호출 및 실행)
+
+
+
+/*상속의 예제*/
+
+
+//1단계
+
+
+#include <iostream>
+using std::cout; using std::endl;
+
+class Person	//Base클래스
+{
+private:
+	int age;
+	char name[50];
+public:
+	Person(int myage=1, char *myname="noname")
+		: age(myage)
+	{
+		strcpy(name, myname);
+	}
+	void WhatYourName() const
+	{
+		cout << "My name is " << name << endl;
+	}
+	void HowOldAreYou() const
+	{
+		cout << "I am" << age << "years old" << endl;
+	}
+};
+
+//Derived 클래스
+class UnivStudent : public Person
+{
+private:
+	char major[50];
+public:
+	UnivStudent(char*mymajor)
+	{
+		strcpy(major, mymajor);
+	}
+	void WhoAreYou() const
+	{	//Person을 상속했기 때문에 호출 가능.
+		WhatYourName();
+		HowOldAreYou();
+		cout << "My major is " << major << endl;
+	}
+};
+
+
+int main(void)
+{
+	UnivStudent Kim("computer");
+	//UnivStudent 클래스의 생성자 호출 -> Person 생성자 호출 및 실행 -> UnivStudent 클래스 생성자 실행
+	//문제점 : UnivStudent 객체를 생성하면서 이름과 나이를 원하는 값으로 초기화 못시킴!
+	//초기화를 못시키면, Person 클래스에 멤버함수추가 + Student 에 멤버함수 추가 + 메인에 또 써야됨
+	//==>프로그램이 복잡해짐!!
+	Kim.WhoAreYou();
+	return 0;
+}
+
+
+
+
+
+
+
+
+//2단계
+*멤버 이니셜 라이저
+ -Base 클래스의 생성자 명시적 호출
+
+
+class UnivStudent : public Person
+{
+private:
+	char major[50];
+public:
+	UnivStudent(char *myname, int myage, char* mymajor)
+	Person(_myage,mymajor)
+{
+	strcpy(major,mymajor);
+} ....
+}
+
+int main(void)
+{
+ UnivStudent stu1("Kim",20,"computer);
+}
+
+//Derived 클래스의 생성자 호출 -> Base 클래스의 생성자 호출 및 실행 -> Derived 클래스의 생성자 실행
+//클래스의 멤버는 해당 클래스의 생성자를 통해서 초기화해야 한다!
+
+-------------------------------
+
+**용어의 정리 **
+
+Person			UnivStudetn
+상위 클래스		하위 클래스
+기초(base)클래스	유도(derived)클래스
+슈퍼(super)클래스	서브(sub)클래스
+부모클래스		자식클래스
+
+
+
+-------------------------------
+
+
+//상속의 소멸
+
+*첫째 : Derived 객체 소멸자 호출
+*둘째 : Base 객체 소멸자 호출
+*셋째 : 메모리 반환
+//=>Base , Derived 의 클래스 내에서 동적할당한다면 소멸자를 통해 해제가 이루어 져야 메모리 유출X
+
+
+/*소멸의 예제*/
+#include <iostream>
+using std::endl; using std::cout;
+
+class SoBase
+{
+private:
+	int baseNum;
+public:
+	SoBase(int n)
+		:baseNum(n)
+	{
+		cout << "SoBase() : " << baseNum << endl;
+	}
+	~SoBase()
+	{
+		cout << "~SoBase() : " << baseNum << endl;
+	}
+};
+
+class SoDerived : public SoBase
+{
+private :
+	int derivNum;
+public:
+	SoDerived(int n)
+		:SoBase(n), derivNum(n)
+	{
+		cout << "SoDerived() : " << derivNum << endl;
+	}
+	~SoDerived()
+	{
+		cout << "~SoDerived() : " << derivNum << endl;
+	}
+};
+
+int main(void)
+{
+	SoDerived drv1(15);
+	SoDerived drv2(27);
+	return 0;
+}
+
+//스택에 생성된 객체의 소멸순서는 생성순서와 반대이다.
+
+-------------------------------
+
+//7-3 protected 선언과 세 가지 형태의 상속
+
+
+/*
+
+//protected로 선언된 멤버가 허용하는 접근의 범위
+
+ -상속 관계에 놓여있을 경우 접근을 허용
+ -그 외에는 private 멤버와 동일!!! 
+==> 차이 : private(클래스 내에서만 접근, 상속도 불가능) // protected(상속에서 접근 가능)
+
+/*protected의 접근 범위에 대한 예제*/
+#include <iostream>
+using std::cout; using std::endl;
+
+class Base
+{
+private:
+	int num1;
+protected:
+	int num2;
+public:
+	int num3;
+};
+
+class Derived : public Base
+{
+public:
+	void ShowBaseMember()
+	{
+		//cout << num1;	//컴파일 에러!
+		cout << num2;
+		cout << num3;
+	}
+};
+
+
+==>기초 클래스와 이를 상속하는 유도클래스 사이에서도 '정보은닉'은 지켜지는 게 좋음
+
+
+*/
+
+
+
+
+/*
+
+//세 가지 형태의 상속(private 상속 , protected 상속 , public 상속)
+
+*접근 권한 변경
+ -Base 클래스의 멤버는 상속되는 과정에서 접근 권한 변경
+ 
+
+
+//protected 상속
+
+#include <iostream>
+using std::cout; using std::endl;
+
+class Base
+{
+private:
+	int num1;
+protected:
+	int num2;
+public:
+	int num3;
+	Base()
+		:num1(1), num2(2), num3(3) {}
+};
+
+class Derived : protected Base
+//protected보다 접근의 범위가 넓은 멤버는 protected로 변경시켜서 상속하겠다.
+{
+
+public:
+	void ShowBaseData()
+	{
+		//cout << num1 << endl; //컴파일 에러(private 멤버 num1은 접근 불가)
+		cout << num2 << endl;	//protected 멤버 num2는 Derived클래스에서만 접근 가능
+		cout << num3 << endl;	//
+	}
+};
+				
+
+int main(void)
+{
+	Derived drv;
+	//cout << drv.num3 << endl;	//drv는 protected 상속 -> num3는 protected -> main에서 접근 불가능
+	drv.ShowBaseData();
+	return 0;
+}
+
+
+
+
+//private 상속
+
+
+#include <iostream>
+using std::cout; using std::endl;
+
+class Base
+{
+private:
+	int num1;
+protected:
+	int num2;
+public:
+	int num3;
+	Base()
+		:num1(1), num2(2), num3(3) {}
+};
+
+class Derived : private Base
+//private보다 접근의 범위가 넓은 멤버는 private으로 변경시켜서 상속하겠다.
+{
+
+//private: => 접근 불가
+//	int num1;
+//protected: =>private :
+//	int num2;
+//public: =>private :
+//	int num3;
+//num1은 어디서든 접근 불가, num2, num3는 클래스 내에서만 접근 가능
+
+
+public:
+	void ShowBaseData()	{
+		//cout << num1 << endl; //컴파일 에러
+		cout << num2 << endl;
+		cout << num3 << endl;
+	}
+};
+
+
+class DeDerived : private Derived
+{
+//접근불가
+//	int num1;
+//접근불가
+//	int num2;
+//접근 불가
+//	int num3;
+//=>DeDerived를 통해서 모든 멤버 접근 불가 => 무의미함
+
+};
+
+int main(void)
+{
+	Base b1;
+	b1.num3 = 2;
+	cout << b1.num3 << endl;
+	Derived drv;
+	//drv.num3 = 3;	//컴파일 에러! drv는 모든 멤버 변수가 private임
+	drv.ShowBaseData();
+
+	return 0;
+}
+
+
+//public 상속
+// == private는 접근 불가, 나머지는 그대로 상속
+
+
+
+*/
+
+
+
+
+
+
+
+
+
+
+/*
+
+//7-4 상속을 위한 조건
+
+//1) IS-A 관계의 성립
+
+*예제
+무선 전화기 is a 전화기
+노트북 컴퓨터 is a 컴퓨터
+
+
+/*IS-A 관계가 성립하는 클래스 상속의 예제*/
+
+#include <iostream>
+using std::endl; using std::cout;
+
+class Computer
+{
+private:
+	char owner[50];
+public:
+	Computer(char *name)
+	{
+		strcpy(owner, name);
+	}
+	void Calculate()
+	{
+		cout << "요청 내용을 계산합니다." << endl;
+	}
+};
+
+class NotebookComp : public Computer
+{
+private :
+	int Battery;
+public:
+	NotebookComp(char *name, int initChag)
+		:Computer(name), Battery(initChag)
+	{}
+	void Charging()
+	{
+		Battery += 5;
+	}
+	void UseBattery()
+	{
+		Battery -= 1;
+	}
+
+	int GetBatteryInfor()
+	{
+		return Battery;
+	}
+	void MovingCal()
+	{
+		if (GetBatteryInfor()< 1)
+		{
+			cout << "충전이 필요합니다." << endl;
+			return;
+		}
+		cout << "이동하면서 ";
+		Calculate();
+		UseBattery();
+	}
+
+};
+
+class TabletNotebook : public NotebookComp
+{
+private:
+	char regstPenModel[50];
+public:
+	TabletNotebook(char *name, int initChag, char *pen)
+		:NotebookComp(name, initChag)
+	{
+		strcpy(regstPenModel, pen);
+	}
+	void Write(char *penInfo)
+	{
+		if (GetBatteryInfor() < 1)
+		{
+			cout << "충전이 필요합니다." << endl;
+			return;
+		}
+		if (strcmp(regstPenModel, penInfo) != 0)
+		{
+			cout << "등록된 펜이 아닙니다." << endl;
+			return;
+		}
+		cout << "필기 내용을 처리합니다." << endl;
+		UseBattery();
+	}
+};
+
+
+int main(void)
+{
+	NotebookComp nc("이수종", 5);
+	TabletNotebook tn("정수영", 5, "ISE-241-242");
+
+	nc.MovingCal();
+	tn.Write("ISE-241-242");
+
+	return 0;
+}
+
+//UML(Unified Modeling Language
+TabletNotebokk -> NotebookComp -> Computer
+
+
+
+
+
+
+
+
+
+
+//2) HAS-A 관계도 상속의 조건은 되지만 복합 관계로 이를 대신하는 것이 일반적이다.
+//소유의 관계도 상속으로 표현이 가능함(has a)
+
+/*소유의 관계로 클래스 상속을 보여주는 예제*/
+
+#include <iostream>
+#include <cstring>
+
+using std::endl; using std::cout;
+
+class Gun	//총을 표현한 클래스
+{
+private:
+	int bullet;		//장전된 총알의 수
+public:
+	Gun(int bnum)
+		:bullet(bnum) {}
+	void Shot()
+	{
+		cout << "BBANG!" << endl;
+		bullet--;
+	}
+};
+
+class Police : public Gun
+{
+private :
+	int handcuffs;		//소유한 수갑의 수
+public:
+	Police(int bnum, int bcuff)
+		:Gun(bnum), handcuffs(bcuff) {}
+	void PutHandcuff()
+	{
+		cout << "snap" << endl;
+		handcuffs--;
+	}
+};
+
+int main(void)
+{
+	Police pman(5, 3);	//총알 5개 수갑 3개
+	pman.Shot();
+	pman.PutHandcuff();
+	return 0;
+}
+
+
+/*같은 예제로 상속이 아닌 예제*/
+
+
+#include <iostream>
+#include <cstring>
+
+using std::endl; using std::cout;
+
+class Gun	//총을 표현한 클래스
+{
+private:
+	int bullet;		//장전된 총알의 수
+public:
+	Gun(int bnum)
+		:bullet(bnum) {}
+	void Shot()
+	{
+		cout << "BBANG!" << endl;
+		bullet--;
+	}
+};
+
+class Police
+{
+private :
+	int handcuffs;		//소유한 수갑의 수
+	Gun *pistol;
+public:
+	Police(int bnum, int bcuff)
+		:handcuffs(bcuff) 
+	{
+		if (bnum > 0) pistol = new Gun(bnum);
+		else pistol = NULL;
+	}
+	void PutHandcuff()
+	{
+		cout << "snap" << endl;
+		handcuffs--;
+	}
+	void Shot()
+	{
+		if (pistol == NULL) cout << "Hut BBANG!" << endl;
+		else pistol->Shot();
+	}
+	~Police()
+	{
+		delete pistol;
+	}
+};
+
+int main(void)
+{
+	Police pman1(5, 3);
+	pman1.Shot();
+	pman1.PutHandcuff();
+
+	Police pman2(0, 3);
+	pman2.Shot();
+	pman2.PutHandcuff();
+
+	return 0;
+}
+
+
+
+
+==>요구사항이
+1)권총을 소유하지 않은 경찰을 표현해야 합니다.
+2)경찰이 권총과 수갑뿐만 아니라, 전기봉도 소유하기 시작했습니다.
+
+==>상속으로 묶인 두 개의 클래스는 강한 연관성을 띤다.
+1) 
+pistol = NULL 하면됨
+
+2)
+상속 : 전기봉이라는 클래스는 만들어서 police에 상속 해야함. => 다중 상속
+일반 : 경찰이라는 클래스에 변수를 추가하면 됨
+
+
+
+==>결론 :
+상속은 IS-A 관계의 표현에 매우 적절하다. 그리고 경우에 따라서는 HAS-A 관계의 표현에도
+(소유 관계의 표현에도)사용될 수 있으나, 이는 프로그램의 변경에 많은 제약을 가져다 줄 수 있다.
+
+
+
+
+
+
+
+
+
+
+
+
+
+*/
+
+
+
+
+
+
+
+
+
+
+

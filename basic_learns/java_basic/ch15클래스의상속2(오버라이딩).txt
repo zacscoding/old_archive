@@ -1,0 +1,424 @@
+-------------------ch.15 클래스의 상속2 : 오버라이딩-----------------------
+
+//상속을 위한 기본 조건인 IS-A 관계의 성립
+			사람
+	학생				교수
+
+중학생,고등학생,대학생		정교수 부교수
+
+
+==>학생 is a 사람 //교수 is a 사람 
+==>IS-A 관계는 상속을 위한 최소한의 조건이다.
+(IS-A관계라고 무조건 상속하는 건 아님. 일단 IS-A는 상속의 조건이고 상속 할지 말지는 그 다음 문제)
+
+-상속관계에 있는 두 클래스 사이에는 IS-A 관계가 성립해야 한다.
+-IS-A 관계가 성립하지 않는 경우에는 상속의 타당성을 면밀히! 검토해야 한다.
+-IS-A 이외에 HAS-A 관계도 상속으로 표현 가능하다. 그러나 HAS-A를 대신해서 
+ Composition 관계를 유지하는 것이 보다 적절한 경우가 많다.
+
+
+In 집합 : 사람 <- 학생 <- 중학생 
+==>(하위 클래스로 갈 수록)구체화(규모로)  BUT 기능은 많아짐
+==>(상위 클래스로 갈 수록)범용적  
+//집합적인 규모 , 기능적인 측면 두가지 요소로 바라볼 수 있기
+
+--------------------------------------------------------------------------
+//HAS-A 관계에 상속을 적용한 경우
+-경찰은 총을 소유하고 있다.=> 경찰 has a 총  : Gun <- Police
+
+*****
+==>상속은 강한 연결고리를 형성한다(강한 연관성을 띈다.)즉, Poilice has a Gun에서 Gun클래스를
+상속하는 Poilice클래스로는 총을 소유하는 경찰만 표현이 가능하다. 때문에 총을 소유하지 않는 경찰
+, 또는 총이 아닌 경찰봉을 소유하는 경찰 등 다양한 표현에 한계를 보인다는 단점이 있다.
+
+
+//HAS-A 관계에 복합 관계를 적용한 경우
+
+==>복합 관계은 강한 연결고리를 형성하지 않는다. 따라서 소유하던 대상을 소유하지 않을 수도 있고,
+소유의 대상을 늘리는 것도 상속보다 훨씬 간단하다. 때문에 HAS-A 관계는 복합 관계로 표현한다.
+
+--------------------------------------------------------------------------
+
+//15-2 하위 클래스에서 메소드를 다시 정의한다면?(==메소드오버라이딩)
+
+-상위 클래스에 정의된 메소드의 이름,반환형,매개변수 선언(전부 다!)까지 완전히 동일한 메소드를
+ 하위 클래스에서 다시 정의하는 것
+-하위 클래스에 정의된 메소드에 의해 상위 클래스의 메소드는 가리워진다.
+
+
+class Speaker
+{
+	private int volumeRate;
+	public void showCurrentState()
+	{
+		System.out.println("볼륨의 크기 :"+volumeRate);
+	}
+	public void setVolume(int vol)
+	{
+		volumeRate=vol;
+	}
+}
+
+class BaseEnSpeaker extends Speaker
+{
+	private int baseRate;
+	public void showCurrentState()	//super클래스의 showCurrentState()를 가림
+	{
+		super.showCurrentState();
+		System.out.println("베이스 크기 :"+baseRate);
+	}
+	public void setBaseRate(int base)
+	{
+		baseRate=base;
+	}
+}
+
+
+
+//자바컴파일러의 실제 관점
+
+BaseEnSpeaker is a Speaker (O)
+
+Speaker is a BaseEnSpeaker (X)
+
+==>IS-A는 한쪽방향은 성립 역은 성립X
+==>speaker bs=new Speaker();
+	     =new BaseEnSpeaker();
+
+	public static void main(String[] args)
+	{
+		Speaker bs=new BaseEnSpeaker();
+		//BaseEnSpeaker도 Speaker의 일종이므로 인정 & 무엇을 참조했는지 잊음
+
+		bs.setVolume(20);
+		//bs.setBaseRate(20);	//컴파일 에러
+		bs.showCurrentState();
+	}
+
+
+--------------------------------------------------------------------------
+//참조변수의 참조 가능성에 대한 일반화
+
+class AAA{...}
+class BBB extends AAA{...}
+class CCC extends BBB{...}
+
+AAA ref1=new BBB();	//BBB는 AAA이다.->컴파일 OK
+AAA ref2=new CCC();	//컴파일 OK
+BBB ref3=new CCC();	//컴파일 OK
+
+CCC ref1=...	//컴파일 완료 가정 => CCC클래스의 인스턴스 or CCC를 상속하는 클래스의 인스턴스
+BBB ref2=ref1;	//컴파일 OK
+AAA ref3=ref1;	//컴파일 OK
+
+AAA ref1=new CCC();	//가능
+BBB ref2=ref1;	//컴파일 에러
+//AAA클래스의 ref1는 AAA,BBB,CCC...를 참조가능 
+//BUT BBB클래스의 ref2는 AAA클래스의 인스턴스를 참조할 수 없음(실제로 BBB 인스턴스가 생성되도, 컴파일 타임에 에러 -> 강제형변환) .
+CCC ref3=ref1;	//컴파일 에러
+
+--------------------------------------------------------------------------
+//오버라이딩 관계에서의 메소드 호출
+
+class AAA
+{
+	public void rideMethod()
+	{
+		System.out.println("AAA`s Method");
+	}
+	public void loadMethod()
+	{
+		System.out.println("void Method");
+	}
+}
+
+class BBB extends AAA
+{
+	public void rideMethod()	//오버라이딩
+	{
+		System.out.println("BBB`s Method");
+	}
+	public void loadMethod(int num)//오버로딩
+	{
+		System.out.println("int Method");
+	}
+}
+
+class CCC extends BBB
+{
+	public void rideMethod()	//오버라이딩
+	{
+		System.out.println("CCC`s Method");
+	}
+	public void loadMethod(double num)	//오버로딩
+	{
+		System.out.println("double Method");
+	}
+}
+
+public class OverLoad {
+	public static void main(String[] args)
+	{
+		AAA ref1=new CCC();
+		BBB ref2=new CCC();
+		CCC ref3=new CCC();
+		
+		ref1.rideMethod();		
+		ref2.rideMethod();
+		ref3.rideMethod();
+		
+		ref3.loadMethod();
+		ref3.loadMethod(1);
+		ref3.loadMethod(1.2);		
+	}
+}
+
+==>AAA의 rideMethod 메소드는 BBB의 rideMethod에 의해서 오버라이딩 되고,
+   BBB의 rideMethod 메소드는 CCC의 rideMethod에 의해서 오버라이딩 된다.
+
+--------------------------------------------------------------------------
+
+//인스턴스 변수도 오버라이딩 되나요?
+
+class AAA
+{
+	public int num=2;
+}
+
+class BBB extends AAA
+{
+	public int num=5;
+}
+
+class CCC extends BBB
+{
+	public int num=7;
+}
+
+public class OverLoad {
+	public static void main(String[] args)
+	{
+		CCC ref1=new CCC();
+		BBB ref2=ref1;
+		AAA ref3=ref2;
+		
+		System.out.println("CCC`s ref : "+ref1.num);	//7출력
+		System.out.println("BBB`s ref : "+ref2.num);	//5출력
+		System.out.println("AAA`s ref : "+ref3.num);	//2출력	
+	}
+}
+
+--------------------------------------------------------------------------
+
+//15-3 참조변수의 인스턴스 참조와 instanceof 연산자
+;boolean result=좌항(객체) instanceof 우항(타입);
+-형변환이 가능한지를 묻는 연산자이다.
+-형변환이 가능하면 true를 가능하지 않으면 false를 반환
+
+
+(Intro e.g)
+
+class Box
+{
+	public void simpleWrap(){}
+}
+
+class PaperBox extends Box
+{
+	public void paperWrap(){}
+}
+
+class GoldPaperBox extends PaperBox
+{
+	public void goldWrap(){}
+}
+
+
+	public static void main(String[] args)
+	{
+		//case 1.
+		Box b=new Box();
+		PaperBox b1=b;	//컴파일 에러(b는 Box or PaperBox or GoldPaperBox)
+		PaperBox b1=(PaperBox)b; //에러
+		
+		//case 2.
+		Box b=new GoldPaperBox();
+		GoldPaperBox b2=(GoldPaperBox)b;	//가능! 실제로 b가 GPB를 참조하고 있어서		
+		//==>case1에서는 false반환 & case2에는 true를 반환
+	}
+
+---------------------
+
+	public static void wrapBox(Box box)
+	{
+		if(box가 GoldPaperBox로 형변환이 가능하다면)
+			((GoldPaperBox)box).goldWrap();
+		else if(box가 PaperBox로 형변환이 가능하다면)
+			((PaperBox)box).paperWrap();
+		else
+			box.simpleWrap();
+	}
+
+==>
+	public static void wrapBox(Box box)
+	{
+		if(box instanceof GoldPaperBox)	
+		//box가 참조하는 인스턴스가 GoldPaperBox또는 GPB를 상속하는 클래스의 인스턴스 라면
+			((GoldPaperBox)box).goldWrap();
+		else if(box instanceof PaperBox)
+		//box가 참조하는 인스턴스가 PaperBox 또는 PB를 상속하는 클래스의 인스턴스 라면
+			((PaperBox)box).paperWrap();
+		else
+			box.simpleWrap();
+	}
+
+==>instanceof 키워드를 통해 box가 참조하는 인스턴스가 instanceof OO일때, 
+   OO클래스의 인스턴스 또는 OO클래스를 상속하는 인스턴스라는 보장을 받을 수 있다.
+
+
+-------------------------------------
+실행예제
+
+
+class Box
+{
+	public void simpleWrap()
+	{
+		System.out.println("Box.simpleWrap()!");
+	}
+}
+
+class PaperBox extends Box
+{
+	public void paperWrap(){
+		System.out.println("PaperBox.paperWrap()!");
+	}
+}
+
+class GoldPaperBox extends PaperBox
+{
+	public void goldWrap(){
+		System.out.println("GoldPaperBox.goldWrap()!");
+	}
+}
+public class InstanceOfTest {
+	public static void main(String[] args)
+	{
+		Box b1=new Box();
+		Box b2=new PaperBox();
+		Box b3=new GoldPaperBox();
+		
+		System.out.println("--new Box()--");
+		wrapBox(b1);	//Box.simpleWrap()!
+		System.out.println("");
+		System.out.println("--new PaperBox()--");
+		wrapBox(b2);	//PaperBox.paperWrap()!
+		System.out.println("");
+		System.out.println("--new GoldPaperBox()--");
+		wrapBox(b3);	//GoldPaperBox.goldWrap()!
+		System.out.println("");
+		
+		
+	}
+	public static void wrapBox(Box box)
+	{
+		if(box instanceof GoldPaperBox){
+			((GoldPaperBox)box).goldWrap();
+		}else if(box instanceof PaperBox){
+			((PaperBox)box).paperWrap();
+		}else{
+			box.simpleWrap();
+		}
+	}
+
+}
+
+
+
+
+
+
+--------------------------------------------------------------------------
+--------------------------------------------------------------------------
+--------------------------------------------------------------------------
+--------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--------------------------------------------------------------------
+--------------------------------------------------------------------
+--------------------------------------------------------------------
+--------------------------------------------------------------------
+--------------------------------------------------------------------
+--------------------------------------------------------------------
+--------------------------------------------------------------------
+--------------------------------------------------------------------
+--------------------------------------------------------------------
+--------------------------------------------------------------------
+--------------------------------------------------------------------
+--------------------------------------------------------------------
+--------------------------------------------------------------------
+--------------------------------------------------------------------
+--------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

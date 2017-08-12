@@ -1,0 +1,17 @@
+양방향 연결 리스트 ADT
+
+size();	//리스트의 요소 개수 반환
+
+isEmpty();	//true==empty
+
+first();	//첫번째 요소 반환(삭제X)
+
+last();		//마지막 요소 반환(삭제X)
+
+addFirst();	//리스트의 앞에 추가
+
+addLast();	//리스트의 마지막에 추가
+
+removeFirst();	//첫번째 요소 제거
+
+removeLast();	//마지막 요소 제거

@@ -1,0 +1,2386 @@
+-------------------ch.23 쓰레드(Thread)와 동기화-----------------------
+(Intro)
+쓰레드와 동기화는 별도가 아니라 같이 적용해야 하는 개념
+
+	Java Program
+	JVM Program
+	OS (ing :Process)
+
+Process : 쓰레드 그릇
+프로세스 생성시 1개의 쓰레드가 만들어짐(기본적으로) => main thread
+
+Method
+Stack <<main thread가 실행
+Heap
+	
+=>thread가 2개일때 별도의 실행흐름을 가지므로 별도의 stack을 가져야함.
+=>별도의 stack을 만듬.
+=>heap,method는 공유 가능
+
+=>
+멀티 프로세스 	: 애플리케이션 단위의 멀티 태스킹
+멀티 쓰레드 	: 애플리케이션 내부에서 멀티 태스킹
+=>
+멀티 프로세스는 운영체제에서 할당받은 자신의 메모리를 가지고 실행하기 때문에 서로 독립적
+멀티 쓰레드는 하나의 스레드가 예외를 발생시키면 프로세스 자체가 종료되며 다른 스레드에 영향 끼칠 수 있음 => 예외 처리에 만전을 기해야함
+
+--------------------------------------------------------------------------
+
+//23-1 쓰레드의 이해와 Thread 클래스의 상속
+
+-프로세스는 실행중인 프로그램을 의미한다.
+-쓰레드는 프로세스 내에서 별도의 실행흐름을 갖는 대상이다.
+-프로세스 내에서 둘 이상의 쓰레드를 생성하는 것이 가능하다.
+
+메소드영역 // 스택 영역 // 힙 영역 
+(프로그램이 실행될 때 프로세스에 할당된 메모리,이 자체를 단순히 프로세스라고 하기도 한다.
+ 사실 쓰레드는 모든 일의 기본 단위이다. main메소드를 호출하는 것도 프로세스 생성시 함께 생성되는
+ main 쓰레드를 통해서 이뤄진다.)
+
+--------------------------------------------------------------------------
+
+//쓰레드의 생성
+
+/*쓰레드 클래스 (쓰레드용 클래스 디자인)*/
+//1.extends Thread  2.run() overriding
+
+class ShowThread extends Thread {	//자바에서 쓰레드도 인스턴스로 표현
+	String threadName;
+
+	public ShowThread(String name) {
+		//super(name); //쓰레드 이름 지정 가능 + getName() 호출 가능
+		threadName = name;
+	}
+
+	public void run() {	//쓰레드의 main 메소드가 run이다. Thread클래스의 오버라이딩 해야함.
+		for (int i = 0; i < 20; i++) {
+			//System.out.println("쓰레드 :  " + super.getName());
+			System.out.println("쓰레드 :  " + threadName);
+			try {
+				sleep(100);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+}
+
+public class ThreadUnderstand {
+	public static void main(String[] args) {	//스레드의 시작 지점 => main
+		//Thread클래스를 상속하는 ShowThread 인스턴스 두개 생성 => 두개의 쓰레드 생성
+		ShowThread st1 = new ShowThread("AAA");
+		ShowThread st2 = new ShowThread("BBB");
+		st1.start();	//start가 메소드가 호출되면 쓰레드가 생성되고, 생성된 쓰레드는 run 메소드를 호출한다.
+		st2.start();
+	}
+}
+
+
+/* 익명 객체를 이용한 Thread 클래스 생성  */
+
+Thread thread=new Thread(){
+	public void run(){
+		스레드가 실행할 코드;
+	}
+};
+
+
+=>class MyThread extends Thread{} 일 경우 
+setName()/ getName()을 통해서 쓰레드 이름 설정 가능
+=>기본 쓰레드 이름 : Thread-n 
+
+--------------------------------------------------------------------------
+
+//쓰레드의 생성을 보인 첫 번째 예제의 의문점!
+
+Q1.쓰레드를 생성 후 start()메소드 호출. BUT run()은 왜 안됨?
+A : run 메소드를 직접 호출은 가능. BUT 쓰레드 생성은 아님( 쓰레드는 별도의 메모리를 가지고 있음)
+
+Q2.CPU가 1개인데 어떻게 2개 이상이 실행?
+A :모든쓰레드는 원칙을 가지고 CPU를 공유. (CPU 내에 존재하는 연산장치가 여러 개 존재하는 경우 쓰레드 각각에 코어가 하나씩 할당되어 실행도됨)
+
+Q3.main 메소드가 종료되어도 쓰레드는 실행을 계속하나요? 그리고 쓰레드는 run 메소드의 실행이 완료되면 종료되나요?
+A :쓰레드의 main 메소드가 run 메소드. 프로그램(쓰레드1,쓰레드2,쓰레드3)이 있으면 쓰레드1 종료 -> 소멸 & 쓰레드 2,3은 계속실행
+main 메소드를 실행하는 쓰레드를 가리켜 'main 쓰레드' 라고 부름
+
+Q4. 무엇이 쓰레드인가?
+A : 쓰레드는 매우 포괄적. 별도의 실행흐름을 형성하기 위해서 자바 가상머신에 의해 만들어지는(또는 준비되는) 
+	모든 리소스와 각종 정보들을 총칭해서 쓰레드
+
+--------------------------------------------------------------------------
+
+//쓰레드를 생성하는 두 번째 방법
+;Runnable 인터페이스 구현
+
+class Sum{
+	int num;	
+	String threadName;
+	public Sum(String name){
+		num=0;
+		threadName=name;
+	}
+	public void addNum(int n){
+		System.out.println(threadName+"의 addNum 실행");
+		num+=n;
+	}
+	public int getNum(){		
+		return num;
+	}
+}
+
+class AdderThread extends Sum implements Runnable {	//Runnable 인터페이스의 메소드 run 한개
+	int start,end;	
+	public AdderThread(int s,int e,String name) {
+		super(name);
+		start=s;
+		end=e;		
+	}
+	public void run() {
+		for(int i=start;i<=end;i++){
+			addNum(i);
+		}
+	}
+}
+
+
+public class RunnableThread {
+	public static void main(String[] args) {	
+		//Runnable인터페이스를 구현하는 AdderThread클래스의 인스턴스 2개 생성.
+		AdderThread at1=new AdderThread(1,50,"AAA");
+		AdderThread at2=new AdderThread(51,100,"BBB");
+		Thread tr1=new Thread(at1);	//Thread(Runnable target)  									
+		Thread tr2=new Thread(at2);	//Runnable인터페이스를 구현하는 클래스의 인스턴스로 Thread 생성자 호출 
+		
+		tr1.start();	//start 메소드의 호출을 통해서 최종으로 쓰레드를 생성 및 실행
+		tr2.start();	//=>생성자의 인자로 전달된 인스턴스의 run 메소드가 호출
+		
+		try{
+			tr1.join();
+			tr2.join();
+		} catch(InterruptedException e){
+			e.printStackTrace();
+		}
+		
+		System.out.println("1~100까지 합 : "+(at1.getNum()+at2.getNum()));	//두 쓰레드가 실행하면서 만들어 놓은 결과값을 참조하여 반환		
+	}
+}
+
+==>생성방법1,2는 같음 : Thread 클래스 정의 & run메소드 호출
+
+//연습문제 위의 AdderThread를 Thread클래스 상속해서 하기
+
+class SumThread extends Thread{
+	int num;		
+	int start,end;
+	public SumThread(int s,int e){
+		num=0;		
+		start=s;
+		end=e;
+	}
+	public void addNum(int n){		
+		num+=n;
+	}
+	public int getNum(){		
+		return num;
+	}
+	public void run() {
+		for(int i=start;i<=end;i++){
+			addNum(i);
+		}
+	}
+}
+public class Test {
+	public static void main(String[] args) {	
+			SumThread st1= new SumThread(1,50);
+			SumThread st2= new SumThread(51,100);
+			st1.start();
+			st2.start();
+			try{
+				st1.join();
+				st2.join();
+			} catch(InterruptedException e) {
+				e.printStackTrace();
+			}
+			
+			System.out.println("1-100까지 합 : "+(st1.getNum()+st2.getNum()));
+			
+	}
+}
+
+
+/*익명 객체를 이용해서 thread생성하기 */
+
+import java.awt.Toolkit;
+
+public class Main {
+	public static void main(String[] args){	
+		//익명 객체 사용
+		Thread thread=new Thread(new Runnable(){
+			@Override
+			public void run(){
+				Toolkit toolkit=Toolkit.getDefaultToolkit();
+				for(int i=0;i<5;i++){
+					toolkit.beep();
+					try{
+						Thread.sleep(500);
+					}catch(Exception e){}
+				}
+			}
+			
+		});
+		thread.start();
+		
+		for(int i=0;i<5;i++){
+			System.out.println("띵");
+			try{
+				Thread.sleep(500);
+			}catch(Exception e){}
+		}	
+	}
+}
+
+/*람다식을 이용*/
+		Thread thread = new Thread(() -> {
+			Toolkit toolkit = Toolkit.getDefaultToolkit();
+			for (int i = 0; i < 5; i++) {
+				toolkit.beep();
+				try {
+					Thread.sleep(500);
+				} catch (Exception e) {
+				}
+			}
+		});
+
+--------------------------------------------------------------------------
+
+//23-2쓰레드의 특성
+
+//쓰레드의 스케줄링과 우선순위 컨트롤
+
+=>JVM의 쓰레드 스케줄러는 쓰레드의 실행을 스케줄링(컨트롤) 해야한다.
+(쓰레드 스케줄링의 두 가지 기준)
+-우선순위가 높은 쓰레드의 실행을 우선시한다.(높은건 10, 낮은건 1 총 10단계)
+-우선순위가 동일할 때는 cpu의 할당시간을 나눈다.
+ (우선순위의 숫자차이는 의미X. 두 쓰레드간의 누가 크냐 작냐가 더 중요)
+
+=> 동시성(Concurrency) , 병렬성(Parallelism)
+동시성 : 멀티 작업을 위해 하나의 코어에서 멀티 스레드가 번갈아가며 실행하는 성질
+병렬성 : 멀티 작업을 위해 멀티 코어에서 개별 스레드를 동시에 실행하는 성질 
+
+=>쓰레드의 스케줄링 1)우선순위(Priority)방식 // 2)순환 할당(Round-Robin)
+ 
+ 
+/*	 예제	1	 */
+ 
+ class MessageSendingThread extends Thread {
+	String message;
+	int priority;
+
+	public MessageSendingThread(String str) {
+		message = str;
+	}
+
+	public void run() {
+		for (int i = 0; i < 50; i++)
+			System.out.println(message + "(" + getPriority() + ")");
+			//getPriority() : 쓰레드의 우선순위 반환
+	}
+}
+
+public class PriorityTestOne {
+	public static void main(String[] args) {
+		/*쓰레드3개 모두 동일한 우선순위.*/
+		MessageSendingThread tr1 = new MessageSendingThread("First");
+		MessageSendingThread tr2 = new MessageSendingThread("Second");
+		MessageSendingThread tr3 = new MessageSendingThread("Third");
+		tr1.start();
+		tr2.start();
+		tr3.start();
+	}
+}
+
+<< 실행 결과 >>
+First(5) Second(5) Third(5) 세개 번갈아 가면서 실행됨
+
+=>쓰레드의 실행방식은 시스템의 상황과 환경에 따라서 매우 많은 차이를 보인다.
+"동일한 우선순위의 쓰레드들은 CPU의 할당시간을 적절히(골고루) 나눠서 실행된다"라고만 가능.
+엄밀하게 수치적으로 할당시간과 할당순서를 이야기할 수 없다!
+
+--------------------------------------------------------------------------
+
+//우선순위가 다른 쓰레드들의 실행
+;우선순위가 높을수록 다른 스레드에 비해 실행 기회를 더 많이 가짐
+
+
+class MessageSendingThread extends Thread {
+	String message;
+
+	public MessageSendingThread(String str, int prio) {
+		message = str;
+		setPriority(prio);
+	}
+
+	public void run() {
+		for (int i = 0; i < 50; i++)
+			System.out.println(message + "(" + getPriority() + ")");
+	}
+}
+
+public class PriorityTestTwo {
+	public static void main(String[] args) {
+		MessageSendingThread tr1 = new MessageSendingThread("First", Thread.MAX_PRIORITY);		//상수로 10
+		MessageSendingThread tr2 = new MessageSendingThread("Second", Thread.NORM_PRIORITY);	//상수로 5
+		MessageSendingThread tr3 = new MessageSendingThread("Third", Thread.MIN_PRIORITY);		//상수로 1
+
+		tr1.start();
+		tr2.start();
+		tr3.start();
+	}
+}
+
+==>쓰레드는 그 특성상 운영체제에 상당히 의존적임.
+자바 자체적으로 10단계를 지원하지만, 실행중인 운영체제가 7단계라면 그 쓰레드는 7단계까지 우선순위가 부여될 수 있다.
+(즉, 우선순위 7,8로 set메소드 이용해도 우선순위가 6으로 될 수 있음.)
+
+
+/*예제 2*/
+
+public class CalcThread extends Thread{
+	public CalcThread(String name){
+		setName(name);
+	}
+	
+	public void run(){
+		for(int i=0;i<2000000000;i++){}
+		System.out.println(getName());
+	}
+}
+
+
+public class Main {
+	public static void main(String[] args){
+		for(int i=1;i<=10;i++){
+			Thread thread=new CalcThread("thread"+i);
+			if(i!=10)
+				thread.setPriority(Thread.MIN_PRIORITY);
+			else
+				thread.setPriority(Thread.MAX_PRIORITY);
+			
+			thread.start();			
+		}	
+	}
+}
+
+
+=>쿼드코어 에서는 쓰레드가 4개 이하에서는 병렬성으로 실행될 수 있어서 우선순위방식이 크게 영향을 미치지 못함.
+=>10개의 쓰레드 생성 & 하나만 우선순위10, 나머지는 1
+=>thread10에 더많은 할당량을 줌
+=>thread10이 대부분 먼저 실행됨
+
+
+--------------------------------------------------------------------------
+
+//낮은 우선순위의 쓰레드 실행
+
+class MessageSendingThread extends Thread {
+	String message;
+
+	public MessageSendingThread(String str, int prio) {
+		message = str;
+		setPriority(prio);
+	}
+
+	public void run() {
+		for (int i = 0; i < 500; i++) {
+			System.out.println(message + "(" + getPriority() + ")");
+
+			try {
+				sleep(1);	//CPU를 양보
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+}
+
+public class PriorityTestThree {
+	public static void main(String[] args) {
+		MessageSendingThread tr1 = new MessageSendingThread("First", Thread.MAX_PRIORITY);
+		MessageSendingThread tr2 = new MessageSendingThread("Second", Thread.NORM_PRIORITY);
+		MessageSendingThread tr3 = new MessageSendingThread("Third", Thread.MIN_PRIORITY);
+
+		tr1.start();
+		tr2.start();
+		tr3.start();
+	}
+}
+
+<<실행 결과>>
+Second(5)
+First(10)
+Third(1)
+Second(5)
+First(10)
+Third(1)
+Second(5)
+Third(1)
+....
+
+--------------------------------------------------------------------------
+
+//쓰레드의 라이프 사이클
+
+new -->(start메소드 호출 시)
+		Runnable  (<<--->>)Blocked       
+Dead <--(run 메소드 완료 시)
+
+(JVM이 스케줄러에 의해 Runnable 상태 중 1개 실행)
+
+1)new 		: "쓰레드 클래스가 new 키워드를 통해서 인스턴스화 된 상태 " 
+			,(JVM(i.e OS)에 의해 관리가 되는 상태는 X. 자바에서는 이 상태에서부터 쓰레드라 표현)
+
+2)Runnable 	: "쓰레드 인스턴스를 대상으로 start 메소드를 호출한 상태" 
+			,(start()메소드 호출 -> runnable -> 스케줄러에의해 선택 -> 실행(run) )
+
+3)Blocked 	: "실행 중인 쓰레드가 sleep,join 메소드를 호출하거나 CPU의 할당이 필요치 않는 
+				입출력 연산을 하게 되면 CPU는 다른 쓰레드에게 양보 & Blocked상태"
+			(Blocked의 원인이 제거되어 다시 Runnable상태로 돌아와야지 스케줄러에 의해 선택 & 실행 가능)
+			(sleep메소드로 인해 blocked 되었으면, sleep메소드가 반환이 되면서 다시 Runnable상태가 된다.)
+			
+4)Dead		: "run 메소드의 실행 & 완료 => Dead 상태"
+			(Dead상태이면 할당 받았던 메모리를 비롯해서 각종 쓰레드 관련 정보가 완전히 사라짐. => Dead -> Runnable 불가능)
+
+==>Runnable과 Blocked를 빈번히 왔다갔다해서 다른 쓰레드가 실행 가능! BUT Dead상태이면 다시 new를 해야 가능
+==>Runnable 상태의 쓰레드만이 스케줄러에 의해 스케줄링 가능하다.
+
+상태			열거 상수				설명
+ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+객체 생성		NEW					스레드 객체가 생성, 아직 start() 메소드가 호출되지 않은 상태
+실행 대기		RUNNABLE			실행 상태로 언제든지 갈 수 있는 상태
+
+			WAITING				다른 스레드가 통지할 때까지 기다리는 상태
+일시 정지		TIMED_WAITING		주어진 시간 동안 기다리는 상태
+			BLOCKED				사용하고자 하는 객체의 락이 풀릴 때까지 기다리는 상태
+			
+종료			TERMINATED			실행을 마친 상태
+
+
+/*   Thread의 상태를 확인하는 예제   */
+
+
+/*
+ * 타켓 클래스 : 10억번 루핑을 돌게해서 RUNNABLE 상태 유지 & sleep() 메소드를 호출해서 TIMED_WAITING 상태 
+ *			  &10억먼 루핑 RUNNABLE 상태 & TERMINATED 상태
+ */ 
+public class TargetThread extends Thread{
+	public void run(){
+		for(long i=0;i<1000000000;i++){}
+		try{
+			//1.5초간 정지
+			Thread.sleep(1500);
+		}catch(Exception e){}
+		for(long i=0;i<1000000000;i++){}
+	}
+}
+
+
+/*
+ *상태 출력 클래스 : 스레드의 상태를 0.5초 주기로 출력
+ */
+
+public class StatePrintThread extends Thread{
+	private Thread targetThread;
+	
+	public StatePrintThread(Thread targetThread){
+		this.targetThread=targetThread;
+	}
+	
+	public void run(){
+		while(true){
+			//스레드 상태 얻기
+			Thread.State state=targetThread.getState();
+			System.out.println(targetThread.getName()+"스레드 상태 : "+state);
+			
+			//객체 생성 상태일 경우 실행 대기 상태로 만듬
+			if(state==Thread.State.NEW)
+				targetThread.start();
+			
+			//종료 상태일 경우 while문을 종료함
+			if(state==Thread.State.TERMINATED)
+				break;
+			
+			try{
+				Thread.sleep(500);
+			}catch(Exception e){}			
+		}
+	}
+}
+
+
+/*
+ * 메인 클래스
+ */
+ 
+public class Main {
+	public static void main(String[] args){
+		StatePrintThread statePrintThread=new StatePrintThread(new TargetThread());
+		statePrintThread.start();					
+	}
+}
+
+--------------------------------------------------------------------------
+//스레드 상태 제어
+;yeild() // join()
+
+
+/*Thread.yeild()예제 */
+
+public class ThreadA extends Thread{
+	public boolean stop=false;	//종료 플래그
+	public boolean work=true;	//작업 진행 여부 플래그
+
+	public void run(){
+		while(!stop){
+			if(work){
+				System.out.println("ThreadA 작업 내용");
+			}else{
+				Thread.yield();
+			}
+		}
+		System.out.println("ThreadA 종료");
+	}
+}
+
+public class ThreadB extends Thread{
+	public boolean stop=false;
+	public boolean work=true;
+	
+	public void run(){
+		while(!stop){
+			if(work){
+				System.out.println("ThreadB 작업 내용");
+			}else{
+				Thread.yield();
+			}
+		}
+		System.out.println("ThreadB 종료");
+	}
+
+}
+
+
+public class Main {
+	public static void main(String[] args){
+		ThreadA threadA=new ThreadA();
+		ThreadB threadB=new ThreadB();
+		
+		//ThreadA,B 모두 실행
+		threadA.start();
+		threadB.start();
+		
+		try{
+			Thread.sleep(3000);
+		}catch(InterruptedException e){}
+		//ThreadB만 실행
+		threadA.work=false;
+		
+		try{
+			Thread.sleep(3000);
+		}catch(InterruptedException e){}
+		//ThreadA,B 모두 실행
+		threadA.work=true;
+		
+		try{
+			Thread.sleep(3000);
+		}catch(InterruptedException e){}
+		//ThreadA,B 모두 종료
+		threadA.stop=true;
+		threadB.stop=true;					
+	}
+}
+
+
+
+/*Thread.join() 예제*/
+
+public class SumThread extends Thread{
+	private long sum;
+	
+	public long getSum(){
+		return sum;
+	}
+	
+	public void setSum(long sum){
+		this.sum=sum;		
+	}
+	
+	public void run(){
+		for(int i=0;i<=100;i++){
+			sum+=i;
+		}
+	}
+}
+
+public class Main {
+	public static void main(String[] args){
+		SumThread sumThread=new SumThread();
+		sumThread.start();
+		
+		try{
+			sumThread.join();	//sumThread가 끝날때 까지 main스레드가 기다림
+		}catch(InterruptedException e){}
+		
+		System.out.println("1-100합 : "+sumThread.getSum());
+	}
+}
+
+--------------------------------------------------------------------------
+
+//쓰레드의 메모리 구성
+
+모든 쓰레드는 스택을 제외한 메소드 영역과 힙을 공유한다. 따라서 이 두 영역을 통해서 데이터를 주고 받을 수 
+있다. 스택은 쓰레드 별로 독립적일 수 밖에 없는 이유는, 쓰레드의 실행이 메소드의 호출을 통해서 이뤄지고,
+메소드의 호출을 위해서 사용되는 메모리 공간이 스택이기 때문이다.
+
+A쓰레드	Main쓰레드	B쓰레드
+-------------------------
+(공유)	Method		(공유)
+Stack	Stack		Stack
+(공유)	Heap		(공유)
+-------------------------
+
+//쓰레드간 메모리 영역의 공유 예제
+
+class Sum {
+	int num;
+	
+	public Sum() {
+		num = 0;
+	}
+
+	public void addNum(int n) {
+		num += n;
+	}
+
+	public int getNum() {
+		return num;
+	}
+}
+
+class AdderThread extends Thread {
+	Sum sumInst;
+	int start, end;
+
+	public AdderThread(Sum sum, int s, int e) {
+		sumInst = sum;
+		start = s;
+		end = e;
+	}
+
+	public void run() {
+		for (int i = start; i <= end; i++)
+			sumInst.addNum(i);
+	}
+}
+
+public class ThreadHeapMultiAccess {
+	public static void main(String[] args) {
+		Sum s = new Sum();
+		AdderThread at1 = new AdderThread(s, 1, 50);	//위에서 생성한 Sum 인스턴스를 통해 쓰레드의 생성자에 매개변수 전달.
+		AdderThread at2 = new AdderThread(s, 51, 100);	//=> at1,at2 두개의 쓰레드는 s라는 인스턴스에 접근이 가능하다.
+		
+		at1.start();
+		at2.start();
+
+		try {
+			at1.join();	//at1 쓰레드가 종료 후 다음 라인으로 
+			at2.join();	//at2 쓰레드 종료 후 다음 라인으로
+			//그렇지 않으면, at1,at2쓰레드 실행 중 System.out.~라인 실행 
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+
+		System.out.println("1~100까지의 합: " + s.getNum());
+	}
+}
+
+==>인스턴스가 힙에 저장되어있으므로 at1,at2,main Thread가 동시접근이 가능하다!
+==>위의 예제는 둘 이상의 쓰레드가 메모리 공간에 동시 접근하는 문제를 가지고 있다. 따라서
+   정상적이지 못한 실행의 결과가 나올 수도 있다.
+		
+--------------------------------------------------------------------------
+
+//23-2 동기화(Synchronization)	
+
+(Intro)
+ 공유>>	메모리(Heap) <<공유
+쓰레드A				쓰레드B
+=>문제 해결을 위해 
+1)동시접근 X 	2)순서 컨트롤
+
+--------------------------------------------------------------------------
+
+//쓰레드의 메모리 접근방식과 그에 따른 문제점
+
+상황 : heap에 num=100가 저장되어 있고
+Thread1, Thread2가 ++연산을 진행
+
+1)정상적인 연산의 예
+Thread1이 num의 값을 가져와 증가연산(cpu)하고 다시 넣는다 	=> num==100
+Thread2이 num의 값을 가져와 증가연산(cpu)하고 다시 넣는다 	=> num==101
+
+2)문제가 발생하는 예
+Thread1이 num의 값을 가져와 연산하고 Thread1 blocked 	=> 임시메모리에 100 저장
+Thread2가 num의 값을 가져와 연산하고 다시 num에 저장 		=> num==100
+Thread1이 num에 저장 								=> num==100
+
+=>값을 가져와서 연산하고 다시 넣는 것이 하나의 일 단위인데, 그것을 부분적으로 나눠서 실행
+=>동시접근 : 2개 연산이 연산을 부분적으로 나눠서 각각 완료되는 상황
+=>문제해결 : 일의단위를 보장하고 실행흐름을 컨트롤 => 동기화(Synchronized)
+
+--------------------------------------------------------------------------
+
+//Thread-safe 합니까?
+
+Note that this implementation is not synchronized
+
+API문서에는 해당 클래스의 인스턴스가 둘 이상의 쓰레드가 동시에 접근을 해도 문제가 발생하지 않는지를
+명시하고 있다. 따라서 쓰레드 기반의 프로그래밍을 한다면, 특정 클래스의 사용에 앞서 쓰레드에
+안전한지를 확인해야 한다.
+
+--------------------------------------------------------------------------
+
+//쓰레드의 동기화 기법1 : synchronized 기반 동기화 메소드
+
+class Increment {
+	int num = 0;
+
+	/*동기화 메소드의 선언! synchronized선언으로 인해서 increment메소드는 쓰레드에 안전한 함수가 된다.*/
+	//선언안하면 실행마다 값 다르게 나옴.
+	public synchronized void increment() {	
+		num++;
+	}
+
+	public int getNum() {
+		return num;
+	}
+}
+
+class IncThread extends Thread {
+	Increment inc;
+
+	public IncThread(Increment inc) {
+		this.inc = inc;
+	}
+
+	public void run() {
+		for (int i = 0; i < 10000; i++)
+			for (int j = 0; j < 10000; j++)
+				inc.increment();
+	}
+}
+
+public class ThreadSyncError {
+	public static void main(String[] args) {
+		Increment inc = new Increment();
+		IncThread it1 = new IncThread(inc);
+		IncThread it2 = new IncThread(inc);
+		IncThread it3 = new IncThread(inc);
+
+		it1.start();
+		it2.start();
+		it3.start();
+
+		try {
+			it1.join();
+			it2.join();
+			it3.join();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+
+		System.out.println(inc.getNum());
+	}
+}
+
+synchronized 선언으로 인해서 increment 메소드는 정상적으로 동작한다.
+그러나 엄청난 성능의 감소를 동반한다! 특히 위 예제와 같이 빈번한 메소드의 호출은 문제가 될 수 있다.
+(synchronized의 리소스 소모가 심함!)
+
+--------------------------------------------------------------------------
+
+//synchronized 기반 동기화 메소드의 정확한 이해
+
+class Calculator {
+	int opCnt=0;
+	public int add(int n1,int n2) {
+		opCnt++;	//동기화가 필요한 문장
+		return n1+n2;		
+	}
+	
+	public int min(int n1,int n2){
+		opCnt++;	//동기화가 필요한 문장
+		return n1-n2;
+	}
+	
+	public void showOpCnt() {
+		System.out.println("총 연산 횟수 : "+opCnt);
+	}	
+}
+
+class AddThread extends Thread {
+	Calculator cal;
+	
+	public AddThread(Calculator cal) {
+		this.cal=cal;
+	}
+	
+	public void run() {
+		System.out.println("1+2= "+cal.add(1, 2));
+		System.out.println("2+4= "+cal.add(2, 4));
+	}
+}
+
+class MinThread extends Thread {
+	Calculator cal;
+	
+	public MinThread(Calculator cal) {
+		this.cal=cal;
+	}
+	
+	public void run() {
+		System.out.println("2-1= "+cal.min(2, 1));
+		System.out.println("4-2= "+cal.min(4, 2));
+	}
+}
+
+
+
+public class ThreadSyncMethod {
+	public static void main(String[] args) {
+		Calculator cal=new Calculator();
+		AddThread at=new AddThread(cal);
+		MinThread mt=new MinThread(cal);
+		
+		at.start();
+		mt.start();
+		
+		try{
+			at.join();
+			mt.join();			
+		} catch(InterruptedException e) {
+			e.printStackTrace();
+		}
+		
+		cal.showOpCnt();	
+	}
+}
+
+=>모든 인스턴스는 lock을 걸 수 있다!
+
+=>동기화에 사용되는 인스턴스는 하나이며, 이 인스턴스에는 하나의 열쇠만이 존재한다.
+동기화의 대상은 인스턴스이며, 인스턴스의 열쇠를 획득하는 순간 모든 동기화 메소드에는
+타 쓰레드의 접근이 불가능하다. 따라서 메소드 내에서 동기화가 필요한 영역이 매우 
+제한적이라면 메소드 전부를 synchronized로 선언하는 것은 적절치 않다.
+(synchronized로 선언된 add,min 메소드는 열쇠가 필요 BUT 일반 메소드는 다른 스레드가 접근 가능)
+
+--------------------------------------------------------------------------
+
+//쓰레드의 동기화 기법 synchronized 기반 동기화
+
+/* 1)동기화 메소드 기반 */
+public synchronized int add(int n1,int n2) {
+	opCnt++;		//동기화가 필요한 문장
+	return n1+n2;
+}
+
+public synchronized int min(int n1,int n2) {
+	opCnt++;		//동기화가 필요한 문장
+	return n1-n2;
+}
+
+문제점 : 실제로 동기화가 필요한 문장은 적지만, 메소드 전체를 동기화 함으로써 성능저하를 초래!
+------->
+
+/* 2)동기화 블록 기반 */
+
+public int add(int n1,int n2) {
+	synchronized(this){	<<열쇠가 필요한 영역
+		opCnt++;	//동기화 된 문장
+	}
+	return n1+n2;
+}
+
+public int min(int n1,int n2) {
+	synchronized(this){	<<열쇠가 필요한 영역
+		opCnt++;	//동기화 된 문장
+	}
+	return n1-n2;
+}
+
+=>동기화 블록을 이용하면 동기화의 대상이 되는 영역을 세밀하게 제한할 수 있다.
+=>synchronized(this)에서 this는 동기화의 대상을 알리는 용도로 사용이 되었다. 즉, 메소드가
+호출된 인스턴스 자신의 열쇠를 대상으로 동기화를 진행하는 문장이다.
+
+--------------------------------------------------------------------------
+
+//동기화 블록의 예
+
+class IHaveTwoNum {
+	int num1 = 0;
+	int num2 = 0;
+
+	
+	public void addOneNum1() {
+		synchronized (key1) {
+			num1 += 1;
+		}
+	}
+
+	public void addTwoNum1() {
+		synchronized (key1) {
+			num1 += 2;
+		}
+	}
+
+	public void addOneNum2() {
+		synchronized (key2) {
+			num2 += 1;
+		}
+	}
+
+	public void addTwoNum2() {
+		synchronized (key2) {
+			num2 += 2;
+		}
+	}
+
+	public void showAllNums() {
+		System.out.println("num1: " + num1);
+		System.out.println("num2: " + num2);
+	}
+	Object key1 = new Object();
+	Object key2 = new Object();
+}
+
+class AccessThread extends Thread {
+	IHaveTwoNum twoNumInst;
+
+	public AccessThread(IHaveTwoNum inst) {
+		twoNumInst = inst;
+	}
+
+	public void run() {
+		twoNumInst.addOneNum1();
+		twoNumInst.addTwoNum1();
+
+		twoNumInst.addOneNum2();
+		twoNumInst.addTwoNum2();
+	}
+}
+
+class Test {
+	public static void main(String[] args) {
+		IHaveTwoNum numInst = new IHaveTwoNum();
+
+		AccessThread at1 = new AccessThread(numInst);
+		AccessThread at2 = new AccessThread(numInst);
+
+		at1.start();
+		at2.start();
+
+		try {
+			at1.join();
+			at2.join();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		numInst.showAllNums();
+	}
+}
+
+=>num1에 관한 메소드와 num2에 관한 메소드는 동기화 할 필요가 없다. 그래서 각각 키를 가지고 동기화 블록 설정
+=>보다 일반적인 형태==두 개의 동기화 인스턴스 중 하나는 this로 지정(2개 블록은 this, 2개 블록은 key)
+=>위의 코드에서 보이듯이 동기화 블록을 이용하면 동기화의 기준을 다양화할 수 있다.
+=>"정말로 필요한 부분에, 최소한의 형태로 동기화를 하는 개발자가 정말로 동기화를 잘하는 개발자"
+
+--------------------------------------------------------------------------
+
+//쓰레드 접근순서의 동기화 필요성
+ (동기화는 쓰레드의 접근 순서(방식)를 컨트롤한다는 의미이다.)
+ 
+class NewsPaper {
+	String todayNews;
+
+	public void setTodayNews(String news) {
+		todayNews = news;
+	}
+
+	public String getTodayNews() {
+		return todayNews;
+	}
+}
+
+class NewsWriter extends Thread {
+	NewsPaper paper;
+
+	public NewsWriter(NewsPaper paper) {
+		this.paper = paper;
+	}
+
+	public void run() {
+		paper.setTodayNews("자바의 열기가 뜨겁습니다.");
+	}
+}
+
+class NewsReader extends Thread {
+	NewsPaper paper;
+
+	public NewsReader(NewsPaper paper) {
+		this.paper = paper;
+	}
+
+	public void run() {
+		System.out.println("오늘의 뉴스: " + paper.getTodayNews());
+	}
+}
+
+class NewsPaperStory {
+	public static void main(String[] args) {
+		NewsPaper paper = new NewsPaper();
+		NewsReader reader = new NewsReader(paper);
+		NewsWriter writer = new NewsWriter(paper);
+
+		reader.start();
+		writer.start();
+
+		try {
+			reader.join();
+			writer.join();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
+} 
+
+
+=>위의 예제가 논리적으로 실행되려면 NewWriter 쓰레드가 먼저 실행되고, 이어서 
+NewsReader 쓰레드가 실행되어야 한다. 하지만 이를 보장하지 못하는 구조로
+구현이 되어있다.
+(소스코드로 순서를 정할 수는 없다. 왜냐하면 쓰레드의 실행순서는 다를 수 있으므로)
+
+--------------------------------------------------------------------------
+
+//wait,notify,notifyall에 의한 실행순서 동기화
+
+-public final void wait() throws InterruptedException
+//위의 함수를 호출한 쓰레드는 notify 또는 notifyAll메소드가 호출될 때까지 블로킹 상태에 놓이게 된다.
+
+-public final void notify()
+//wait 함수의 호출을 통해서 블로킹 상태에 놓여있는 쓰레드 하나를 깨운다.
+
+-public final void notifyAll()
+//wait함수의 호출을 통해서 블로킹 상태에 놓여있는 모든 쓰레드를 깨운다.
+
+synchronized(this){
+	wait();
+}
+위의 함수들은 왼쪽에서 보이는 바와 같이 한 순간에 하나의 쓰레드만 호출할 수 있도록 
+동기화 처리를 해야 한다.
+
+
+class NewsPaper {
+	String todayNews;
+	boolean isTodayNews = false;
+
+	public void setTodayNews(String news) {	//writer쓰레드가 호출하는 메소드
+		todayNews = news;
+		isTodayNews = true;
+
+		synchronized (this) {
+			notifyAll();
+		}
+	}
+
+	public String getTodayNews() {	//reader쓰레드가 호출하는 메소드
+		if (isTodayNews == false) {
+			try {
+				synchronized (this) {
+					wait();
+				}
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+		return todayNews;
+	}
+}
+
+=>Reader쓰레드가 getTodayNews() 실행 => isTodayNews==false => wait()상태
+=>Writer쓰레드가 setTodayNews() 실행 => 실행하고 notifyAll()로 모든 쓰레드 깨움
+									(notify()만 하면 하나만 깨움)
+=>Reader쓰레드가 return 부분을 실행
+(NewsPaper 클래스의 인스턴스에서 wait하고 있음.)
+
+wait과 notifyAll 메소드에 의한 동기화가 진행될때, 이전 예제에서 달라지는 부분은 쓰레드 클래스가
+아닌 쓰레드에 의해 접근이 이뤄지는 NewsPaper 클래스라는 사실에 주목!
+
+-----------------------------
+/*  e.g2) 데이터를 넣는 ProducerThread // 데이터를 쓰는 ConsummerThread   */
+
+
+/* 공유 인스턴스  */
+public class DataBox {
+	private String data;
+	
+	public synchronized String getData(){
+		if(this.data==null){
+			try{
+				wait();
+			}catch(InterruptedException e){
+				
+			}
+		}
+		String returnValue=data;
+		System.out.println("ConsummerThread가 읽은 데이터 : "+returnValue);
+		data=null;
+		notify();
+		return returnValue;		
+	}
+	
+	public synchronized void setData(String data){
+		if(this.data!=null){
+			try{
+				wait();
+			}catch(InterruptedException e){
+				
+			}
+		}
+		this.data=data;
+		System.out.println("ProducerThread가 생성한 데이터 : "+data);
+		notify();
+	}
+}
+
+
+/*	데이터 생산 쓰레드	*/
+public class ProducerThread extends Thread{
+	private DataBox dataBox;
+	
+	public ProducerThread(DataBox dataBox){
+		this.dataBox=dataBox;
+	}
+	
+	@Override
+	public void run(){
+		for(int i=1;i<=3;i++){
+			String data="Data-"+i;
+			dataBox.setData(data);
+		}
+	}
+}
+
+
+/*	데이터 소비 쓰레드	*/
+public class ConsummerThread extends Thread{
+	private DataBox dataBox;
+	
+	public ConsummerThread(DataBox dataBox){
+		this.dataBox=dataBox;
+	}
+	
+	@Override
+	public void run(){
+		for(int i=1;i<=3;i++){
+		String data=dataBox.getData();
+		}
+	}
+
+}
+
+
+/*	Main 클래스	*/
+public class Main {
+	public static void main(String[] args){
+		DataBox dataBox=new DataBox();
+		
+		ProducerThread pThread=new ProducerThread(dataBox);
+		ConsummerThread cThread=new ConsummerThread(dataBox);
+		
+		pThread.start();
+		cThread.start();
+		
+		try{
+			pThread.join();
+			cThread.join();
+		}catch(InterruptedException e){
+			e.printStackTrace();
+		}		
+	}
+}
+
+--------------------------------------------------------------------------
+//스레드에 안전한 종료(stop 플래그, interrup() )
+;스레드는 자신의 run() 메소드가 모두 실행되면 자동적으로 종료. 경우에 따라 실행 중인 스레드를 즉시 종료할 필요가 있음
+(e.g : 동영상 끝까지 보지 않고 사용자가 멈춤을 요구)
+
+
+//stop플래그 이용하는 방법
+
+=>stop() 메소드는 deprecated. (메소드로 스레드를 갑자기 종료하면 자원(파일,네트워크 연결 등)이 불안전한 상태로 남겨짐)
+=>stop 플래그를 이용
+private boolean stop;	//stop 플래그 필드
+public void run(){
+	while(!stop){
+		....
+	}
+	//스레드가 사용한 자원 정리
+}
+
+
+/*	stop 플래그를 스레드 예제		*/
+/*스레드 클래스*/
+public class PrintThread1 extends Thread{
+	private boolean stop;
+	
+	public void setStop(boolean stop){
+		this.stop=stop;
+	}
+	
+	@Override
+	public void run(){
+		while(!stop){
+			System.out.println("실행 중");
+		}
+		System.out.println("자원정리");
+		System.out.println("실행 종료");
+	}
+}
+
+
+/*메인 클래스*/
+public class Main {
+	public static void main(String[] args){
+		PrintThread1 pThread=new PrintThread1();
+		
+		pThread.start();
+		try{
+			Thread.sleep(1);
+		}catch(InterruptedException e){
+			e.printStackTrace();
+		}
+		
+		pThread.setStop(true);		
+	}
+}
+
+//interrupt() 메소드를 이용하는 방법
+;interrupt() 메소드는 스레드가 일시 정지 상태에 있을 때 InterruptedException 예외를 발생시키는 역할
+
+
+/*	PrintThread2를 실행한 후 1초 후에 PrintThread2를 멈추도록 interrupt() 메소드를 호출하는 예제 	*/
+
+/*스레드 클래스*/
+public class PrintThread2 extends Thread{
+	@Override
+	public void run(){
+		try{
+			while(true){
+				System.out.println("실행 중");
+				Thread.sleep(1000);
+			}
+		}catch(InterruptedException e){
+			
+		}
+		System.out.println("자원 정리");
+		System.out.println("실행 종료");
+	}
+}
+
+/*메인 클래스*/
+public class Main {
+	public static void main(String[] args){
+		PrintThread2 printThread=new PrintThread2();
+		printThread.start();
+		try{
+			Thread.sleep(1000);
+		}catch(InterruptedException e){
+			//empty
+		}	
+		printThread.interrupt();		
+	}
+}
+
+=>스레드가 실행 대기 또는 실행 상태에 있을 때 interrupt() 메소드가 실행되면 InterruptedException 예외가 발생하지 않고,
+  미래에 일시 정지 상태가 되면 InterruptedException 예외 발생
+=>
+public class PrintThread2 extends Thread{
+	@Override
+	public void run(){
+		try{
+			while(true){
+				for(int i=0;i<5;i++){
+					System.out.println((i+1)+"번째 실행 중");
+				}
+				Thread.sleep(1000);				
+			}			
+		}catch(InterruptedException e){
+		
+		}
+		System.out.println("자원 정리");
+		System.out.println("실행 종료");
+	}
+}	
+
+public class Main {
+	public static void main(String[] args){
+		PrintThread2 printThread=new PrintThread2();
+		printThread.start();
+		printThread.interrupt();		
+	}
+}
+
+<< 실행 결과 >>
+1번째 실행 중
+2번째 실행 중
+3번째 실행 중
+4번째 실행 중
+5번째 실행 중
+자원 정리
+실행 종료
+
+
+=>일시 정지를 만들지 않고 interrupt() 메소드 호출 여부 확인하는 방법
+interrupted() : 정적 메소드 , 현재 스레드가 interrupted 되었는지 확인
+isInterrupted() : 인스턴스 메소드, 현재 스레드가 interrupted 되었는지 확인
+=>
+boolean status=Thread.interrupted();		//Thread클래스.메소드
+boolean status=objThread.isInterrupted();	//인스턴스.메소드
+
+
+public class PrintThread2 extends Thread{
+	@Override
+	public void run(){
+		while(true){
+			System.out.println("실행 중");
+			if(Thread.interrupted())	//==if(this.isInterrupted())			
+				break;				
+		}
+		
+		System.out.println("자원 정리");
+		System.out.println("실행 종료");
+	}
+}
+
+--------------------------------------------------------------------------
+
+//23-4 새로운 동기화 방식
+
+기존 : 위의 key를 위해 Object클래스를 생성
+새로운 : 새로운 key 인스턴스 생성
+
+==>둘다 알아야함
+
+--------------------------------------------------------------------------
+
+//synchronized 키워드의 대체
+
+Class MyClass{
+	private final ReentrantLock criticObj=new ReentrantLock();
+	...
+	void myMethod(int arg){
+		criticObj.lock();		//다른 쓰레드가 진입하지 못하게 문을 잠근다.
+		....
+		....
+		criticObj.unlock();		//다른 쓰레드의 진입이 가능하게 문을 연다.
+	}
+}
+
+↓↓↓↓보다 안정적인 구현모델, 반드시 unlock 메소드가 호출되는 모델↓↓↓↓↓
+
+	void myMethod(int arg){
+		criticObj.lock();		//다른 쓰레드가 진입하지 못하게 문을 잠근다.
+		try{
+			...
+			...
+		}finally{
+			criticObj.unlock();	//다른 쓰레드의 진입이 가능하게 문을 연다.
+		}
+	}
+
+	
+/*예제*/
+
+import java.util.concurrent.locks.ReentrantLock;
+
+class IHaveTwoNum{
+	int num1=0;
+	int num2=0;
+	
+	public void addOneNum1(){
+		key1.lock();
+		try{
+			num1+=1;	//num1의 동시접근을 key1으로 잠금
+		}finally{
+			key1.unlock();
+		}
+	}
+	
+	public void addTwoNum1(){
+		key1.lock();
+		try{
+			num1+=2;	//num1의 동시접근을 key1으로 잠금
+		}finally{
+			key1.unlock();
+		}
+	}
+	
+	public void addOneNum2(){
+		key2.lock();
+		try{
+			num2+=1;	//num2의 동시접근을 key2로 잠금
+		}finally{
+			key2.unlock();
+		}
+	}
+	
+	public void addTwoNum2(){
+		key2.lock();
+		try{
+			num2+=2;	//num2의 동시접근을 key2로 잠금
+		}finally{
+			key2.unlock();
+		}
+	}	
+	
+	private final ReentrantLock key1=new ReentrantLock();
+	private final ReentrantLock key2=new ReentrantLock();
+}	
+
+--------------------------------------------------------------------------
+
+//await, signal, signalAll에 의한 실행순서의 동기화
+
+-await 		: 낮잠을 취한다(wait 메소드에 대응)
+-signal 	: 낮잠 자는 쓰레드 하나를 깨운다(notify 메소드에 대응)
+-signalAll 	: 낮잠 자는 모든 쓰레드를 깨운다(notifyAll 메소드에 대응)
+
+=>
+ReentrantLock 인스턴스 대상으로 newCondition 메소드 호출 시, Condition 인터페이스를 구현하는
+인스턴스의 참조 값 반환!
+이 인스턴스를 대상을 위의 메소드를 호출하여, 쓰레드의 실행순서를 동기화 한다.
+
+=>
+위의 메소드의 사용방법을 보이는 예제 ConditionSyncStringReadWrite.java
+
+import java.util.concurrent.locks.ReentrantLock;
+import java.util.concurrent.locks.Condition;
+import java.util.Scanner;
+
+class StringComm{
+	String newString;
+	boolean isNewString=false;
+	
+	private final ReentrantLock entLock=new ReentrantLock();	//entLock이라는 키로, get,set의 동기화를 조정
+	private final Condition readCond=entLock.newCondition();	//entLock을 대상으로 두 개의 Condition 인스턴스를 생성
+	private final Condition writeCond=entLock.newCondition();	//=>특정 조건의 만족 여부에 따라서 실행여부를 결정할 사항이 두가지 라는 뜻
+	
+	public void setNewString(String news){	//새로 입력받은 문자열을 저장하기 위한 메소드
+		entLock.lock();
+		try{
+			if(isNewString==true){	//이미 저장해 놓은 문자열을 다른 쓰레드가 가져가지 않았다면, 가져갈 때까지 대기하기 위한 코드.
+				writeCond.await();	//즉, 다른쓰레드가 가져가지 않은 문자열을 덮어쓰지 않기 위한 코드.			
+			}
+			
+			newString=news;
+			isNewString=true;
+			readCond.signal();
+		} catch(InterruptedException e){
+			e.printStackTrace();
+		} finally{
+			entLock.unlock();
+		}
+	} 
+	
+	public String getNewString(){	//새로 입력 받은 문자열을 가져가기 위한 메소드
+		String retStr=null;
+		entLock.lock();
+		try{
+			if(isNewString==false){	//현재 문자열이 없다면 기다리기
+				readCond.await();
+			}
+			retStr=newString;
+			isNewString=false;
+			writeCond.signal();
+		} catch(InterruptedException e){
+			e.printStackTrace();
+		} finally{
+			entLock.unlock();
+		}
+		return retStr;
+	}	
+}
+
+class StringReader extends Thread{	//문자열을 입력받아서 StringComm인스턴스에 가져다 놓는 쓰레드 클래스
+	StringComm comm;
+	
+	public StringReader(StringComm comm){
+		this.comm=comm;
+	}
+	
+	public void run(){
+		Scanner sc=new Scanner(System.in);
+		String readStr;
+		for(int i=0;i<5;i++){
+			readStr=sc.nextLine();
+			comm.setNewString(readStr);
+		}
+	}
+}
+
+class StringWriter extends Thread{	//StringComm 인스턴스의 문자열을 가져가는 쓰레드 클래스
+	StringComm comm;
+	
+	public StringWriter(StringComm comm){
+		this.comm=comm;
+	}
+	
+	public void run(){
+		for(int i=0;i<5;i++){
+			System.out.println("read string : "+comm.getNewString());
+		}
+	}
+}
+
+
+public class ConditionSyncStringReadWrite {
+	public static void main(String[] args) {
+		StringComm strComm=new StringComm();
+		StringReader sr=new StringReader(strComm);
+		StringWriter sw=new StringWriter(strComm);
+		
+		System.out.println("입출력 쓰레드의 실행...");
+		sr.start();
+		sw.start();	
+	}
+}
+
+==>
+StringReader 쓰레드는 getter함수의 readCond에 의해 await되고 setter의 readCond.signal()을 통해 깨어난다.
+StringWriter 쓰레드는 setter함수의 writeCond에 의해 await되고 getter의 writeCond.signal()을 통해 깨어난다.
+
+
+--------------------------------------------------------------------------
+
+//데몬 스레드(daemon thread)
+;주 스레드의 작업을 돕는 보조적인 역할을 수행하는 스레드
+(주 스레드가 종료되면 데몬 스레드는 강제적으로 자동 종료, 이외에는 일반 스레드와 동일)
+e.g)워드프로세서의 자동 저장 // 미디어 플레이어의 동영상 및 음악 재생 // 가비지 컬렉터
+    => 워드프로세스 // 미디어 플레이어 // JVM 종료되면 같이 종료 됨.
+
+e.g)메인 : main 스레드	// 데몬 : 자동 저장 
+
+public class AutoSaveThread extends Thread{
+	public void save(){
+		System.out.println("작업 내용을 저장함.");
+	}
+	
+	@Override
+	public void run(){
+		while(true){
+			try{
+				Thread.sleep(1000);
+			}catch(InterruptedException e){
+				break;
+			}
+			save();
+		}
+	}
+}
+
+public class Main {
+	public static void main(String[] args){
+		AutoSaveThread autoSaveThread=new AutoSaveThread();
+		autoSaveThread.setDaemon(true);	//start()하고 setDaemon(true)하면 IllegalThreadStateException 발생
+		autoSaveThread.start();
+		
+		try{
+			Thread.sleep(3000);
+		}catch(InterruptedException e){
+			
+		}
+		
+		System.out.println("메인 스레드 종료");		
+	}
+}
+
+<< 실행 결과 >>
+작업 내용을 저장함.
+작업 내용을 저장함.
+작업 내용을 저장함.
+메인 스레드 종료
+
+--------------------------------------------------------------------------
+
+//스레드 그룹
+;관련된 스레드를 묶어서 관리할 목적으로 이용.
+=>JVM이 실행되면 system 스레드 그룹을 만들고 JVM 운영에 필요한 스레드들을 생성해서 system 스레드 그룹에 포함
+=>스레드는 반드시 하나의 스레드 그룹에 포함.(명시적으로 그룹에 포함하지 않으면, 자신을 생성한 스레드와 같은 그룹에 속하게 됨)
+
+//1.스레드 그룹 이름 얻기
+
+ThreadGroup group=Thread.currentThread().getThreadGroup();
+String groupName=group.getNae();
+
+Map<Thread,StackTraceElement[]> map=Thread.getAllStackTraces();
+
+
+
+예제)
+
+public class AutoSaveThread extends Thread{
+	public AutoSaveThread(String name){
+		setName(name);
+	}
+	
+	public void save(){
+		System.out.println("작업 내용을 저장함.");
+	}
+	
+	@Override
+	public void run(){
+		
+	}
+}
+
+
+import java.util.Map;
+import java.util.Set;
+
+public class Main {
+	public static void main(String[] args){
+		AutoSaveThread autoSaveThread=new AutoSaveThread("AutoSaveThread");
+		autoSaveThread.setDaemon(true);
+		autoSaveThread.start();
+		
+		Map<Thread,StackTraceElement[]> map=Thread.getAllStackTraces();
+		Set<Thread> threads=map.keySet();
+		for(Thread thread : threads){
+			System.out.println("name : "+thread.getName()+((thread.isDaemon())?"(데몬)":"(주)"));
+			System.out.println("\t"+"소속그룹 : "+thread.getThreadGroup().getName());
+			System.out.println();
+		}
+		
+	}
+}
+
+
+<< 실행 결과 >>
+name : Signal Dispatcher(데몬)
+	소속그룹 : system
+
+name : AutoSaveThread(데몬)
+	소속그룹 : main
+
+name : main(주)
+	소속그룹 : main
+
+name : Attach Listener(데몬)
+	소속그룹 : system
+
+name : Finalizer(데몬)
+	소속그룹 : system
+
+name : Reference Handler(데몬)
+	소속그룹 : system
+
+
+=>Finalizer는 가비지 콜렉션을 담당하는 스레드
+
+
+//2.스레드 그룹 생성
+
+e.g)스레드 그룹 생성
+ThreadGroup tg=new ThreadGroup(String name);	//현재 스레드가 속한 그룹의 하위 그룹으로 생성
+ThreadGroup tg=new ThreadGroup(ThreadGroup parent, String name);
+
+e.g)스레드를 그룹에 포함
+Thread t=new Thread(ThreadGroup group,Runnable target);
+Thread t=new Thread(ThreadGroup group,Runnable target,String name);
+Thread t=new Thread(ThreadGroup group,Runnable target,String name, long stackSize);
+Thread t=new Thread(ThreadGroup group,String name);
+
+=>
+ThreadGroup : 스레드 그룹
+Runnable	: Runnable 구현 객체
+String		: 스레드 이름
+long		: JVM이 스레드에 할당할 stack의 크기
+
+
+//3.스레드 그룹의 일괄 interrupt()
+
+public class WorkThread extends Thread{
+	public WorkThread(ThreadGroup threadGroup,String threadName){
+		super(threadGroup,threadName);
+	}
+	
+	@Override
+	public void run(){
+		while(true){
+			try{
+				Thread.sleep(1000);
+			}catch(InterruptedException e){	//개별 interrupt() 호출 후 처리
+				System.out.println(getName()+"interrupted");
+				break;
+			}			
+		}
+		System.out.println(getName()+"종료됨");
+	}
+}
+
+
+public class Main {
+	public static void main(String[] args){
+		ThreadGroup myGroup=new ThreadGroup("My Group");
+		WorkThread workThreadA=new WorkThread(myGroup,"workThreadA");
+		WorkThread workThreadB=new WorkThread(myGroup,"workThreadB");
+		
+		workThreadA.start();
+		workThreadB.start();
+		
+		System.out.println("[main 스레드 그룹의 list() 메소드 출력 내용 ]");
+		ThreadGroup mainGroup=Thread.currentThread().getThreadGroup();
+		mainGroup.list();
+		System.out.println();
+		
+		try{
+			Thread.sleep(1000);
+		}catch(InterruptedException e){
+			
+		}
+		
+		System.out.println("[ myGroup 스레드 그룹의 interrupt() 메소드 호출 ]");
+		myGroup.interrupt();	//myGroup에 속한 스레드의 interrupt() 호출		
+	}
+}
+
+
+<< 실행 결과 >>
+[main 스레드 그룹의 list() 메소드 출력 내용 ]
+java.lang.ThreadGroup[name=main,maxpri=10]
+    Thread[main,5,main]
+    java.lang.ThreadGroup[name=My Group,maxpri=10]
+        Thread[workThreadA,5,My Group]
+        Thread[workThreadB,5,My Group]
+
+[ myGroup 스레드 그룹의 interrupt() 메소드 호출 ]
+workThreadAinterrupted
+workThreadA종료됨
+workThreadBinterrupted
+workThreadB종료됨
+
+--------------------------------------------------------------------------
+
+//스레드풀(ThreadPool)
+;병렬 작업 처리가 많아지면 스레드 개수 증가 & CPU 연산 증가 => 애플리케이션 성능 저하
+=>스레드풀을 사용(작업 처리에 사용되는 스레드를 제한된 개수만큼 정해놓고 작업 큐(Queue)에 들어오는 작업들을 하나씩 스레드가 맡아 처리
+=>java.util.concurrent 패키지에서 ExecutorService 인터페이스 &  Executors 클래스 제공
+
++이것이 자바다 p.626 스레드풀 처리 과정 그림 보기
+
+1.스레드풀에 작업 처리 요청
+2.스레드풀(ExcutorService)에서 작업 큐에 enqueue & 각 스레드는 큐에서 작업을 가져와 처리함
+3.최대 개수 만큼 스레드1,2,...n 작업처리
+4.Application으로 결과 전달
+
+-------------------------------
+
+//1.스레드풀 생성 및 종료
+
+-스레드풀 생성		
+
+메소드명(매개변수)					 초기 스레드 수 	코어 스레드 수 		최대 스레드 수
+newCachedThreadPool()				0						0				Integer.MAX_VALUE
+newFixedThreadPool(int nThreads)	0			  		nThreads			nThreads
+
+=>
+초기 스레드 수 : ExecutorService 객체가 생성될 때 기본적으로 생성되는 스레드 수
+코어 스레드 수 : 스레드 수가 증가된 후 사용되지 않는 스레드를 스레드풀에서 제거할 때 최소한 유지해야 할 스레드 수
+최대 스레드 수 : 스레드풀에서 관리하는 최대 스레드 수
+
+1)newCachedThreadPool()
+ExecutorService executorService=Executors.newCachedThreadPool();
+=>초기 스레드 수 & 코어 스레드 수 0
+=>스레드 개수보다 작업 개수가 많으면 새 스레드를 생성시켜 작업을 처리(이론상으로 int 최대값 BUT 운영체제의 성능과 상황에 따라 다름)
+=>1개 이상의 스레드가 추가되었을 경우 60초 동안 추가된 스레드가 아무 작업을 하지 않으면 추가된 스레드를 종료하고 풀에서 제거
+
+2)newFixedThreadPool(int nThreads)
+ExecutorService executorService=Executors.newFixedThreadPool(
+								Runtime.getRuntime().availableProcessors() );	//CPU코어 수 만큼
+=>초기 스레드 개수 0 & 코어 스레드 수 : nThreads
+=>스레드 개수보다 작업 개수가 많으면 새 스레드를 생성시키고 작업을 처리(최대 스레드 개수는 nThreads)
+=>스레드가 작업을 처리하지 ㅇ낳고 놀고 있더라도 스레드 개수가 줄지 않음.							
+
+3)직접 ThreadPoolExecutor 객체 생성
+ExecutorService threadPool=new ThredPoolExecutor(
+			3,		//코어 스레드 개수
+			100,	//최대 스레드 개수
+			120L,	//놀고 있는 시간
+			TimeUnit.SECONDS,	//놀고 있는 시간 단위
+			new SynchronousQueue<Runnable>() //작업 큐
+);
+
+
+-스레드풀 종료
+;스레드풀의 스레드는 기본적으로 데몬 스레드가 아니기 때문에, main 스레드가 종료되더라도 작업을 처리하기 위해 계속 실행 상태.
+
+ExecutorService에서 종료 관련 3가지 메소드
+
+void shutdown()	//현재 처리 중인 작업뿐만 아니라 작업 큐에 대기하고 있는 모든 작업을 처리한 뒤에 스레드풀을 종료
+
+List<Runnable> shutdownNow()	//현재 작업 처리 중인 스레드를 interrupt 해서 작업 중지를 시도하고 스레드풀 종료
+								//리턴값은 작업 큐에 있는 미처리된 작업(Runnable) 목록
+								
+boolean awaitTermination(long timeout,TimeUnit unit)	//shutdown() 메소드 호출 이후, 모든 작업 처리를 timeout 시간
+														//내에 완료하면 true 리턴 or 완료하지 못하면 처리 중인 스레드를
+														//interrupt하고 false리턴
+
+=>
+executorService.shutdown();
+or
+executorService.shutdownNow();														
+														
+										
+-------------------------------
+
+//2.작업 생성과 처리 요청
+
+-작업 생성
+;하나의 작업은 Runnable or Callable 구현 클래스로 표현
+
+1)Runnable 구현 클래스
+Runnable task=new Runnable(){
+	@Override
+	public void run(){
+	//스레드가 처리할 작업 내용
+	}
+}
+
+2)Callable 구현 클래스
+Collable<T> task=new Collable<T>{
+	@Override
+	public T call() throws Exception{
+	//스레가 처리할 작업 내용
+	return T;
+	}
+}
+
+=>스레드풀의 스레드는 작업 큐에서 Runnable or Callable 객체를 가져와 run() or call() 메소드 실행
+
+
+
+-작업 처리 요청
+;ExecutorService의 작업 큐에 Runnable 또는 Callable 객체를 넣는 행위
+
+=>작업처리를 위한 메소드
+
+void execute(Runnable command)		//-Runnable을 작업 큐에 저장 -작업 처리 결과를 받지 못함
+
+Future<?> submit(Runnable task)			//-Runnable 또는 Callable을 작업 큐에 저장 -리턴된 Future를 통해 작업 처리 결과를 얻을 수 있음
+Future<V> submit(Runnable task,V result)
+Future<V> submit(Callable<V> task)
+
+=>차이
+1)execute()는 작업 처리 결과를 받지 못함	// submit()은 작업 처리 결과를 받을 수 있도록 Future를 리턴
+2)execute()는 작업 처리 도중 예외가 발생하면 스레드 종료 & 스레드는 스레드풀에서 제거 => 스레드풀은 다른 작업 처리를 위해 새로운 스레드 생성
+  submit() 은 작업 처리 도중 예외가 발생하더라도 스레드는 종료되지 않고 다음 작업을 위해 재사용
+=>스레드의 생성 오버헤더를 줄이기 위해 submit() 사용 하는것이 좋음
+
+  
+  
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
+
+public class Main {
+	public static void main(String[] args)throws Exception{		
+		//최대 스레드 개수가 2인 스레드풀 생성
+		ExecutorService executorService=Executors.newFixedThreadPool(2);	
+		
+		//작업 정의
+		for(int i=0;i<10;i++){
+			Runnable runnable=new Runnable(){
+				@Override
+				public void run(){
+					//스레드 총 개수 및 작업 스레드 이름 출력
+					ThreadPoolExecutor threadPoolExecutor=(ThreadPoolExecutor)executorService;
+					int poolSize=threadPoolExecutor.getPoolSize();
+					String threadName=Thread.currentThread().getName();
+					System.out.println("[총 스레드 개수 : "+poolSize+"] 작업 스레드 이름 : "+threadName);
+					
+					//예외발생
+					int value=Integer.parseInt("삼");					
+				}
+			};
+			//작업 처리 요청
+			executorService.execute(runnable);
+			//executorService.submit(runnable);
+			
+			Thread.sleep(10); //콘솔에 출력 시간을 주기 위해 0.01초 일시 정지
+		}
+		
+		//스레드풀 종료
+		executorService.shutdown();
+	}
+}  
+
+<< 실행결과 1 : executorService.execute(runnable); >>
+[총 스레드 개수 : 1] 작업 스레드 이름 : pool-1-thread-1
+Exception in thread "pool-1-thread-1" java.lang.NumberFormatException: For input string: "삼"
+....
+[총 스레드 개수 : 2] 작업 스레드 이름 : pool-1-thread-3
+....
+[총 스레드 개수 : 2] 작업 스레드 이름 : pool-1-thread-2
+....
+[총 스레드 개수 : 2] 작업 스레드 이름 : pool-1-thread-4
+....
+[총 스레드 개수 : 2] 작업 스레드 이름 : pool-1-thread-5
+....
+[총 스레드 개수 : 2] 작업 스레드 이름 : pool-1-thread-6
+....
+[총 스레드 개수 : 2] 작업 스레드 이름 : pool-1-thread-7
+....
+[총 스레드 개수 : 2] 작업 스레드 이름 : pool-1-thread-8
+....
+[총 스레드 개수 : 2] 작업 스레드 이름 : pool-1-thread-9
+....
+[총 스레드 개수 : 2] 작업 스레드 이름 : pool-1-thread-10
+....
+
+=>....은 예외 메세지. 작업 처리 도중 예외가 발생했기 때문에 해당 스레드는 제거 & 새 스레드 계속 생성(thread-n) 다 다름
+
+
+<< 실행 결과 2: executorService.submit(runnable); >>
+[총 스레드 개수 : 1] 작업 스레드 이름 : pool-1-thread-1
+[총 스레드 개수 : 2] 작업 스레드 이름 : pool-1-thread-2
+[총 스레드 개수 : 2] 작업 스레드 이름 : pool-1-thread-1
+[총 스레드 개수 : 2] 작업 스레드 이름 : pool-1-thread-2
+[총 스레드 개수 : 2] 작업 스레드 이름 : pool-1-thread-1
+[총 스레드 개수 : 2] 작업 스레드 이름 : pool-1-thread-2
+[총 스레드 개수 : 2] 작업 스레드 이름 : pool-1-thread-1
+[총 스레드 개수 : 2] 작업 스레드 이름 : pool-1-thread-2
+[총 스레드 개수 : 2] 작업 스레드 이름 : pool-1-thread-1
+[총 스레드 개수 : 2] 작업 스레드 이름 : pool-1-thread-2
+
+=>예외가 발생하더라도 스레드가 종료되지 않고 계속 재사용되어 다른 작업을 처리하고 있음
+
+
+
+//e.g ) Thread로 나눠서 배열의 최대값을 구하는 예제 (Future<V>활용)
+
+
+import java.util.Arrays;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+
+class FindMaxTask implements Callable<Integer>{
+	private int[] data;
+	private int start;
+	private int end;
+	
+	public FindMaxTask(int [] data,int start,int end){
+		this.data = data;
+		this.start = start;
+		this.end = end;
+	}
+	
+	public Integer call(){
+		System.out.println(Thread.currentThread().getName());
+		int max = Integer.MIN_VALUE;
+		for(int i=start;i<end;i++){
+			if(max < data[i]) max = data[i];
+		}
+		System.out.println("call() 종료");
+		return max;
+	}
+}
+
+public class MultiThreadMaxFinder {	
+	public static int max(int[] data) throws InterruptedException ,ExecutionException {
+		if(data.length == 1){
+			return data[0];
+		}else if(data.length==0){
+			throw new IllegalArgumentException();
+		}
+		
+		FindMaxTask task1 = new FindMaxTask(data,0,data.length/2);
+		FindMaxTask task2 = new FindMaxTask(data,data.length/2,data.length);
+		
+		ExecutorService executor = Executors.newFixedThreadPool(2);		
+		Future<Integer> result1 = executor.submit(task1);
+		Future<Integer> result2 = executor.submit(task2);
+		
+		System.out.println("Futere후");
+		
+		if(!executor.isShutdown())
+			executor.shutdown();
+		int max =  Math.max(result1.get(), result2.get());
+		System.out.println("get()후");
+		return max;
+	}
+	
+	public static void main(String[] args){
+		int[] data = new int[10];
+		for(int i=0;i<data.length;i++){
+			data[i] = (int)(Math.random()*500);
+		}
+		System.out.println(" ***기존 데이터*** ");
+		System.out.println(Arrays.toString(data));
+		try{
+			System.out.println("최대 값 : "+max(data));
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+
+}
+
+
+
+-------------------------------
+
+//3.블로킹 방식의 작업 완료 통보
+;ExecutorService의 submit() 메소드는 매개값으로 준 Runnable 또는 Callable 작업을 스레드풀의 작업 큐에 저장하고
+ 즉시 Future 객체를 리턴
+=>Future 객체는 작업 결과가 아니라 작업이 완료될때까지 기다렸다가(지원했다가=블로킹되었다가) 최종 결과를 얻는데 사용.
+=>Future == 지연완료객체(pending completion)
+
+Future의 get()메소드
+V get()		//작업이 완료될 때까지 블로킹되었다가 처리 결과 V를 리턴
+V get(long timeout,TimeUnit unit)	//timeout 시간 전에 작업이 완료되면 결과 V를 리턴 
+									// 완료되지 않으면 TimeoutExcepion예외 발생
+
+
+=>submit()메소드 별로 Future의 get() 메소드가 리턴하는 값
+메소드								작업 처리 완료 후 리턴 타입		작업 처리 도중 예외 발생
+submit(Runnable task)				future.get()->null			future.get()->예외발생
+submit(Runnable task,Integer result) future.get() ->int 타입 값	future.get()->예외발생
+submit(Callable<String> tast)		future.get() ->String타입 값	future.get()->예외발생							
+									
+		
+
+		
+									
+
+/*	리턴값이 없는 작업 완료 통보	*/
+
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+
+public class Main {
+	public static void main(String[] args)throws Exception{
+		ExecutorService executorService=Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+		System.out.println("[작업 처리 요청]");
+		
+		Runnable runnable=new Runnable(){
+			@Override
+			public void run(){
+				int sum=0;
+				for(int i=1;i<=10;i++){
+					sum+=i;
+				}
+				System.out.println("[처리 결과]"+sum);
+			}
+		};
+		
+		Future future=executorService.submit(runnable);		
+		try{
+			future.get();
+			System.out.println("작업 처리 완료");			
+		}catch(Exception e){
+			System.out.println("[실행 예외 발생함]"+e.getMessage());
+		}		
+						
+		executorService.shutdown();
+	}
+}
+
+
+<< 실행 결과 >>
+[작업 처리 요청]
+[처리 결과]55
+작업 처리 완료
+
+
+/*	리턴값이 있는 작업 완료 통보	*/
+
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+
+public class Main {
+	public static void main(String[] args)throws Exception{
+		ExecutorService executorService=Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+		
+		System.out.println("[작업 처리 요청]");
+		
+		Callable<Integer> task=new Callable<Integer>(){
+			@Override
+			public Integer call() throws Exception{
+				int sum=0;
+				for(int i=1;i<=10;i++){
+					sum+=i;
+				}
+				return sum;
+			}
+		};
+		
+		Future<Integer> future=executorService.submit(task);
+		
+		try{
+			int sum=future.get();
+			System.out.println("[처리 결과] "+sum);
+			System.out.println("[작업 처리 완료]");
+		}catch(Exception e){
+			System.out.println("[실행 예외 발생함] "+e.getMessage());
+		}
+		
+		executorService.shutdown();
+	}
+}
+
+
+<< 실행 결과 >>
+[작업 처리 요청]
+[처리 결과] 55
+[작업 처리 완료]
+
+
+
+//작업 처리 결과를 외부 객체에 저장
+
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+
+class Result{
+	int accumValue;
+	synchronized void addValue(int value){
+		accumValue+=value;
+	}
+}
+
+public class Main {
+	public static void main(String[] args)throws Exception{
+		ExecutorService executorService=Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+		
+		System.out.println("[작업 처리 요청]");
+		
+		//작업 정의		
+		class Task implements Runnable{
+			Result result;
+			Task(Result result){
+				this.result=result;
+			}
+			@Override
+			public void run(){
+				int sum=0;
+				for(int i=1;i<=10;i++){
+					sum+=i;
+				}
+				result.addValue(sum);
+			}
+		}
+		
+		//두가지 작업 처리 요청
+		Result result=new Result();
+		Runnable task1=new Task(result);
+		Runnable task2=new Task(result);
+		Future<Result> future1=executorService.submit(task1,result);
+		Future<Result> future2=executorService.submit(task2,result);
+		
+		//두 가지 작업 결과를 취합
+		try{
+			result=future1.get();
+			result=future2.get();			
+			System.out.println("[처리 결과] "+result.accumValue);
+			System.out.println("[작업 처리 완료]");
+		}catch(Exception e){
+			e.printStackTrace();
+			System.out.println("[실행 예외 발생함] "+e.getMessage());
+		}		
+		executorService.shutdown();		
+	}
+}
+
+
+<< 실행 결과 >>
+[작업 처리 요청]
+[처리 결과] 110
+[작업 처리 완료]
+
+
+
+//작업 완료 순으로 통보
+;작업 요청 순서대로 작업이 처리되는 것 x => 작업의 양과 스레드 스케줄링에 따라서 처리됨
+=>스레드풀에서 작업 처리가 완료된 것만 통보 받는 방법 : CompletionService 인터페이스 를 이용(poll(),take() 메소드)
+=>CompletionService 구현 클래스 : ExecutorCompetionService<V>
+
+
+
+import java.util.concurrent.Callable;
+import java.util.concurrent.CompletionService;
+import java.util.concurrent.ExecutorCompletionService;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+
+public class Main {
+	public static void main(String[] args)throws Exception{
+		ExecutorService executorService=Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+		
+		//CompletionService 생성
+		CompletionService<Integer> completionService=new ExecutorCompletionService<Integer>(executorService);
+		
+		System.out.println("[작업 처리 요청]");
+		for(int i=0;i<3;i++){
+			//쓰레드풀에게 작업 처리 요청
+			completionService.submit(new Callable<Integer>(){
+				@Override
+				public Integer call() throws Exception{
+					int sum=0;
+					for(int i=1;i<=10;i++){
+						sum+=i;
+					}
+					return sum;
+				}
+				
+			});
+		}
+		
+		System.out.println("[처리 완료된 작업 확인]");
+		executorService.submit(new Runnable(){	//스레드풀의 스레드에서 실행하도록 함.
+			@Override
+			public void run(){
+				while(true){
+					try{
+						Future<Integer> future=completionService.take();//완료된 작업 가져오기
+						int value=future.get();						
+						System.out.println("[처리 결과] "+value);
+					}catch(Exception e){
+						break;
+					}
+				}
+			}
+			
+			
+		});
+		
+		//3초 후 스레드풀 종료
+		try{
+			Thread.sleep(3000);
+		}catch(InterruptedException e){
+			
+		}
+		
+		executorService.shutdown();		
+	}
+}
+
+
+
+<< 실행 결과 >>
+[작업 처리 요청]
+[처리 완료된 작업 확인]
+[처리 결과] 55
+[처리 결과] 55
+[처리 결과] 55
+
+-------------------------------
+
+//4.콜백 방식의 작업 완료 통보
+;콜백(callback) : 애플리케이션이 스레드에서 작업 처리를 요청한 후, 스레드가 작업을 완료하면 특정 메소드(콜백 메소드)를 자동 실행하는 기법
+=>ExecutorService는 콜백을 위한 별도 기능X // Runnable 구현 클래스는 콜백 기능 구현 가능
+
+
+import java.nio.channels.CompletionHandler;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+public class CallbackExample {
+	private ExecutorService executorService;
+	
+	public CallbackExample(){
+		executorService=Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());		
+	}
+	
+	//콜백 메소드를 가진 CompletionHandler 객체 생성
+	private CompletionHandler<Integer,Void> callback=new CompletionHandler<Integer,Void>(){
+		@Override
+		public void completed(Integer result,Void attachment){	//결과 타입, 첨부 타입
+			System.out.println("completed() 실행 : "+result);
+		}
+		
+		@Override
+		public void failed(Throwable exc,Void attachment){	//예외 타입,첨부 타입
+			System.out.println("failed() 실행 : "+exc.toString());
+		}
+	};
+	
+	public void doWork(final String x,final String y){
+		Runnable task=new Runnable(){
+			@Override
+			public void run(){
+				try{
+					int intX=Integer.parseInt(x);
+					int intY=Integer.parseInt(y);
+					int result=intX+intY;
+					callback.completed(result,null);	//정상처리 했을 경우 호출
+				}catch(NumberFormatException e){
+					callback.failed(e,null);	//예외가 발생했을 경우 호출
+				}
+			}
+		};
+		executorService.submit(task);	//스레드풀에게 작업 처리 요청
+	}
+		
+	public void finish(){
+		executorService.shutdown();	//스레드풀 종료
+	}
+	
+	public static void main(String[] args){
+		CallbackExample example=new CallbackExample();		
+		example.doWork("3","3");
+		example.doWork("3","삼");
+		
+		example.finish();
+	}
+}
+
+
+<< 실행 결과 >>
+completed() 실행 : 6
+failed() 실행 : java.lang.NumberFormatException: For input string: "삼"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

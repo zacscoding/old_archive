@@ -1,0 +1,964 @@
+-------------------ch25-2.JavaFX-----------------------
+------
+
+/2.1 메인 클래스
+import javafx.application.Application;
+import javafx.stage.Stage;
+
+public class AppMain extends Application{
+	@Override
+	public void start(Stage primaryStage) throws Exception{
+		primaryStage.show();
+	}
+	
+	public static void main(String[] args){
+		launch(args);	//AppMain 객체 생성 및 메인 윈도우 생성
+	}
+}
+
+=>
+javaFX 애플리케이션을 시작하는 메인 클래스는 추상 클래스인 javafx.application.Application 을 상속 
+& start() 메소드 재정의 & main() 메소드에서 Application의 launch() 메소드를 호출해야함.
+=>
+launch() 메소드는 메인 클래스의 객체를 생성하고, 메인 윈도우를 생성한 다음 start() 메소드 호출
+
+------
+
+/2.2 JavaFX 라이프사이클
+Application.launch() -> 기본 생성자 -> init() -> start() -> 사용
+Platform.exit() 호출 or 마지막 Stage 닫힘 -> stop() -> 종료
+
+종료되는 3가지 case
+1)마우스로 마지막 윈도우(Stage)의 우측 상단 닫기 버튼을 클릭
+2)자바 코드로 마지막 윈도우(Stage)의 close() 메소드 호출
+3)자바 코드로 Platform.exit() 또는 System.exit(0) 호출
+=>종료 직전 stop() 메소드 호출 -> 파일닫기,네트워크 끊기 등 자원 정리
+
+=>라이프사이클의 각 단계에서 호출되는 메소드는 서로 다른 스레드상에서 실행됨.
+JVM이 생성한 main 스레드가 Application.launch() 를 실행하면 launch() 메소드는 
+-JavaFX-Launcher : init() 실행
+-JavaFX Application Thread : 메인 클래스 기본 생성자, start() 및 stop() 실행 + UI 생성 및 수정 작업, 입력 이벤트 처리 등
+두 가지 스레드를 생성하고 시작.
+=>다른 스레드가 UI에 접근하면 예외 발생.
+
+e.g)
+
+
+import javafx.application.Application;
+import javafx.stage.Stage;
+
+public class AppMain extends Application{
+	
+	public AppMain(){
+		System.out.println(Thread.currentThread().getName()+": AppMain() 호출");
+	}
+	
+	@Override
+	public void init() throws Exception{
+		System.out.println(Thread.currentThread().getName()+": init() 호출");
+	}	
+	
+	@Override
+	public void start(Stage primaryStage) throws Exception{
+		System.out.println(Thread.currentThread().getName()+": start() 호출");
+		primaryStage.show();
+	}
+	
+	@Override
+	public void stop() throws Exception{
+		System.out.println(Thread.currentThread().getName()+": stop() 호출");
+	}
+	
+	public static void main(String[] args){
+		System.out.println(Thread.currentThread().getName()+": main() 호출");
+		launch(args);
+	}
+}
+
+<< 실행 결과 >>
+main: main() 호출
+JavaFX Application Thread: AppMain() 호출
+JavaFX-Launcher: init() 호출
+JavaFX Application Thread: start() 호출
+JavaFX Application Thread: stop() 호출			<<윈도우 창X 누르면 호출
+
+------
+
+/2.3 메인 클래스 실행 매개값 얻기
+;init() 메소드의 역할 : 메인 클래스의 실행 매개값을 얻어 애플리케이션의 초기값으로 이용할 수 있도록 하는 것.
+e.g)
+java AppMain --ip=192.168.0.5 --port=50001
+
+=>Application.launch()는 main() 메소드의 매개값을 그대로 넘겨 받음.
+=>init() 메소드에서 파라미터값을 얻는 방법
+Parameters params=getParameters();
+//1)
+List<String> list=params.getRaw();			
+//2)
+Map<String,String> map=params.getNamed();
+
+=>
+getRaw()는 "--ip=192.168.0.5" 와 "--port=50001"을 요소로 갖는 List 컬렉션을 리턴
+getName() 는 "ip"를 키로해서 "192.168.0.5"를 저장 // "port"를 키로해서 "50001"을 저장하는 Map 컬렉션을 리턴
+
+
+import java.util.List;
+import java.util.Map;
+
+import javafx.application.Application;
+import javafx.stage.Stage;
+
+public class AppMain extends Application{
+	@Override
+	public void init() throws Exception{
+		Parameters params=getParameters();
+		List<String> list=params.getRaw();
+		System.out.println("list.get(0) : "+list.get(0));
+		System.out.println("list.get(1) : "+list.get(1));		
+				
+		Map<String,String> map=params.getNamed();
+		System.out.println("map.get(\"ip\") : "+map.get("ip"));
+		System.out.println("map.get(\"port\") : "+map.get("port"));		
+	}	
+	
+	@Override
+	public void start(Stage primaryStage) throws Exception{		
+		primaryStage.show();
+	}
+		
+	public static void main(String[] args){
+		String[] arg={
+				"--ip=192.168.0.5",
+				"--port=50001"
+		};		
+		launch(arg);
+	}
+}
+
+<< 실행 결과 >>
+list.get(0) : --ip=192.168.0.5
+list.get(1) : --port=50001
+map.get("ip") : 192.168.0.5
+map.get("port") : 50001
+
+------
+
+/2.4 무대(Stage)와 장면(Scene)
+;JavaFX는 윈도우를 무대(Stage)로 표현. 무대는 한 번에 하나의 장면을 가질 수 있음.
+=> 장면을 javafx.scene.Scene 로 표현
+
+import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
+import javafx.stage.Stage;
+
+public class AppMain extends Application{
+	@Override
+	public void start(Stage primaryStage) throws Exception{
+		VBox root=new VBox();	//Parent 하위 객체인 VBox 생성
+		root.setPrefWidth(350); //VBox의 폭 설정
+		root.setPrefHeight(150); //VBox의 높이 설정
+		root.setAlignment(Pos.CENTER);	//컨트롤을 중앙으로 정렬
+		root.setSpacing(20); //컨트롤의 수직 간격
+		
+		Label label=new Label();	//Label 컨트롤 생성
+		label.setText("Hello, JavaFX");	//text 속성 설정
+		label.setFont(new Font(50));	//font 속성 설정
+		
+		Button button=new Button();	//Button 컨트롤 생성
+		button.setText("확인");		//text 속성 설정
+		button.setOnAction(event->Platform.exit()); //클릭 이벤트 처리
+		
+		root.getChildren().add(label);	//VBox의 자식으로 Label 컨트롤 추가
+		root.getChildren().add(button); //VBox의 자식으로 button 컨트롤 추가
+		
+		Scene scene=new Scene(root);
+		
+		primaryStage.setTitle("AppMain");
+		primaryStage.setScene(scene);
+		primaryStage.show();		
+	}
+		
+	public static void main(String[] args){	
+		launch(args);
+	}
+}
+
+=>
+VBox는 수직 방향으로 자식 컨트롤을 배치하는 컨테이너
+
+-------------------------------------------------------------------------------------
+
+//3. JavaFX 레이아웃
+;장면(Scene)에는 다양한 컨트롤이 포함되는데, 이들을 배치하는 것이 레이아웃(Layout)임.
+=>레이아웃을 작성하는 방법
+1)자바 코드로 작성하는 프로그램적 레이아웃
+2)FXML로 작성하는 선언적 레이아웃
+
+------
+
+/3.1 프로그램적 레이아웃
+;자바 코드로 UI 컨트롤을 배치하는 것.
+(자바 코드에 익숙한 개발자들이 선호하는 방식으로 컨트롤 배치, 스타일 지정, 이벤트 처리 등을 모두 자바 코드로 작성)
+BUT 
+1)레이아웃이 복잡해지면 코드까지 복잡 -> 난해한 프로그램이 될 확률이 높아짐. 
+2)모두 개발자가 직접 작성해야 하므로 디자이너와 협력해서 개발하는 것도 어려움. 
+3)유지보수 측면에서도 간단한 레이아웃 변경이나 스타일 변경이 필요하면 자바 소스를 수정하고 재 컴파일
+
+e.g)텍스트를 입력할 수 있는 TextField 컨트롤과 클릭할 수 있는 Button 컨트롤이 수평으로 나란히 배치
+import javafx.application.Application;
+import javafx.collections.ObservableList;
+import javafx.geometry.Insets;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.HBox;
+import javafx.stage.Stage;
+
+public class AppMain extends Application{
+	@Override
+	public void start(Stage primaryStage) throws Exception{
+		HBox hbox=new HBox();	// HBox 컨테이너 생성(수평으로 배치)
+		hbox.setPadding(new Insets(10));	//안쪽 여백 설정
+		hbox.setSpacing(10);  //컨트롤 간의 수평 간격 설정
+		
+		TextField textField=new TextField();	//TextField 컨트롤 생성
+		textField.setPrefWidth(200); //TextField의 폭 설정	
+	
+		Button button=new Button();  //Button 컨트롤 생성		
+		button.setText("확인");  //Button 글자 설정
+		
+		
+		ObservableList list=hbox.getChildren(); //HBox의 ObservableList 얻기
+		list.add(textField);	//TextField 컨트롤 배치
+		list.add(button);		//Button 컨트롤 배치
+		
+		Scene scene=new Scene(hbox);	//장면 생성
+		
+		primaryStage.setTitle("AppMain"); //윈도우창 제목 설정
+		primaryStage.setScene(scene);	 //윈도우 창에 장면 설정
+		primaryStage.show();			//윈도우 창 보여주기		
+	}
+		
+	public static void main(String[] args){	
+		launch(args);
+	}
+}
+
+------
+
+/3.2 FXML 레이아웃
+
+e.g)위의 자바 코드와 같은 TextField와 Button을 FXML 레이아웃으로 작성
+root.fxml
+
+<HBox xmlns:fx="http://javafx.com/fxml"> <!-- HBox 컨테이너 선언 -->
+	<padding>	<!-- 안쪽 여백 설정 -->
+		<Insets top="10" right="10" buttom="10" left="10" />
+	</padding>
+	<spacing>10</spacing>	<!-- 컨트롤 간의 수평 간격 설정 -->
+	
+	<children>	<!-- 자식 컨트롤 추가 -->
+		<TextField>		<!-- TextFiled 선언-->
+			<prefWidth>200</prefWidth>	<!-- TextField의 폭 설정 -->
+		</TextField>
+		
+		<Button>	<!-- Button 컨트롤 선언-->
+			<text>확인</text> <!-- Button 글자 설정 -->
+		</Button>
+	</children>
+</HBox>
+
+
+------
+
+/3.3 레이아웃 여백 : 패딩과 마진
+padding : 안쪽 여백 -> 해당 컨테이너의 setPadding() 메소드를 사용해서 설정
+margin : 바깥 여백 -> 바깥 컨테이너의 setMargin() 메소드를 사용
+
+=>Button이 HBox에 포함되어 있을 때, HBox의 패딩을 50 == Button의 마진을 50
+1)HBox의 패딩을 50
+--자바 코드--
+HBox hBox=new HBox();
+hBox.setPadding(new Insets(50));
+
+--FXML 태그--
+<HBox>
+	<padding>
+		<Insets topRightButtomLeft="50"/>
+	</padding>
+</HBox>	
+
+2)Button의 마진 50
+--자바코드--
+Button button=new Button();
+button.setMargen(button,new Insets(50));
+
+--FXML 태그--
+<Button>
+	<HBox.margin>
+		<Insets topRightBottomLeft="50" />
+	</HBox.margin>
+</Button>
+
+=>방향
+		top
+left    내용		right
+		buttom
+
+		
+=>마진과 패딩값은 javafx.geometry.Insets 객체로 제공
+1)new Insets(double topRightButtonLeft);	//모두 같은 값
+
+2)new Insets(double top, double right, double bottom, double left);	//개별 값 줄 수 있음
+//top을 기준으로 시계방향으로 나열
+
+
+ 
+
+import javafx.application.Application;
+import javafx.geometry.Insets;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.layout.HBox;
+import javafx.stage.Stage;
+
+public class AppMain extends Application{
+	@Override
+	public void start(Stage primaryStage) throws Exception{
+		//HBox패딩 설정
+		HBox hbox=new HBox();
+		hbox.setPadding(new Insets(50,10,10,50));
+		Button button=new Button();
+		button.setPrefSize(100,100);
+
+		//Button의 마진 설정
+//		HBox hbox=new HBox();
+//		Button button=new Button();
+//		button.setPrefSize(100, 100);
+//		HBox.setMargin(button,new Insets(10,10,50,50));
+		
+		hbox.getChildren().add(button);
+		Scene scene=new Scene(hbox);
+		
+		primaryStage.setTitle("AppMain");
+		primaryStage.setScene(scene);
+		primaryStage.show();		
+	}
+		
+	public static void main(String[] args){	
+		launch(args);
+	}
+}
+
+------
+
+/3.4 FXML 작성 규칙
+;FXML로 선언된 태그는 자바 코드로 변환되어 실행되기 때문에 자바 코드와 매핑 관계가 존재.
+
+
+
+1.패키지 선언
+자바코드									FXML 태그
+import javafx.scene.layout.HBox;		<?import javafx.scene.layout.HBox?>
+import javafx.scene.control.*;			<?import javafx.scene.control.* ?>		
+
+=>
+<?xml version="1.0~~> 과 <루트컨테이너 xmlns:fx=~~> 사이에 작성
+=>
+FXML 태그에서 사용되는 클래스 import 안되어 있으면, javafx.fxml.LoadException 발생
+
+
+2.태그 선언
+<태그이름>....</태그이름> or <태그이름/>
+=> 끝태그 없으면 javax.xml.stream.XMLStreamException 예외 발생
+
+
+3.속성 선언
+;속성값은 큰따옴표(") 또는 작은 따옴표(')로 표시 
+=>그렇지 않으면 javax.xml.Stream.XMLStreamException 예외 발생
+
+<태그이름 속성명="값" 속성명="값">...</태그이름>
+
+--자바코드--
+Button button=new Button();
+button.setText("확인");
+
+--FXML코드--
+<Button>
+	<text>확인</text>
+</Button>
+
+or 
+
+<Button text="확인"/>
+
+
+4.객체 선언
+
+1)<클래스 속성="값"/>
+
+--자바 코드--
+HBox hbox=new HBox();
+hbox.setPadding(new Insets(10,10,10,10));
+
+--FXML 코드--
+<HBox>
+	<padding>
+		<Insets top="10" right="10" bottom="10" left="10"/>
+	</padding>
+</HBox>
+
+2)<클래스 fx:value="값"/>
+
+자바코드						FXML
+String.valueOf("Hello!");	<String fx:value="Hello!" />
+Integer.valueOf("1");		<Integer fx:value="1" />
+Double.valueOf("1.0");		<Double fx:value="1.0" />
+Boolean.valueOf("false");	<Boolean fx:value="false" />
+
+
+3) <클래스 fx:constant="상수" />
+
+--자바 코드--
+Button button=new Button();
+button.setMaxWidth(Double.MAX_VALUE);
+
+--FXML--
+<Button>
+	<maxWidth>
+		<Double fx:constant="MAX_VALUE" />
+	</maxWidth>
+</Button>
+
+
+4)<클래스 fx:factory="정적메소드">
+
+--자바 코드--
+ComboBox combo=new ComboBox();
+combo.setItems(FXCollections.observableArrayList("공개","비공개"));
+
+--FXML --
+<ComboBox>
+	<items>
+		<FXCollections fx:factory="observableArrayList">
+			<String fx:value="공개"/>
+			<String fx:value="비공개"/>
+		</FXCollections>
+	</items>
+</ComboBox>
+
+------
+
+/3.5 FXML 로딩과 Scene 생성
+;FXML 파일 작성 -> 파일을 읽어드려 선언된 내용을 객체화 => FXML 로딩(javafx.fxml.FXMLLoader)
+ 
+public class AppMain extends Application{
+	@Override
+	public void start(Stage primaryStage) throws Exception{
+		Parent root=FXMLLoader.load(getClass().getResource("root2.fxml"));
+		Scene scene=new Scene(root);
+		
+		primaryStage.setTitle("AppMain");
+		primaryStage.setScene(scene);
+		
+		primaryStage.show();
+		
+	}
+		
+	public static void main(String[] args){	
+		launch(args);
+	}
+}
+
+1) FXMLLoader의 정적 메소드 load()
+Parent root=FXMLLoader.load(getClass().getResource("xxx.fxml"));
+2) FXMLLoader의 인스턴스 메소드 load()
+FXMLLoader loader=new FXMLLoader(getClass().getResource("xxx.fxml"));
+Parent root=(Parent)loader.load();
+
+------
+
+/3.6 JavaFX Scene Builder
+;설치 방법 책 보기
+
+-------------------------------------------------------------------------------------
+
+//4. JavaFX 컨테이너
+
+컨테이너			설명
+AnchorPane		컨트롤을 좌표로 배치하는 레이아웃
+BorderPane		위,아래,오른쪽,왼쪽,중앙에 컨트롤 배치하는 레이아웃
+FlowPane		행으로 배치하되 공간이 부족하면 새로운 행에 배치하는 레이아웃
+GridPane		그리드로 배치하되 셀의 크기가 고정적이지 않은 레이아웃
+StackPane		컨트롤을 겹쳐서 배치하는 레이아웃
+TilePane		그리드로 배치하되 고정된 셀의 크기를 갖는 레이아웃
+HBox			수평으로 배치하는 레이아웃
+VBox			수직으로 배치하는 레이아웃
+
+
+------
+
+/4.1 AnchorPane 컨테이너
+
+
+------
+------
+------
+------
+------
+------
+------
+------
+------
+------
+------
+------
+
+-------------------------------------------------------------------------------------
+
+//5.JavaFX 이벤트 처리
+
+------
+
+/5.1 이벤트 핸들러(Event Handler)
+import javafx.application.Application;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.layout.HBox;
+import javafx.stage.Stage;
+
+public class AppMain extends Application{
+	@Override
+	public void start(Stage primaryStage) throws Exception{
+		HBox root=new HBox();
+		root.setPrefSize(200,50);
+		root.setAlignment(Pos.CENTER);
+		root.setSpacing(20);
+		
+		Button btn1=new Button("버튼1");
+		btn1.setOnAction(new EventHandler<ActionEvent>(){
+			@Override
+			public void handle(ActionEvent event){
+				System.out.println("버튼1 클릭");
+			}
+		});
+		
+		Button btn2=new Button("버튼2");
+		btn2.setOnAction(event->System.out.println("버튼2 클릭"));
+		
+		root.getChildren().addAll(btn1,btn2);
+		Scene scene=new Scene(root);
+		
+		primaryStage.setTitle("AppMain");
+		primaryStage.setScene(scene);
+		primaryStage.setOnCloseRequest(event->System.out.println("종료 클릭"));
+		
+		primaryStage.show();	
+	}
+		
+	public static void main(String[] args){	
+		launch(args);
+	}
+}
+
+------
+
+/5.2 FXML 컨트롤러(Controller)
+
+1)fx:controller 속성과 컨트롤러 클래스
+
+<루트컨테이너 xmlns:fx="http://javafx.com/fxml"
+	fx:controller="packageName.ControllerName">
+	...
+</루트컨테이너>
+
+=>
+public class ControllerName implements Initializable{
+	@Override
+	public void initialize(URL location,ResourceBundle resources){
+	..
+	}
+}
+
+
+=>initialize() 메소드는 컨트롤러 객체가 생성되고 나서 호출
+=>주로 UI 컨트롤의 초기화,이벤트 핸들러 등록, 속성 감시 등의 코드가 작성
+
+
+2)fx:id 속성과 @FXML 컨트롤 주입
+
+/*	fx:id 속성   ; root.fxml		*/
+<HBox xmlns:fx="http://javafx.com/fxml"
+			fx:controller="packageName.ControllerName"
+			...>
+		<children>
+			<Button fx:id="btn1" text="버튼1" />
+			<Button fx:id="btn2" text="버튼1" />
+			<Button fx:id="btn3" text="버튼1" />
+		</children>
+</HBox>
+
+
+public class ControllerName implements Initializable{
+	@FXML private Button btn1;
+	@FXML private Button btn2;
+	@FXML private Button btn3;
+	@Override
+	public void initialize(URL location,ResourceBundle resources){
+	..
+	}
+}
+
+=>FXMLLoader가 FXML 파일을 로딩할 때, 태그로 선언된 컨트롤 객체가 생성되고 컨트롤러 객체도 함께 생성
+=>@FXML 어노테이션이 적용된 필드에 컨트롤 객체가 자동 주입됨
+=>initialize() 메소드 호출(initialize()메소드 내부에서 필드를 안전하게 사용)
+
+
+3)EventHandler 등록
+;컨트롤에서 발생하는 이벤트를 처리하려면, 컨트롤러의 initialize() 메소드에서 EventHandler를 생성하고 등록해야 함.
+
+e.g)	/*	RootController.java	*/
+
+import java.net.URL;
+import java.util.ResourceBundle;
+
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
+
+public class RootController implements Initializable{
+	@FXML private Button btn1;		//btn1 객체 주입
+	@FXML private Button btn2;		//btn2 객체 주입
+	@FXML private Button btn3;		//btn3 객체 주입
+	
+	@Override
+	public void initialize(URL location,ResourceBundle resources){
+		btn1.setOnAction(new EventHandler<ActionEvent>(){
+			@Override
+			public void handle(ActionEvent event){
+				handleBtn1Action(event);
+			}
+		});		
+		btn2.setOnAction(event->handleBtn2Action(event));
+		btn3.setOnAction(event->handleBtn3Action(event));
+	}
+	public void handleBtn1Action(ActionEvent event){
+		System.out.println("버튼1 클릭");
+	}
+	public void handleBtn2Action(ActionEvent event){
+		System.out.println("버튼2 클릭");
+	}
+	public void handleBtn3Action(ActionEvent event){
+		System.out.println("버튼3 클릭");
+	}
+}
+
+
+4)이벤트 처리 메소드 매핑
+;컨트롤러에서 EventHandler를 생성하지 않고 바로 이벤트 처리 메소드와 연결할 수 있음.
+
+e.g)
+FXML 파일
+<Button fx:id="btn" text="버튼" onAction="#handleBtnAction" />
+
+Controller 클래스
+public void handlBtnAction(Action event){...}
+
+-------------------------------------------------------------------------------------
+
+//6.JavaFX 속성 감시와 바인딩
+;JavaFX는 컨트롤의 속성(property)을 감시하는 리스너를 설정할 수 있음
+e.g)Slider의 value 속성값을 감시하는 리스너를 설정 & value 속성값이 변경되면 리스너가 다른 컨트롤러의 폰트나 이미지의 크기 변경
+
+------
+
+/6.1 속성 감시
+private StringProperty text=new SimpleStringProperty();	//값이 저장될 필드
+
+public void setText(String newValue) {text.set(newValue);}	//Setter
+public String getText(){ return text.get(); }		//Getter
+public StringProperty textProperty() {return text;}	//Property 메소드
+
+
+e.g)
+
+/*	Label과 Slider 컨트롤 배치	root.fxml	*/
+
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.BorderPane?>
+
+
+<BorderPane prefHeight="138.0" prefWidth="202.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8"
+		fx:controller="exam01_property_listener.RootController">
+   <center>
+      <Label fx:id="label" text="JavaFX" BorderPane.alignment="CENTER" />    
+   </center>
+   <bottom>
+      <Slider fx:id="slider" BorderPane.alignment="CENTER" />
+   </bottom>
+</BorderPane>
+
+
+/*	속성 감시 리스너 설정  RootController.java	*/
+package exam01_property_listener;
+
+import java.net.URL;
+import java.util.ResourceBundle;
+
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.scene.control.Label;
+import javafx.scene.control.Slider;
+import javafx.scene.text.Font;
+
+public class RootController implements Initializable{
+	@FXML private Slider slider;
+	@FXML private Label label;
+	
+	@Override
+	public void initialize(URL location,ResourceBundle resources){
+		slider.valueProperty().addListener(new ChangeListener<Number>(){
+			@Override
+			public void changed(ObservableValue<? extends Number> observable,Number oldValue,Number newValue){
+				label.setFont(new Font(newValue.doubleValue()));
+			}
+		});
+	}
+
+}
+
+------
+
+/6.2 속성 바인딩
+;JavaFX 속성은 다른 속성과 바인딩 될 수 있음
+xxxProperty() 메소드가 리턴하는 Property 구현 객체의 bind() 메소드 이용하면 됨
+e.g)
+TextArea textArea1=new TextArea();
+TextArea textArea2=new TextArea();
+//1)단방향(textArea1에 입력된 내용 -> textArea2에 자동 입력 , 반대 안됨)
+textArea2.textProperty().bind(textArea1.textProperty());	
+//2)양방향 2가지 방법
+textArea2.textProperty().binBidirectional(textArea1.textProperty());
+Bindings.bindBidirectional(textArea1.textProperty(),textArea2.textProperty());
+
+//언바인딩
+textArea2.textProperty().unbind();	//단방향 해제
+textArea2.textProperty().unbindBidirectional(textArea1.textProperty());	//양방향 해제
+Bindings.unbindBidirectional(textArea1.textProperty(),textArea2.textProperty()); //양방향 해제
+
+e.g)
+/*	TextArea 컨트롤 배치 ; root.fxml		*/
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.VBox?>
+
+
+<VBox prefHeight="434.0" prefWidth="435.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8"
+		fx:controller="exam02_property_bind.RootController">		
+   <children>
+      <Label text="TextArea1" />
+      <TextArea fx:id="textArea1" prefHeight="79.0" prefWidth="389.0" />
+      <Label text="TextArea2" />
+      <TextArea fx:id="textArea2" prefHeight="86.0" prefWidth="435.0" />
+      <Label text="TextArea3" />
+      <TextArea fx:id="textArea3" prefHeight="88.0" prefWidth="435.0" />
+      <Label text="TextArea4" />
+      <TextArea fx:id="textArea4" prefHeight="122.0" prefWidth="435.0" />
+   </children>
+</VBox>
+
+
+
+/*	속성 바인딩	; RootController.java	*/
+package exam02_property_bind;
+
+import java.net.URL;
+import java.util.ResourceBundle;
+
+import javafx.beans.binding.Bindings;
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.scene.control.TextArea;
+
+public class RootController implements Initializable{
+	@FXML private TextArea textArea1;
+	@FXML private TextArea textArea2;
+	@FXML private TextArea textArea3;
+	@FXML private TextArea textArea4;
+	
+	@Override
+	public void initialize(URL location,ResourceBundle resources){
+		//1)단방향
+		textArea2.textProperty().bind(textArea1.textProperty());
+				
+		//2)양방향
+		//textArea3.textProperty().bindBidirectional(textArea4.textProperty());
+		Bindings.bindBidirectional(textArea3.textProperty(),textArea4.textProperty());
+	}	
+}
+
+------
+
+/6.3 Bindings 클래스
+;두 속성이 항상 동일한 값과 타입을 가질 수는 없음. 한쪽 속성값이 다른쪽 속성값과 동일해지기 위해서는 연산 작업이 필요할 수도 있음.
+e.g)윈도우 크기에 상관없이 항상 화면 정중앙에 원을 그린다고 가정.
+=>원의 x,y좌표는 루트 컨테이너 폭의 1/2 
+=>javafx.beans.binding.BindingsBindings 클래스가 제공하는 정적 메소드를 이용하면 됨
+
+/* 연산된 속성 바인딩	RootContoroller.java	*/
+package exam03_bindings;
+
+import java.net.URL;
+import java.util.ResourceBundle;
+
+import javafx.beans.binding.Bindings;
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.shape.Circle;
+
+public class RootController implements Initializable{
+	@FXML private AnchorPane root;
+	@FXML private Circle circle;
+	
+	@Override
+	public void initialize(URL location, ResourceBundle resources){		
+		circle.radiusProperty().bind(Bindings.divide(root.widthProperty(),10));
+		circle.centerXProperty().bind(Bindings.divide(root.widthProperty(), 2));
+		circle.centerYProperty().bind(Bindings.divide(root.heightProperty(), 2));		
+	}
+
+}
+
+
+
+/*	Circle 배치 ; root.fxml		*/
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.shape.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
+
+
+<AnchorPane prefHeight="200.0" prefWidth="300.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8"
+	fx:id="root" fx:controller="exam03_bindings.RootController">
+   <children>
+      <Circle fx:id="circle" fill="DODGERBLUE" radius="50.0" stroke="BLACK"  />
+   </children>
+</AnchorPane>
+
+-------------------------------------------------------------------------------------
+
+//07. JavaFX 컨트롤
+;JavaFX는 다양한 UI 컨트롤을 제공. (사용 빈도가 높은 버튼 컨트롤,입력 컨트롤, 뷰 컨트롤, 미디어 컨트롤, 챠트 컨트롤에 대해)
+
+------
+
+/7.1 버튼 컨트롤
+버튼 컨트롤은 마우스로 클릭할 수 있는 컨트롤로 ButtonBase를 상속하는 하위 컨트롤
+(Button, CheckBox, RadioButton, ToggleButton,Hyperlink 등이 있음)
+
+
+
+
+
+------
+------
+------
+------
+------
+------
+------
+------
+------
+------
+------
+------
+------
+------
+
+-------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------
+------
+------
+------
+------
+------
+------
+------
+------
+------
+------
+------
+------
+------
+------
+------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

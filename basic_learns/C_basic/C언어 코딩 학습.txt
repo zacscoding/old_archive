@@ -1,0 +1,581 @@
+
+
+C언어 코딩학습
+
+//001
+
+#include <stdio.h>
+
+void main()
+{
+ printf(" *첫번째 프로그램* \n");
+ printf(" C프로그래밍은 어렵지만 재밌다.\n");
+ printf( "코딩을 끝냈으면 Ctrl+F5 키를 누르세요.\n");
+}
+
+
+//002
+
+#include <stdio.h>
+
+void main()
+{
+ int a;
+
+ printf(" *한문자 출력\n");
+ putchar('A');
+ putchar('B');
+ putchar('\t');
+ putchar('a');
+ putchar('b');
+ putchar('\n');
+ putchar('0');
+ putchar('1');
+ putchar('\n');
+ puts(" putchar함수는 한문자 출력 전용함수");
+}
+
+//003
+
+#include <stdio.h>
+
+void main()
+{
+ puts(" * 정수로 문자 출력 * ");
+ putchar(65);
+ putchar(66);
+ putchar('\t');
+ putchar(97);
+ putchar(98);
+ putchar('\t');
+ putchar(48);
+ putchar(49);
+ putchar('\n');
+ puts(" 정수와 문자와 일대일로 매칭된다.");
+ 
+}
+
+
+//004
+
+#include <stdio.h>
+
+void main()
+{
+ puts(" *문자열 출력 *");
+ puts(" puts은 문자열 출력 전용함수");
+ puts(" 입력 함수 \t 출력 함수");
+ puts(" getchar  \t  putchar");
+ puts(" gets     \t  puts");
+ puts(" scanf    \t  printf");
+ puts(" 대칭관계를 잘 보세요.");
+}
+
+
+//005
+
+#include <stdio.h>
+
+void main()
+{ 
+ printf("--------------------------\n");
+ printf("    * 입출력 서식 안내 *\n");
+ printf("--------------------------\n");
+ printf("%%d(decimal)는 10진수 출력\n");
+ printf("--------------------------\n");
+ printf("%%c(character)는 한문자 출력\n");
+ printf("--------------------------\n");
+ printf("%%s(string)는 문자열 출력\n");
+ printf("--------------------------\n");
+ printf("%%f(float)는 작은실수(4byte) 출력\n");
+ printf("-------------------------------------\n");
+ printf("%%lf(long float)는 큰실수(8byte) 출력\n");
+ printf("-------------------------------------\n");
+ printf(" 자주 사용하는 서식들입니다.\n");
+ printf("-------------------------------------\n");
+}
+
+
+//006
+
+#include <stdio.h>
+
+void main()
+{
+ printf(" * 정수 출력 *\n");
+ printf(" %d,  %d , %d\n", 100, 65, 30000);
+ printf("%%d는 데이터를 decimal(십진수)형태로 출력하라.\n");
+}
+
+
+
+//007
+
+#include <stdio.h>
+
+void main()
+{
+ printf("-----------------------\n");
+ printf("\t* 실수 출력 *\n");
+ printf("-----------------------\n");
+ printf(" %f, %f , %f\n",4.23456,6.56789,7.78);
+ printf("------------------------------------\n");
+ printf(" %%f는 float(4byte)형태로 출력하라.\n");
+ printf("----------------------------------\n");
+ printf(" 실수의 기본 출력은 소수점 이하 6자리 까지\n");
+ printf("----------------------------------------\n");
+ printf(" %%lf는 long float(8byte)형태로 출력하라.\n");
+ printf("-----------------------------------------\n");
+ printf(" %%.2lf는 소수점 이하 2자리만 출력하라.\n");
+ printf("-----------------------------------------\n");
+}
+
+
+
+//008
+
+#include <stdio.h>
+
+void main()
+{
+ printf("---------------------\n");
+ printf("\t * 문자 출력 *\n");
+ printf("---------------------\n");
+ printf(" %c, %c, %c\n", 'A', 'k', '$');
+ printf("-----------------------------\n");
+ printf(" %%c는 character형태로 출력하라.\n");
+ printf("-----------------------------\n");
+ printf(" putchar함수는 문자전용 출력함수\n");
+ printf("-----------------------------\n");
+ printf(" printf함수는 여러형식 출력함수\n");
+ printf("-----------------------------\n");
+
+}
+
+
+
+
+
+//009
+
+#include <stdio.h>
+
+void main()
+{
+ printf("--------------------\n");
+ puts("  *문자열 출력  * ");
+ printf("--------------------\n");
+ puts(" 행복은 스스로 찾는 것이다.");
+ printf("---------------------------\n");
+ puts(" C언어는 어렵지만 재미있다.");
+ printf("---------------------------\n");
+ puts(" puts함수 자동 줄바꿈이 된다.");
+ printf("---------------------------\n");
+ puts(" printf함수는 자동 줄바꿈 안된다.");
+ printf("--------------------------------\n");
+}
+
+
+//010
+
+#include <stdio.h>
+
+void main()
+{
+ printf("------------------------\n");
+ puts("  * 제어 문자  *");
+ printf("------------------------\n");
+ puts("\\n은 new line - 줄바꿈");
+ printf("------------------------\n");
+ puts("\\t는 tab 간격 (보통 8칸)");
+ printf("------------------------\n");
+ puts("\\b는 back - 좌측으로 커서 한칸 이동");
+ printf("-----------------------------\n");
+ puts("\\a는 alert - 경고음(삐) 발생");
+ printf("----------------------------\n");
+ puts("\\0은 NULL문자 - 문자열의 끝을 나타냄");
+ printf("------------------------------\n");
+} 
+
+ 
+
+ 
+
+ 
+
+//011
+
+#include <stdio.h>
+
+void main()
+{
+ printf("-------------------\n");
+ printf("* 보기 좋게 출력 *\n");
+ printf("-------------------\n");
+ printf("[777] 그 자리 출력\n");
+ printf("-------------------\n");
+ printf("[\t777] 탭키 만큼 띄고 출력\n");
+ printf("----------------------------\n");
+ printf("[%10d]10칸 잡고 우측 정렬\n", 777);
+ printf("----------------------------\n");
+ printf("[%-10d]10칸 잡고 좌측 정렬\n", 777);
+ printf("----------------------------\n");
+ printf("[%-20s]20칸 잡고 좌측 정렬\n", "HAPPY");
+ printf("----------------------------\n");
+ printf("[%20s]20칸 잡고 좌측 정렬\n", "func");
+ printf("----------------------------\n");
+ puts(" 소스코드 옆에 출력화면을 놓고 비교해 보세요.");
+ printf("----------------------------\n");
+}
+
+ 
+
+//012
+
+#include <stdio.h>
+
+void main()
+{
+ int n1, n2;
+
+ printf("-------------------\n");
+ printf("*정수 두 개 입출력*\n");
+ printf("-------------------\n");
+ printf("정수 두 개 입력 :");
+ scanf("%d%d", &n1, &n2);
+ printf("a = %d, b=%d \n", n1, n2);
+ printf("-------------------\n");
+ puts("엔터, 탭, 스페이스 등으로 두 값을 구분합니다.");
+ printf("-------------------------------------------\n");
+}
+
+
+//013
+
+#include <stdio.h>
+
+void main()
+{
+ int n1, n2;
+
+ printf("--------------------------\n");
+ printf("*정수 두 개 입출력*\n");
+ printf("--------------------------\n");
+ printf("첫번째 정수 : ");
+ scanf("%d", &n1);
+
+ printf("두번째 정수 : ");
+ scanf("%d", &n2);
+
+ printf("a=%d, b=%d\n", n1, n2);
+ printf("--------------------------\n");
+
+}
+
+ 
+
+
+//014
+
+#include <stdio.h>
+
+void main()
+{
+ double x;
+
+ printf("-----------------\n");
+ printf("* 실수 입출력 *\n");
+ printf("-----------------\n");
+
+ printf("시력 입력 :");
+ scanf("%lf", &x);
+
+ printf("당신의 시력은 %.1lf입니다.\n",x);
+ printf("-----------------\n");
+ puts("정수,실수 입력 받을때는 변수앞에 &를 붙입니다.");
+ printf("-----------------------------------------\n");
+}
+
+ 
+
+ 
+
+ 
+
+//015
+
+#include <stdio.h>
+
+void main()
+{
+ char a;
+ int b;
+ printf("----------------\n");
+ puts("* 문자 입출력*\n");
+ printf("----------------\n");
+ printf("혈액형을 입력하세요:");
+// scanf("%c", &a);
+ b = getchar();
+ printf("당신의 혈액형은 %c입니다.\n", b);
+ printf("---------------------\n");
+ puts("문자입력은 scanf(%c), getchar 두가지 방식이 있습니다.");
+ printf("------------------------------------------------------\n");
+
+ 
+
+}
+
+
+//016
+//방법3 미완
+
+#include <stdio.h>
+
+void main()
+{
+ char a, b;
+ int x, y;
+ printf("--------------\n");
+ printf("*두문자 입출력*\n");
+ printf("--------------\n");
+
+ printf("문자 두개 입력하세요 :");
+ //방법1
+ // scanf("%c %c", &a, &b);
+ //방법2
+ //scanf("%c", &a);
+ //while (getchar() == '\n');//버퍼를 비움
+ //scanf("%c", &b);
+ 
+ //방법3
+ x = getchar();
+ while (getchar() == '\n');
+ y = getchar();
+// printf("a=%c, b=%c \n", a, b);
+ printf("a=%c, b=%c \n", x, y);
+ printf("--------------------------------------------------\n");
+ puts("연속하면 괜찮은데, 첫 문자입력후 엔터를 치면 문제가 발생합니다.");
+ printf("---------------------------------------------------\n");
+}
+
+
+
+//017
+
+
+#include <stdio.h>
+
+int main(void)
+{
+	char a; int b;
+	puts("---------------------");
+	puts("*두문자 입출력*");
+	puts("---------------------");
+
+	printf("첫 번째 문자 입력 : ");
+	scanf("%c", &a);
+	getchar();
+	printf("두 번째 문자 입력 : ");
+	b=getchar();
+	printf("a = %c , b = %c\n", a, b);
+
+	puts("---------------------");
+	puts("fflush(stdin)은 키보드 버퍼 비우기 입니다.");
+	puts("-------------------------------------------");
+}
+
+
+
+
+//018
+
+
+#include <stdio.h>
+
+int main(void)
+{
+	int a, b;
+	puts("--------------");
+	puts("*두문자 입출력*");
+	puts("--------------");
+
+	printf("첫 번째 문자 입력 :");
+	a = getchar();
+
+	getchar();
+
+	printf("두 번째 문자 입력 :");
+	b = getchar();
+
+	printf("a = %c , b = %c\n", a, b);
+	puts("---------------------------");
+	puts("문자만 입력시는 getchar함수를 추천합니다.");
+	puts("-----------------------------------------");
+
+	return 0;
+}
+
+
+
+
+//019,20
+
+#include <stdio.h>
+
+int main(void)
+{
+	char text[50];
+	puts("---------------");
+	printf("좋아하는 야구팀은 :");
+	gets_s(text);
+	printf("야구팀은 = %s\n", text);
+	puts("-----------------------------------");
+	puts("scanf는 공백을 만나면 입력종료");
+	puts("공백을 포함할 때는 사용하면 안된다.");
+	puts("-----------------------------------");
+	
+	return 0;
+}
+
+
+
+
+//021
+
+#include <stdio.h>
+
+int main(void)
+{
+	char town[20];
+	int n_bus;
+	puts("-----------------------");
+	puts("*정수와 문자열 입출력*");
+	puts("-----------------------");
+
+	printf("무슨동에 사세요 : ");
+	gets_s(town);
+
+	printf("몇번 타고 가세요 :");
+	scanf("%d", &n_bus);
+	printf("%s에 %d번 타고 가시네요.\n", town, n_bus);
+	puts("---------------------------------");
+	puts("town은 배열명이기에 &를 붙이지 않습니다.");
+	puts("----------------------------------------");
+}
+
+
+
+
+
+//022
+
+
+#include <stdio.h>
+
+int main(void)
+{
+	char name[20];
+	int year;
+	char b_t;
+	double eye;
+
+	puts("-----------------");
+	puts("*여러형식 입출력*");
+	puts("-----------------");
+
+	printf("이름 : ");
+	gets_s(name);
+	printf("출생년도 :");
+	scanf("%d", &year);
+	getchar();
+	printf("혈액형 :");
+	scanf("%c", &b_t);
+	printf("평균시력:");
+	scanf("%lf", &eye);
+
+	
+	printf("%s님은 %d년생, %c형, 시력은 %.1lf\n", name, year, b_t, eye);
+
+	puts("-------------------------------------");
+	puts("%s,%d 등 서식문자에 주의하세요.");
+	puts("---------------------------------------");
+
+}
+
+
+//023,024
+
+#include <stdio.h>
+
+int main(void)
+{
+	int a[5];
+	int i,n;
+	n=sizeof(a)/sizeof(int);
+
+	puts("--------------------");
+	puts("   *정수배열 입출력*");
+	puts("--------------------");
+	
+	for (i = 0; i < n; i++) {
+		printf("[%d]번째 버스번호는 : ",i);
+		scanf("%d", &a[i]);
+	}
+	putchar('\n');
+	puts("*[5] 개의 버스번호 출력 *");
+	puts("--------------------");
+	for (i = 0; i < n; i++) {
+		printf("bus[%d] = %d 번\n", i, a[i]);
+	}
+	puts("-------------------------------");
+	puts("c언어는 항상 0을 카운트합니다.");
+	puts("-------------------------------");
+
+}
+
+
+
+//025
+
+
+#include <stdio.h>
+
+int main(void)
+{
+	char city[5][20];
+	int n,i;
+
+	n = sizeof(city) / sizeof(char[20]);
+	printf("%d", n);
+
+	puts("--------------------");
+	puts("  *문자열배열 입출력*");
+	puts("--------------------");
+
+	for (i = 0; i < n; i++) {
+		printf("[%d]번째 도시명 : ", i);
+		gets_s(city[i]);
+	}
+	putchar('\n');
+//	puts("*[5] 개의 도시명 출력 *");
+	printf("*[%d] 개의 도시명 출력\n*", n);
+	puts("------------------------");
+	for (i = 0; i < n; i++) {
+		printf("city[%d] = %s\n", i, city[i]);
+	}
+	puts("------------------------");
+	puts("char[20]가 5개 모인 2차원 배열.");
+	puts("-------------------------------");
+
+	return 0;
+}
+
+
+
+//026
+
+
+
+
+
+

@@ -1,0 +1,219 @@
+
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+
+typedef struct node {
+ char name[20];
+ int age;
+ int kor, eng, mat;
+ struct node *link;
+}node;
+
+void print_menu(void);  //메뉴 출력 함수
+void add(node **);    //학생 등록 함수
+void modify(node **);       //학생 수정 함수
+void del(node **);   //학생 삭제 함수 
+void show_data(node **); //학생 정보 보기
+
+int main(void)
+{
+ node *list = NULL; //연결리스트의 시작 포인터
+ node *prev, *next, *p;
+ int choice;
+ while (1) {
+  print_menu();
+  scanf("%d", &choice);
+  while (getchar() != '\n'); //엔터 버퍼 지우기
+
+  if (choice <= 0 || choice > 5) {
+   printf("1-5를 선택해주세요.\n");
+  }
+  else if (choice == 5) {
+   break;
+  }
+  else if (choice == 1) {
+   add(&list);
+  }
+  else if (choice == 2) {
+   modify(&list);
+  }
+  else if (choice == 3) {
+   del(&list);
+  }
+  else if (choice == 4) {
+   show_data(&list);
+  }
+
+ }
+
+
+ //동적할당 삭제
+ p = list;
+ while (p) {
+  next = p->link;
+  free(p);
+  p = next;
+ }
+
+ return 0;
+}
+
+//메뉴 출력
+void print_menu(void)
+{
+ puts("==============출력==============");
+ puts("##학생관리 프로그램##");
+ puts("1. 학생등록하기");
+ puts("2. 학생수정");
+ puts("3. 학생삭제");
+ puts("4. 학생정보보기");
+ puts("5. 종료");
+ printf("선택 : ");
+}
+
+//1.학생등록하기
+void add(node **qlist)
+{
+ node *p, *q, *prev;
+ p = (node *)malloc(sizeof(node));
+
+ if (p == NULL) {
+  printf("동적할당오류\n");
+  return;
+ }
+
+ printf("이름입력:");
+ gets_s(p->name);
+ printf("나이 입력:");
+ scanf("%d", &p->age);
+ printf("국어 입력:");
+ scanf("%d", &p->kor);
+ printf("영어 입력:");
+ scanf("%d", &p->eng);
+ printf("수학 입력:");
+ scanf("%d", &p->mat);
+
+ if (*qlist == NULL) {
+  *qlist = p;
+  p->link = NULL;
+ }
+ else {
+  q = *qlist;
+  while (q) {
+   prev = q;
+   q = q->link;
+  }
+  prev->link = p;
+  p->link = NULL;
+ }
+ system("cls");
+ puts("================================");
+ printf("추가 되었습니다.\n");
+ puts("================================");
+}
+
+//2.학생 수정
+void modify(node **qlist)
+{
+ node *p = *qlist;
+ char name[20];
+
+ if (p == NULL) {
+  system("cls");
+  puts("================================");
+  printf("학생 등록을 먼저해주세요\n");
+  puts("================================");
+  return;
+ }
+ system("cls");
+ puts("================================");
+ printf("수정할 학생의 이름 : ");
+ gets_s(name);
+
+ while (p) {
+  if (strcmp(p->name, name) == 0) {
+   printf("이름 입력:");
+   gets_s(p->name);
+   printf("나이 입력:");
+   scanf("%d", &p->age);
+   printf("국어 입력:");
+   scanf("%d", &p->kor);
+   printf("영어 입력:");
+   scanf("%d", &p->eng);
+   printf("수학 입력:");
+   scanf("%d", &p->mat);
+
+   p = p->link;
+   system("cls");
+   puts("================================");
+   puts("수정되었습니다.");
+   puts("================================");
+   return;
+  }
+  p = p->link;
+ }
+ system("cls");
+ puts("================================");
+ printf(" %s 이 존재하지 않습니다.\n",name);
+ puts("================================");
+
+}
+
+//3.학생 삭제
+void del(node **qlist)
+{
+ node *p = *qlist;
+ node *tmp = *qlist;
+
+ char name[20];
+ printf("삭제할 학생 이름 입력 : ");
+ gets_s(name);
+
+ //삭제 데이터가 리스트의 첫번째 인 경우
+ while (p) {
+  if (strcmp(p->name, name) == 0) {
+   *qlist = p->link;
+   free(p);
+   system("cls");
+   puts("================================");
+   printf(" %s 이 삭제 되었습니다.\n", name);
+   puts("================================");
+   return;
+  }
+
+  while (p) {
+   if (strcmp(p->name, name) == 0) {
+    tmp->link = p->link;  //이전 구조체, 다음 구조체 연결
+    free(p); //찾는 구조체 동적할당 해제
+    system("cls");
+    puts("================================");
+    printf(" %s 이 삭제 되었습니다.\n", name);
+    puts("================================");
+    return;
+   }
+   p = p->link;
+  }
+ }
+ system("cls");
+ puts("================================");
+ printf(" %s 이 존재하지 않습니다.\n", name);
+ puts("================================");
+
+}
+
+//4.학생 정보 보기
+void show_data(node **qlist)
+{
+ node *p = *qlist;
+ system("cls");
+ puts("========================================================================");
+ while (p) {
+  printf("이름: %-8s / 나이: %2d / 국어점수 :%3d / 영어점수 :%3d / 수학점수 :%3d\n", p->name, p->age, p->kor, p->eng, p->mat);
+  p = p->link;
+ }
+ puts("========================================================================");
+}
+ 

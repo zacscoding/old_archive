@@ -1,0 +1,599 @@
+-----------CH18.MVC 패턴 구현-----------------
+;이 장에서 다룰 내용
+-모델 2 구조
+-MVC 패턴
+-커맨드 패턴을 사용한 컨트롤러 구현
+
+---------------------------------------------------------------------------------------------
+
+//01 모델2 구조와 MVC 패턴
+
+-----------
+
+/1.1 모델 1 구조
+
+
+웹 브라우저			웹 컨테이너
+		-->1.요청-->	JSP		<=> 서비스 클래스, 자바빈 클래스
+		<--2.응답<--
+		
+=>웹 브라우저의 요청을 JSP가 직접 처리
+(웹 브라우저의 요청을 받은 JSP는 자바빈,서비스 클래스를 작업을 처리하고 그 결과를 클라이언트에 출력)
+=>JSP페이지에 비즈니스 로직을 처리하기 위한 코드와 웹 브라우저에 결과를 출력하는 코드가 섞임
+e.g)방명록 예제
+하나의 JSP페이지에서 서비스 클래스를 통해서(글쓰기,읽기 등의) 원하는 작업을 수행하고 그 결과를 출력
+		
+-----------
+
+/1.2 모델 2 구조
+
+웹 브라우저				웹 컨테이너
+		-->1.요청-->		서블릿  <-->로직 클래스
+						  | 빈객체	
+						  V포워딩
+		<--2.응답<--		JSP  
+
+=>웹 브라우저의 요청을 하나의 서블릿이 받음.
+=>서블릿은 웹 브라우저의 요청을 알맞게 처리한 후 그 결과를 보여줄 JSP 페이지로 포워딩
+=>포워딩을 통해 요청 흐름을 받은 JSP 페이지는 결과 화면을 클라이언트에 전송
+
+-특징
+;웹 브라우저의 요청을 단일 진입점(i.e 하나의 서블릿에서 처리)
+=>웹 브라우저의 모든 요청을 받기 때문에, 서블릿은 웹 브라우저의 요청을 구분하는 방법이 필요
+==>MVC(Model-View-Controller)패턴을 이용해서 웹 어플리케이션을 구현할 때 모델 2 구조를 사용.
+
+-----------
+
+/1.3 MVC 패턴
+;MVC 패턴은 스윙과 같은 UI 컴포넌트뿐만 아니라 웹 어플리케이션 개발 영역에서도 보편적으로 사용
+-M(Model) 	: 비즈니스 영역의 로직을 처리한다.
+-V(View)	: 비즈니스 영역에 대한 프레젠테이션 뷰(i.e 사용자가 보게 될 결과 화면)를 담당
+-C(Controller) : 사용자의 입력 처리와 흐름 제어를 담당한다.
+
+
+		-->1.요청-->컨트롤러 <--2.비즈니스 로직 처리--> 모델
+사용자				|3.뷰 선택
+					V
+		<--4.응답<-- 뷰
+
+	
+==>핵심
+-비즈니스 로직을 처리하는 모델과 결과 화면을 보여주는 뷰를 분리한다.
+-어플리케이션의 흐름 제어나 사용자의 처리 요청은 컨트롤러에 집중된다.
+
+-----------
+
+/1.4 MVC 패턴과 모델2 구조의 매핑
+
+
+<< 모델 2 구조 >>
+
+웹 브라우저				웹 컨테이너
+		-->1.요청-->		서블릿  <-->로직 클래스
+						  | 빈객체	
+						  V포워딩
+		<--2.응답<--		JSP  
+		
+<< MVC 패턴 >>
+
+		-->1.요청-->컨트롤러 <--2.비즈니스 로직 처리--> 모델
+사용자				|3.뷰 선택
+					V
+		<--4.응답<-- 뷰
+
+=>Mapping
+컨트롤러 	= 서블릿
+모델 		= 로직 처리 클래스, 자바빈
+뷰 			= JSP
+사용자 		= 웹 브라우저 내지 휴대폰과 같은 다양한 기기
+				
+-----------
+
+/1.5 MVC의 컨트롤러 : 서블릿
+
+<< 컨트롤러 서블릿의 내부 동작 방식 >>
+웹브라우저			웹 컨테이너
+	--HTTP요청-->1.HTTP 요청받음
+				2.클라이언트가 요구하는 기능을 분석
+				3.요청한 비즈니스로직을 <-->모델
+				  처리하는 모델 사용
+				4.결과를 request 또는 session에 저장
+				5.알맞은 뷰 선택 후, 뷰로 포워딩(또는 리다이렉트)
+					|
+					V
+	<--HTTP응답<--  JSP
+	
+=>
+과정1		: 웹 브라우저가 전송한 HTTP 요청을 받는다. 서블릿의 doGet() 메소드나 doPost() 메소드가 호출
+과정2		: 웹 브라우저가 어떤 기능을 요청했는지 분석한다. e.g)게시판 목록을 요청, 글쓰기 요청 등등
+과정3		: 모델을 사용하여 요청한 기능을 수행한다.
+과정4		: 모델로부터 전달받은 결과물을 알맞게 가공한 후, request나 session의 setAttribute()메소드를 사용하여 결과값을 속성에 저장
+				이렇게 저장한 결과값은 뷰인 JSP에서 사용한다.
+과정5		: 웹 브라우저에 결과를 전송할 JSP를 선택한 후, 해당 JSP로 포워딩한다. 경우에 따라 리다이렉트를 하기도 한다.
+
+-----------
+
+/1.6 MVC의 뷰 : JSP
+;모델 2 구조에서 JSP는 뷰 역할을 담당.
+뷰 역할을 하는 JSP는 컨트롤러에서 request ,session 기본 객체에 저장한 데이터를 사용하여 웹 브라우저에 알맞은 결과를 출력.
+(컨트롤러 서블릿 처럼 일반적인 처리 순서 X)
+
+=>뷰 역할을 하는 JSP는 웹 브라우저가 요청한 결과를 보여주는 프레젠테이션 역할 뿐만 아니라 
+  웹 브라우저의 요청을 컨트롤러에 전달해주는 매개체가 되기도 함
+e.g)글쓰기 목록을 보여주는 BoardList.jsp에는 [글쓰기] 링크는 컨트롤러에 연결
+=>웹 브라우저가 지속적으로 컨트롤러에 요청을 보낼 수 있는 링크나 폼을 제공해서 웹 브라우저가 업무 흐름에 따라 컨트롤러에 알맞은 요청을 보낼 수
+  있도록 함.
+  
+-----------
+
+/1.7 MVC의 모델
+;명확하게 어떤 것을 통해서 구현한다는 규칙은 없음. 비즈니스 로직을 처리해주면 모델이 될 수 있음.
+
+<<모델의 일반 적인 업무 흐름 >>
+1.컨트롤러로부터 요청 받음
+2.비즈니스 로직 수행(서비스 클래스나 DAO 클래스를 이용해서 비즈니스 로직을 수행)
+3.수행 결과 컨트롤러에 리턴(처리한 결과값을 저장하는 객체로 보통 자바빈을 사용)
+
+---------------------------------------------------------------------------------------------
+
+//02 모델 2 구조를 이용한 MVC 패턴 구현
+;MVC 패턴의 구현 방법은 서블릿만 이용하는 단순한 방법 ~ 파일로부터 설정 정보를 읽어오는 복잡한 방법까지 다양함
+=>이 절에서는 가장 손쉬운 구현 방법 ~ 커맨드 패턴을 기반으로 한 구현 방법까지 살펴볼 것
+
+-----------
+
+/2.1 모델 2 구조의 구현 방법 : 기본 MVC 패턴 구현 기법
+
+e.g)
+1.서블릿은 화면에 출력할 메시지를 생성해서 JSP에 전달한다.
+2.JSP는 서블릿으로부터 전달받은 메시지를 화면에 출력한다.
+
+
+1)컨트롤러 서블릿 (모델 없이 직접 로직 수행)
+/*	chap18/src/mvc/simple/SimpleController.java		*/
+
+package mvc.simple;
+
+import java.io.IOException;
+
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+public class SimpleController extends HttpServlet{
+	//1단계 HTTP 요청 받음
+	@Override
+	public void doGet(HttpServletRequest request,HttpServletResponse response) throws ServletException,IOException{
+		processRequest(request,response);		
+	}
+	@Override
+	public void doPost(HttpServletRequest request,HttpServletResponse response) throws ServletException,IOException{
+		processRequest(request,response);		
+	}
+	
+	//2~5단계 처리를 위한 메소드
+	private void processRequest(HttpServletRequest request,HttpServletResponse response) throws IOException,ServletException{
+		//2단계, 요청 파악
+		String type=request.getParameter("type");	//request 객체로부터 사용자의 요청을 파악하는 코드
+		
+		//3단계, 요청한 기능을 수행
+		Object resultObject=null;
+		if(type==null||type.equals("greeting")){
+			resultObject="안녕하세요";
+		}else if(type.equals("date")){
+			resultObject=new java.util.Date();
+		}else{
+			resultObject="Invalid Type";
+		}
+		
+		//4단계, request나 session에 처리 결과를 저장
+		request.setAttribute("result",resultObject);
+		
+		//5단계, RequestDispatcher를 사용하여 알맞은 뷰로 포워딩
+		RequestDispatcher dispatcher=request.getRequestDispatcher("/simpleView.jsp");
+		dispatcher.forward(request,response);		
+	}
+}
+
+
+2)뷰
+/*	chap18/WebContent/simpleView.jsp	*/
+
+
+
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>뷰</title>
+</head>
+<body>
+
+결과 : ${result}	<!-- 컨트롤러가 전달한 값을 읽어와 출력 -->
+
+</body>
+</html>
+
+
+3)web.xml 파일 설정
+  <servlet>
+  	<servlet-name>SimpleController</servlet-name>
+  	<servlet-class>mvc.simple.SimpleController</servlet-class>  	
+  </servlet>
+  
+  <servlet-mapping>
+  	<servlet-name>SimpleController</servlet-name>
+  	<url-pattern>/simple</url-pattern>
+  </servlet-mapping>  
+
+
+  
+<< 실행 결과 : http://localhost:8080/chap18/simple	>>
+결과 : 안녕하세요 
+
+<< 실행 결과 : http://localhost:8080/chap18/simple?type=date >>
+결과 : Tue Nov 15 22:48:10 KST 2016 
+
+-----------
+
+/2.2 커맨드 패턴 기반의 코드
+
+=>사용자가 어떤 기능을 요구했는지 판단하기 위해 사용하는 방법 중에서 가장 일반적인 방법은 명령어를 사용하는 것.
+e.g) "게시판글목록보기"명령, "게시판 글쓰기"명령 등을 컨트롤러 서블릿에 전송
+=>웹 브라우저를 통해서 명령어를 전달하는 방법은 2가지
+1)특정 이름의 파라미터에 명령어 정보를 전달
+2)요청 URI 자체를 명령어로 사용
+
+
+e.g)
+http://localhost:8080/chap18/controller?cmd=BoardList&...
+
+=>
+String command=request.getParameter("cmd");
+String viewPage=null;
+
+if(command==null){
+	//명령어 오류 처리
+	viewPage="/error/invalidCommand.jsp";
+}else if(command.equals("BoardList")){
+	//글목록 읽기 요청 처리
+	...
+	viewPage="/board/list.jsp";
+}else if(command.equals("BoardWriteForm")){
+	//글쓰기 입력 폼 요청 처리
+	..
+	viewPage="/board/writeForm.jsp";
+}
+
+RequestDispatcher dispatcher=request.getRequestDispatcher(viewPage);
+dispatcher.forward(request,response);
+
+------
+
+/2.2.1 커맨드 패턴을 이용한 명령어 처리기의 분리
+커맨드 패턴 : 하나의 명령어를 하나의 클래스에서 처리하도록 구현하는 패턴
+
+e.g)
+String command=request.getParameter("cmd");
+CommandHandler handler=null;
+
+if(command==null){
+	handler=new NullHandler();
+}else if(command.equals("BoardList")){
+	handler=new BoardListHandler();
+}else if(command.equals("BoardWriteForm")){
+	handler=new BoardWriteHandler();
+}
+
+String viewPage=handler.process(request,response);
+RequestDispatcher dispatcher=request.getRequestDispatcher(viewPage);
+dispatcher.forward(request,response);
+
+
+=>
+				<< 인터페이스 >>
+				CommandHandler
+				public String process()
+<<구현 클래스>>					<<구현 클래스>>
+ListHandler						WriteFormHandler
+public String process()			public String process()
+	
+=>
+
+/*	chap18/src/mvc/command/CommandHandler.java		*/
+
+package mvc.command;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+public interface CommandHandler {
+	public String process(HttpServletRequest request,HttpServletResponse response) throws Exception;
+}
+
+
+=> 구현 핸들러 클래스
+public class SomeHandler implements CommandHandler {
+	public String process(HttpServletRequest request,HttpServletResponse response) throws Exception{
+		//1.명령어와 관련된 비즈니스 로직 처리
+		..
+		//2.뷰 페이지에서 사용할 정보 저장
+		request.setAttribute("someValue",value);
+		//3.뷰 페이지의 URI 리턴
+		return "/view/someView.jsp";
+	}
+}
+
+-----------
+
+/2.3 설정 파일에 커맨드와 클래스의 관계 명시하기
+
+기존 : 컨트롤러 서블릿에서 중첩된 if-else 문 사용
+=>새로운 명령어가 추가되면, 컨트롤러 서블릿 클래스의 코드를 직접 변경해야 하는 단점이 존재.
+=><명령어,핸들러 클래스>의 매핑 정보를 설정 파일에 저장하는 것.
+e.g)
+BoardList=mvjsp.comman.BoardListHandler;
+BoardWriteForm=mvjsp.comman.BoardWriteFormHandler;
+
+
+1)컨트롤러 서블릿 
+/*	chap18/src/mvc/controller/ControllerUsingFile.java	*/
+
+
+package mvc.controller;
+
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Properties;
+
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import mvc.command.CommandHandler;
+import mvc.command.NullHandler;
+
+public class ControllerUsingFile extends HttpServlet{
+	//<커맨드,핸들러인스턴스> 매핑 정보 저장
+	private Map<String,CommandHandler> commandHandlerMap=new HashMap<>();
+	
+	//초기화 담당
+	public void init() throws ServletException{
+		String configFile=getInitParameter("configFile"); //web.xml에 지정한 configFile 값을 가져옴
+		Properties prop=new Properties(); //Properties 인스턴스 생성
+		String configFilePath=getServletContext().getRealPath(configFile); //configFile의 패스
+		try(FileReader fis=new FileReader(configFilePath)){
+			prop.load(fis); // configFile에 key,value값으로 매핑되어있는 값들을 불러옴
+		}catch(IOException e){
+			throw new ServletException(e);
+		}
+		//불러온 Properties를 꺼내는 과정
+		Iterator keyIter=prop.keySet().iterator();
+		while(keyIter.hasNext()){
+			String command=(String)keyIter.next(); //command ,키값
+			String handlerClassName=prop.getProperty(command); //command에 맞는 핸들러(모델클래스)
+			try{
+				//모델클래스 생성
+				Class<?> handlerClass=Class.forName(handlerClassName); 
+				CommandHandler handlerInstance=(CommandHandler)handlerClass.newInstance();
+				commandHandlerMap.put(command,handlerInstance); //map에 담기
+			}catch(ClassNotFoundException | InstantiationException | IllegalAccessException e){
+				throw new ServletException(e);
+			}			
+		}
+	}
+	
+	@Override
+	public void doGet(HttpServletRequest request,HttpServletResponse response) throws ServletException,IOException{
+		processRequest(request,response);		
+	}
+	@Override
+	public void doPost(HttpServletRequest request,HttpServletResponse response) throws ServletException,IOException{
+		processRequest(request,response);		
+	}
+	
+	private void processRequest(HttpServletRequest request,HttpServletResponse response) throws IOException,ServletException{
+		String command=request.getParameter("cmd");
+		CommandHandler handler=commandHandlerMap.get(command);
+		if(handler==null){
+			handler=new NullHandler();
+		}
+		String viewPage=null;
+		try{
+			viewPage=handler.process(request, response);			
+		}catch(Exception e){
+			throw new ServletException(e);
+		}
+		
+		if(viewPage!=null){
+			RequestDispatcher dispatcher=request.getRequestDispatcher(viewPage);
+			dispatcher.forward(request, response);			
+		}		
+	}
+}
+
+
+2)web.xml 설정
+/*	chap18/WebContent/WEB-INF/web.xml	*/
+
+
+ <servlet>
+  	<servlet-name>ControllerUsingFile</servlet-name>
+  	<servlet-class>mvc.controller.ControllerUsingFile</servlet-class>
+  	<init-param>
+  		<param-name>configFile</param-name>
+  		<param-value>/WEB-INF/commandHandler.properties</param-value>
+  	</init-param>  	
+  	<load-on-startup>1</load-on-startup>
+  </servlet>
+  
+  <servlet-mapping>
+  	<servlet-name>ControllerUsingFile</servlet-name>
+  	<url-pattern>/controllerUsingFile</url-pattern>
+  </servlet-mapping>  
+
+  
+  
+  
+3)property 파일
+/*	chap18/WebContent/WEB-INF/commandHandler.properties
+
+
+hello=mvc.hello.HelloHandler
+#someCommand=any.someHandler
+
+
+4)모델 - HelloHandler
+/*	chap18/src/mvc/hello/HelloHandler.java		*/
+
+
+package mvc.hello;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import mvc.command.CommandHandler;
+
+public class HelloHandler implements CommandHandler{
+	@Override
+	public String process(HttpServletRequest request,HttpServletResponse response) throws Exception{
+		request.setAttribute("hello","안녕하세요!");
+		return "/WEB-INF/view/hello.jsp";
+	}
+}
+
+
+
+5.뷰 페이지 
+/*	chap18/WebContent/WEB-INF/view/hello.jsp	*/
+
+
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Hello</title>
+</head>
+<body>
+
+<%=request.getAttribute("hello") %>
+
+</body>
+</html>
+
+
+
+
+<< 실행 결과 :http://localhost:8080/chap18/controllerUsingFile?cmd=hello >>
+안녕하세요!
+
+
+-----------
+
+/2.4 요청 URI를 명령어로 사용하기
+명령어 기반의 파라미터의 단점 : 컨트롤러의 URL이 사용자에게 노출 
+=>사용자는 명령어를 변경해서 컨트롤러에 요청을 전송할 수 있음.
+
+=>
+http://localhost:8080/chap18/hello.do
+http://localhost:8080/chap18/guestbook/list.do
+자체를 명령어로 사용
+
+e.g)
+
+1)컨트롤러 서블릿 
+/*	chap18/src/mvc/controller/ControllerUsingURI.java	*/
+
+
+
+process() 메소드에서 
+String command = request.getRequestURI();	// "/chap18/hello.do" 가 저장됨.
+if(command.indexOf(request.getContextPath())==0){
+	command=command.substring(request.getContextPath().length());	// "/chap18" 제거 =>"/hello.do"
+}
+만 추가
+
+
+
+2)web.xml 파일
+  <servlet>
+  	<servlet-name>ControllerUsingURI</servlet-name>
+  	<servlet-class>mvc.controller.ControllerUsingURI</servlet-class>
+  	<init-param>
+  		<param-name>configFile</param-name>
+  		<param-value>/WEB-INF/commandHandlerURI.properties</param-value>
+  	</init-param>  	
+  	<load-on-startup>1</load-on-startup>
+  </servlet>
+  
+  <servlet-mapping>
+  	<servlet-name>ControllerUsingURI</servlet-name>
+  	<url-pattern>*.do</url-pattern>
+  </servlet-mapping>  
+
+  
+3.프로퍼티 파일
+/*	chap18/WebContent/WEB-INF/commandHandlerURI.properties
+
+
+/hello.do=mvc.hello.HelloHandler
+
+
+<< 실행 결과 : http://localhost:8080/chap18/hello.do >>
+안녕하세요!
+
+---------------------------------------------------------------------------------------------
+
+//03 모델 1 구조와 모델 2 구조의 선택
+
+
+모델		장점								단점
+ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+		-배우기 쉽다							-로직 코드와 뷰 코드가 혼합되어 JSP 코드가 복잡해진다.
+		-자바 언어를 몰라도 어느 정도			
+모델1		 구현이 가능하다.					-뷰 변경 시 논리 코드의 빈번한 복사가 발생해서 코드 중복이 발생하기 쉽다.
+		-기능과 JSP가 직관적으로 연결된다.		 즉, 유지보수가 힘들어 진다.	
+		
+		
+		-로직 코드와 뷰 코드를 분리해서 유지보수	-자바 언어에 친숙하지 않으면 접근하기가 쉽지 않다.
+		 가 쉬워진다.
+모델2	-컨트롤러 서블릿에서 권한 검사나 인증과 	-작업량이 많다(커맨드 클래스 + 뷰 JSP)
+		 같은 공통 기능 처리가 가능하다.
+		-확장이 용이하다.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,319 @@
+
+
+double a=1.23;
+
+//printf("%g",a);
+
+
+
+ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ14장ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+
+//1번
+#include <stdio.h>
+
+
+void set_proverb(char **q, int n)
+{
+ static char *proverb[10] = {
+  "0aaa",
+  "1bbb",
+  "2ccc",
+  "3ddd",
+  "4eee",
+  "5fff",
+  "6ggg",
+  "7hhh",
+  "8iii",
+  "9jjj",
+ };
+ *q = proverb[n];
+}
+int main(void)
+{
+ int choice;
+ char *p;
+
+
+ printf("몇 번째 속담을 선택하시겠습니까?");
+ scanf("%d", &choice);
+
+ set_proverb(&p, choice);
+
+ printf("%s\n", p);
+
+ return 0;
+
+}
+
+
+
+//2번
+
+#include <stdio.h>
+
+int get_sum(int[], int);
+
+int main(void)
+{
+ int arr[3][6] = {
+  {10,10,10,10,10},
+  { 10,10,10,10,10 },
+  { 10,10,10,10,10 }
+ };
+ int row_size, cols_size;
+ int i,total_sum=0;
+
+ row_size = sizeof(arr) / sizeof(arr[0]);
+ cols_size = sizeof(arr[0]) / sizeof(int);
+ 
+ for (i = 0; i < row_size; i++) {
+  total_sum += get_sum(arr[i], cols_size);
+ }
+
+ printf("%d %d배열 전체의 합은 : %d입니다.\n", row_size, cols_size, total_sum);
+
+ return 0;
+
+}
+
+int get_sum(int array[], int size)
+{
+ int sum = 0;
+ int i;
+ for (i = 0; i < size; i++) {
+  sum += array[i];
+ }
+ return sum;
+}
+
+
+
+
+ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ15장ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+
+
+//1번
+
+(a)
+#ifdef DEBUG
+  printf("result=%f\n", result);
+#endif
+
+(b)
+#if(DEBUG==2)
+  printf("result=%f\n", result);
+#endif
+
+
+(c)
+#if(DEBUG==2&&LEVEL==3)
+  printf("result=%f\n", result);
+#endif
+
+
+(d)
+printf("line : %d.result=%f\n",__LINE__, result);
+
+
+(e)//미완
+#include <stdio.h>
+#define POWER_TYPE 1
+
+#if(POWER_TYPE==0)
+int power(int x, int y)
+#elif(POWER_TYPE==1)
+double power(int x, int y)
+#endif
+{
+ double result = 1.0;
+ int i;
+ for (i = 0; i < y; i++) {
+  printf("result=%lf\n", result);
+  result *= x;
+ }
+
+ return result;
+}
+
+int main(void)
+{
+ int a, b;
+ scanf("%d%d", &a, &b);
+
+#if(POWER_TYPE==0)
+ printf("결과 : %d\n", (power(a, b)));
+#elif(POWER_TYPE==1)
+ printf("결과 : %lf\n", (power(a, b)));
+#endif
+ return 0;
+}
+
+
+(f)
+#if(0)
+  printf("result=%lf\n", result);
+#endif
+
+
+
+//2번
+
+#include <stdio.h>
+#define GET_MIN(x,y,z) (x<y)?((x<z)?(x):(z)):((y<z)?(y):(z))
+
+int main(void)
+{
+ int a, b, c;
+
+ printf("3개의 정수를 입력하시오 :");
+ scanf("%d%d%d", &a, &b, &c);
+
+ printf("최소값은 %d입니다.\n", GET_MIN(a, b, c));
+
+ return 0;
+}
+
+
+
+//3번
+
+
+
+#include <stdio.h>
+#define ARRAY_INIT(array,size,value) {int i;for(i=0;i<size;i++){*(array+i)=value;}}
+
+//#define ARRAY_INIT(array,size,value) {int i;for(i=0;i<size;i++){array[i]=value;}}
+
+
+int main(void)
+{
+ int arr[10];
+ int i;
+ ARRAY_INIT(arr, 10, 1);
+
+ for (i = 0; i < 10; i++) {
+  printf("arr[%d]=%d\n", i, arr[i]);
+ }
+
+ return 0;
+}
+
+
+
+ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ16장ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+
+
+//1번
+
+#include <stdio.h>
+
+int main(void)
+{
+ FILE *fp1, *fp2;
+ char fname1[50], fname2[50];
+ char c1,c2;
+
+ printf("첫번째 파일 이름:");
+ gets_s(fname1);
+
+
+ printf("두번째 파일 이름:");
+ gets_s(fname2);
+
+ if ((fp1 = fopen(fname1, "r")) == NULL || (fp2 = fopen(fname2, "r")) == NULL) {
+  fprintf(stderr, "파일을 열 수 없습니다.\n");
+  return 1;
+ }
+ while ((!feof(fp1)) && (!feof(fp2))) {
+  c1 = fgetc(fp1); c2 = fgetc(fp2);
+  if (c1 != c2) {
+   printf("두 파일은 서로 다릅니다.\n");
+   goto A;
+  }
+ }
+ printf("두 파일은 서로 같습니다.\n");
+ A:
+ fclose(fp1);
+ fclose(fp2);
+
+ return 0;
+
+}
+
+
+
+//2번
+
+
+#include <stdio.h>
+#include <ctype.h>
+
+int main(void)
+{
+ FILE *fp1, *fp2;
+ char fname1[50], fname2[50];
+ char c1, c2;
+
+
+ printf("입력 파일 :");
+ gets_s(fname1);
+ 
+ printf("출력 파일 :");
+ gets_s(fname2);
+
+ if ((fp1 = fopen(fname1, "r")) == NULL || (fp2 = fopen(fname2, "w")) == NULL) {
+  fprintf(stderr, "파일 열 수 없음\n");
+  return 1;
+ }
+ while (!(feof(fp1))) {
+  c1 = fgetc(fp1);
+  if (islower(c1)) {
+   c2 = toupper(c1);
+  }
+  else {
+   c2 = c1;
+  }
+  fputc(c2, fp2);
+ }
+ fclose(fp1);
+ fclose(fp2);
+
+ return 0;
+}
+
+
+
+//3번
+
+
+#include <stdio.h>
+
+int main(void)
+{
+ FILE *fp1, *fp2;
+ char fname1[50], fname2[50];
+ int a;
+
+ printf("입력 파일 :");
+ scanf("%s", fname1);
+
+ printf("복사 파일 :");
+ scanf("%s", fname2);
+
+ if ((fp1 = fopen(fname1, "rb")) == NULL || (fp2 = fopen(fname2, "wb")) == NULL) {
+  fprintf(stderr, "파일 열 수 없음\n");
+  return 1;
+ }
+
+ while (!(feof(fp1))) {
+  fread(&a, sizeof(int), 1, fp1);
+  fwrite(&a, sizeof(int), 1, fp2);
+ }
+
+ fclose(fp1);
+ fclose(fp2);
+
+ return 0;
+}
+
+

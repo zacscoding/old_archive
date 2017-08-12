@@ -1,0 +1,134 @@
+public class DoublyLinkedList<E> {
+	/* nested class*/
+	private static class Node<E>{
+		private E element;
+		private Node<E> prev;
+		private Node<E> next;
+		private Node(E e,Node<E> p,Node<E> n){
+			element=e;
+			prev=p;
+			next=n;
+		}
+		public E getElement(){return element;}
+		public Node<E> getPrev(){return prev;}
+		public Node<E> getNext(){return next;}
+		public void setPrev(Node<E> p){prev=p;}
+		public void setNext(Node<E> n){next=n;}		
+	}
+	
+	//instance variables 
+	private Node<E> header;
+	private Node<E> trailer;
+	private int size=0;
+	public DoublyLinkedList(){
+		header=new Node<E>(null,null,null);
+		trailer=new Node<E>(null,header,null);
+		header.setNext(trailer);
+	}
+	
+	//access method
+	public int size(){	//리스트의 요소 개수 반환
+		return size;
+	}
+	
+	public boolean isEmpty(){	//true==empty
+		return size==0;
+	}
+	
+	public E first(){	//첫번째 요소 반환(삭제X)
+		if(header.getNext()==trailer)
+			return null;
+		return header.getNext().getElement();
+	}
+	
+	public E last(){		//마지막 요소 반환(삭제X)
+		if(trailer.getPrev()==header)
+			return null;
+		return trailer.getPrev().getElement();
+	}
+	
+	//update method
+	public void addFirst(E e){	//리스트의 앞에 추가
+//		Node<E> newest=new Node<>(e,header,header.getNext());
+//		header.getNext().setPrev(newest);
+//		header.setNext(newest);
+//		size++;
+		//책 코드
+		addBetween(e,header,header.getNext());
+	}
+	public void addLast(E e){	//리스트의 마지막에 추가
+//		Node<E> newest=new Node<>(e,trailer.getPrev(),trailer);
+//		trailer.getPrev().setNext(newest);
+//		trailer.setPrev(newest);
+//		size++;
+		//책코드
+		addBetween(e,trailer.getPrev(),trailer);
+	}
+
+	public E removeFirst(){	//첫번째 요소 제거
+		if(isEmpty())
+			return null;
+//		Node<E> rnode=header.getNext();
+//		E rdata=rnode.getElement();		
+//		header.setNext(rnode.getNext());
+//		rnode.getNext().setPrev(header);
+//		size--;
+//		return rdata;
+		
+		//책코드
+		return remove(header.getNext());
+	}
+
+	public E removeLast(){	//마지막 요소 제거
+		if(isEmpty())
+			return null;
+//		Node<E> rnode=trailer.getPrev();
+//		E rdata=rnode.getElement();
+//		trailer.setPrev(rnode.getPrev());
+//		rnode.getPrev().setNext(trailer);
+//		size--;
+//		return rdata;	
+		
+		//책코드
+		return remove(trailer.getPrev());
+	}
+	
+	//private update methods
+	private void addBetween(E e,Node<E> predecessor,Node<E> successor){
+		Node<E> newest=new Node<>(e,predecessor,successor);
+		predecessor.setNext(newest);
+		successor.setPrev(newest);
+		size++;
+	}
+	
+	private E remove(Node<E> node){
+		Node<E> predecessor=node.getPrev();
+		Node<E> successor=node.getNext();
+		predecessor.setNext(successor);
+		successor.setPrev(predecessor);
+		size--;
+		return node.getElement();		
+	}
+	
+	
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

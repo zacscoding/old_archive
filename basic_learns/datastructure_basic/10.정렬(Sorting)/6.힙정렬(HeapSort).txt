@@ -1,0 +1,38 @@
+#include <stdio.h>
+#include "UsefulHeap.h"
+
+int PriComp(int n1, int n2) {
+	return n2 - n1;	//오름차순 정렬을 위한 문장
+}
+
+void HeapSort(int arr[], int n, PriorityComp pc) {
+	Heap heap;
+	int i;
+	
+	HeapInit(&heap, PriComp);
+
+	//정렬대상을 가지고 힙을 구성
+	for (i = 0; i < n; i++) {
+		HInsert(&heap, arr[i]);
+	}
+
+	//순서대로 하나씩 꺼내서 정렬을 완성
+	for (int i = 0; i < n; i++) {
+		arr[i] = HDelete(&heap);
+	}
+}
+
+int main(void)
+{
+	int arr[5] = { 5,3,2,4,1 };
+	int i,size = sizeof(arr) / sizeof(int);
+	HeapSort(arr, size, PriComp);
+
+	for (i = 0; i < size; i++) {
+		printf("%d ", arr[i]);
+	}
+
+	pritnf("\n\n");
+
+	return 0;	
+}

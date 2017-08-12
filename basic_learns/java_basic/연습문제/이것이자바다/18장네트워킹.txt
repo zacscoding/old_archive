@@ -1,0 +1,159 @@
+1.1
+-----------------------------------------------------------------------------
+2.1
+-----------------------------------------------------------------------------
+3.4
+-----------------------------------------------------------------------------
+4.1
+-----------------------------------------------------------------------------
+5.3
+-----------------------------------------------------------------------------
+6.3
+-----------------------------------------------------------------------------
+7.
+import java.io.BufferedReader;
+import java.io.FileReader;
+
+public class AddLineNumberExample {
+	public static void main(String[] args) throws Exception {
+		//정확한 경로로 수정
+		String filePath=
+				"C:\\Users\\명수\\workspace\\UDPChatting\\src\\UdpReceiveExample.java";				
+		//작성 위치
+		
+		//입력 스트림
+		BufferedReader in=new BufferedReader(new FileReader(filePath));
+		int rowNumber=1;
+		String rowStr;
+		while( (rowStr=in.readLine())!=null ){						
+			System.out.println(rowNumber+": "+str);			
+			rowNumber++;
+		}		
+		in.close();		
+		
+	}
+}
+
+-----------------------------------------------------------------------------
+8.2
+-----------------------------------------------------------------------------
+9.
+[클라이언트]
+Socket socket=new Socket("localhost",5001);
+
+[서버]
+ServerSocket serverSocket=new ServerSocket(5001);
+Socket socket=serverSocket.accept();
+
+-----------------------------------------------------------------------------
+10.
+입력 스트림		출력 스트림
+출력 스트림		입력 스트림
+
+-----------------------------------------------------------------------------
+11.
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.OutputStream;
+import java.net.Socket;
+
+public class ClientExample {
+	public static void main(String[] args) throws Exception{
+		Socket socket=new Socket("localhost",5001);
+		OutputStream os=socket.getOutputStream();
+		
+		String filePath="E:\\test\\TOP.jpg";
+		File file=new File(filePath);
+		
+		String fileName=file.getName();	//"TOP.jpg" 문자열		
+		//파일 이름이 저장된 길이 100바이트 먼저 보냄
+		byte[] byteArr=fileName.getBytes("UTF-8");
+		os.write(byteArr, 0, byteArr.length);
+			
+		
+		System.out.println("[파일 보내기 시작] "+fileName);
+		//파일 데이터를 보냄
+		BufferedInputStream buffIn=new BufferedInputStream(new FileInputStream(filePath));
+		byte[] sendData=new byte[100];
+		int readByteData=-1;
+		
+		while( (readByteData=buffIn.read(sendData))!=-1 ){
+			os.write(sendData);			
+		}
+		
+		os.flush();
+		System.out.println("[파일 보내기 완료]");
+		
+		
+		buffIn.close();
+		os.close();
+		socket.close();		
+	}
+}
+
+
+
+import java.io.BufferedOutputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.net.InetSocketAddress;
+import java.net.ServerSocket;
+import java.net.Socket;
+
+public class ServerExample {
+	public static void main(String[] args) throws Exception{
+		ServerSocket serverSocket=new ServerSocket();
+		serverSocket.bind(new InetSocketAddress("localhost",5001));
+		
+		System.out.println("[서버 시작]");
+		while(true){
+			try{
+				Socket socket=serverSocket.accept();
+				
+				InputStream in=socket.getInputStream();
+				
+				byte[] bytes=new byte[100];
+				int readByteCount=-1;
+				
+				in.read(bytes);
+				
+				//클라이언트가 보낸 100바이트를 먼저 읽고 파일 이름을 얻어 내기
+				String fileName=new String(bytes);
+				fileName=fileName.trim();
+				
+				//파일 데이터를 받고 E:\Temp 폴더에 저장
+				System.out.println("[파일 받기 시작] "+fileName);
+				BufferedOutputStream buffOut=new BufferedOutputStream(
+									new FileOutputStream("E:\\Temp\\"+fileName));
+				while( (readByteCount=in.read(bytes))!=-1  ){
+					buffOut.write(bytes);
+				}
+				System.out.println("[파일 받기 완료]");
+								
+				buffOut.close();
+				in.close();
+				socket.close();
+				break;
+			}catch(Exception e){
+				break;
+			}			
+		}		
+		serverSocket.close();
+		System.out.println("[서버 종료]");		
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+

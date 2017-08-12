@@ -1,0 +1,18 @@
+Graphics
+
+ - 1. Frame 클래스를 처음 실행시켰을 때
+ - 2. Frame 클래스의 사이즈가 변경이 될 때
+ - 3. repaint() 메소드가 실행이 될때 
+
+=> 위의 조건이면, 아래 메소드가 실행
+
+	public void update(Graphics g){
+		g.clearRect(0,0,this.getWidth(),this.getHeight()); //현재 자신의 사이즈
+		paint(g);
+	}
+
+	public void paint(Graphics g){
+		//그래픽 작업 관련 코드
+	}
+
+

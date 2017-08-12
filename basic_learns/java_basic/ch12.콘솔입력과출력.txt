@@ -1,0 +1,169 @@
+-------------------ch.12 콘솔 입력과 출력-----------------------
+
+--------------------------------------------------------------------
+//12-1 콘솔 출력(Console Output)
+
+- println 메소드는 출력 후에 개행을 한다.
+- print 메소드는 출력 후에 개행을 하지 않는다.
+- println, print 메소드의 인자로 인스턴스의 참조 값이 전달될 수 있다.
+
+class Friend
+{
+	String myName;
+	public Friend(String name)
+	{
+		myName=name;
+	}
+	public String toString()
+	{
+		return "제 이름은 "+myName+"입니다.";
+		//실제로는 새로운 문자열을 저장하는 인스턴스가 생성 & 반환 
+		//but 편의상(관례상) 문자열이 반환된다고 표현을 함.
+	}
+	
+}
+public class StringToString {
+	public static void main(String[] args)
+	{
+		Friend fnd1=new Friend("이종수");
+		Friend fnd2=new Friend("현주은");
+		
+		System.out.println(fnd1);	//Friend형 참조변수(fnd1)가 인자로 전달 & fnd1.toString()이 호출 및 실행
+		System.out.println(fnd2);	//Friend형 참조변수(fnd2)가 인자로 전달 & fnd2.toString()이 호출 및 실행
+		
+		System.out.print("출력이 ");
+		System.out.print("종료되었습니다.");
+		System.out.println("");		
+	}
+
+}
+--------------------------------------------------------------------
+
+//이스케이프 시퀀스(Escape Sequence)
+;문자열 안에서 특별한 의미로 해석되는 문자를 가리켜 '이스케이스 시퀀스'라 한다.
+\n(개행) // \t(탭tab)	//\"(큰따옴표Quatation mark)	// \\역슬래쉬(Backslash)
+
+
+//문자열을 조합해서 출력하는 printf
+;System.out.printf 메소드는 문자열의 중간에 삽입될 데이터를 가지고 하나의 문자열을 조합해서 출력한다.
+
+//%g 출력의 대상에 따라서 %e 또는 %f형태의 출력
+
+--------------------------------------------------------------------------
+
+//12-2 콘솔 입력(Console Input)
+
+(intro)
+//자바에서의 콘솔 입력은 골칫거리였다!(2000년대)
+(2000년대에는 Applet 기반으로 공부했음(익스플로러 상에서 확인하는거) &기업에서 요구하는 대로 발전이 이루어짐
+= > 콘솔은 크게 중요시 되지 않았음)
+
+		BufferedReader br=new BufferedReader(new InputStringReader(System.in));
+		String str=br.readLine();
+		int num=Integer.parseInt(str);
+		
+		==>
+		Scanner kb=new Scanner(System.in);
+		int num=kb.nextInt();
+
+--------------------------------------------------------------------
+
+//Scanner 클래스
+
+//Scanner클래스의 생성자
+-Scanner(File source)
+-Scanner(InputString source)
+-Scanner(Readable source)
+-Scanner(String source)
+
+==>Scanner 클래스는 다양한 리소스를 대상으로 입력을 받을 수 있도록 정의된 클래스. (그 중 콘솔이 하나)
+==>Scanner 클래스는 리스소가 무엇이든지 간에 데이터를 읽어드리는 방법(데이터를 추출하는 기능)을 표준화(인터페이스화)하겠다.
+
+--------------------------------------------------------------------------
+
+//Scanner 예제1 - 문자열을 읽는 Scanner
+import java.util.Scanner;
+
+public class StringScannin {
+	public static void main(String[] args)
+	{
+		String source="1 5 7";
+		Scanner sc=new Scanner(source);
+		
+		int num1=sc.nextInt();
+		int num2=sc.nextInt();
+		int num3=sc.nextInt();
+		int sum=num1+num2+num3;
+		
+		System.out.printf("문자열에 저장된 %d, %d, %d의 합 : %d",num1,num2,num3,sum);	
+	}
+
+}
+
+//예제2 - 키보드 버퍼를 읽는 Scanner
+import java.util.Scanner;
+
+public class StringScannin {
+	public static void main(String[] args)
+	{
+		Scanner sc=new Scanner(System.in);	//키보드 리소스
+		
+		int num1=sc.nextInt();
+		int num2=sc.nextInt();
+		int num3=sc.nextInt();
+		int sum=num1+num2+num3;
+		
+		System.out.printf("문자열에 저장된 %d, %d, %d의 합 : %d",num1,num2,num3,sum);	
+	}
+
+}
+
+==>
+in.nextInt(); vs in.nextShort();
+는 같은 3이 있을 경우 int형(4byte)로 데이터를 넣을 것인가, short(2byte)형으로 넣을 것인가 차이
+
+==>
+자바 I/O의 기본 원칙
+:입력과 출력의 대상이 무엇이건 간에 입출력의 기본 방식 및 원리를 동일하게 구성하겠다는 것
+
+
+--------------------------------------------------------------------------
+
+//Scanner 클래스를 구성하는 주요 메소드
+public boolean nextBoolean();
+public byte nextByte();
+public short nextShort();
+public int nextInt();
+public long nextLong();
+public float nextFloat();
+public double nextDouble();
+public String nextLine();	//엔터전까지 받음
+public String next();		//공백기준으로 받음
+
+
+import java.util.Scanner;
+public class ScannerTest {
+	public static void main(String[] args)
+	{
+		Scanner in=new Scanner(System.in);
+		
+		System.out.print("nextLine()으로 받음 : ");	//I like Java 입력
+		String str1=in.nextLine();
+		System.out.print("next()으로 받음 : ");	//I like Java 입력
+		String str2=in.next();
+		
+		System.out.println("str1="+str1);	//I like Java 출력
+		System.out.println("str2="+str2);	//I 출력
+		
+		
+		System.out.print("참이면 true 거짓이면 false 입력 : ");
+		boolean isTrue=in.nextBoolean();
+		if(isTrue)
+			System.out.println("참(true)을 입력");
+		else
+			System.out.println("거짓(false)을 입력");
+		
+		
+	}
+}
+

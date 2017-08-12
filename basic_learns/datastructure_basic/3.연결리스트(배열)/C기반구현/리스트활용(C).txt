@@ -1,0 +1,96 @@
+#include <stdio.h>
+#include <Windows.h>
+#include "ArrayList.h"
+enum {INPUTDATA=1,REMOVE,SEARCH,EXIT};
+void showMenu();
+void inputData(List* plist);
+void removeData(List* plist);
+void searchAllData(List* plist);
+int main(void)
+{
+	/*** ArrayList의 생성 및 초기화 ***/
+	List list;
+	int data;
+	ListInit(&list);
+	int choice;
+	while (1) {
+		showMenu();
+		scanf("%d", &choice);
+		switch (choice) {
+		case INPUTDATA:
+			inputData(&list);			
+			break;
+		case REMOVE:
+			removeData(&list);
+			break;
+		case SEARCH:
+			searchAllData(&list);
+			break;
+		case EXIT:
+			goto A;
+			break;			
+		}
+		system("pause");
+		system("cls");
+	}		
+A:
+	printf("프로그램을 종료합니다.\n");
+	return 0;
+}
+
+void showMenu() {
+	puts("------ArrayList Test------");
+	puts("1.데이터 저장");
+	puts("2.데이터 삭제");
+	puts("3.데이터 출력");
+	puts("4.종료 ");
+	printf("선택 : ");
+}
+
+void inputData(List* plist) {
+	int data;
+	printf("저장할 정수 입력 : ");
+	scanf("%d", &data);
+	LInsert(plist, data);
+	printf("저장완료\n");
+}
+
+void removeData(List* plist) {
+	int num,data;
+	printf("삭제할 데이터 입력 : ");
+	scanf("%d", &num);
+	if (LFirst(plist, &data)) {
+		if (data == num) {
+			LRemove(plist);
+			printf("삭제완료\n");
+			return;
+		}
+		while (LNext(plist, &data)) {
+			if (data == num) {
+				LRemove(plist);
+				printf("삭제 완료\n"); 
+				return;
+			}
+		}
+		printf("%d존재하지 않음\n", num);
+	}
+	else {
+		printf("저장 된 데이터 없음\n");
+	}
+}
+
+void searchAllData(List* plist) {	
+	int cnt=1;
+	int data;
+	if (LFirst(plist, &data)) {
+		printf("%d번재 데이터 : %d\n", cnt, data);
+		cnt++;
+		while (LNext(plist, &data)) {
+			printf("%d번재 데이터 : %d\n", cnt, data);
+			cnt++;
+		}		
+	}
+	else {
+		printf("저장 된 데이터 없음\n");
+	}
+}

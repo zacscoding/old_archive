@@ -1,0 +1,47 @@
+#include <stdio.h>
+#include <Windows.h>
+#include "ShowTree.h"
+
+void gotoxy(int x, int y) {
+	COORD pos = { x,y };
+	SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), pos);
+}
+
+void show_tree(BTreeNode *p)
+{
+	if (p == NULL) {
+		return;
+	}
+	else {
+		static int i = 0;
+		static int j = 50;
+		int k;
+		int count = 0;
+		gotoxy(j, i);
+		printf("%d", p->data);
+		if (GetLeftSubTree(p) != NULL) {
+			i += 2;
+			j -= 4;
+			count++;
+			gotoxy(j, i);
+			show_tree(GetLeftSubTree(p));
+		}
+		for (k = 0; k < count; k++) {
+			i -= 2;
+			j += 4;
+		}
+
+		count = 0;
+		if (GetRightSubTree(p) != NULL) {
+			i += 2;
+			j += 4;
+			count++;
+			gotoxy(j, i);
+			show_tree(GetRightSubTree(p));
+		}
+		for (k = 0; k < count; k++) {
+			i -= 2;
+			j -= 4;
+		}
+	}
+}

@@ -1,0 +1,291 @@
+//9-1 멤버 함수의 사실 어디에
+
+/*
+
++그림1
+
+*객체에 의해서 공유되는 멤버 함수
+ -UnderObj1.cpp , UnderObj2.cpp
+
+
+
+#include <iostream>
+
+class A
+{
+	int n;
+public:
+	A(int n)
+	{
+		this->n = n;
+	}
+	void add()
+	{
+		n++;
+	}
+
+};
+
+int main(void)
+{
+	A a1(10);
+	A a2(20);
+	//A객체 2개 생성 => add()를 공유할 수 있다면 효율적!
+	//==>Code Area영역에 void add(){ num++; } 이 들어감
+	//void add()는 void add(A * a) { (a->n)++; } 변경됨
+	
+	a1.add();
+	//a1의 포인터 this가 인자로 전달됨
+	a2.add();
+	//a2객체의 포인터 this가 인자로 전달됨
+	return 0;
+}
+
+
+//9-2 가상 함수가 동작하는 원리
+
+
+#include <iostream>
+using std::cout; using std::endl;
+
+class A
+{
+	int a;
+	int b;
+public:
+
+	virtual void fct1() {
+		cout << "fct1(...)" << endl;
+	}
+	//클래스의 멤버 함수중 적어도 1개의 virtual 함수가 있으면,
+	//virtual 테이블이 형성(가상테이블)
+
+	virtual void fct2() {
+		cout << "fct2(...)" << endl;
+	}
+
+};
+
+class B : public A
+{
+	int c;
+	int d;
+public:
+
+	virtual void fct1() {
+		cout << "overriding fct1(...)" << endl;
+	}
+
+	void fct3() {
+		cout << "fct3()" << endl;
+	}
+};
+
+
+int main(void)
+{
+	////설명1
+	//A a;
+	//a.fct1();
+	////=>A의 가상 테이블 => fct1()의 키값을 찾음 => Value(0x1100번지)를 실행
+	////=>단점 1)메모리 소모(가상테이블 생성)  2)함수호출마다 가상 테이블 참조 => 실행이 늦어짐
+	//B b;
+	////=>가상테이블의 A::fct1() 존재하지 않음
+
+	//설명2
+	A* aaa = new A();
+	aaa->fct1();
+	//A객체의 VTable포인터는 객체 A의 가상테이블을 참조 
+	//=> void A::fct1() , void A::fct2() 존재하는
+
+
+	B* bbb = new B();
+	bbb->fct1();
+	//B객체의 VTable포인터는 객체 B의 가상 테이블 참조
+	//=>void B::fct1() , void A::fct2() , void B::fct3()
+
+	//8장은 장점 vs 9장은 virtual 멤버 함수의 단점	
+	//=>장점이 훨씬 큼!!!!
+	//=>자바의 경우, 장점이 너무 커서 재정의로만 함
+
+	delete aaa;
+	delete bbb;
+	
+	return 0;
+
+}
+
+
+
+//9-3 다중 상속에 대한 이해
+
+
+//다중 상속은 문법적으로 가치가 낮음(많은 객체지향 전문가 들은 쓰지말라고 함)
+//99년도 UML의 급속한 발전이 됨 . 이전에도 안 좋은것은 알았지만, 그렇게  나쁜 것인지 모름
+//그냥 맛만 보기
+
+#include <iostream>
+using std::cout; using std::endl;
+
+class AAA
+{
+public:
+	void String1() {
+		cout << "AAA::String1" << endl;
+	}
+};
+
+class BBB
+{
+public:
+	void String2() {
+		cout << "BBB::String2" << endl;
+	}
+};
+
+class CCC : public AAA, public BBB
+{
+public:
+	void ShowString() {
+		String1();
+		String2();
+	}
+};
+
+
+int main(void)
+{
+	CCC ccc;
+	ccc.ShowString();
+
+	return 0;
+}
+
+
+
+//9-4 다중 상속의 모호성
+
+
+#include <iostream>
+using std::cout; using std::endl;
+
+class AAA
+{
+public:
+	void String() {
+		cout << "AAA::String1" << endl;
+	}
+};
+
+class BBB
+{
+public:
+	void String() {
+		cout << "BBB::String2" << endl;
+	}
+};
+
+class CCC : public AAA, public BBB
+{
+public:
+	void ShowString() {
+		//String(); //AAA::String();
+		//String(); //BBB::String();
+	//코드가 지저분해지고 모호해짐!!! 절대 좋은 쪽으로 느끼지 말고 
+	//나쁜쪽으로 느끼기
+	}
+};
+
+
+int main(void)
+{
+	CCC ccc;
+	ccc.ShowString();
+
+	return 0;
+}
+
+
+
+
+//9-5 Virtual Base 클래스
+
+
+#include <iostream>
+using std::cout; using std::endl;
+
+class AAA
+{
+public:
+	void String1() {
+		cout << "AAA::String1" << endl;
+	}
+};
+
+class BBB : public AAA
+{
+public:
+	void String2() {
+		cout << "BBB::String2" << endl;
+	}
+};
+
+class CCC : public AAA
+{
+public:
+	void String3() {
+		cout << "CCC::String" << endl;
+	}
+};
+
+class DDD : public BBB, public CCC
+{
+public:
+	void ShowString() {
+		//String1();
+
+		String2();
+		String3();
+	}
+};
+
+
+
+int main(void)
+{
+	DDD ddd;
+	ddd.ShowString();
+	///DDD객체 생성하면 BBB,CCC 존재 
+	//=> BBB안에 AAA + CCC안에 AAA까지 존재	
+	//DDD클래스 안에 String1()을 BBB::String1(); or CCC::String1(); 바꿔야함.
+	//==>엄청 지저분 함
+	//==>그래서 AAA클래스를 하나만 포함하자고 약속하게 됨
+	//==>class BBB : virtual public AAA & class CCC : virtual public AAA
+	//==>BBB,CCC클래스를 동시에 상속하는 클래스는 AAA를 하나만 상성
+	//==>Virtual Base클래스 사용할 일 없어야 함!
+	return 0;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

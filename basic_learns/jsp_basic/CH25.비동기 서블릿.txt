@@ -1,0 +1,150 @@
+-----------CH25.비동기 서블릿-----------------
+
+e.g)
+
+
+package com.controller;
+
+import java.io.IOException;
+
+import javax.servlet.AsyncContext;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import com.sun.istack.internal.logging.Logger;
+
+@WebServlet(urlPatterns="/hello",asyncSupported = true) //비동기 방식(XML도 가능)
+public class AsyncHelloWorldServlet extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+	private Logger logger = Logger.getLogger(getClass());
+       
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    	final AsyncContext asyncContext = request.startAsync();
+    	
+    	new Thread(new Runnable() {
+    		@Override
+    		public void run() {
+    			try {
+    				Thread.sleep(5000);    				
+    			} catch(InterruptedException ex) {
+    				ex.printStackTrace();
+    			}
+    			HttpServletResponse response 
+    				= (HttpServletResponse)asyncContext.getResponse();
+    			response.setContentType("text/plain");
+    			response.setCharacterEncoding("UTF-8");
+    			
+    			try {
+    				response.getWriter().println("Hello");
+    			} catch(IOException e) {
+    				e.printStackTrace();
+    			}
+    			logger.info("complete response");
+    			asyncContext.complete(); // 클라이언트와 연결 종료
+    		}
+    	}).start();
+    	logger.info("doGet return");
+    	//(해당 서블릿을 실행하던 쓰레드는 컨테이너가 관리하는 쓰레드 풀로 반환되어
+    	//다른 클라이언트 요청을 처리할 수 있음
+	}
+}
+
+
+1.클라이언트의 요청을 수신하는 쓰레드(T1)가 AsyncHelloWorldServlet의 doGet() 메서드를 실행한다.
+2.T1은 req.startAsync() 메서드를 이용해서 비동기 처리를 위한 AsyncContext 객체를 구한다.
+3.T1은 비동기로 응답을 처리할 쓰레드 T2를 생성하고 실행한다.
+4.T2는 5초간 실행을 중지한다. 
+5.T1은 doGet() 메서드가 종료되고, 컨테이너의 쓰레드 풀에 반환된다.
+6.T2는 AsyncContext를 이용해서 클라이언트에 응답을 전송한다.
+7.T2는 complete()을 통해 클라이언트와의 연결을 종료한다.
+8.T2의 실행이 종료된다.
+
+
+---------------------------------------------------------------------------------------------
+
+//비동기 기능을 이용한 채팅 구현 : 서버측 코드
+
+
+	
+-----------
+-----------
+-----------
+-----------
+-----------
+-----------
+---------------------------------------------------------------------------------------------
+-----------
+-----------
+-----------
+-----------
+-----------
+-----------
+---------------------------------------------------------------------------------------------
+-----------
+-----------
+-----------
+-----------
+-----------
+-----------
+---------------------------------------------------------------------------------------------
+-----------
+-----------
+-----------
+-----------
+-----------
+-----------
+------
+------
+------
+------
+------
+------
+------
+------
+------
+------
+------
+------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

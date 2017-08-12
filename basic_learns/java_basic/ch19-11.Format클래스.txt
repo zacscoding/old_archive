@@ -1,0 +1,209 @@
+-------------------ch19-11.Format클래스-----------------------
+;java.text패키에서 숫자 형식을 위해 DecimalFormat, 날짜 형식을 위해 SimpleDateFormat, 
+매개변수화된 문자열 형식을 위해 MessageFormat 클래스 제공
+
+-------------------------------------------------------------------------------------
+
+//1.숫자 형식 클래스(DecimalFormat)
+
+import java.text.DecimalFormat;
+
+public class Main {
+	public static void main(String[] args) {
+		double num=1234567.89;
+		
+		DecimalFormat df=new DecimalFormat("0");
+		System.out.println(df.format(num));		//1234568
+		
+		df=new DecimalFormat("0.0");
+		System.out.println(df.format(num));		//1234567.9
+		
+		df=new DecimalFormat("0000000000.00000");
+		System.out.println(df.format(num));		//0001234567.89000
+		
+		df=new DecimalFormat("#");
+		System.out.println(df.format(num));		//1234568
+
+		
+		df=new DecimalFormat("#.#");
+		System.out.println(df.format(num));		//1234567.9
+		
+		df=new DecimalFormat("##########.#####");
+		System.out.println(df.format(num));		//1234567.89
+		
+		df=new DecimalFormat("#.0");
+		System.out.println(df.format(num));		//1234567.9
+		
+		df=new DecimalFormat("+#.0");
+		System.out.println(df.format(num));		//+1234567.9
+
+		df=new DecimalFormat("-#.0");
+		System.out.println(df.format(num));		//-1234567.9
+
+		df=new DecimalFormat("#,###.0");
+		System.out.println(df.format(num));		//1,234,567.9
+		
+		df=new DecimalFormat("0.0E0");
+		System.out.println(df.format(num));		//1.2E6
+		
+		df=new DecimalFormat("+#,###;-#,###");
+		System.out.println(df.format(num));		//+1,234,568
+		
+		df=new DecimalFormat("#.#%");
+		System.out.println(df.format(num));		//123456789%
+		
+		df=new DecimalFormat("\u00A4 #,###");
+		System.out.println(df.format(num));		//￦1,234,568
+	}
+}
+
+<< 실행 결과 >>
+1234568
+1234567.9
+0001234567.89000
+1234568
+1234567.9
+1234567.89
+1234567.9
++1234567.9
+-1234567.9
+1,234,567.9
+1.2E6
++1,234,568
+123456789%
+￦1,234,568
+
+-------------------------------------------------------------------------------------
+
+//2.날짜 형식 클래스(SimpleDateFormat)
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+public class Main {
+	public static void main(String[] args) {
+		Date now=new Date();
+		SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd");	//년,월,일
+		System.out.println(sdf.format(now));	
+		
+		sdf=new SimpleDateFormat("yyyy년 MM월 dd일");
+		System.out.println(sdf.format(now));
+		
+		sdf=new SimpleDateFormat("yyyy.MM.dd a HH:mm:ss");	//년.월.일 오전/오후 시간:분:초
+		System.out.println(sdf.format(now));
+		
+		sdf=new SimpleDateFormat("오늘은 E요일");				//요일
+		System.out.println(sdf.format(now));
+		
+		sdf=new SimpleDateFormat("올해의 D번째 날(yy년도MM월)");	//월 구분이 없는 일(1~365) (년.월)
+		System.out.println(sdf.format(now));
+		
+		sdf=new SimpleDateFormat("이달의 d번째 날(yy년도MM월)");	//일
+		System.out.println(sdf.format(now));		
+		
+		sdf=new SimpleDateFormat("올해의 w번째 주(yy년도)");		//년의 몇번째 주
+		System.out.println(sdf.format(now));
+		
+		sdf=new SimpleDateFormat("이번달의 W번째 주(yy년도MM월)");	//월의 몇번째 주
+		System.out.println(sdf.format(now));
+		
+	}
+}
+
+<< 실행 결과 >>
+
+2016-11-02
+2016년 11월 02일
+2016.11.02 오후 16:35:19
+오늘은 수요일
+올해의 307번째 날(16년도11월)
+이달의 2번째 날(16년도11월)
+올해의 45번째 주(16년도)
+이번달의 1번째 주(16년도11월)
+
+-------------------------------------------------------------------------------------
+
+//3.문자열 형식 클래스(MessageFormat)
+
+
+import java.text.MessageFormat;
+
+public class Main {
+	public static void main(String[] args) {
+		String id="Java";
+		String name="Zac";
+		String tel="010-1234-1234";
+		
+		String text="회원 ID : {0} \n회원이름 : {1}\n회원 전화 : {2}";
+		String result1=MessageFormat.format(text,id,name,tel);
+		System.out.println(result1);
+		System.out.println();
+		
+		String sql="insert into member values({0},{1},{2})";
+		Object[] arguments={"'Java'","'Zac'","'010-1234-1234'"};
+		String result2=MessageFormat.format(sql, arguments);
+		System.out.println(result2);
+		
+	}
+}
+
+<< 실행 결과 >>
+회원 ID : Java 
+회원이름 : Zac
+회원 전화 : 010-1234-1234
+
+insert into member values('Java','Zac','010-1234-1234')
+
+
+-------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

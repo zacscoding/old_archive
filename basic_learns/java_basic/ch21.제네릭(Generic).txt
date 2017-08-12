@@ -1,0 +1,848 @@
+-------------------ch.21 제네릭(Generic)-----------------------
+
+//21-1 제네릭 클래스의 이해와 설계
+
+(Intro)
+-프로그램의 언어의 문법을 더 알고 덜 알고는 크게 중요하지 않는다.
+-제네릭 이후로 너무 문법 지향적으로 공부하지 말것
+-컬렉션 프레임워크를 위한 기초과정
+--------------------------------------------------------------------------
+//AppleBox와 OrangeBox 클래스의 설계
+
+class AppleBox{
+	Apple item;
+	public void store(Apple item) {
+		this.item=item;
+	}
+	
+	public Apple pullOut() {
+		return item;
+	}	
+}
+
+class OrageBox{
+	Orange item;
+	public void store(Orange item) {
+		this.item=item;
+	}
+	
+	public Orange pullOut() {
+		return item;
+	}
+}
+
+=>AppleBox와 OrangeBox를 구분한 모델(자료형이 다르니까)
+
+class FruitBox{	//무엇이든 담을 수 있는 상자 클래스
+	Object item;
+	public void store(Object item) {
+		this.item=item;
+	}
+	
+	public Object pullOut() {
+		return item;
+	}	
+}
+
+-1)Fruit 클래스
+장점 : 구현의 편리성
+단점 : 자료형에 안전하지 못함
+(구현의 편의만 놓고 보면, FruitBox클래스가 더 좋아 보인다. 하지만 FruitBox
+클래스는 자료형에 안전하지 못하다는 단점이 있다.)
+
+-2)AppleBox와 OrangeBox
+1)장점 : 자료형에 안전하다
+2)단점 : 구현의 불편함(Apple,Orange,Banana..등등 지속적으로 필요할때 마다 추가)
+(AppleBox와 OrangeBox는 구현의 불편함이 따르는 단점이 있다. 그러나 자료형에 안전
+하다는 장점이 있다.)
+
+==>자료형의 안전성과 구현의 편의성을 한데 모은것이 Generic(제네릭)
+
+--------------------------------------------------------------------------
+
+//자료형의 안전성에 대한 논의
+
+	public static void main(String[] args) {
+		//정상적인 설계과정과 실행
+		FruitBox fBox1 = new FruitBox();
+		fBox1.store(new Orange(10));
+		Orange org1 = (Orange) fBox1.pullOut();
+		org1.showSugarContent();
+		
+		//
+		FruitBox fBox2 = new FruitBox();
+		fBox2.store("오렌지");	//Object로 받으므로 String 인스턴스를 받을 수 있음.
+		Orange org2 = (Orange) fBox2.pullOut();	//실수 or 잘못전달로 예외 발생 지점(문법적 오류는 아님)
+		org2.showSugarContent();
+	}
+=>잘못된 자료형을 기반으로 인스턴스를 생성 & 오류가 발견되지 않음
+=>자료형에 안전하지 않다는 것을 의미
+=>
+실행중간에 Class Casting Exception이 발생한다. 그런데 실행중간에 발생하는 
+예외는 컴파일 과정에서 발견되는 오류상황보다 발견 및 정정이 어렵다!
+즉, 이는 자료형에 안전한 형태가 아니다.
+
+		OrangeBox fBox2 = new OrangeBox();
+		fBox2.store("오렌지");	//에러 발생지점
+		Orange org2 = (Orange) fBox2.pullOut();
+		org2.showSugarContent();
+=>
+컴파일 과정에서 메소드 store에 문자열 인스턴스가 전달될 수 없음이 발견된다.
+이렇듯 컴파일 과정에서 발견 된 자료형 관련 문제는 발견 및 정정이 간단하다.
+즉, 이는 자료형에 안전한 형태이다.
+
+=>자료형의 안전은 문법적 오류보다는 논리적 오류 측면에서
+=>실행과정에서 발견되는 오류를 컴파일 과정에서 발견되도록 코드를 작성하는 것은 매우 의미가 있음. 
+=>자료형에 안전한 코드를 작성하는 것이 중요함(사람은 실수를 많이 함)
+
+--------------------------------------------------------------------------
+
+//제네릭(Generics) 클래스 설계
+
+class FruitBox{
+	Object item;
+	public void store(Apple item) {
+		this.item=item;
+	}
+	
+	public Apple pullOut() {
+		return item;
+	}
+	
+}
+
+==>
+class FruitBox<T>{	//T(type의약자, 모든 상관X)라는 이름이 매개변수화 된 자료형임을 나타냄
+	T item;
+	public void store(T item) {
+		this.item=item;
+	}
+	
+	public T pullOut() {
+		return item;
+	}	
+}
+
+=>T에 해당하는 자료형의 이름은 인스턴스를 생성하는 순간에 결정이 된다!
+=>제네릭 클래스가 자료형의 안전과 정의의 편의라는 두 마리 토끼를 실제로 
+  잡았는지 생각해보자.
+
+--------------------------------------------------------------------------
+
+//제네릭 클래스 기반 인스턴스 생성
+
+1) FruitBox<Orange> orBox=new FruitBox<Orange>();
+=>T를 Orange로 결정해서 FruitBox의 인스턴스를 생성하고 이를 참조할 수 있는
+  참조변수를 선언해서 참조 값을 저장한다!
+
+2) FruitBox<Apple> apBox=new FruitBox<Apple>();
+=>T를 Apple로 결정해서 FruitBox의 인스턴스를 생성하고 이를 참조할 수 있는
+  참조변수를 선언해서 참조 값을 저장한다!
+
+====> 구현의 편의성과 자료형의 안전성 모두를 잡은 것이 Generics(제네릭) 꼭 이해!
+--------------------------------------------------------------------------
+//제네릭 기본 예제
+
+class Orange{
+	private int sugarContent;	//당분 함량
+	public Orange(int sugar) {
+		sugarContent=sugar;
+	}
+	public void showSugarContent() {
+		System.out.println("당도 : "+sugarContent);
+	}
+}
+
+class Apple{
+	private int weight;	//사과 무게
+	public Apple(int weight) {
+		this.weight=weight;
+	}
+	public void showAppleWeight() {
+		System.out.println("무게 : "+weight);
+	}
+}
+
+class FruitBox<T>{
+	private T item;
+	public void store(T item) {
+		this.item=item;
+	}
+	public T pullOut() {
+		return item;
+	}
+}
+
+public class GenericBaseFruitBox {	
+	public static void main(String[] args){
+		
+		/*Orange 클래스를 기반으로 인스턴스를 생성하고 활용하는 예*/
+		FruitBox<Orange> orgBox=new FruitBox<Orange>();
+		//FruitBox<Orange> orgBox=new FruitBox<>();	//자바 7이후
+		orgBox.store(new Orange(10));
+		Orange org=orgBox.pullOut();
+		org.showSugarContent();
+		
+		/*Apple 클래스를 기반으로 인스턴스를 생성하고 활용하는 예*/
+		FruitBox<Apple> apBox=new FruitBox<Apple>();
+		apBox.store(new Apple(20));
+		Apple app=apBox.pullOut();
+		app.showAppleWeight();
+	}
+}
+
+--------------------------------------------------------------------------
+//21-1 [생성자의 추가]
+class FruitBox<T>{
+	private T item;
+	public FruitBox(T inst) {	//추가 된 생성자
+		this.item=inst;
+	}
+	....	
+}
+
+--------------------------------------------------------------------------
+
+//21-2 제네릭을 구성하는 다양한 문법적 요소
+
+(Intro)
+제네릭을 정의할 경우는 그렇게 많지는 않음 
+BUT Collection Framework(자료구조,알고리즘)를 잘 활용
+--------------------------------------------------------------------------
+
+//제네릭 메소드의 정의와 호출
+
+class AAA{
+	public String toString(){
+		return "Class AAA";
+	}
+}
+
+class BBB{
+	public String toString(){
+		return "Class BBB";
+	}
+}
+
+class InstanceTypeShower{
+	int showCnt=0;
+	
+	/*인스턴스 메소드인 showInstType이 제네릭으로 정의. 위치 주의!*/
+	public <T> void showInstType(T inst){
+		System.out.println(inst);
+		showCnt++;
+	}
+	
+	void showPrintCnt(){
+		System.out.println("Show count: "+showCnt);
+	}
+}
+
+public class IntroGenericMethod {
+	public static void main(String[] args) {
+		AAA aaa=new AAA();
+		BBB bbb=new BBB();
+		
+		InstanceTypeShower shower=new InstanceTypeShower();
+		shower.<AAA>showInstType(aaa);
+		shower.<BBB>showInstType(bbb);
+		//shower.showInstType(aaa); //가능
+		//shower.showInstType(bbb); //가능
+		//제네릭 메소드의 호출과정에서 전달되는 인자를 통해서 제네릭 자료형을 결정할 수 있으므로 자료형의 표현은 생략 가능하다.
+		
+		//shower.<AAA>showInstType(BBB); //컴파일 에러!
+		shower.showPrintCnt();
+	}
+}
+
+--------------------------------------------------------------------------
+
+//제네릭 메소드와 둘 이상의 자료형
+
+class AAA{
+	public String toString(){
+		return "Class AAA";
+	}
+}
+
+class BBB{
+	public String toString(){
+		return "Class BBB";
+	}
+}
+
+class InstanceTypeShower2{
+	public <T, U> void showInstType(T inst1, U inst2){
+	//T,U와 같은 문자는 상징적이다. 따라서 타 문자로도 대체 가능!
+	
+		System.out.println(inst1);
+		System.out.println(inst2);
+	}
+}
+
+
+public class IntroGenericMethod2 {
+	public static void main(String[] args) {
+		AAA aaa=new AAA();
+		BBB bbb=new BBB();
+		
+		InstanceTypeShower2 shower=new InstanceTypeShower2();
+		shower.<AAA, BBB>showInstType(aaa, bbb);
+		shower.showInstType(aaa, bbb);	//생략 가능! <<일반적인 호출
+	}
+}
+
+--------------------------------------------------------------------------
+
+//매개변수의 자료형 제한
+
+interface SimpleInterface {
+	public void showYourName();
+}
+
+class UpperClass {
+	public void showYourAncestor() {
+		System.out.println("Upper Class");
+	}
+}
+
+class AAA extends UpperClass implements SimpleInterface {	
+	public void showYourName() {
+		System.out.println("Class AAA");
+	}
+}
+
+class BBB extends UpperClass implements SimpleInterface {	
+	public void showYourName() {
+		System.out.println("Class BBB");
+	}
+}
+
+class CCC {
+	public void showYourName() {
+		System.out.println("Class CCC");
+	}
+}
+
+public class BoundedTypeParam {	
+	public static <T> void showInstanceAncestor(T param) {
+		((SimpleInterface)param).showYourName();
+	}
+	
+	public static <T> void showInstanceName(T param) {
+		((UpperClass)param).showYourAncestor();
+	}
+	
+	public static void main(String[] args) {
+		AAA aaa=new AAA();
+		BBB bbb=new BBB();
+		CCC ccc=new CCC();
+		
+		showInstanceAncestor(aaa);
+		showInstanceName(aaa);
+		
+		showInstanceAncestor(bbb);
+		showInstanceName(bbb);
+		
+		
+		//showInstanceAncestor(ccc);
+		//showInstanceName(ccc);
+	}
+}
+
+=>위의메소드에서 UpperClass와 SimpleInterface를 강제 형변환 하고 있음
+=>그러면 위의 코드는 자료형에 안전하지 않음(e.g CCC경우 UpperClass를 상속하지 않고
+SimpleInterface를 구현하지 않지만 컴파일 및 실행 => 에러)
+
+============>
+//자료형에 안전한 구조로 구성
+
+public static <T extends AAA> void myMethod(T param) {...}
+=>T가 AAA를 상속(AAA가 클래스인 경우) 또는 구현(AAA가 인터페이스인 경우)하는
+클래스의 자료형이 되어야 함을 명시함.
+(extends 는 제네릭 매개변수의 자료형 제한에 되고 클래스와 인터페이스를 구분하지 않고 둘다 키워드
+ extends를 사용! )
+
+public static <T extends SimpleInterface> void showInstanceAncestor(T param){
+	param.showYourName();
+}
+
+=>SimpleInterface가 인터페이스 일때, 인자는 SimpleInterface를 구현하는 클래스의
+ 인스턴스이어야 함!
+=>메소드의 {} 안에는 SimpleInterface에서 정의된 메소드나 필드만 사용가능
+
+public static <T extends UpperClass> void showInstanceName(T param){
+	param.showYourAncestor();
+}
+
+=>UpperClass가 클래스명 일때, UpperClass를 상속하는 클래스의 인스턴스이어야 함!
+==>키워드 extends는 매개변수의 자료형을 제한하는 용도로도 사용된다!
+=>메소드의 {} 안에는 UpperClass에서 정의된 메소드나 필드만 사용가능
+
+==>		showInstanceAncestor(ccc);
+		showInstanceName(ccc);
+		컴파일 에러!
+
+--------------------------------------------------------------------------
+
+//제네릭 메소드와 배열
+
+(Intro)
+<T> showArrayData(T arr){
+	arr.showData();
+}
+==>컴파일 가능?? 불가능. T는 모든 클래스가 가능하므로 모든 클래스에는
+showData() 메소드가 있어야함. ==>모순! 그래서 제한을 걸어둠
+==>마찬가지로 배열도 인스턴스이므로 제네릭 매개변수에 전달이 가능하다.
+==>arr[i]는 배열만 가능한 연산
+==>
+public static <T> void showArrayData(T[] arr){
+	for(int i=0; i<arr.length; i++)
+	 System.out.println(arr[i]); //println은 Object로 매개변수 전달받음
+}
+
+==>이렇듯 [] 연산(length 멤버필드 등)이 필요하다면 매개변수의 선언을 통해서 전달 되는 참조 값을
+   배열의 참조 값으로 제한해야 한다.
+   
+public class IntroGenericArray {	
+	public static <T> void showArrayData(T[] arr) {		
+		for(int i=0;i<length;i++) {
+			System.out.println(arr[i]);
+		}
+	}
+	
+	public static void main(String[] args) {
+		String[] stArr=new String[] {
+				"Hi!",
+				"I`m so happy",
+				"Java Generic Programming"
+		};		
+		showArrayData(stArr);			
+	}
+}
+
+--------------------------------------------------------------------------
+
+// 제네릭 변수의 참조와 상속의 관계
+
+public void hiMethod(Apple param) {...}
+=>매개변수로 전달될 수 있는 대상의 볌위 : Apple 클래스 인스턴스 or Apple클래스를 상속하는 인스턴스의 참조값
+
+public void ohMethod(FruitBox<Fruit> param)
+{...}
+
+class Apple extends Fruit {..}
+
+=>ohMethod의 매개변수로 FruitBox<Apple>의 인스턴스 참조값 가능??
+=>불가능!
+
+=>ohMethod의 인자로 전달될 수 있는 참조 값의 자료형은 
+	-FruitBox<Fruit>의 인스턴스 참조 값
+	-FruitBox<Fruit>을 상속하는 인스턴스의 참조 값
+=> class A extends FruitBox<Fruit>일때 A의 인스턴스 참조값은 매개변수로 전달 가능
+=> BUT class Apple extends Fruit 일때 FruitBox<Apple>의 인스턴스 참조값은 매개변수 불가능!
+
+--------------------------------------------------------------------------
+
+//와일드카드와 제네릭 변수의 선언
+
+(Intro)
+*.class : 확장자가 클래스인 모든 파일
+와일드 카드 : 제한된 범주 내에있는 모든 것을 지침할때 사용!
+=>자바에서는 ?가 와일드 카드
+
+1) FruitBox<?> box;
+Generic클래스인 FruitBox에서 자료형에 상관없이(모든 클래스를) 
+참조할 수 있는 참조변수 선언
+
+2) <? extends Fruit>
+ <? extends Fruit>가 의미하는 바는 "Fruit을 상속하는 모든 클래스" 이다.
+ -> FruitBox<? extends Fruit> box1=new FruitBox<Fruit>();
+ -> FruitBox<? extends Fruit> box2=new FruitBox<Apple>();
+(? extends Fruit 해석)
+
+3) FruitBox<?> box;
+ =>자료형에 상관없이 FruitBox<T>의 인스턴스를 참조에 사용되는 참조변수,
+  ->FruitBox<? extends Object> box; 의 선언과 동일!
+   
+/*예제*/  
+class Fruit {
+	public void showYou() {
+		System.out.println("Fruit!!");
+	}
+}
+
+class Apple extends Fruit {
+	public void showYou() {
+		super.showYou();		
+		System.out.println("Apple!!");
+	}
+}
+
+class Banana {
+	public void showYou() {
+		System.out.println("Banana");
+	}
+}
+
+class FruitBox<T> {
+	T item;
+	public void store(T item) {
+		this.item=item;
+	}
+	
+	public T pullOut() {
+		return item;
+	}
+}
+
+
+public class Test {
+	/*Fruit or Fruit을 상속하는 모든 클래스를 매개변수로 받을 수 있음.*/
+	public static void openAndShowFruitBox(FruitBox<? extends Fruit> box) {
+		Fruit fruit=box.pullOut();
+		fruit.showYou();
+	}
+	
+	public static void main(String[] args) {
+		FruitBox<Fruit> box1=new FruitBox<Fruit>();
+		box1.store(new Fruit());
+		
+		FruitBox<Apple> box2=new FruitBox<Apple>();
+		box2.store(new Apple());
+		
+		FruitBox<Banana> box3=new FruitBox<Banana>();
+		box3.store(new Banana());
+		
+		openAndShowFruitBox(box1); //box1이 참조하는 인스턴스의 자료형은 FruitBox<Fruit>이므로 매개변수 전달 가능
+		openAndShowFruitBox(box2);	//box2이 참조하는 인스턴스의 자료형은 FruitBox<Apple>이므로 매개변수 전달 가능
+		//openAndShowFruitBox(box3); //컴파일 에러! box3는 FruitBox<Banana>이므로		
+	}
+}  
+
+--------------------------------------------------------------------------
+
+//하위 클래스를 제한하는 용도의 와일드 카드
+
+1)
+FruitBox<? extends Apple>boundedBox;
+ ->~을 상속하는 클래스라면 무엇이든지
+ -> "Apple을 상속하는 클래스의 인스턴스라면 무엇이든지 참조 가능한 참조변수 선언"
+
+=>A-->B-->Apple과 같이 상속관계 일때,
+FruitBox<? super Apple>boundedBox=new FruitBox<A>(); //가능
+FruitBox<? super Apple>boundedBox=new FruitBox<B>(); //가능
+
+
+2)
+FruitBox<? super Apple>boundedBox;
+ ->~이 상속하는 클래스라면 무엇이든지
+ -> "Apple이 상속하는 클래스의 인스턴스라면 무엇이든지 참조 가능한 참조변수 선언"
+
+=>A<--B<--Apple과 같이 상속관계 일때,
+FruitBox<? super Apple>boundedBox=new FruitBox<A>();
+FruitBox<? super Apple>boundedBox=new FruitBox<B>();
+
+
+//와일드카드 ? extends  // ? super 예제
+
+
+public class Course<T> {
+	private String name;
+	private T[] students;
+	
+	public Course(String name,int capacity){
+		this.name=name;
+		students=(T[])new Object[capacity];
+	}
+	
+	public String getName(){
+		return name;
+	}
+	
+	public T[] getStudents(){
+		return students;
+	}
+	
+	public void add(T t){
+		for(int i=0;i<students.length;i++){
+			if(students[i]==null){
+				students[i]=t;
+				return;
+			}				
+		}
+		System.out.println("등록 인원 마감");
+	}
+}
+
+
+import java.util.Arrays;
+class Person{
+	String name;
+	public Person(String name){
+		this.name=name;
+	}
+	@Override
+	public String toString(){
+		return name;
+	}
+}
+class Worker extends Person{
+	public Worker(String name){
+		super(name);
+	}
+}
+class Student extends Person{
+	public Student(String name){
+		super(name);
+	}
+}
+class HighStudent extends Student{
+	public HighStudent(String name){
+		super(name);
+	}
+}
+
+public class Main {
+	public static void registerCourse(Course<?> course){
+		System.out.println(course.getName()+" 수강생:"+Arrays.toString(course.getStudents()));
+	}
+	
+	public static void registerCourseStudent(Course<? extends Student> course){
+		System.out.println(course.getName()+" 수강생:"+Arrays.toString(course.getStudents()));
+	}
+	
+	public static void registerCourseWorker(Course<? super Worker> course){
+		System.out.println(course.getName()+" 수강생:"+Arrays.toString(course.getStudents()));
+	}
+	
+	public static void main(String[] args){
+		//일반인 등록 과정
+		Course<Person> personCourse=new Course<Person>("일반인 과정",5);
+		personCourse.add(new Person("일반인"));
+		personCourse.add(new Worker("직장인"));
+		personCourse.add(new Student("학생"));
+		personCourse.add(new HighStudent("고등학생"));
+		
+		Course<Worker> workerCourse=new Course<Worker>("직장인과정",5);
+		workerCourse.add(new Worker("직장인"));
+		
+		Course<Student> studentCourse=new Course<Student>("학생과정",5);
+		studentCourse.add(new Student("학생"));
+		studentCourse.add(new HighStudent("고등학생"));
+		
+		Course<HighStudent> highStudentCourse=new Course<HighStudent>("고등학생과정",5);		
+		highStudentCourse.add(new HighStudent("고등학생"));
+		
+		System.out.println("\t--상속관계--");
+		showExtends();
+		
+		System.out.println("--registerCourse(Course<?> course)--");
+		registerCourse(personCourse);
+		registerCourse(workerCourse);
+		registerCourse(studentCourse);
+		registerCourse(highStudentCourse);
+		System.out.println();
+		
+		System.out.println("--registerCourseStudent(Course<? extends Student> course)--");		
+		//registerCourseStudent(personCourse);	//컴파일 에러
+		//registerCourseStudent(workerCourse);	//컴파일 에러
+		registerCourseStudent(studentCourse);
+		registerCourseStudent(highStudentCourse);
+		System.out.println();
+		
+		System.out.println("--registerCourseWorker(Course<? super Worker> course)--");
+		registerCourseWorker(personCourse);
+		registerCourseWorker(workerCourse);
+		//registerCourseWorker(studentCourse); //컴파일 에러
+		//registerCourseWorker(highStudentCourse); //컴파일 에러
+				
+	}
+	public static void showExtends(){
+		System.out.println("\tPerson");
+		System.out.println("Worker\t\tStudent");
+		System.out.println("\t\tHighStudent");
+		System.out.println();
+		System.out.println();
+	}
+	
+
+}
+
+
+
+<< 실행 결과 >>
+	--상속관계--
+	Person
+Worker		Student
+			HighStudent
+
+--registerCourse(Course<?> course)--
+일반인 과정 수강생:[일반인, 직장인, 학생, 고등학생, null]
+직장인과정 수강생:[직장인, null, null, null, null]
+학생과정 수강생:[학생, 고등학생, null, null, null]
+고등학생과정 수강생:[고등학생, null, null, null, null]
+
+--registerCourseStudent(Course<? extends Student> course)--
+학생과정 수강생:[학생, 고등학생, null, null, null]
+고등학생과정 수강생:[고등학생, null, null, null, null]
+
+--registerCourseWorker(Course<? super Worker> course)--
+일반인 과정 수강생:[일반인, 직장인, 학생, 고등학생, null]
+직장인과정 수강생:[직장인, null, null, null, null]
+
+--------------------------------------------------------------------------
+
+//제네릭 클래스를 상속하는 다양한 방법
+
+1)하위 클래스에서도 제네릭클래스로 상속하는 예제
+class AAA<T> {	//상위 클래스
+	T itemAAA;
+}
+
+class BBB<T> extends AAA<T> {	//가능
+	T itemBBB;
+}
+
+class CCC extends AAA<T> {..} //불가능
+
+class DDD<T,V> extends AAA<T>{	//가능
+	T itemDDD;
+	V itemDDD2;
+}
+
+=>
+BBB<String> myString=new BBB<String>();
+BBB<Integer> myInteger=new BBB<Integer>();
+
+
+2)상위클래스의 T 타입을 정해서 상속하는 예제
+
+class AAA<T> {
+	T itemAAA;
+	
+	public T get() {
+		return itemAAA;
+	}
+}
+
+class BBB extends AAA<String> {	//AAA<String>은 T가 String인 일반 클래스와 같음
+	public BBB(String str) {
+		super.itemAAA=str;
+	}	
+}
+
+--------------------------------------------------------------------------
+
+//제네릭 인터페이스를 구현하는 두 가지 방법
+
+interface MyInterface<T>{	//제네릭 인터페이스
+	public T myFunc(T item);
+}
+
+//1번
+class MyImplement1<T> implements MyInterface<T>{ //제네릭 인터페이스 구현 모델1
+	public T myFunc(T item) {
+		return item;
+	}
+} //=>일반적인 인터페이스의 구현과 차이가 없다!
+
+//2번
+class MyImplement2 implements MyInterface<String>{ //제네릭 인터페이스 구현 모델2
+	public String myFunc(String item) {
+		return item;
+	}
+} //제네릭 인터페이스의 자료형을 지정해서 구현하는 것도 가능하다!
+
+	public static void main(String[] args) {
+		MyImpl1<Integer> inter1=new MyImpl1<Integer>();
+		MyImpl2 inter2=new MyImpl2();
+		
+		System.out.println(inter1.myFunc(new Integer(15)));
+		System.out.println(inter2.myFunc(new String("Hellow")));
+	}
+--------------------------------------------------------------------------
+
+//기본자료형의 이름은 제네릭에 사용 불가!
+
+-컴파일 불가능한 문장들!
+ FruitBox<int> fb1=new FruitBox<int>();
+ FruitBox<double> fb1=new FruitBox<double>();
+
+=>(In 자바)기본 자료형 정보를 이용해서는 제네릭 클래스의 인스턴스 생성이 불가능하다!
+ 제네릭은 클래스와 인스턴스에 관한 이야기이다!
+
+=>기본 자료형 정보를 대상으로는 제네릭 인스턴스의 생성이 필요한 상황에서는
+ Wrapper 클래스를 떠올리면 된다!
+
+--------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

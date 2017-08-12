@@ -1,0 +1,85 @@
+1.3
+
+2.4
+
+3.
+class Cat implements Soundable{
+	public String sound(){
+		return "야옹";
+	}
+}
+
+class Dog implements Soundable{
+	public String sound(){
+		return "멍멍";
+	}
+}
+
+4.
+
+interface DataAccessObject{
+	void select();
+	void insert();
+	void update();
+	void delete();
+}
+
+class OracleDao implements DataAccessObject{
+	
+	@Override
+	public void select() {
+		System.out.println("Oracle DB에서 검색");		
+	}
+
+	@Override
+	public void insert() {
+		System.out.println("Oracle DB에 삽입");
+	}
+
+	@Override
+	public void update() {
+		System.out.println("Oracle DB에서 검색");	
+	}
+
+	@Override
+	public void delete() {
+		System.out.println("Oracle DB에서 삭제");
+		
+	}
+	
+}
+
+class MysqlDao implements DataAccessObject{
+	@Override
+	public void select() {
+		System.out.println("Mysql Dao에서 검색");		
+	}
+
+	@Override
+	public void insert() {
+		System.out.println("Mysql Dao에 삽입");
+	}
+
+	@Override
+	public void update() {
+		System.out.println("Mysql Dao에서 검색");	
+	}
+
+	@Override
+	public void delete() {
+		System.out.println("Mysql Dao에서 삭제");
+		
+	}	
+}
+
+5.
+
+		Action action=new Action(){
+			@Override
+			public void work(){
+				System.out.println("복사를 시작합니다.");
+			}
+		};	
+		
+		action.work();
+

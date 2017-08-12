@@ -1,0 +1,626 @@
+ㅡㅡㅡㅡㅡㅡㅡㅡch3 ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+
+/*3-1 C++에서 구조체*/
+
+/*c++식 구조체 선언 및 데이터를 담는 구조체, 처리하는 함수의 관계*/
+//밑의 함수들은 구조체 Car에 종속성을 띄고 있음. 그러나 전역변수를 선언함으로써 종속적임을 나타내지 못하는 상황
+
+
+//기존 C와 같은 구조체 예제
+#include <iostream>
+using std::cout;
+using std::endl;
+
+//구조체 Car와 관련된 각종 정보를 상수화
+#define ID_LEN 20
+#define MAX_SPD 200
+#define FUEL_STEP 2
+#define ACC_STEP 10
+#define BRK_STEP 10
+
+struct Car {
+	char gamerID[20];	//소유자  ID
+	int fuelGauge;		//연료량
+	int curSpeed;		//현재속도
+};
+
+//차의 정보를 출력하는 기능의 함수(단순히 정보만 출력하므로 const참조자를 매개변수로 선언)
+//안정성을 위해 const 키워드 사용
+void ShowCarState(const Car &car)
+{
+	cout << "소유자 ID : " << car.gamerID << endl;
+	cout << "연료량 : " << car.fuelGauge << "%" << endl;
+	cout << "현재 속도 : " << car.curSpeed << "km/s" << endl;
+}
+
+//엑셀을 밟을 때마다 속도 증가 , 연료 감소하는 함수
+void Accel(Car &car)
+{
+	if (car.fuelGauge <= 0) {
+		return;
+	}
+	else {
+		car.fuelGauge -= FUEL_STEP;
+	}
+
+	if (car.curSpeed + ACC_STEP >= MAX_SPD) {
+		car.curSpeed = MAX_SPD;
+		return;
+	}
+
+	car.curSpeed += ACC_STEP;
+	
+}
+
+//브레이크를 밟은 상황을 표현한 함수(단순히 속도만 감소하는 것으로 표현)
+void Break(Car &car)
+{
+	if (car.curSpeed < BRK_STEP)
+	{
+		car.curSpeed = 0;
+		return;
+	}
+	car.curSpeed -= BRK_STEP;
+}
+
+int main(void)
+{
+	//C++식 구조체 선언 (기존 C : struct Car run99={};)
+	Car run99 = { "run99",100,0 };	//소유자 id , 현재 연료량 , 현재 속도
+	Accel(run99);		//엑셀 -> 속도 10증가 , 연료 2 감소 - 속도 10 , 연료 98%
+	Accel(run99);		//엑셀 -> 속도 10증가 , 연료 2 감소 - 속도 20 , 연료 96%
+	ShowCarState(run99);	//현재 자동차 상태보여주기
+	cout << "----------------------------" << endl;
+	Break(run99);		//브레이크 -> 속도 10감소  - 속도 10 , 연료 96%
+	ShowCarState(run99);
+	cout << "----------------------------" << endl;
+	Car sped77 = { "sped77",100,0 };
+	Accel(sped77);	//엑셀 - > 속도 10증가 , 연료 2감소 - 속도 10 , 연료 98%
+	Break(sped77);  //브레이크 -> 속도 10감소  - 속도 0 연료 98%
+	ShowCarState(sped77);
+	cout << "----------------------------" << endl;
+
+	return 0;
+}
+
+
+//Want : 구조체 안으로 함수를 넣고 싶음.
+/*구조체 안의 함수 멤버*/
+
+#include <iostream>
+using std::cout;
+using std::endl;
+
+//구조체 Car와 관련된 각종 정보를 상수화
+#define ID_LEN 20
+#define MAX_SPD 200
+#define FUEL_STEP 2
+#define ACC_STEP 10
+#define BRK_STEP 10
+
+//함수를 멤버로 지니는 구조체의 정의를 보이고 있음
+struct Car {
+	char gamerID[20];	//소유자  ID
+	int fuelGauge;		//연료량
+	int curSpeed;		//현재속도
+
+	//차의 정보를 출력하는 기능의 함수
+	void ShowCarState()
+	{
+		cout << "소유자 ID : " << gamerID << endl;
+		cout << "연료량 : " << fuelGauge << "%" << endl;
+		cout << "현재 속도 : " <<curSpeed << "km/s" << endl;
+	}
+
+	//엑셀을 밟을 때마다 속도 증가 , 연료 감소하는 함수
+	void Accel()
+	{
+		if (fuelGauge <= 0) {
+			return;
+		}
+		else {
+			fuelGauge -= FUEL_STEP;
+		}
+
+		if (curSpeed + ACC_STEP >= MAX_SPD) {
+			curSpeed = MAX_SPD;
+			return;
+		}
+		curSpeed += ACC_STEP;
+	}
+
+	//브레이크를 밟은 상황을 표현한 함수(단순히 속도만 감소하는 것으로 표현)
+	void Break()
+	{
+		if (curSpeed < BRK_STEP)
+		{
+			curSpeed = 0;
+			return;
+		}
+		curSpeed -= BRK_STEP;
+	}
+};
+
+
+
+int main(void)
+{
+	//초기화 대상은 함수가 아닌 변수이다. 함수가 삽입되었어도 초기화 방법은 달라지지 않는다.
+	Car run99 = { "run99",100,0 };	//소유자 id , 현재 연료량 , 현재 속도
+	//구조체 run99에 존재하는(실제로는 x 존재하는 것으로 이해) Accel함수를 호출하고 있음
+	//구조체 내에 선언된 변수에 접근하는 바업ㅂ과 동일한 방식으로 함수의 호출이 이뤄진다.
+	run99.Accel();		//엑셀 -> 속도 10증가 , 연료 2 감소 - 속도 10 , 연료 98%
+	run99.Accel();		//엑셀 -> 속도 10증가 , 연료 2 감소 - 속도 20 , 연료 96%
+	run99.ShowCarState();	//현재 자동차 상태보여주기
+	cout << "----------------------------" << endl;
+	run99.Break();		//브레이크 -> 속도 10감소  - 속도 10 , 연료 96%
+	run99.ShowCarState();
+	cout << "----------------------------" << endl;
+	Car sped77 = { "sped77",100,0 };
+	//sped77에 대한 함수 접근
+	sped77.Accel();	//엑셀 - > 속도 10증가 , 연료 2감소 - 속도 10 , 연료 98%
+	sped77.Break();  //브레이크 -> 속도 10감소  - 속도 0 연료 98%
+	sped77.ShowCarState();
+	cout << "----------------------------" << endl;
+
+	return 0;
+}
+
+//위의 매크로도 구조체에 포함된다.
+
+/*매크로 상수도 구조체에 넣는 예제1*/
+struct Car {
+
+	enum {
+		ID_LEN = 20,
+		MAX_SPD = 200,
+		FUEL_STEP = 2,
+		ACC_STEP = 10,
+		BRK_STEP = 10
+	};
+	char gamerID[20];	//소유자  ID
+	int fuelGauge;		//연료량
+	int curSpeed;		//현재속도
+	//+함수들
+
+};
+
+
+/*매크로 상수도 구조체에 넣는 예제2*/
+//상수 매크로를 namespace CAR_CONST안의 enum으로  정의 ==>>훨씬 가독성 좋음
+#include <iostream>
+using std::cout;
+using std::endl;
+
+namespace CAR_CONST
+{
+	enum {
+		ID_LEN = 20,
+		MAX_SPD = 200,
+		FUEL_STEP = 2,
+		ACC_STEP = 10,
+		BRK_STEP = 10
+	};
+}
+
+
+struct Car {
+	char gamerID[CAR_CONST::ID_LEN];
+	int fuelGauge;		
+	int curSpeed;		
+
+	void ShowCarState()
+	{
+		cout << "소유자 ID : " << gamerID << endl;
+		cout << "연료량 : " << fuelGauge << "%" << endl;
+		cout << "현재 속도 : " << curSpeed << "km/s" << endl;
+	}
+
+	void Accel()
+	{
+		if (fuelGauge <= 0) {
+			return;
+		}
+		else {
+			fuelGauge -= CAR_CONST::FUEL_STEP;
+		}
+
+		if (curSpeed + CAR_CONST::ACC_STEP >= CAR_CONST::MAX_SPD) {
+			curSpeed = CAR_CONST::MAX_SPD;
+			return;
+		}
+		curSpeed += CAR_CONST::ACC_STEP;
+	}
+
+	//브레이크를 밟은 상황을 표현한 함수(단순히 속도만 감소하는 것으로 표현)
+	void Break()
+	{
+		if (curSpeed < CAR_CONST::BRK_STEP)
+		{
+			curSpeed = 0;
+			return;
+		}
+		curSpeed -= CAR_CONST::BRK_STEP;
+	}
+};
+
+
+
+int main(void)
+{
+	Car run99 = { "run99",100,0 };
+
+	run99.Accel();
+	run99.Accel();
+	run99.ShowCarState();
+	cout << "----------------------------" << endl;
+	run99.Break();		
+	run99.ShowCarState();
+	cout << "----------------------------" << endl;
+	
+	Car sped77 = { "sped77",100,0 };
+	sped77.Accel();
+	sped77.Break();
+	sped77.ShowCarState();
+	cout << "----------------------------" << endl;
+
+	return 0;
+}
+//구조체가 너무 커짐. 실제로 함수 세부를 들여다 보기 보다는 , 함수의 선언과 주석을 보기 전체적인 흐름을 봄.
+//함수가 구조체 안에 있을때는 inline화 되어 있음. BUT 밖으로 빼면 인라인화 안됨
+//그래서 inline을 써주면 함수가 구조체 안에 코드가 있을때, 밖으로 뺄때 완전이 똑같음.
+
+//-------------완성본 -----------------
+#include <iostream>
+using std::cout;
+using std::endl;
+
+namespace CAR_CONST
+{
+	enum {
+		ID_LEN = 20,
+		MAX_SPD = 200,
+		FUEL_STEP = 2,
+		ACC_STEP = 10,
+		BRK_STEP = 10
+	};
+}
+
+struct Car {
+	char gamerID[CAR_CONST::ID_LEN];
+	int fuelGauge;		
+	int curSpeed;		
+
+	void ShowCarState();	// 상태 정보 출력
+	void Accel();		// 엑셀, 속도증가 연료감소
+	void Break();		// 브레이크 , 속도감소
+};
+
+
+//inline void Car::ShowCarState()
+void Car::ShowCarState()
+{
+	cout << "소유자 ID : " << gamerID << endl;
+	cout << "연료량 : " << fuelGauge << "%" << endl;
+	cout << "현재 속도 : " << curSpeed << "km/s" << endl;
+}
+
+//inline void Car::Accel()
+void Car::Accel()
+{
+	if (fuelGauge <= 0) {
+		return;
+	}
+	else {
+		fuelGauge -= CAR_CONST::FUEL_STEP;
+	}
+
+	if (curSpeed + CAR_CONST::ACC_STEP >= CAR_CONST::MAX_SPD) {
+		curSpeed = CAR_CONST::MAX_SPD;
+		return;
+	}
+	curSpeed += CAR_CONST::ACC_STEP;
+}
+
+//inline void Car::Break() 
+void Car::Break()
+{
+	if (curSpeed < CAR_CONST::BRK_STEP)
+	{
+		curSpeed = 0;
+		return;
+	}
+	curSpeed -= CAR_CONST::BRK_STEP;
+}
+
+int main(void)
+{
+	Car run99 = { "run99",100,0 };
+
+	run99.Accel();
+	run99.Accel();
+	run99.ShowCarState();
+	cout << "----------------------------" << endl;
+	run99.Break();		
+	run99.ShowCarState();
+	cout << "----------------------------" << endl;
+	
+	Car sped77 = { "sped77",100,0 };
+	sped77.Accel();
+	sped77.Break();
+	sped77.ShowCarState();
+	cout << "----------------------------" << endl;
+
+	return 0;
+}
+
+
+/*3-2 클래스(Class)와 객체(Object)*/
+
+/*클래스 예제(구조체와 차이)*/
+#include <iostream>
+using std::cout;
+using std::endl;
+
+namespace CAR_CONST
+{
+	enum {
+		ID_LEN = 20,
+		MAX_SPD = 200,
+		FUEL_STEP = 2,
+		ACC_STEP = 10,
+		BRK_STEP = 10
+	};
+}
+
+class Car {	//struct 대신 class라는 키워드 사용
+private:	//private : 내부 접근만 허용(클래스 내에서만)
+//레이블 (접근제어 지시자의 뒤에 : 가 붙음 , 접근제어 지시자가 특정 위치정보를 알리는 '레이블(라벨)'이기 때문. switch문의 case도 레이블이기 때문에 :가 붙음
+	char gamerID[CAR_CONST::ID_LEN];
+	int fuelGauge;		
+	int curSpeed;		
+public:  //내부 + 외부 접근 허용(어디서든)
+	void InitMember(char*ID, int fuel);	//클래스 초기화
+	void ShowCarState();				//상태 정보 출력
+	void Accel();						//엑셀, 속도증가(연료감소)
+	void Break();						//브레이크, 속도감소
+};
+
+
+void Car::InitMember(char*ID, int fuel)
+{
+	strcpy(gamerID, ID);
+	fuelGauge = fuel;
+	curSpeed = 0;
+}
+
+void Car::ShowCarState()
+{
+	cout << "소유자 ID : " << gamerID << endl;
+	cout << "연료량 : " << fuelGauge << "%" << endl;
+	cout << "현재 속도 : " << curSpeed << "km/s" << endl;
+}
+
+void Car::Accel()
+{
+	if (fuelGauge <= 0) {
+		return;
+	}
+	else {
+		fuelGauge -= CAR_CONST::FUEL_STEP;
+	}
+
+	if (curSpeed + CAR_CONST::ACC_STEP >= CAR_CONST::MAX_SPD) {
+		curSpeed = CAR_CONST::MAX_SPD;
+		return;
+	}
+	curSpeed += CAR_CONST::ACC_STEP;
+}
+
+void Car::Break()
+{
+	if (curSpeed < CAR_CONST::BRK_STEP)
+	{
+		curSpeed = 0;
+		return;
+	}
+	curSpeed -= CAR_CONST::BRK_STEP;
+}
+
+int main(void)
+{
+	Car run99;
+	run99.InitMember("run99", 100);	//클래스의 변수에는 접근x BUT 함수에는 접근이 가능
+	run99.Accel();
+	run99.Accel();
+	run99.Accel();
+	run99.ShowCarState();
+	cout << "----------------------------" << endl;
+	run99.Break();		
+	run99.ShowCarState();
+	cout << "----------------------------" << endl;
+	
+	return 0;
+}
+
+
+
+
+/*파일 분할*/
+////////////////////////////
+/*Car.h*/
+#ifndef __CAR_H__ //헤더파일 중복포함 문제를 해결하기 위한 매크로 선언
+#define __CAR_H__
+
+namespace CAR_CONST
+{
+	enum {
+		ID_LEN = 20,
+		MAX_SPD = 200,
+		FUEL_STEP = 2,
+		ACC_STEP = 10,
+		BRK_STEP = 10
+	};
+}
+
+class Car {	
+private:	
+			
+	char gamerID[CAR_CONST::ID_LEN];
+	int fuelGauge;
+	int curSpeed;
+public:  
+	void InitMember(char*ID, int fuel);
+	void ShowCarState();			
+	void Accel();					
+	void Break();					
+};
+
+#endif
+
+
+////////////////////////////
+/*Car.cpp*/
+#include <iostream>
+#include <cstring>
+#include "Car.h"
+using std::cout;
+using std::endl;
+
+void Car::InitMember(char*ID, int fuel)
+{
+	strcpy(gamerID, ID);
+	fuelGauge = fuel;
+	curSpeed = 0;
+}
+
+void Car::ShowCarState()
+{
+	cout << "소유자 ID : " << gamerID << endl;
+	cout << "연료량 : " << fuelGauge << "%" << endl;
+	cout << "현재 속도 : " << curSpeed << "km/s" << endl;
+}
+
+void Car::Accel()
+{
+	if (fuelGauge <= 0) {
+		return;
+	}
+	else {
+		fuelGauge -= CAR_CONST::FUEL_STEP;
+	}
+
+	if (curSpeed + CAR_CONST::ACC_STEP >= CAR_CONST::MAX_SPD) {
+		curSpeed = CAR_CONST::MAX_SPD;
+		return;
+	}
+	curSpeed += CAR_CONST::ACC_STEP;
+}
+
+void Car::Break()
+{
+	if (curSpeed < CAR_CONST::BRK_STEP)
+	{
+		curSpeed = 0;
+		return;
+	}
+	curSpeed -= CAR_CONST::BRK_STEP;
+}
+
+
+
+
+////////////////////////////
+/*RacingMain.cpp*/
+#include "Car.h"
+
+int main(void)
+{
+	Car run99;
+	run99.InitMember("run99", 100);	//클래스의 변수에는 접근x BUT 함수에는 접근이 가능
+	run99.Accel();
+	run99.Accel();
+	run99.Accel();
+	run99.ShowCarState();
+	run99.Break();
+	run99.ShowCarState();
+	
+	return 0;
+}
+
+////inline화 할때는 h에 inline void func() {,,,,,} 직접 써주기
+
+
+/*과일장수 , 과일사는 사람 프로그램*/
+
+
+
+#include <iostream>
+using std::cout; using std::endl;
+
+class FruitSeller
+{
+private:
+	int APPLE_PRICE;
+	int numOfApples;
+	int myMoney;
+public:
+	void InitMembers(int price, int num, int money)
+	{
+		APPLE_PRICE = price;
+		numOfApples = num;
+		myMoney = money;
+	}
+	int SaleApples(int money)
+	{
+		int num = money / APPLE_PRICE;
+		numOfApples -= num;
+		myMoney += money;
+		return num;
+	}
+	void ShowSaleResult()
+	{
+		cout << "남은 사과 : " << numOfApples << endl;
+		cout << "판매 수익 : " << myMoney << endl;
+	}
+};
+
+class FruitBuyer
+{
+	int myMoney;		//private:
+	int numOfApples;	//private:
+public:
+	void InitMember(int money)
+	{
+		myMoney = money;
+		numOfApples = 0;
+	}
+
+	void BuyApples(FruitSeller &seller, int money)
+	{
+		numOfApples += seller.SaleApples(money);	//과일 장수에게 구매 목적으로 SaleApples 함수를 호출
+													//메시지 전달(Message Passing)
+		myMoney -= money;
+	}
+	void ShowBuyResult()
+	{
+		cout << "현재 잔액 : " << myMoney << endl;
+		cout << "사과 개수 : " << numOfApples << endl;
+	}
+};
+
+int main(void)
+{
+	FruitSeller seller;
+	seller.InitMembers(1000, 20, 0);
+	FruitBuyer buyer;
+	buyer.InitMember(5000);
+	buyer.BuyApples(seller, 2000);	//과일 구매
+
+	cout << "과일 판매자의 현황 " << endl;
+	seller.ShowSaleResult();
+	cout << "과일 구매자의 현황" << endl;
+	buyer.ShowBuyResult();
+
+	return 0;
+}

@@ -1,0 +1,86 @@
+1.4
+
+2.3
+
+3.4
+
+4.2
+
+5.3
+
+6.숫자로 변환할 수 없음.
+
+7.
+
+/*** 로그인 예제 메인 클래스  ***/
+public class LoginExample {
+	public static void main(String[] args){
+		try{
+			login("white","12345");
+		}catch(Exception e){
+			System.out.println(e.getMessage());
+		}
+		
+		
+		try{
+			login("blue","54321");
+		}catch(Exception e){
+			System.out.println(e.getMessage());
+		}
+	}
+	
+	public static void login(String id,String password) throws WrongPasswordException,NotExistIDException{
+		//id가 "blue"가 아니면 NotExisteIDException 발생
+		if(!id.equals("blue"))
+			throw new NotExistIDException("아이디가 존재하지 않습니다.");
+		
+		
+		//password가 12345가 아니라면 WrongPasswordException 발생
+		if(!password.equals("12345"))
+			throw new WrongPasswordException("패스워드가 틀립니다.");
+		
+	}								
+}
+
+
+/*** 예외클래스 : 잘못된 아이디 입력 ***/
+public class NotExistIDException extends Exception{
+	public NotExistIDException(){}
+	public NotExistIDException(String message){
+		super(message);		
+	}
+}
+
+
+
+/*** 예외클래스 : 잘못된 비밀번호 입력 ***/
+public class WrongPasswordException extends Exception{
+	public WrongPasswordException(){}
+	public WrongPasswordException(String message){
+		super(message);
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

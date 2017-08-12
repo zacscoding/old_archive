@@ -1,0 +1,216 @@
+1.4번
+-----------------------------------------------------------------------------
+2.hashCode() // equals()
+-----------------------------------------------------------------------------
+3.
+public class Student {
+	private String studentNum;
+	
+	public Student(String studentNum){
+		this.studentNum=studentNum;
+	}
+	
+	public String getStudentNum(){
+		return studentNum;
+	}
+	
+	@Override
+	public int hashCode(){		
+		return studentNum.hashCode();
+	}
+	
+	@Override
+	public boolean equals(Object obj){
+		if(obj instanceof Student){
+			Student comp=(Student)obj;
+			if(studentNum.equals(comp.getStudentNum()))
+				return true;
+		}
+		return false;		
+	}	
+}
+
+import java.util.HashMap;
+
+public class Main {
+	public static void main(String[] args){
+		//Student 키로 총점을 저장하는 HashMap 객체 생성
+		HashMap<Student,String> hMap=new HashMap<Student,String>();
+		
+		//new Student("1")의 점수 95를 저장
+		hMap.put(new Student("1"), "95");
+		
+		//new Student("1")로 점수를 읽어옴
+		String score=hMap.get(new Student("1"));
+		System.out.println("1번 학생의 총점 : "+score);
+	}
+}
+
+-----------------------------------------------------------------------------
+4.
+public class Member {
+	private String id;
+	private String name;
+	
+	public Member(String id,String name){
+		this.id=id;
+		this.name=name;
+	}
+	
+	@Override
+	public String toString(){
+		return (id+": "+name);
+	}
+}
+
+public class Main {
+	public static void main(String[] args){
+		Member member=new Member("Zaccoding","Zac");
+		System.out.println(member);
+	}
+}
+-----------------------------------------------------------------------------
+5.4
+-----------------------------------------------------------------------------
+6.
+public class Main {
+	public static void main(String[] args){
+		byte[] bytes={73,32,108,111,118,101,32,121,111,117};
+		String str=new String(bytes);
+		
+		System.out.println(str);		
+	}
+}
+
+-----------------------------------------------------------------------------
+7.
+public class Main {
+	public static void main(String[] args){
+		String str="모든 프로그램은 자바 언어로 개발될 수 있다.";
+		int index=str.indexOf("자바");
+		if(index==-1){
+			System.out.println("자바 문자열이 포함되어 있지 않습니다.");
+		}
+		else{
+			System.out.println("자바 문자열이 포함되어 있습니다.");
+			str=str.replace("자바","Java");
+			System.out.println("-->"+str);
+		}		
+	}
+}
+-----------------------------------------------------------------------------
+8.
+import java.util.StringTokenizer;
+
+public class Main {
+	public static void main(String[] args){
+		String str="아이디,이름,패스워드";
+		
+		//방법1:(split() 메소드 이용)
+		String[] tokenStr1=str.split(",");
+		for(String tok:tokenStr1)
+			System.out.println(tok);
+		System.out.println();
+		
+		//방법2(StringTokenizer 이용)
+		StringTokenizer token=new StringTokenizer(str,",");
+		
+		//1)while로 출력
+		while(token.hasMoreElements()){
+			System.out.println(token.nextToken());
+		}
+		System.out.println();
+		
+		//2)countTokens()로 출력
+		token=new StringTokenizer(str,",");
+		int size=token.countTokens();
+		for(int i=0;i<size;i++){
+			System.out.println(token.nextElement());
+		}		
+	}
+}
+
+-----------------------------------------------------------------------------
+9.
+public class Main {
+	public static void main(String[] args){
+		String str="";
+		for(int i=1;i<=100;i++){
+			str+=i;
+		}
+		System.out.println(str);
+		int size=str.length();
+		
+		StringBuilder strBuilder=new StringBuilder(size);
+		for(int i=1;i<=100;i++){
+			strBuilder.append(i);
+		}
+		String str2=strBuilder.toString();
+		System.out.println(str2);		
+	}
+}
+-----------------------------------------------------------------------------
+10.
+import java.util.regex.Pattern;
+
+public class Main {
+	public static void main(String[] args){
+		String id="5Angel1004";
+		String regExp="\\w{1}+\\w{7,11}";
+		boolean isMatch=Pattern.matches(regExp,id);
+		if(isMatch)
+			System.out.println("사용 가능한 아이디 입니다.");
+		else
+			System.out.println("사용 불가능한 아이디 입니다.");		
+	}
+}
+-----------------------------------------------------------------------------
+11.
+100은 값의 범위가 -128~127 사이의 값이므로, ==와 =!연산이 가능
+BUT 300은 주소값 비교
+
+-----------------------------------------------------------------------------
+12.
+public class Main {
+	public static void main(String[] args){
+		String strData1="200";
+		int intData1=Integer.parseInt(strData1);
+		
+		System.out.println((intData1+50));
+		
+		int intData2=150;
+		String strData2=String.valueOf(intData2);
+		
+		System.out.println((strData2+"0"));		
+	}
+}
+-----------------------------------------------------------------------------
+13.
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+public class Main {
+	public static void main(String[] args){
+		Date now=new Date();
+					
+		SimpleDateFormat formatter=new SimpleDateFormat("yyyy년 MM월 dd일 E요일 hh시 mm분");
+				
+		System.out.println(formatter.format(now));		
+	}
+}
+
+
+-----------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+

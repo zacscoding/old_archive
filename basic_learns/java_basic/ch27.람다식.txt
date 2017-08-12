@@ -1,0 +1,1199 @@
+-------------------ch27.람다식-----------------------
+
+//1. 람다식 이란?
+=>함수적 프로그래밍은 병렬 처리와 이벤트 지향 프로그래밍에 적합 
+=>객체 지향 프로그래밍 + 함수적 프로그래밍을 혼합함으로써 더욱 효율적인 프로그래밍이 될 수 있도록 변화
+=>자바8 부터 람다식(Lambda Expression)을 지원
+=>람다식은 익명 함수(anonymous function)를 생성하기 위한 식으로 함수 지향 언어에 더 가까움
+=>람다식 -> 매개 변수를 가진 코드 블록 -> 익명 구현 객체
+
+//익명 구현 객체
+Runnable runnable=new Runnable(){
+	public void run(){...}
+}
+
+//람다식
+Runnable runnable=() -> {...};
+=>(매개변수)->{실행코드}
+=>런타임 시에 인터페이스의 익명 구현 객체로 생성
+
+-------------------------------------------------------------------------------------
+
+//2. 람다식 기본 문법
+
+(타입 매개변수, ..) -> {실행문; ...}
+
+(int a) -> {System.out.println(a);}
+==
+(a)->{System.out.println(a);}
+==
+a->System.out.println(a);	//매개변수가 1개 일때
+
+=>매개변수가 없으면 반드시 () 넣어야 함
+() -> { 실행문; ..}
+
+=>
+(x,y) -> {return x+y;}
+==
+(x,y)->x+y	//{}안에 return 문만 있으면 생략 가능
+
+-------------------------------------------------------------------------------------
+
+//3.타켓 타입과 함수적 인터페이스
+=>자바의 메소드는 단독으로 선언X 항상 클래스의 구성 멤버로 선언
+=>
+인터페이스 변수=람다식;
+=>람다식은 인터페이스의 익명 구현 객체를 생성함
+=>인터페이스 를 타겟 타입(target type)이라고 함
+
+/3.1 함수적 인터페이스(@FunctionalInterface)
+;함수적 인터페이스(functional interface) : 람다식의 타켓 타입이 되는 인터페이스(메소드가 1개)
+(메소드가 2개이면 불가능)
+
+=>
+@FunctionalInterface  어노테이션을 붙이면, 2개 이상의 추상메소드가 선언되면 컴파일 오류!
+
+e.g)
+@FunctionalInterface
+interface MyInterface{	
+	public void method();
+	public void otherMethod();	//컴파일 오류
+}
+
+/3.2 매개 변수와 리턴값이 없는 람다식
+
+@FunctionalInterface
+interface MyFunctionalInterface{
+	public void method();	
+}
+
+public class Main {	
+	public static void main(String[] args){
+		MyFunctionalInterface fi=()->{
+			String str="method call 1";
+			System.out.println(str);			
+			};
+		fi.method();
+		
+		fi=()->{			
+			System.out.println("method call 2");
+		};
+		fi.method();
+		
+		fi=()->System.out.println("method call 3");	//실행문이 1개면 {} 생략가능
+		fi.method();		
+	}	
+}
+
+<< 실행 결과 >>
+method call 1
+method call 2
+method call 3
+
+
+
+/3.3 매개 변수가 있는 람다식
+@FunctionalInterface
+interface MyFunctionalInterface{
+	public void method(int x);	
+}
+=>
+MyFunctionalInterface fi=(x)->{..}; 또는
+MyFunctionalInterface fi=x->{..};
+
+@FunctionalInterface
+interface MyFunctionalInterface{
+	public void method(int x);	
+}
+
+public class Main {	
+	public static void main(String[] args){
+		MyFunctionalInterface fi;
+		
+		fi=(x)->{
+			int result=x*5;
+			System.out.println(result);
+		};
+		fi.method(2);
+		
+		fi=(x)->{System.out.println(x*5);};
+		fi.method(2);
+		
+		fi=x->System.out.println(x*5);	//매개변수1개이면 () 생략 가능
+		fi.method(2);
+		
+	}	
+}
+
+<< 실행 결과 >>
+10
+10
+10
+
+
+
+/3.4 리턴값이 있는 람다식
+@FunctionalInterface
+interface MyFunctionalInterface{
+	public int method(int x,int y);	
+}
+
+=>
+MyFunctionalInterface fi=(x,y)->{...; return 값;};
+=>람다식에 return 문만 있으면 {} 생략 가능
+
+
+
+@FunctionalInterface
+interface MyFunctionalInterface{
+	public int method(int x,int y);	
+}
+
+public class Main {	
+	public static void main(String[] args){
+		MyFunctionalInterface fi;
+		
+		fi=(x,y)->{
+			int result=x+y;
+			return result;
+		};
+		System.out.println(fi.method(2, 5));
+		
+		fi=(x,y)->{return x+y;};
+		System.out.println(fi.method(2, 5));
+		
+		fi=(x,y)->x+y;	//return 문만 있으므로 {} 생략 가능
+		System.out.println(fi.method(2, 5));
+		
+		fi=(x,y)->sum(x,y);	//return 문만 있으므로 {} 생략가능
+		System.out.println(fi.method(2, 5));
+	}	
+	
+	public static int sum(int x,int y){
+		return x+y;
+	}
+	
+}
+
+<< 실행 결과 >>
+7
+7
+7
+7
+
+
+-------------------------------------------------------------------------------------
+
+//4.클래스 멤버와 로컬 변수 사용
+
+/4.1 클래스의 멤버 사용
+;일반적인 this : 익명 객체의 참조 // 람다식의 this : 람다식을 실행한 객체의 참조
+
+@FunctionalInterface
+interface MyFunctionalInterface{
+	public void method();	
+}
+
+class UsingThis{
+	public int outterField=10;
+	
+	class Inner{
+		int innerField=20;
+		
+		void method(){
+			//람다식
+			MyFunctionalInterface fi=()->{
+				System.out.println("outterField:"+outterField);
+				System.out.println("outterField:"+UsingThis.this.outterField);	//바깥 객체의 참조를 얻기 위해
+				System.out.println();
+				
+				System.out.println("innerField:"+innerField);
+				System.out.println("innerField:"+this.innerField);	//람다식 내부에서 this는 Inner객체를 참조
+				System.out.println();
+			};
+			fi.method();
+		}
+	}
+}
+
+
+public class Main {	
+	public static void main(String[] args){
+		UsingThis usingThis=new UsingThis();		
+		UsingThis.Inner inner=usingThis.new Inner();		
+		inner.method();	
+			
+	}	
+}
+
+
+<< 실행 결과 >>
+outterField:10
+outterField:10
+
+innerField:20
+innerField:20
+
+
+
+
+/4.2 로컬 변수 사용
+
+
+
+@FunctionalInterface
+interface MyFunctionalInterface{
+	public void method();	
+}
+
+class UsingLocalVariable{
+	void method(int arg){	//arg는 final 특성을 가짐
+		int localVar=40;	//localVar는 final 특성을 가짐
+		
+		//arg=31;	//final 특성 때문에 수정 불가
+		//localVar=41;	//final 특성 때문에 수정 불가
+		
+		//람다식
+		MyFunctionalInterface fi=()->{
+			//로컬 변수 읽기
+			System.out.println("arg : "+arg);
+			System.out.println("localVar : "+localVar);
+		};
+		fi.method();		
+	}
+}
+
+
+public class Main {	
+	public static void main(String[] args){
+		UsingLocalVariable ulv=new UsingLocalVariable();
+		ulv.method(20);
+			
+	}	
+}
+
+
+
+<< 실행 결과 >>
+arg : 20
+localVar : 40
+
+
+-------------------------------------------------------------------------------------
+
+//5.표준 API의 함수적 인터페이스
+;표준 API에서 한 개의 추상 메소드를 가지는 인터페이스들은 모두 람다식을 이용해서 익명 구현 객체로 표현 가능!
+e.g)Runnable 인터페이스 run() 메소드
+
+
+e.g)
+public class Main {	
+	public static void main(String[] args){
+		//1번 방법
+		Runnable runnable=()->{
+			for(int i=0;i<10;i++)
+				System.out.println(i);
+		};
+		
+		Thread thread=new Thread(runnable);
+		thread.start();		
+		
+		//2번
+		Thread thread2=new Thread( ()->{
+			for(int i=10;i<20;i++)
+				System.out.println(i);
+		});
+		thread2.start();				
+	}	
+}
+
+=>
+java.util.function 표준 API 제공(메소드 또는 생성자의 매개 타입으로 사용되어 람다식을 대입할 수 있도록 하기 위해서)
+대표적 인터페이스 : Consumer,Supplier,Function,Operator,Predicate
+
+종류			추상 메소드 특징		
+Consumer	-매개값 O 리턴값 X
+Supplier	-매개값 X 리턴값 O
+Function	-매개값 O 리턴값 O
+			-주로 매개값을 리턴값으로 매핑(타입변환)
+Operator	-매개값O 리턴값 O
+			-주로 매개값을 연산하고 결과를 리턴
+Predicate	-매개값 O 리턴값 O(boolean)
+			-매개값을 조사해서 true/false 리턴
+			
+
+/5.1 Consumer 함수적 인터페이스
+;리턴값이 없는 accept() 메소드를 가지고 있음 ( 매개값을 소비(사용만 하고 리턴X)하는 역할 )
+
+인터페이스 명				추상 메소드					설명
+Consumer<T>				void accept(T t)			객체 T를 받아 소비
+BiConsumer<T,U>			void accept(T t,U u)		객체 T,U를 받아 소비
+DoubleConsumer			void accept(double value)	double값을 받아 소비
+IntConsumer				void accept(int value)		int값을 받아 소비
+LongConsumer			void accept(long value)		long값을 받아 소비
+ObjDoubleConsumer<T>	void accept(T t,double v)	객체T와 double 값을 받아 소비
+ObjIntConsumer<T>		void accept(T t,int v)		객체T와 int 값을 받아 소비
+ObjLongConsumer<T>		void accept(T t,long v)		객체T와 long 값을 받아 소비
+
+e.g)
+Consumer<String> consumer=t->{t를 소비하는 실행문;};
+BiConsumer<String,String> consumer=(t,u)->{t와 u를 소비하는 실행문;};
+DoubleConsumer consumer=d->{d를 소비하는 실행문;};
+ObjIntConsumer<String> consumer=(t,i)->{t와i를 소비하는 실행문;};
+
+
+
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
+import java.util.function.DoubleConsumer;
+import java.util.function.ObjIntConsumer;
+
+public class Main {	
+	public static void main(String[] args){
+		Consumer<String> consumer=t->System.out.println(t+"8");
+		consumer.accept("java");
+		
+		BiConsumer<String,String> biConsumer=(t,u)->System.out.println(t+u);
+		biConsumer.accept("Java", "8");
+		
+		DoubleConsumer dConsumer=(d)->System.out.println("Java"+d);
+		dConsumer.accept(8.0);
+		
+		ObjIntConsumer<String> oiConsumer=(t,i)->System.out.println(t+i);
+		oiConsumer.accept("Java", 8);		
+	}	
+}
+
+<< 실행 결과 >>
+java8
+Java8
+Java8.0
+Java8
+
+
+
+
+
+
+/5.2 Supplier 함수적 인터페이스
+;매개 변수가 없고 리턴값이 있는 getXXX() 메소드를 가지고 있음
+
+인터페이스명			추상 메소드				설명
+ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+Supplier<T>			T get()					T 객체를 리턴
+BooleanSupplier		boolean getAsBoolean()	boolean 값을 리턴
+DoubleSupplier		double getAsDouble()	double 값을 리턴
+IntSupplier			int getAsInt()			int 값을 리턴
+LongSupplier		long getAsLong()		long 값을 리턴
+
+
+import java.util.function.IntSupplier;
+
+public class Main {	
+	public static void main(String[] args){
+		IntSupplier intSupplier=()->{
+			int num=(int)(Math.random()*6)+1;
+			return num;
+		};
+		
+		int num=intSupplier.getAsInt();
+		System.out.println("눈의 수 : "+num);		
+	}	
+}
+
+
+<< 실행 결과 >>
+눈의 수 : 3
+
+
+
+
+
+
+
+
+/5.3 Function 함수적 인터페이스
+;매개값과 리턴값이 있는 aplyXXX() 메소드를 가지고 있음.
+
+인터페이스명					추상 메소드							설명
+ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+Function<T,R>				R apply(T t)					객체 T를 객체 R로 매핑
+BiFunction<T,U,R>			R apply(T t,U u)				객체 T,U를 객체 R로 매핑
+DoubleFunction<R>			R apply(double value)			double을 객체 R로 매핑
+IntFunction<R>				R apply(int value)				int를 객체 R로 매핑
+IntToDoubleFunction			double applyAsDouble(int val)	int를 double로 매핑
+IntToLongFunction			long applyAsLong(int val)		int를 long으로 매핑
+LongToDoubleFunction		double applyAsDouble(long val)	long을 double로 매핑
+LongToIntFunction			int applyAsInt(long val)		long을 int로 매핑
+ToDobleBiFunction<T,U>		double applyAsDouble(T t,U t)	객체 T,U를 double로 매핑
+ToDoubleFunction<T>			double applyAsDouble(T t)		객체 T를 double로 매핑
+ToIntBiFunction<T,U>		int applyAsInt(T t,U u)			객체 T와 U를 int로 매핑
+ToIntFunction<T>			int applyAsInt(T t)				객체 T를 int로 매핑
+ToLongBiFunction<T,U>		long applyAsLong(T t,U u)		객체 T,U를 long으로 매핑
+ToLongFunction<T>			long applyAsLong(T t)			객체 T를 long으로 매핑
+
+
+
+/*e.g*/
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.function.Function;
+import java.util.function.ToIntFunction;
+
+class Student{
+	private String name;
+	private int englishScore;
+	private int mathScore;
+	public Student(String name,int englishScore,int mathScore){
+		this.name=name;
+		this.englishScore=englishScore;
+		this.mathScore=mathScore;
+	}
+	public String getName() {
+		return name;
+	}
+	public int getEnglishScore() {
+		return englishScore;
+	}
+	public int getMathScore() {
+		return mathScore;
+	}	
+}
+
+public class Main {
+	private static List<Student> list=Arrays.asList(new Student("홍길동",90,96),new Student("신용권",95,93));
+	
+	public static void printString(Function<Student,String> function){
+		for(Student student : list)
+			System.out.println(function.apply(student)+" ");
+		System.out.println();		
+	}
+	
+	public static void printInt(ToIntFunction<Student> function){
+		for(Student student : list)
+			System.out.println(function.applyAsInt(student)+" ");
+		System.out.println();
+	}
+	
+	public static double avg(ToIntFunction<Student> function){
+		int sum=0;
+		for(Student student : list)
+			sum+=function.applyAsInt(student);
+		return (double)sum/list.size();
+	}
+	
+	
+	public static void main(String[] args){
+		System.out.println("[학생 이름]");
+		printString(t->t.getName());
+		
+		System.out.println("[영어 점수]");
+		printInt(t->t.getEnglishScore());
+		
+		System.out.println("[수학 점수]");
+		printInt(t->t.getMathScore());
+		
+		System.out.println("[영어점수 평균]");
+		System.out.println(avg(t->t.getEnglishScore()));		
+		System.out.println("[수학점수 평균]");
+		System.out.println(avg(t->t.getMathScore()));	
+	}	
+}
+
+
+
+
+<< 실행 결과 >>
+[학생 이름]
+홍길동 
+신용권 
+
+[영어 점수]
+90 
+95 
+
+[수학 점수]
+96 
+93 
+
+[영어점수 평균]
+92.5
+[수학점수 평균]
+94.5
+
+
+
+
+
+
+
+
+/5.4 Operator 함수적 인터페이스
+;매개 변수와 리턴값이 있는 applyXXX() 메소드. BUT 매핑(타입변환)보다는 매개값을 이용해서 연산을 수행한 후 동일한 타입으로 리턴값을 제공하는 역할
+
+인터페이스명				추상메소드									설명
+ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+BinaryOperator<T>		BiFunction<T,U,R>의 하위 인터페이스			T와U를 연산한 후 R 리턴
+UnaryOperator<T>		Function<T,R>의 하위 인터페이스				T를 연산한 후 R 리턴
+DoubleBinaryOperator	double applyAsDouble(double,double)		두 개의 double 연산
+DoubleUnaryOperator		double applyAsDouble(double)			한 개의 double 연산
+IntBinaryOperator		int applyAsInt(int,int)					두 개의 int 연산
+IntUnaryOperator		int applyAsInt(int)						한 개의 int 연산
+LongBinaryOperator		long applyAsLong(long,long)				두 개의 long 연산
+LongUnaryOperator		long applyAsLong(long)					한 개의 long 연산
+
+
+
+import java.util.Arrays;
+import java.util.function.IntBinaryOperator;
+
+public class Main {
+	private static int[] scores = { 92, 95, 87 };
+
+	public static int maxOrMin(IntBinaryOperator operator) {
+		int result = scores[0];
+		for (int score : scores) {
+			result = operator.applyAsInt(result, score);
+		}
+		return result;
+	}
+
+	public static void main(String[] args) {
+		int max = maxOrMin((v1, v2) -> v1 > v2 ? v1 : v2);
+		
+		int min = maxOrMin((v1, v2) -> {
+			if (v1 < v2)
+				return v1;
+			else
+				return v2;
+		});
+
+		System.out.print("배열 : ");
+		System.out.println(Arrays.toString(scores));
+
+		System.out.println("최대값 : " + max);
+		System.out.println("최소값 : " + min);
+
+	}
+}
+
+
+<< 실행 결과 >>
+배열 : [92, 95, 87]
+최대값 : 95
+최소값 : 87
+
+
+
+
+
+
+
+/5.5 Predicate 함수적 인터페이스
+;매개변수와 boolean 리턴값이 있는 testXXX() 메소드를 가지고 있음.
+
+인터페이스명			메소드						설명
+Predicate<T>		boolean test(T t)			객체 T를 조사
+BiPredicate<T,U>	boolean test(T t,U u)		객체 T와 U를 비교 조사
+DoublePredicate		boolean test(double v)		double값을 조사
+IntPredicate		boolean test(int v)			int 값을 조사
+LongPredicate		boolean test(long v)		long 값을 조사
+
+
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.function.Predicate;
+
+class Student{
+	private String name;
+	private String sex;
+	private int score;
+	
+	public Student(String name,String sex,int score){
+		this.name=name;
+		this.sex=sex;
+		this.score=score;
+	}
+	public String getName() {return name;}
+	public String getSex() {return sex;}
+	public int getScore() {return score;}	
+}
+
+
+
+public class Main {
+	private static List<Student> list=Arrays.asList(
+			new Student("홍길동","남자",90),
+			new Student("김순희","여자",90),
+			new Student("감자바","남자",95),
+			new Student("박한나","여자",92)			
+	);
+	
+	public static double avg(Predicate<Student> predicate){
+		int count=0,sum=0;
+		
+		for(Student student : list){
+			if(predicate.test(student)){
+				count++;
+				sum+=student.getScore();
+			}			
+		}
+		return (double)sum/count;		
+	}
+	
+	public static void main(String[] args) {
+		System.out.println("남자 평균");
+		double manOfAvg=avg(t->{
+			if(t.getSex().equals("남자"))
+				return true;
+			return false;
+		});
+		System.out.println(": "+manOfAvg);
+		
+		System.out.println("여자 평균");
+		double womenOfAvg=avg(t->t.getSex().equals("여자"));
+		System.out.println(": "+womenOfAvg);
+	}
+}
+
+
+<< 실행 결과 >>
+남자 평균
+: 92.5
+여자 평균
+: 91.0
+
+
+
+
+
+/5.6 andThen()과 compose() 디폴트 메소드
+;디폴트 및 정적 메소드는 추상 메소드가 아니므로 선언되어도 함수적 인터페이스 성질을 잃지 않음
+=>Consumer,Function,Operator 종류의 함수적 인터페이스는 andThen() // compose() 디폴트 메소드를 가지고 있음
+
+1)andThen()메소드
+
+인터페이스AB = 인터페이스A.andThen(인터페이스B);
+최종결과=인터페이스AB.method();
+
+=>
+인터페이스AB.method() --> 인터페이스A(람다식)  --andThen --> 인터페이스B(람다식) --> 최종결과
+;인터페이스A처리 & 결과를 인터페이스B의 매개값으로 제공 & 인터페이스B는 제공받은 매개값을 가지고 처리한 후 최종 결과를 리턴
+
+
+2)compose() 메소드
+
+인터페이스AB=인터페이스A.compose(인터페이스B);
+최종결과=인터페이스AB.method();
+
+=>
+인터페이스AB method() -->인터페이스B(람다식) --compose-->인터페이스A(람다식) --> 최종결과
+;인터페이스B 처리 & 결과를 인터페이스 A의 매개값으로 제공 & 인터페이스A는 제공받은 매개값을 가지고 처리한 후 최종 결과를 리턴
+
+
+종류			함수적 인터페이스			andThen()		compose()
+			Consumer<T>				O
+			BiConsumer<T,U>			O
+Consumer 	DoubleConsumer			O
+			IntConsumer				O
+			LongConsumer			O
+			
+Function	Function<T,R>			O				O
+			BiFunction<T,U,R>		O				O
+			
+Operator	BinaryOperator<T>		O
+			DoubleUnaryOperator		O				O
+			IntUnaryOperator		O				O
+			LongUnaryOperator		O				O
+			
+
+-----
+-Consumer의 순차적 연결			
+;Consumer인터페이스는 처리 결과를 리턴하지 않기 때문에 andThen() 디폴트 메소드는 함수적 인터페이스의 호출 순서만 정함.
+
+import java.util.function.Consumer;
+
+class Address{
+	private String country;
+	private String city;
+	
+	public Address(String country,String city){
+		this.country=country;
+		this.city=city;
+	}
+	public String getCountry() {return country;}
+	public String getCity() {return city;}		
+}
+class Member{
+	private String name;
+	private String id;
+	private Address address;
+	
+	public Member(String name,String id,Address address){
+		this.name=name;
+		this.id=id;
+		this.address=address;
+	}
+
+	public String getName() {return name;}
+	public String getId() {return id;}
+	public Address getAddress() {return address;}	
+}
+
+
+public class Main {
+	public static void main(String[] args) {
+		Consumer<Member> consumerA=(m)->{
+			System.out.println("consumerA: "+m.getName());			
+		};
+		Consumer<Member> consumerB=(m)->{
+			System.out.println("consumerB: "+m.getId());
+		};
+		
+		Consumer<Member> consumerAB=consumerA.andThen(consumerB);
+		consumerAB.accept(new Member("홍길동","hong",null));
+		//consumerA 람다실 실행 & consumerB 람다식 실행		
+	}
+}
+
+
+
+<< 실행 결과 >>
+consumerA: 홍길동
+consumerB: hong
+
+-----
+-Function의 순차적 연결
+
+import java.util.function.Function;
+
+class Address{
+	private String country;
+	private String city;
+	
+	public Address(String country,String city){
+		this.country=country;
+		this.city=city;
+	}
+	public String getCountry() {return country;}
+	public String getCity() {return city;}		
+}
+class Member{
+	private String name;
+	private String id;
+	private Address address;
+	
+	public Member(String name,String id,Address address){
+		this.name=name;
+		this.id=id;
+		this.address=address;
+	}
+
+	public String getName() {return name;}
+	public String getId() {return id;}
+	public Address getAddress() {return address;}	
+}
+
+
+public class Main {
+	public static void main(String[] args) {
+		Function<Member,Address> functionA;
+		Function<Address,String> functionB;
+		Function<Member,String> functionAB;
+		String city;
+		
+		//Address인스턴스 얻고 & 그 인스턴스로 City값 얻기
+		functionA=(m)->m.getAddress();
+		functionB=(a)->a.getCity();
+		
+		functionAB=functionA.andThen(functionB);
+		city=functionAB.apply(
+				new Member("홍길동","hong",new Address("한국","서울"))
+				);
+		System.out.println("거주 도시 : "+city);
+		
+		functionAB=functionB.compose(functionA);
+		city=functionAB.apply(
+				new Member("홍길동","hong",new Address("한국","서울"))
+				);
+		System.out.println("거주 도시 : "+city);		
+	}
+}
+
+
+<< 실행 결과 >>
+거주 도시 : 서울
+거주 도시 : 서울
+
+-----
+
+/5.7 and(), or(), negate() 디폴트 메소드 // isEqual() 정적 메소드
+;and() or() negate() == && || !
+
+종류			함수적 인터페이스		and()	or()	negate()
+Predicate	Predicate<T>		O		O		O		
+			BiPredicate<T,U>	O		O		O		
+			DoublePredicate		O		O		O		
+			IntPredicate		O		O		O		
+			LongPredicate		O		O		O		
+
+			
+import java.util.function.IntPredicate;
+
+public class Main {
+	public static void main(String[] args) {
+		//2의 배수 검사
+		IntPredicate predicateA=a->a%2==0;
+		
+		//3의 배수 검사
+		IntPredicate predicateB=a->a%3==0;
+		
+		IntPredicate predicateAB;
+		boolean result;
+		
+		//and()
+		predicateAB=predicateA.and(predicateB);
+		result=predicateAB.test(9);
+		System.out.println("9는 2와 3의 배수 ? "+result);
+		
+		//or()
+		predicateAB=predicateA.or(predicateB);
+		result=predicateAB.test(9);
+		System.out.println("9는 2또는 3의 배수 ?"+result);
+		
+		//negate()
+		predicateAB=predicateA.negate();
+		result=predicateAB.test(9);
+		System.out.println("9는 홀수 ? "+result);
+		
+	}
+}
+
+
+<< 실행 결과 >>
+9는 2와 3의 배수 ? false
+9는 2또는 3의 배수 ?true
+9는 홀수 ? true
+
+-----
+-isEqual()
+Predicate<T>는 isEqual() 정적 메소드를 추가로 제공
+
+Predicate<Object> predicate=Predicate.isEqual(targetObject);
+boolean result=predicate.test(sourceObject);
+
+=>
+sourceObject	targetObject	리턴 값
+null			null			true
+not null		null			false
+null			not null		false
+not null		not null		sourceObject.equals(targetObject)의 리턴 값
+
+
+import java.util.function.Predicate;
+
+public class Main {
+	public static void main(String[] args) {
+		Predicate<String> predicate;
+		
+		predicate=Predicate.isEqual(null);
+		System.out.println("null,null : "+predicate.test(null));	
+		
+		predicate=Predicate.isEqual("Java8");
+		System.out.println("null,Java8 : "+predicate.test(null));
+		
+		predicate=Predicate.isEqual(null);
+		System.out.println("Java8,null : "+predicate.test("Java8"));
+		
+		predicate=Predicate.isEqual("Java8");
+		System.out.println("Java8,Java8 : "+predicate.test("Java8"));	//"java8".equals("Java8");
+		
+		predicate=Predicate.isEqual("Java8");
+		System.out.println("Java7,Java8 : "+predicate.test("Java7"));	//"java7".equals("Java8");
+	}
+}
+
+
+<< 실행 결과 >>
+null,null : true
+null,Java8 : false
+Java8,null : false
+Java8,Java8 : true
+Java7,Java8 : false
+
+-----
+
+-minBy(),maxBy() 정적 메소드
+;BinaryOperator<T> 함수적 인터페이스는 minBy()와 maxBy() 정적 메소드 제공
+BinaryOperator<T> minBy(Comparator<? super T> comparator)
+BinaryOperator<T> maxBy(Comparator<? super T> comparator)
+
+=>
+Comparator<T>는 함수적 인터페이스
+@FunctionalInterface
+public interface Comparator<T>{
+	public int compare(T o1,T o2);
+}
+
+e.g)
+import java.util.function.BinaryOperator;
+
+class Fruit{
+	String name;
+	int price;
+	public Fruit(String name,int price){
+		this.name=name;
+		this.price=price;
+	}
+	public String getName() {return name;}
+	public int getPrice() {	return price;}	
+}
+
+public class Main {
+	public static void main(String[] args) {
+		BinaryOperator<Fruit> binaryOperator;
+		Fruit fruit;
+		
+		binaryOperator=BinaryOperator.minBy((f1,f2)->Integer.compare(f1.price,f2.price));		
+		fruit=binaryOperator.apply(new Fruit("딸기",6000),new Fruit("수박",10000));
+		System.out.println("가격이 싼것 : "+fruit.name);
+		
+		binaryOperator=BinaryOperator.maxBy((f1,f2)->Integer.compare(f1.price, f2.price));
+		fruit=binaryOperator.apply(new Fruit("딸기",6000),new Fruit("수박",10000));
+		System.out.println("가격이 비싼것 : "+fruit.name);
+		
+	}
+}
+
+
+<< 실행 결과 >>
+가격이 싼것 : 딸기
+가격이 비싼것 : 수박
+
+
+-------------------------------------------------------------------------------------
+
+//6. 메소드 참조
+;메소드 참조(Method References) : 메소드를 참조해서 매개 변수의 정보 및 리턴 타입을 알아내어 람다식에서 불필요한 매개 변수를 제거하는 것이 목적.
+
+=>
+(x,y)->Math.max(x,y)
+=>람다식은 단순히 두 개의 값을 Math.math() 메소드의 매개값으로 전달하는 역할만 하기 때문에 다소 불편해 보임
+=>메소드 참조를 이용해서 깔끔하게 처리
+Math :: max;	//메소드 참조
+
+e.g)
+IntBinaryOperator operator=Math::max;	//메소드 참조
+(IntBinaryOperator 인터페이스는 두 개의 int 매개값을 받아 int 값을 리턴하므로 Math::max 메소드 참조를 대입할 수 있다.)
+
+=>정적 또는 인스턴스 메소드 참조 가능 + 생성자 참조도 가능
+
+
+/6.1 정적 메소드와 인스턴스 메소드 참조
+1)정적(static)메소드 참조
+클래스 :: 메소드
+
+2)인스턴스 메소드 참조
+참조변수 :: 메소드
+
+
+
+import java.util.function.IntBinaryOperator;
+
+class Calculator{
+	public static int staticMethod(int x,int y){
+		return x+y;
+	}
+	
+	public int instanceMethod(int x,int y){
+		return x+y;
+	}
+}
+
+public class Main {
+	public static void main(String[] args) {
+		IntBinaryOperator operator;
+		
+		//정적 메소드 참조
+		operator=(x,y)->Calculator.staticMethod(x,y);
+		System.out.println("결과1 : "+operator.applyAsInt(1, 2));
+		
+		operator=Calculator::staticMethod;
+		System.out.println("결과2 : "+operator.applyAsInt(3, 4));
+		
+		
+		//인스턴스 메소드 참조
+		Calculator cal=new Calculator();
+		
+		operator=(x,y)->cal.instanceMethod(x, y);
+		System.out.println("결과3 : "+operator.applyAsInt(5, 6));
+		
+		operator=cal::instanceMethod;
+		System.out.println("결과4 : "+operator.applyAsInt(7, 8));		
+	}
+}
+
+
+
+<< 실행 결과 >>
+결과1 : 3
+결과2 : 7
+결과3 : 11
+결과4 : 15
+
+=>람다식이 메소드 참조를 대체
+
+
+
+
+
+
+/6.2 매개 변수의 메소드 참조
+;메소드는 람다식 외부의 클래스 멤버일 수도 있고, 람다식에서 제공되는 매개 변수의 멤버일 수도 있음
+
+(a,b)->{a.instanceMethod(b)};
+
+=>
+클래스 :: instanceMethod
+=>작성 방법은 정적 메소드 참조와 동일 BUT a의 인스턴스 메소드가 참조되므로 전혀 다른 코드가 실행
+
+
+
+import java.util.function.ToIntBiFunction;
+
+public class Main {
+	public static void main(String[] args) {
+		ToIntBiFunction<String,String> function;
+		
+		function=(a,b)->a.compareToIgnoreCase(b);
+		print(function.applyAsInt("Java8","JAVA8"));
+		
+		function=String :: compareToIgnoreCase;
+		print(function.applyAsInt("Java8","JAVA8"));		
+	}	
+	public static void print(int order){
+		if(order<0)
+			System.out.println("사전순으로 앞섬");
+		else if(order==0)
+			System.out.println("동일한 문자열");
+		else
+			System.out.println("사전 순으로 뒤섬");
+	}
+	
+}
+
+<< 실행 결과 >>
+동일한 문자열
+동일한 문자열
+
+
+
+
+
+
+/6.3생성자 참조
+;메소드 참조(Method References)는 생성자 참조도 포함(==인스턴스 생성을 의미)
+
+e.g)
+(a,b)-> {return new 클래스(a,b)};
+
+=>생성자 참조
+클래스 :: new
+
+=>생성자가 오버로딩되어 여러 개 있을 경우, 컴파일러는 함수적 인터페이스의 추상 메소드와 동일한 매개 변수 타입과 개수를 가지고 있는 생성자를 찾아 실행
+
+
+
+
+import java.util.function.BiFunction;
+import java.util.function.Function;
+
+class Member{
+	private String name;
+	private String id;
+	
+	public Member(){
+		System.out.println("Member() 실행");
+	}
+	public Member(String id){
+		System.out.println("Member(String id) 실행");
+		 this.id=id;
+	}
+	public Member(String name,String id){
+		System.out.println("Member(String name,String id) 실행");
+		this.name=name;
+		this.id=id;
+	}
+	public String getID(){return id;}
+}
+
+public class Main {
+	public static void main(String[] args) {
+		//Function R apply(T t) 로 정의 되어있음
+		//=>Member(String id)  생성자 호출
+		Function<String,Member> function1=Member::new;
+		Member member1=function1.apply("angel");
+		
+		//BiFunction R apply(T t,U u)로 정의
+		//=>Member(String name,String id) 생성자 호출
+		BiFunction<String,String,Member> function2=Member::new;
+		Member member2=function2.apply("Zaccoding", "Zac");
+		
+	}		
+}
+
+
+
+
+
+<< 실행 결과 >>
+Member(String id) 실행
+Member(String name,String id) 실행
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

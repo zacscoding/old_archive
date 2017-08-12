@@ -1,0 +1,263 @@
+/*실습1 3개의 정수 중 최소값 구하는 프로그램*/
+/*
+#include <stdio.h>
+
+int main(void)
+{
+int x, y, z, min;
+printf("3개의 정수를 입력하시오 :");
+scanf("%d %d %d", &x, &y, &z);
+
+if (x >= y)
+{
+if (y >= z)
+printf("제일 작은 정수는 : %d\n", y);
+else
+printf("제일 작은 정수는 : %d\n", z);
+}
+else
+{
+if (x >= z)
+printf("제일 작은 정수는 : %d\n", z);
+else
+printf("제일 작은 정수는 : %d\n", x);
+}
+return 0;
+}
+*/
+
+
+/*실습 과제 2*/
+/*
+#include <stdio.h>
+
+int main(void)
+{
+	int month;
+
+	printf("년도의 월(month)를 입력 하시오: ");
+	scanf("%d", &month);
+
+	switch (month)
+	{
+	case 4:
+	case 5:
+		printf("%d월은 봄입니다.\n", month);
+		break;
+	case 6:
+	case 7:
+	case 8:
+		printf("%d월은 여름입니다.\n", month);
+		break;
+	case 9:
+	case 10:
+	case 11:
+		printf("%d월은 가을입니다.\n", month);
+		break;
+	case 12:
+	case 1:
+	case 2:
+	case 3:
+		printf("%d월은 겨울입니다.\n", month);
+		break;
+	default:
+		printf("1-12의 숫자를 입력해주세요..\n");
+		break;
+	}
+	return 0;
+}
+*/
+/*실습과제3*/
+/*if문*/
+/*
+#include <stdio.h>
+
+int main(void)
+{
+double x, y;
+char code;
+double result;
+
+printf("수식을 입력하시오.(+,-,*,/,%%)\n(예:2+5)\n:");
+scanf("%lf %c %lf", &x, &code, &y);
+
+if (code == '+')
+{
+printf("%lf%c%lf=%lf\n", x, code, y, x + y);
+}
+else if (code == '-')
+{
+printf("%lf%c%lf=%lf\n", x, code, y, x - y);
+}
+else if (code == '*')
+{
+printf("%lf%c%lf=%lf\n", x, code, y, x * y);
+}
+else if (code == '/')
+{
+printf("%lf%c%lf=%lf\n", x, code, y, x / y);
+}
+else if (code == '%')
+{
+printf("%lf%c%lf=%d\n", x, code, y, (int)x%(int)y);
+}
+else
+{
+printf("지원되지 않는 연산자 입니다.\n");
+}
+return 0;
+}
+*/
+
+/*switch문*/
+/*
+#include <stdio.h>
+
+int main(void)
+{
+double x, y;
+char code;
+double result;
+
+printf("수식을 입력하시오.(+,-,*,/,%%)\n(예:2+5)\n:");
+scanf("%lf %c %lf", &x, &code, &y);
+
+switch (code)
+{
+case '+':
+printf("%lf%c%lf=%lf\n", x, code, y, x + y);
+break;
+case '-':
+printf("%lf%c%lf=%lf\n", x, code, y, x - y);
+break;
+case'*':
+printf("%lf%c%lf=%lf\n", x, code, y, x * y);
+break;
+case'/':
+printf("%lf%c%lf=%lf\n", x, code, y, x / y);
+break;
+case'%':
+printf("%lf%c%lf=%d\n", x, code, y, (int)x % (int)y);
+break;
+default:
+printf("지원되지않는 연산자입니다.\n");
+break;
+}
+return 0;
+}
+*/
+
+
+/*while+ if문*/
+/*
+
+#include <stdio.h>
+
+int main(void)
+{
+	int x, y, z;
+	char c;
+
+	while (1)
+	{
+		printf("수식을입력하시오(종료:0#0)\n(예:2+5)\n>>");
+		scanf("%d %c %d", &x, &c, &y);
+
+		if (x == 0 && y == 0 && c == '#')	break;
+
+		else if (c == '+')
+		{
+			printf("%d %c %d = %d\n", x, c, y, x + y);
+		}
+		else if (c == '-')
+		{
+			printf("%d %c %d = %d\n", x, c, y, x - y);
+		}
+		else if (c == '*')
+		{
+			printf("%d %c %d = %d\n", x, c, y, x*y);
+		}
+		else if (c == '/')
+		{
+			printf("%d %c %d = %d\n", x, c, y, (double)x / (double)y);
+		}
+		else if (c == '%')
+		{
+			printf("%d %c %d = %d\n", x, c, y, x / y);
+		}
+		else
+		{
+			printf("지원하지않는연산자입니다.\n");
+		}
+	}
+
+	return 0;
+}
+*/
+
+
+/*실습과제4*/
+/*1-max까지 2,5,7배수를 제외한 값을 출력 & 합을 구하는 프로그램 */
+/*
+#include <stdio.h>
+
+int main(void)
+{
+int max, sum, i;	//최대값, 합계, 변수
+
+printf("최대값을 입력하시오:");
+scanf("%d", &max);
+i = 1;
+sum = 0;
+
+while(i<=max)
+{
+if ((i % 2 == 0) || (i % 5 == 0) || (i % 7 == 0))
+{
+i++;
+}
+else
+{
+printf("%8d", i);
+sum += i;
+i++;
+}
+}
+printf("\n출력된 값들의 합 : %d\n", sum);
+
+return 0;
+}
+*/
+
+/*실습과제4*/
+/*1-max까지 2,5,7배수를 제외한 값을 출력 & 합을 구하는 프로그램 */
+/*
+#include <stdio.h>
+
+int main(void)
+{
+	int max, sum, i;	//최대값, 합계, 변수
+
+	printf("최대값을 입력하시오:");
+	scanf("%d", &max);
+	i = 1;
+	sum = 0;
+
+	while (i <= max)
+	{
+		if ((i % 2 == 0) || (i % 5 == 0) || (i % 7 == 0))
+		{
+			sum += i;
+			i++;
+		}
+		else
+		{
+			printf("%8d", i);
+			i++;
+		}
+	}
+	printf("\n출력되지 않은 값들의 합 : %d\n", sum);
+
+	return 0;
+}
+*/

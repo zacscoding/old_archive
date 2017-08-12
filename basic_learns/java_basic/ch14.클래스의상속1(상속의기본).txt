@@ -1,0 +1,173 @@
+-------------------ch.14 클래스의 상속1 : 상속의 기본-----------------------
+
+Object Oriented -> class , 상속 -> (상속) 재활용
+==>상속은 재활용을 위해 존재하는 문법이 아니다!
+
+Java를 공부하면
+1)문법적 요소
+2)O.O
+==>객체지향의 모든 것을 이해하려고 하지말고 (30~50%정도) 어느정도 풍월을 읊을 정도임
+==>자바를 통해서 객체지향을 다 알아야 한다고 생각하지 말기. 
+
+--------------------------------------------------------------------------
+
+//14-1 상속은 재활용 + 알파(<<훨씬 중요함)
+
+//객체지향에서의 상속에 대한 논의와 CBD
+
+(상속에 대한 정확한 평가)
+-객체지향 패러다임은 재활용의 관점에서 실패한 패러다임
+-자바의 상속은 클래스의 재활용적 측면에서 바라본느 것은 문제가 있다.
+-재활용할 수 있다는 이유만으로 상속을 하는 경우가 드믈다(우리는 한다! 그리고 그 결과는 좋지 못하다.)
+
+(상속의 이유)
+-상속을 통해 연관된 일련의 클래스에 대한 공통적인 규약을 정의하고 적용하는데, 상속의 실질적인 목적이 있다.
+
+(CBD, Component Based Development)
+-재활용이라는 공학적 측면의 적용을 위해 정의된 새로운 패러다임 => 기간,인력,돈 줄여줌
+ (component는 작은 클래스가 아니라 100개의 클래스를 묶는 컴포넌트)
+
+
+//객체지향이 재활용의 관점에서 실패한 이유?
+
+-클래스 하나를 재활용하는 것이 새롭게 디자인하는 것보다 더 큰 노력이 든다.
+-재활용을 고려해서 클래스를 디자인할 경우, 설계에 필요한 시간이 몇 배 더 길어진다.
+ (기간, 인력, 돈)
+-실무에서의 현황, 다른 동료가 설계한 클래스에 대한 신뢰도 부족
+
+
+==>GUI에서 Button이나 클래스들 상속해서 활용!!!
+
+--------------------------------------------------------------------------
+
+//14-2 상속의 기본문법 이해
+
+- 상위(Super),부모(parent), 기본(base) // 하위(sub),자식(child),유도(derived)
+
+
+class Man{
+	public String name;
+	public Man(String name)	{
+		this.name=name;
+	}
+	public void tellYourName()	{
+		System.out.println("my name is "+name);
+	}
+}
+
+class BusinessMan extends Man{
+	public String company;
+	public String position;
+	public BusinessMan(String name,String company,String position)	{
+		super(name);	//상위 클래스의 생성자 호출문
+		this.company=company;
+		this.position=position;
+	}
+	public void tellYourInfo()	{
+		System.out.println("My company is "+company);
+		System.out.println("My position is "+position);
+		tellYourName();
+	}
+}
+
+public class Inherit {
+	public void main(String[] args)	{
+		BusinessMan man1=new BusinessMan("Mr. Hong","Hybrid 3D LED","Staff Eng.");
+		BusinessMan man2=new BusinessMan("Mr. LEE","Hybrid 3D LED","Assist Eng.");
+		System.out.println("First man info..");
+		man1.tellYourName();
+		man1.tellYourInfo();
+		System.out.println("Second man info..");
+		man2.tellYourInfo();		
+	}
+}
+
+
+//상속관계에 있는 인스턴스의 생성과정
+BusinessMan man1=new BusinessMan("Mr. Hong","Hybrid 3D LED","Staff Eng.");
+1.메모리 공간 할당
+2.BusinessMan의 생성자 호출 but 상위클래스 생성자 호출 및 실행(그래서 super가 첫번째 줄)
+3.BusinessMan의 생성자 실행
+
+==>결론
+1. 하위 클래스의 생성자는 상위 클래스의 인스턴스 변수를 초기화 할 데이터까지 인자로 전달받아야한다.
+2. 하위 클래스의 생성자는 상위 클래스의 생성자 호출을 통해서 상위 클래스의 인스턴스 변수를 초기화 한다.
+3. 키워드 super는 상위 클래스의 생성자 호출에 사용된다. super와 함께 표시된 전달되는 인자의 수와
+   자료형을 참조하여 호출할 생성자가 결정된다.
+
+--------------------------------------------------------------------------
+
+//반드시 호출되어야 하는 상위 클래스의 생성자
+
+class AAA{
+	int num1;
+	//AAA(){} <<디폴트 생성자
+}
+
+class BBB extends AAA{	
+	int num2;
+	//BBB(){ super(); }  <<디폴트 생성자
+}
+
+
+class AAA{
+	int num1;
+	//AAA(){} <<디폴트 생성자
+}
+
+class BBB extends AAA{	
+	int num2;	
+	BBB(){ num2=0; }  //자동으로 삽입되는 상위 클래스의 생성자 호출문 super();
+}
+
+--------------------------------------------------------------------------
+
+//14-3 상속과 접근제어 지시자
+
+//protected 지시자
+
+//default 패키지로 묶인 두 클래스
+class AAA{
+	int num1;
+	protected int num2;
+}
+
+class BBB extends AAA{
+	BBB(){
+		num1=10;	//AAA클래스의 default 멤버에 접근
+		num2=20;	//BBB 클래스의 protected 멤버에 접근
+	}
+}
+
+==>보통 상속은 동일 패키지로 구성하므로, default도 알고 있기.
+
+//private 멤버도 상속은 된다. 다만 접근만 불가능
+
+
+
+
+--------------------------------------------------------------------------
+
+//14-4 static 변수(메소드)의 상속과 생성자의 상속에 대한 논의
+
+Q. Static 변수도 상속이 되나요?
+static 변수는 접근의 허용여부와 관계가 있다. 따라서 다음과 같이 질문을 해야 옳다
+"상위 클래스의 static 변수에 하위 클래스도 그냥 이름만으로 접근이 가능한가요?"
+==>Yes
+
+class Adder{
+	public static int val=0;
+	public void add(int num)	{
+		val+=num;
+	}
+}
+
+class AdderFriend extends Adder{
+	public void friendAdd(int num)	{
+		val+=num;
+	}
+	public void showVal(){
+		System.out.println(val);
+	}
+}
+

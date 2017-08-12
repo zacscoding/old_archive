@@ -1,0 +1,163 @@
+
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <Windows.h>
+#define MYTIME 1000
+
+typedef struct node {
+ int data;
+ struct node *link;
+}NODE;
+
+void print_menu(void); //프린트 출력
+void add(NODE **);  //push 함수 (데이터 입력, 마지막 노트가 연결리스트의 시작점
+void pop(NODE **);  //마지막 생성 노트 삭제 함수
+void print_data(NODE **); //데이터 출력하는 함수
+        //void del_heap(NODE **); //동적할당 해제 함수1 while문
+void del_heap2(NODE*); //동적할당 해제 함수2 재귀함수
+int main(void)
+{
+ NODE *top = NULL;
+ int choice;
+ while (1) {
+  print_menu();
+  scanf("%d", &choice);
+  if (choice < 1 || choice>4) {
+   continue;
+  }
+  else if (choice == 1) {
+   add(&top);
+  }
+  else if (choice == 2) {
+   pop(&top);
+  }
+  else if (choice == 3) {
+   print_data(&top);
+  }
+  else if (choice == 4) {
+
+   //  while 문으로 동적할당 해제
+   //   del_heap(&top);
+   // break;
+
+   // 재귀함수로 동적할당 해제
+   printf("모든 data 공간해제 후 종료\n");
+   del_heap2(top);
+   break;
+  }
+ }
+ return 0;
+}
+
+
+//메뉴 출력 함수
+void print_menu(void)
+{
+ puts("stack 프로그램 입니다.");
+ puts("1. push");
+ puts("2. pop");
+ puts("3. print_data");
+ puts("4. 종료");
+ printf(">>>>>   : ");
+}
+
+//1.push 함수
+void add(NODE **qtop)
+{
+ NODE *p = (NODE *)malloc(sizeof(NODE));
+ NODE *tmp;
+ if (p == NULL) {
+  printf("동적할당실패\n");
+  system("pause");
+  system("cls");
+  return;
+ }
+
+ if (*qtop == NULL) {
+  *qtop = p;
+  p->link = NULL;
+ }
+ else {
+  p->link = *qtop;
+  *qtop = p;
+ }
+ printf("데이터 입력 : ");
+ scanf("%d", &p->data);
+ system("cls");
+}
+
+
+//2.pop함수
+void pop(NODE **qtop)
+{
+ NODE *tmp;
+ int data;
+ if (*qtop == NULL) {
+  puts("empty data");
+  system("pause");
+  return;
+ }
+ else {
+  tmp = (*qtop)->link;
+  data = (*qtop)->data;
+  free(*qtop);
+  printf("%d\n", data);
+  *qtop = tmp;
+  system("pause");
+  system("cls");
+ }
+}
+
+
+//3.데이터 출력
+void print_data(NODE **qtop)
+{
+ NODE *p = *qtop;
+ while (p) {
+  printf("%d\n", p->data);
+  p = p->link;
+ }
+ printf("empty data\n");
+ system("pause");
+ system("cls");
+}
+
+ 
+
+//4.동적할당 해제 (while 문)
+
+void del_heap(NODE **qtop)
+{
+ NODE *p = *qtop, *next;
+ printf("모든 data 공간해제 후 종료\n");
+ while (p) {
+  next = p->link;
+  printf("%d 해제\n", p->data);
+  Sleep(MYTIME);
+  free(p);
+  p = next;
+ }
+ printf("empty data\n");
+ return;
+}
+
+
+//4.동적할당 해제 (재귀함수)
+
+void del_heap2(NODE* p)
+{
+ NODE *next;
+ Sleep(MYTIME);
+ if (p == NULL) {
+  printf("empty data\n");
+  return;
+ }
+ else {
+  Sleep(MYTIME);
+  printf("%d 해제\n", p->data);
+  next = p->link;
+  free(p);
+  del_heap2(next);
+ }
+} 

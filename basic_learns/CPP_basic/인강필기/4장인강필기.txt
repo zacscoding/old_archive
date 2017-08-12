@@ -1,0 +1,613 @@
+//4장 클래스의 완성
+/*
+(3장은 c->c++ 넘어가는 과정에서의 클래스를 설명함)
+핵심내용
+
+*클래스 디자인 기본 원칙
+ -캡슐화, 정보 은닉 -->>★Why???가 중요
+ -캡슐화와 정보 은닉의 유용성
+
+*클래스 객체의 생성과 소멸 -->★과정이 중요
+ -생성자, 소멸자
+ -생성자, 소멸자의 유용성(★필요성이 중요)
+*/
+
+
+
+
+/*정보 은닉의 필요성*/
+/*
+InfoHiding1.cpp
+*/
+#include<iostream>
+using std::cout;
+using std::endl;
+using std::cin;
+
+//Point라는 클래스에 가정 : 화이트보드의 좌표값(좌 상단 ->(0,0) / 우 하단 ->(100,100)
+//프로그래밍에 있어서 데이터의 제약이 필요할때가 존재
+//e.g)사람의 나이 : int age; ,where age>=1
+class Point
+{
+private:
+//public:
+	int x;   // x좌표의 범위 : 0 ~ 100
+	int y;   // y좌표의 범위 : 0 ~ 100
+public:
+	void SetX(int _x) { //SetX를 통해 간접 접근(x,y에 직접 접근할 수 는 없어도)
+		if (_x < 0 || _x>100)//데이터의 경계 검사와 그에 따른 적절한 처리
+		{
+			cout << "잘못된 데이터 입력" << endl;
+			return;
+		}
+		x = _x;
+	}
+};
+
+int main()
+{
+	int x, y;
+	cout << "좌표입력 : ";
+	cin >> x >> y;	//그림판의 클릭 좌표가 들어왔다고 가정
+					//-10 100이라는 데이터가 들어왔다고 가정.(사용자 실수 or 프로그래머의 모듈러 실수 등등)
+					//문제점 1.잘못된 값이 클래스에 초기됨.
+					//문제점 2.잘못된 값이 들어갔는데 , 잘못됬다고 알려주지 못하는 것
+					//public에 의해 직접 접근하는 것이 문제. ==> 직접 접근을 못하도록 막으면 됨 
+	Point p;
+	p.SetX(x);
+	//p.x = x;
+	//p.y = y;
+
+	cout << "입력 된 데이터를 이용해서 그림을 그림" << endl; //입력된 데이터를 기준으로 그림이 그려진다.라고 가정
+	return 0;
+}
+
+
+
+/*
+   InfoHiding2.cpp
+*/
+#include<iostream>
+using std::cout;
+using std::endl;
+using std::cin;
+
+class Point
+{
+	int x;   // x좌표의 범위 : 0 ~ 100
+	int y;   // y좌표의 점위 : 0 ~ 100
+public:
+	//Get,Set은 관례임 ==>Access Method
+	//x,y를 참조하기 위한 함수(간접 접근)
+	int GetX(){	return x; }
+	int GetY(){	return y; }
+
+	//x,y에 접근하기 위한 함수(직접 접근)
+	void SetX(int _x){ x=_x; }
+	void SetY(int _y){ y=_y; }
+	//==>>>무늬만 정보은닉이지 실제로는 은닉 안됨
+};
+
+int main()
+{
+	int x, y;
+	cout<<"좌표입력 : ";
+	cin>>x>>y;
+
+	Point p;
+	p.SetX(x);
+	p.SetY(y);
+
+	cout<<"입력 된 데이터를 이용해서 그림을 그림"<<endl;
+	return 0;
+}
+
+
+
+/*캡슐화*/
+/*
+캡슐화(Encapsulation)의 기본 개념
+ -관련 있는 데이터와 함수를 하나로 묶는 것(e.g : Account(계좌))
+
+C언어에서 함수 : 1 function = 1 기능.
+이게 하나의 기능인지 두개인지 판별하기 힘듬. => 전체적인 프로그램을 놓고 보면 어느정도 판별이 됨
+BUT 캡슐화는 더 어려움. 이러한 데이터와 함수를 클래스에 넣어야 하나 말아야 하나..
+
+★==>프로그래밍 할 때 클래스를 정의함에 있어서 캡슐화를 잘 시켜야겠다는 생각을 항상 가지기.!★
+
+
+
+*/
+
+
+
+//캡슐화가 잘 진행되지 않은 예제
+//프로젝트가 어느정도 진행되면, 클래스를 바꾸면 어렵고 위험함.
+#include<iostream>
+using std::cout;
+using std::endl;
+using std::cin;
+
+class Point
+{
+	int x;   // x좌표의 범위 : 0 ~ 100
+	int y;   // y좌표의 범위 : 0 ~ 100
+public:
+	//Access Method
+	int GetX() { return x; }
+	int GetY() { return y; }
+
+	void SetX(int _x);
+	void SetY(int _y);
+};
+
+void Point::SetX(int _x)
+{
+	//경계검사
+	if (_x<0 || _x>100) {
+		cout << "X좌표 입력 오류, 확인 요망" << endl;
+		return;
+	}
+	x = _x;
+}
+void Point::SetY(int _y)
+{
+	if (_y<0 || _y>100)
+	{
+		cout << "Y좌표 입력 오류, 확인 요망" << endl;
+		return;
+	}
+	y = _y;
+}
+
+class PointShow
+{
+public:
+	void ShowData(Point p)
+	{
+		cout << "x좌표: " << p.GetX() << endl;
+		cout << "y좌표: " << p.GetY() << endl;
+	}
+};
+
+int main()
+{
+	int x, y;
+	cout << "좌표입력 : ";
+	cin >> x >> y;
+
+	Point p;
+	p.SetX(x);
+	p.SetY(y);
+
+	PointShow show;
+	show.ShowData(p);
+
+	return 0;
+}
+
+
+
+
+
+
+/*캡슐화가 된 예제*/
+
+/*
+Encapsulation2.cpp
+*/
+#include<iostream>
+using std::cout;
+using std::endl;
+using std::cin;
+
+class Point
+{
+	int x;   // x좌표의 범위 : 0~100
+	int y;   // y좌표의 범위 : 0~100
+public:
+	int GetX() { return x; }
+	int GetY() { return y; }
+
+	void SetX(int _x);
+	void SetY(int _y);
+
+	void ShowData();  //캡슐화를 위해 추가된 함수.
+};
+
+void Point::SetX(int _x)
+{
+	if (_x<0 || _x>100) {
+		cout << "X좌표 입력 오류, 확인 요망" << endl;
+		return;
+	}
+	x = _x;
+}
+void Point::SetY(int _y)
+{
+	if (_y<0 || _y>100)
+	{
+		cout << "Y좌표 입력 오류, 확인 요망" << endl;
+		return;
+	}
+	y = _y;
+}
+
+void Point::ShowData()
+{
+	cout << "x좌표: " << x << endl;
+	cout << "y좌표: " << y << endl;
+}
+
+int main()
+{
+	int x, y;
+	cout << "좌표입력 : ";
+	cin >> x >> y;
+
+	Point p;
+	p.SetX(x);
+	p.SetY(y);
+	p.ShowData();
+
+	return 0;
+}
+
+
+/*캡슐화를 왜 해야 하는가 ????
+e.g)
+y2k 문제 ( 연도수를 2자리로 표기하는데, 4자리로 표현해야함.
+(C 언어)
+time : 전역변수 => 이와 관련된 모든 함수(입금,출금,이체,....) 다 뒤져봐야됨
+(C++)
+time 에 대한 모든 데이터와 함수를 클래스화(캡슐화를 잘함) => TIME만 보면됨.
+
+===> 캡슐화 요령 : CLASS에 A,B,C라는 변수가 있다고 가정 => 이 멤버변수와 관련된 모든 함수는 클래스에 들어와야됨. 다른 클래스에서 조작하면 안됨
+*/
+
+
+
+
+
+
+**객체의 생성 과정
+(정보은닉은 유지하기 위해서는 위의 2번과 같이 간접 접근을 통해 초기화를 했음
+그래서 생성과 동시에 초기화 하기 위해 생성자라는 문법적 요소가 등장)
+ -첫째. 메모리 할당
+ -둘째. 생성자의 호출
+==>객체를 위해서는 생성자의 호출까지 완료(e.g 클래스 100개 생성 -> 생성자 100번 호출)
+
++그림1
+
+#include <iostream>
+using std::cout; using std::endl;
+
+class AAA 
+{
+	int i, j;
+public:
+	//생성자	 1)클래스의 이름과 같음 2)리턴없음
+	AAA()
+	{
+		cout << "생성자 호출" << endl;
+		i = 10; j = 20;
+	}
+	//
+	void ShowData()
+	{
+		cout << i << ' ' << j << endl;
+	}
+
+};
+
+int main(void)
+{
+	AAA a; AAA b; AAA c;
+	a.ShowData();
+	b.ShowData();
+	c.ShowData();
+	return 0;
+}
+
+==>항상 생성과 동시에 10,20으로 초기화됨(우리가 원하는 값으로 초기화 안됨!)
+
+
+*생성자를 통한 인자의 전달
+ -이전의 객체 생성 방법은 구조체 변수의 선언과 동일한 방법
+ -Constructor2.cpp , Person3.cpp
+
+#include <iostream>
+using std::cout; using std::endl;
+
+class AAA 
+{
+	int i, j;
+public:
+	AAA(int _i,int _j) //생성자
+	{
+		i =_i; j = _j;
+	}
+	//
+	void ShowData()
+	{
+		cout << i << ' ' << j << endl;
+	}
+
+};
+
+int main(void)
+{
+	AAA a(111,222); //AAA(AAA클래스의 객체 생성) // aaa(객체의 이름은 aaa)
+					//(111,222) (111,222)를 인자로 받을 수 있는 생성자 호출
+	a.ShowData();
+
+	return 0;
+}
+
+*public 생성자, private 생성자
+ - public 생성자 : 어디서든 객체 생성 가능
+ - private 생성자 : 클래스 내부에서만 가능
+
+*객체 생성의 두가지 형태//둘다 표준임
+1)Person p=Person{"kim","013-333-5555",22);
+2)Person p("kim","013-333-5555",22); //많은 프로그래머가 이 방법으로 생성함
+
+*오해하기 쉬운 객체 생성
+Person p("kim","013-333-5555",22); //객체 생성
+Person p();			   //객체 생성 ? X : 리턴형이 클래스인 함수 
+=>Person p; 			   //약속(void 생성자 호출)
+==> 주의 ) 컴파일 오류 안남.
+
+
+*디폴트(default) 생성자
+ -생성자가 하나도 정의되어 있지 않은 경우
+ -자동으로 삽입이 되는 생성자(컴파일러가) 
+ -디폴트 생성자(void 생성자)가 하는 일? !!아무것도 없다!!
+ -Default1.cpp
+
+아래와 같이 쓰면
+class Point
+{
+	int x, y;
+public:
+	void print(){...}
+};
+아래와 같이 디폴트로 컴파일 됨
+class Point
+{
+	int x, y;
+public:
+	Point(){...}
+	void print() { ... }
+};
+
+
+*생성자의 특징
+ - 생성자도 함수다!
+ - 따라서 함수 오버로딩이 가능하다.
+ - 디폴트 매개 변수의 설정도 가능하다.
+ -Default2.cpp, Default3.cpp
+
+
+e.g)
+/*Default1.cpp*/
+#include<iostream>
+using std::cout;
+using std::endl;
+
+class Point
+{
+	int x, y;
+public:
+	//생성자
+	//Point(int _x , int _y ) -->문제 발생
+	Point(int _x=0 , int _y=0 ) 
+	{
+		x = _x, y = _y;
+	}
+	//Point() //생성자는 함수 -> c++의 함수가 지니는 의미를 그대로 지님.
+	//{
+		//x = 0;
+		//y = 0;
+	//}
+	void ShowData()
+	{
+		cout << x << ' ' << y << endl;
+	}
+};
+
+int main()
+{
+	Point p1(10, 20);   //10과 20을 인자로 받는 생성자 호출
+	p1.ShowData();
+
+	Point p2;   //void 생성자 호출.
+				//하나의 생성자가 있으므로 디폴트 생성자 생성 안됨.
+	p2.ShowData();
+	//Point p1; == Point p1(0,0)
+	//Point p2(10); == Point p2(10,0); 같은의미!
+	return 0;
+}
+
+
+==>> 생성자 : 정보 은닉을 무너뜨리지 않고 생성과 동시에 초기화! (모든 객체는 생성자 호출이 항상 이루어짐)
+
+
+////소멸자
+
+*객체가 소멸되는 시점은?
+ -기본 자료형 변수, 구조체 변수가 소멸되는 시점과 동일하다
+
+*함수 내에 선언된 객체
+ -함수 호출이 끝나면 소멸된다.
+
+*전역적으로 선언된 객체
+ -프로그램이 종료될 때 소멸된다.
+ -이렇게 객체 생성할 일 (거의) 없다!
+  ==>객체 지향에는 전역이라는 개념이 존재 하지 않음.
+
+==>
+class Person
+{
+	char *name;
+	char *phone;
+	int age;
+public:
+	Person(char*_name, char*_phone, int _age);
+	void ShowData(void);
+};
+
+Person::Person(char* _name, char* _phone, int _age)
+{
+	name = new char[strlen(_name) + 1];
+	strcpy(name, _name);
+	phone = new char[strlen(_phone) + 1];
+	strcpy(phone,_phone);
+	age = age;
+}
+==>동적 할당 해제에 대한 문제 발생(메모리 유출)
+==>void DelMemory();
+void Person::DelMemory()
+{
+ delete []name;
+ delete []phone;
+}
+==>객체 생성하고 기억하고 소멸하기 직전에 무조건 heap 영역 해제 해야됨 -> 부담스러움
+
+==>
+*생성자
+ - 객체의 맴버 변수 초기화를 위해 객체 생성 시 자동 호출 되는 함수
+*소멸자
+ - 객체의 메모리 반환을 위해서 객체 소멸 시 자동 호출되는 함수
+ - 클래스의 이름 앞에 ~가 붙는 형태
+ - 리턴하지 않으며, 리턴 타입도 없다.
+ - 전달인자 항상 void!
+ - 따라서 오버로딩, 디폴트 매개 변수의 선언 불가능!
+
+*객체 소멸 순서
+ - 첫째 : 소멸자 호출
+ - 둘째 : 메모리 반환
+
+*디폴트(Default)소멸자
+ -객체의 소멸 순서를 만족시키기 위한 소멸자
+ -명시적으로 소멸자 제공되지 않을 경우 자동 삽입
+ -디폴트 생성자와 마찬가지로 하는 일 없다.
+e.g) Point(){} // ~Point(){} <<디폴트 생성자, 소멸자
+
+*소멸자의 명시적 제공
+ -생성자에서 메모리 동적 할당을 하는 경우
+ -Debugging 코드의 작성(객체가 소멸 되는 시점을 알고 싶을때)
+
+
+
+
+
+==>Person1~6 까지 흐름대로 공부하기
+
+
+
+//4-4 클래스와 배열
+*객체 배열과 생성자
+ -객체 배열은 객체를 맴버로 지니는 배열이다.
+ -객체 배열은 기본적으로  void 생성자의 호출을 요구한다.
+ -PointArr1.cpp
+ 
+*객체 포인터 배열
+ -객체를 가리킬 수 있는 포인터를 멤버로 지니는 배열
+ -객체의 동적 생성 방법(PointArr2.cpp) <<중요!!!
+
+//4-5 this 포인터
+(연산자 오버로딩때 많이 쓰임
+=>이번 쳅터에서는 어디에 쓰이냐 보다는 무엇이냐 가 중요)
+this : 자기 참조 포인터
+
+/*this의 예제*/
+#include <iostream>
+using std::cout;
+using std::endl;
+
+class Data
+{
+	int aaa;
+	int bbb;
+public:
+	Data(int aaa, int bbb) {
+		//aaa=aaa;	//매개변수의 aaa가 지역변수로써 위의 맴버변수를 가리게됨. int i=10; i=i; 와 같음
+		this->aaa = aaa;
+
+		//bbb=bbb;
+		this->bbb = bbb;
+	}
+	void printALL() {
+		cout << aaa << " " << bbb << endl;
+	}
+};
+
+int main(void)
+{
+	Data d1(10, 20);
+	d1.printALL();
+	return 0;
+}
+
+
+
+//4-6 Friend 선언
+(스토리 보다는 그냥 문법적인 키워드로 따로 생각
+
+*전역 함수에 대한 friend 선언
+-friend1.cpp
+-전역 함수에게 private 영역 접근 허용
+
+*class에 대한 friend 선언
+-friend2.cpp
+
+-->friend는 단방향성임
+
+*friend 선언의 유용성
+ -유용하지 않다!
+ -정보 은닉에 위배되는 개념
+ -연산자 오버로딩에서 유용하게 사용
+ -그 전에는 사용하지 말자!
+
+*friend 선언으로만 해결 가능한 문제
+ -그런 것은 존재하지 않는다.
+ -연산자 오버로딩에서는 예외!
+
+
+//OOP
+Banking System v2.0
+-Account 구조체를 Account 클래스로 변경
+-생성자,소멸자,정보 은닉,캡슐화 고민!
+-객체의 저장은 포인터 배열을 기반으로
+
+//변경되는 Account 클래스
+class Account
+{
+int id;
+int balance;
+char *name;
+public:
+..멤버 함수들..
+}
+
++
+Account *pArray[100];
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,1415 @@
+-----------CH15.웹어플리케이션의 일반적인 구성 및 방명록 구현-----------------
+;이장에서 다룰 내용
+-웹 어플리케이션의 구성 요소
+-DAO 구현
+-서비스 구현
+-ConnectionProvider 처리
+-방명록 구현
+
+=>웹 어플리케이션을 개발할 때 클래스를 구성하는 전형적인 구조가 존재
+=>좋은 구조 소개 & 방명록 구현 =>어떻게 적용되는지 살펴보기
+
+---------------------------------------------------------------------------------------------
+
+//01 웹 어플리케이션의 전형적인 구성 요소
+
+=>웹 어플리케이션을 포함한 많은 소프트웨어는 초기 개발 이후 지속해서 유지보수(기능 개선 및 추가 등등)
+
+1)문제의 상황
+e.g)블로그의 글 목록을 일반적인 웹 화면 / RSS 피드의 두 가지로 제공하는 경우
+=>모두 동일한 데이터를 사용
+
+/*	일반적인 웹 화면 : list.jsp 	*/
+DB 쿼리 실행 코드(중복)
+<html>...</html>
+
+/*	RSS로 읽어오는 화면 : rss.jsp	*/
+DB 쿼리 실행 코드(중복)
+<xml>..</xml>
+
+=>JSON 형식으로 게시판 글 목록을 제공(기능 추가)
+/*	JSON 형식의 화면 : rest.jsp	*/
+DB 쿼리 실행 코드
+<xml>...</xml>
+
+=>DB 실행 쿼리 코드 변경시 3개의 파일 모두 변경해야함
+=>실수 확률 더 높아지고 유지 보수 힘듬
+
+2)문제 해결
+/* DB 쿼리 실행 코드를 포함한 클래스 설계	*/
+
+/*	일반적인 웹 화면 : list.jsp 	*/
+클래스사용
+<html>...</html>
+
+/*	RSS로 읽어오는 화면 : rss.jsp	*/
+클래스사용
+<xml>..</xml>
+
+/*	JSON 형식의 화면 : rest.jsp	*/
+클래스사용
+<xml>...</xml>
+
+=>변경해야하는 경우 하나의 클래스만 변경하면 됨
+
+===>중복된 코드를 만들지 않는 여러가지 방법 중, 하나 
+: 화면을 보여주기 위한 코드와 상관없이 사용자의 요청을 처리하는 코드를 별도 클래스로 분리
+  DB 처리와 같이 여러 기능에서 사용될 수 있는 코드를 별도 클래스로 분리
+  
+==>
+클래스를 알맞은 단위로 분리함으로써 중복된 코드 때문에 발생하는 문제를 없애고 클래스의 재사용 비율도 높일 수 있음.
+
+-----------
+
+//1.1 웹 어플리케이션의 주요 구성 요소
+;웹 어플리케이션의 구성 요소를 설계하는 방법은 많음
+=> 좋은 기본적인 구조는 밑의 그림
+
+JSP		-->				--Service 클래스	--> DAO 클래스
+										 |
+			MVC 프레임워크					 |
+										 |->
+JSP		-->				--Service 클래스	--> DAO 클래스
+
+-Service 클래스 	: 사용자의 요청을 처리하는 기능을 제공. 기능을 제공하기 위한 로직을 구현하며 DAO 클래스를 이용해서 DB 연동 처리.
+				 (가입 신청 처리, 글 목록 제공 등의 기능 구현)
+-DAO 클래스		: DB와 관련된 쿼리를 실행한다. Service 클래스들은 데이터를 DB에서 읽어오거나 DB에 데이터를 저장할 때 DAO 클래스 사용
+-JSP(뷰)			: Service 클래스가 실행한 결과를 화면에 출력하거나 Service가 기능을 수행하는데 필요한 데이터를 전달한다.
+-MVC 프레임워크	: 사용자의 요청을 Service에 전달하고 Service 의 실행 결과를 JSP와 같은 뷰에 전달한다. e.g 스프링 MVC				 
+
+=>이장에서는 Service 클래스와 dAO 클래스가 일반적으로 어떻게 구현되는지 + 간단한 방명록 예제로 실습
+
+-----------
+
+//1.2 데이터 접근 객체(Data Access Object)의 구현
+;DAO(Data Access Object) 클래스 : 데이터에 접근할 때 사용하는 객체를 위한 클래스
+=>일반적으로 DB 테이블마다 한 개의 DAO 클래스를 작성
+
+-insert() 메소드	: INSERT 쿼리를 실행
+-select() 메소드	: SELECT 쿼리를 실행. 검색 조건에 따라서 두 개 이상의 select() 메소드 제공
+-update() 메소드	: UPDATE 쿼리를 실행
+-delete() 메소드	: DELETE 쿼리를 실행
+
+=>테이블 칼럼과 매핑되는 프로퍼티를 갖는 클래스
+e.g)
+public class Message{				MESSAGE 테이블
+	private int id;  <----------->	MESSAGE_ID int not null
+	private String guestname; <-->  GUEST_NAME varchar(30)
+	...								...
+}
+
+
+1)
+insert() , update() 메소드 : 자바 객체로 부터 값을 읽어와 쿼리를 실행
+e.g)
+public int insert(Connection conn,Message message) throws SQLException{
+	PreparedStatement pstmt=null;
+	try{
+		pstmt=conn.prepareStatement("insert into message values(?,?,?)");
+		pstmt.setInt(1,message.getId());
+		pstmt.setString(2,message.guestName());
+		...
+		return pstmt.executeUpdate();
+	}finally{
+		if(pstmt!=null)try{pstmt.close();}catch(SQLException){}
+	}
+}
+
+2)
+select() 메소드 : SELECT 쿼리 실행 결과로부터 값을 읽어와 자바 객체를 생성해서 리턴
+e.g)
+public Message select(Connection conn,int messageId) throws SQLException{
+	PreparedStatement pstmt=null;
+	ResultSet rs=null;
+	
+	try{
+		pstmt=conn.prepareStatement("select * from message where message_id=?");
+		pstmt.setInt(1,messageId);
+		rs=pstmt.executeQuery();
+		
+		if(!rs.next()) return null;
+		
+		Message message=new Message();
+		message.setId(rs.getInt("message_id"));
+		message.setGuestName(rs.getString("guest_name"));
+		...
+		return message;
+	}finally{
+		if(rs!=null)try{rs.close();}catch(SQLException){}
+		if(pstmt!=null)try{pstmt.close();}catch(SQLException){}
+	}
+}
+
+
+cf)CRUD
+Create-Read-Update-Delete => DB 처리
+
+------
+
+/1.2.1 DAO 에서 Connection에 접근하는 방식
+;DAO가 쿼리를 실행하려면 Statement나 PreparedStatement가 필요 
+=>Connection 객체에 접근할 수 있어야 함
+=>Connection 객체에 접근하는 방식(1.직접 생성 // 2.생성자 // 3.메소드 파라미터)
+
+
+1)DAO 클래스의 메소드에서 직접 Connection을 생성
+public class MessageDao{
+	public Message selectById(int message) throws SQLException{
+		Connection conn=null;
+		PreparedStatement pstmt=null;
+		ResultSet rs=null;
+		try{
+			conn=DriverManager.getConnection(jdbcUrl,userId,userPassword);
+			...
+		}finally{
+			..
+			if(conn!=null)try{conn.close();}catch(SQLException ex){}
+		}
+	}
+}
+
+==>
+MessageDao dao=...//MessageDao 객체를 구함
+Message message=dao.selectById(messageId);	//커넥션 생성
+message.increaseRedCount();
+dao.updateReadCount(messageId,meesage.getReadCount());	//커넥션 생성
+
+=>단점 : 메소드를 실행할 때 마다 매번 Connection을 생성
+=>위 코드는 하나의 기능을 실행할 때 두 개의 DAO 메소드를 호출.
+=>각 DAO 메소드에서 Connection을 생성하므로, 두 개의 Connection 객체를 생성
+=>두 메소드를 하나의 트랜잭션으로 처리할 수 X
+
+
+2)DAO 객체를 생성할 때 생성자로 Connection을 전달 받기
+public class MessageDao{
+	private Connection conn;
+	public MessageDao(Connection conn){
+		this.conn=conn;
+	}
+	
+	public Message selectById(int messageId) throws SQLException{		
+		PreparedStatement pstmt=null;
+		ResultSet rs=null;
+		try{
+			conn=conn.getConnection(jdbcUrl,userId,userPassword);
+			...
+		}finally{
+			..			
+		}
+	}
+}
+
+==>
+Connection conn=null;
+try{
+	conn=..//커넥션을 구함
+	MessageDao dao=new MessageDao(conn);
+	Message message=dao.selectById(messageId);
+	message.increseReadCount();
+	dao.updateReadCount(messageId,message.getReadCount());
+}finally{
+	if(conn!=null)try{conn.close();}catch(SQLException ex){}
+}
+
+=>하나의 Connection 객체를 사용 -> JDBC 트랜잭션 처리 가능
+=>단점 : 매번 새로운 DAO 객체를 생성
+
+
+
+3)DAO 클래스의 메소드 파라미터로 Connection을 전달 받기
+public class MessageDao{
+	public Message selectById(Connection conn,int messageId) throws SQLException{		
+		PreparedStatement pstmt=null;
+		ResultSet rs=null;
+		try{
+			pstmt=conn.prepareStatement(query,userId,password);
+			...
+		}finally{
+			..			
+		}
+	}
+}
+
+==>
+Connection conn=null;
+try{
+	conn=..//커넥션 구함
+	MessageDao dao=..//DAO 객체를 구함
+	Message message=dao.selectById(conn,messageId);
+	message.increaseReadCount(conn);
+	dao.updateReadCount(conn,messageId,message.getReadCount());
+}finally{
+	if(conn!=null)try{conn.close();}catch(SQLException ex){}
+}
+
+=>한 개의 Connection 객체 사용 ->JDBC 트랜잭션 사용 가능
+=>DAO 객체를 매번 생성하지 않아도 됨
+=>BUT DAO 객체의 메소드를 실행할 때마다 Connection 객체를 파라미터로 전달해야 하므로 메소드 호출 코드가 다소 길어짐
+=>   + 실수로 한 트랜잭션을 실행해야 할 메소드에 다른 Connection을 전달할 수 있음
+
+
+==>자바의 ThreadLocal을 사용하면 좀 더 편리한 방법으로 Connection 객체를 전달가능
+http://javacan.tistory.com/entry/ThreadLocalUsage 참고
+
+------
+
+/1.2.2 간단한 close() 및 rollback() 처리 코드를 위한 JdbcUtil
+;Connection,Statement,ResultSet과 같은 클래스는 사용이 끝나면 close() 메소드를 호출해서 자원을 반환해야 함
+=>close()처리 코드를 줄이기 위해 보조 클래스 작성
+
+
+/*	chap15\src\jdbc\JdbcUtil.java	*/
+package jdbc;
+
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+public class JdbcUtil {
+	public static void close(ResultSet rs){
+		if(rs!=null)try{rs.close();}catch(SQLException ex){}
+	}
+	
+	public static void close(Statement stmt){
+		if(stmt!=null)try{stmt.close();}catch(SQLException ex){}
+	}
+	
+	public static void close(Connection conn){
+		if(conn!=null)try{conn.close();}catch(SQLException ex){}
+	}
+	
+	public static void rollback(Connection conn){
+		if(conn!=null)try{conn.rollback();}catch(SQLException ex){}
+	}	
+}
+
+
+==>
+try{
+	..
+}finally{
+	JdbcUtil.close(rs);	
+	JdbcUtil.close(pstmt);
+	JdbcUtil.close(conn);
+}
+와 같이 처리 가능.
+
+
+cf)템플릿 메소드 패턴(Templete Method Pattern)과 전략 패턴( Strategy Pattern)을 사용하면 PreparedStatement의
+   생성부터 쿼리 실행과 같은 코드의 반복되는 코드 입력도 줄일 수 있음
+   http://javacan.tistory.com/entry/116 에서 확인하기
+  
+-----------
+
+//1.3 서비스 클래스 구현
+;서비스 클래스 : 사용자의 요청을 처리하기 위한 기능을 제공
+=>DAO를 통해 데이터에 접근하고 기능을 수행하는 데 필요한 로직을 구현
+
+e.g)게시글 조회 기능
+1.DAO의 select() 메소드를 이용해서 테이블에서 지정한 식별 값을 갖는 데이터를 읽어온다.
+	A.데이터가 존재하지 않으면 익셉션 발생한다.
+	B.데이터가 존재하면 데이터 값을 갖는 Article 객체를 리턴한다.
+2.Article 객체의 조회수 값을 1 증가 시킨다.
+3.DAO의 update()메소드를 이용해서 변경된 조회수 값을 테이블에 반영한다.
+
+
+public class ReadArticleService{
+	..
+	public Article read(int articleId){
+		Connection conn=null;
+		try{
+			conn=..//Connection 구함
+			conn.setAutoCommit(false);	//트랜잭션 시작
+		
+			//기능을 구현하는 데 필요한 DAO를 구한다.
+			ArticleDao articleDao=ArticleDao.getInstance();
+		
+			Article article=articleDao.selectById(conn,articleId);
+			if(article==null){
+				throw new ArticleNotFoundException(articleId);
+			}
+			article.increaseReadCount();	//조회수 증가
+			articleDao.updateReadCount(conn,article);	//증가 된 조회수 DB에 update
+		
+			conn.commit();	//commit()
+			return article;	//article 반환
+		}catch(ArticleNotFoundException ex){
+			JdbcUtill.rollback(conn);
+			throw ex;
+		}catch(SQLException ex){
+			JdbcUtil.rollback(conn);
+			throw new ArticleServiceException("에러 발생 : "+ex.getMessage(),ex);
+		}finally{
+			JdbcUtil.close(conn);
+		}
+	}
+}
+
+
+=>서비스 클래스에서 제공하기에 알맞은 기능 단위
+-게시글 목록 제공
+-게시글 쓰기
+-회원 등록
+-회원 정보 수정
+
+e.g)JSP에서 서비스 클래스 이용하는 예제
+<%
+	int messageId=Integer.parseInt(request.getParameter("messageId");
+	ReadArticleService service=ReadArticleService.getInstance();
+	Article article=service.read(messageId);
+	..
+%>
+글 제목 : <%=article.getSubject() %>
+조회수 : <%=article.getReadConut() %>
+
+------
+
+/1.3.1 서비스 클래스와 트랜잭션 처리
+;서비스 클래스가 제공하는 기능을 트랜잭션 범위에서 처리하려면 : Connection.setAutoCommit(false) & Connection.commit()
+
+try{
+	conn=..//Connection을 구한다
+	//로직을 수행하기 전에 트랜잭션 시작
+	conn.setAutoCommit(false);
+
+	...로직 실행
+	
+	//로직을 수행한 뒤 트랜잭션 커밋
+	conn.commit();
+}catch(SQLException ex){
+	if(conn!=null)
+		try{
+			conn.rollback();	//로직 실행 도중 익셉션이 발생하면 트랜잭션 롤백
+		}
+	...
+}finally{
+	...
+}
+
+=>로직을 수행하는 도중 익셉션이 발생하면 잘못된 데이터가 DB 에 반영되지 않도록 catch 블록에서 트랜잭션을 롤백함
+	
+------
+
+/1.3.2 서비스 클래스의 익셉션 처리
+
+=>내부적으로 DB 처리 실패와 같은 익셉션이 발생하면 , 그대로 전파하지 말고 서비스에 알맞은 익셉션을 생성해서 발생시키는 것이 좋음
+e.g) DeleteMessageService 클래스
+
+public void deleteMessage(int messageId)
+	Connection conn=null;
+	try{
+		conn=..;//Connection 구하기
+		conn.setAutoCommit(false);
+		
+		MessageDao dao=MessageDao.getInstance();
+		dao.deleteById(messageId);	//익셉션이 발생하면?
+		
+		conn.commit();
+	}catch(SQLException ex){
+		JdbcUtil.rollback(conn);
+	}finally{
+		JdbcUtil.close(pstmt);
+	}
+}
+
+=>deleteById() 메소드 실행 중 익셉션이 발생하면 rollback()만 하고 다른 처리 X
+=>익셉션 처리하기
+public void deleteMessage(int messageId)
+	Connection conn=null;
+	try{
+		conn=..;//Connection 구하기
+		conn.setAutoCommit(false);
+		
+		MessageDao dao=MessageDao.getInstance();
+		Message massage=dao.selectById(meesageId);
+		if(message==null){
+			//논리적으로 잘못된 경우에도 익셉션 발생 시키기
+			throw new MessageNotFoundException(messageId);
+		}
+		
+		dao.deleteById(messageId);
+		
+		conn.commit();
+	}catch(SQLException ex){
+		JdbcUtil.rollback(conn);
+		throw new DeleteFailException("삭제에 실패했습니다.",ex);
+	}finally{
+		JdbcUtil.close(pstmt);
+	}
+}
+
+=>
+try{
+	deleteMessageService.deleteMessage(messageId);
+}catch(MessageNotFoundException ex){
+	//존재하지 않는 게시판 삭제하려 했을 때 처리
+	..
+}catch(DeleteFailException ex){
+	//삭제에 실패했음을 의미
+	..
+}
+
+-----------
+
+//1.4 싱글톤(Singleton) 패턴을 이용한 구성 요소 구현
+;다수의 서비스 클래스는 객체를 여러번 만들더라도 실제로 수행하는 기능은 동일한 경우가 많음
+
+e.g)
+ReadArticleService service1=new ReadArticleService();
+ReadArticleService service2=new ReadArticleService();
+
+Article article1=service1.read(messageId);
+Article article2=service2.read(messageId);
+Article article3=service1.read(messageId);
+
+=>Singleton 패턴 적용하기
+
+public class ReadArticleService{
+	//유일한 객체를 정적 필드에 저장
+	private static ReadArticleService instance=new ReadArticleService();
+	
+	//유일한 객체에 접근할 수 있는 정적 메소드 정의
+	public static ReadArticleService getInstance(){
+		return instance;
+	}
+	
+	//생성자를 private으로 설정해서 외부에서 접근하지 못함
+	private ReadArticleService(){}
+}
+
+
+=>
+ReadArticleService service1=new ReadArticleService();
+Article article=service1.read(messageId);
+
+ReadArticleService service2=new ReadArticleService(); //service1과 같은 인스턴스 참조
+
+-----------
+
+//1.5 Connetion을 제공하는 ConnetionProvider 만들기
+
+=>JDBC API를 이용해서 DB 프로그래밍
+Connetion conn=null;
+try{
+	conn=DriverManager.getConnection(jdbcUrl,userId,userPassword);
+	..
+
+=>JDBC URL , 사용자 아이디, 암호가 모든 코드에 중복
+=>JDBC URL을 변경 or 커넥션 풀 구현을 DBCP에서 다른 라이브러리로 변경하려면 모든 코드에 DriverManager.getConnection() 부분을 수정
+
+
+=>Connection객체를 구하는 예제
+/*	chap15\src\jdbc\connection\ConnetionProvider.java	*/
+
+package jdbc.connection;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+
+class ConnectionProvider {
+	public static Connection getConnection() throws SQLException{
+		return DriverManager.getConnection("jdbc:apache:commons:dbcp:guestbook");					
+	}
+}
+
+=>DBCP 커넥션 풀을 사용할 때의 JDBC URL // 방명록 예제 db : guestbook
+=>
+Connection conn=null;
+try{
+	conn=ConnectionProvider.getConnection();
+	..
+
+cf)
+스프링과 같은 프레임워크를 사용하면, Connetion과 관련된 설정을 외부의 설정 파일에서 변경할 수 있도록 하므로
+COnnectionProvider와 같은 클래스를 직접 구현하지 않아도 됨.
+
+---------------------------------------------------------------------------------------------
+
+//02 방명록 구현
+;MySQL에서 동작하는 방명록 예제를 작성
+
+-----------
+
+//2.1 방명록을 구성하는 클래스 구조
+
+------서비스 클래스-------
+ GetMessageListService
+ WriteMessageService		---->MessageDao
+ DeleteMessageService
+----------------------
+		|
+		V
+-----------JDBC Connection 관련--------
+ConnetionProvider 	DBCPInit 	JdbcUtil
+----------------------------------------
+
+
+1)서비스 관련 클래스가 제공하는 기능
+-GetMessageListService 	: 요청한 페이지 번호에 포함된 메시지 목록을 구한다.
+-WriteMesageService		: 메시지를 작성하는(등록하는)기능을 제공
+-DeleteMessageService	: 작성한 메시지를 삭제하는 기능을 제공
+
+2)DAO관련 클래스가 제공하는 기능
+-MessageDao				: GUESTBOOK_MESSAGE 테이블에 대한 쿼리를 실행
+
+3)JDBC COnnection 관련 클래스
+-ConnectionProvide		: Connection을 제공
+-DBCPInit				: 초기화 서블릿(14장에서 봤던)
+-JdbcUtil				: Connetion을 위한 보조 기능 제공
+
+
+-----------
+
+//2.2 데이터베이스와 테이블 생성
+
+1)테이블 생성
+create database guestbook default character set utf8;
+
+2)사용자 권한주기
+create user 'jspexam'@'localhost' identified by 'jsppw';
+grant all privileges on guestbook.* to 'jspexam'@'localhost';
+
+create user 'jspexam'@'%' identified by 'jsppw';
+grant all privileges on guestbook.* to 'jspexam'@'%';
+
+
+3)테이블 생성하기
+guestbook_message 테이블의 스키마
+필드이름		필드 타입		설명
+MESSAGE_ID	INT			메시지 번호(PK)
+GUEST_NAME	VARCHAR(5)	작성자 이름
+PASSWORD	VARCHAR(10)	메시지암호
+MESSAGE		LONG VARCHAR 메시지 내용
+
+=>쿼리
+create table guestbook_message(
+	message_id int not null auto_increment primary key,
+    guest_name varchar(50) not null,
+    password varchar(10) not null,
+    message text not null
+)engine=InnoDB default character set=utf8;
+
+=>
+auto_increment == 자동으로 1씩 증가하는 칼럼(INSERT 쿼리를 수행할 때 값을 지정하지 않으면 해당 칼럼에 1이 증가된 값 삽입)
+
+-----------
+
+//2.3 이클립스 프로젝트 생성과 필요 모듈 복사
+commons-dbcp2-2.1.1.jar
+commons-logging-1.2.jar
+commons-pool2-2.4.2.jar
+mysql-connector-java-5.1.39-bin.jar
+jstl-1.2.jar
+
+파일 복사
+
+
+-----------
+
+//2.4 커넥션 풀 설정 위한 DBCPInit 클래스 구현과 web.xml 설정
+
+/* chap15\src\jdbc\DBCPInit.java */
+package jdbc;
+
+import java.sql.DriverManager;
+import java.util.Properties;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+
+import org.apache.commons.dbcp2.BasicDataSource;
+import org.apache.commons.dbcp2.BasicDataSourceFactory;
+import org.apache.commons.dbcp2.ConnectionFactory;
+import org.apache.commons.dbcp2.DriverManagerConnectionFactory;
+import org.apache.commons.dbcp2.PoolableConnection;
+import org.apache.commons.dbcp2.PoolableConnectionFactory;
+import org.apache.commons.dbcp2.PoolingDriver;
+import org.apache.commons.pool2.ObjectPool;
+import org.apache.commons.pool2.impl.GenericObjectPool;
+import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
+
+public class DBCPInit extends HttpServlet {
+	@Override
+	public void init() throws ServletException {
+		loadJDBCDriver();
+		initConnectionPool();
+	}
+
+	private void loadJDBCDriver() {
+		try {
+			Class.forName("com.mysql.jdbc.Driver");
+		} catch (ClassNotFoundException ex) {
+			throw new RuntimeException("fail to load JDBC Driver", ex);
+		}
+	}
+
+	private void initConnectionPool() {
+		try {
+			//변경 부분 jdbcUrl
+			String jdbcUrl = 
+					"jdbc:mysql://localhost:3306/guestbook?" + 
+					"useUnicode=true&characterEncoding=utf8";
+			String username = "jspexam";
+			String pw = "jsppw";
+
+			ConnectionFactory connFactory = 
+					new DriverManagerConnectionFactory(jdbcUrl, username, pw);
+
+			PoolableConnectionFactory poolableConnFactory = 
+					new PoolableConnectionFactory(connFactory, null);
+			poolableConnFactory.setValidationQuery("select 1");
+
+			GenericObjectPoolConfig poolConfig = new GenericObjectPoolConfig();
+			poolConfig.setTimeBetweenEvictionRunsMillis(1000L * 60L * 5L);
+			poolConfig.setTestWhileIdle(true);
+			poolConfig.setMinIdle(4);
+			poolConfig.setMaxTotal(50);
+
+			GenericObjectPool<PoolableConnection> connectionPool = 
+					new GenericObjectPool<>(poolableConnFactory, poolConfig);
+			poolableConnFactory.setPool(connectionPool);
+			
+			Class.forName("org.apache.commons.dbcp2.PoolingDriver");
+			PoolingDriver driver = 
+					(PoolingDriver) DriverManager.getDriver("jdbc:apache:commons:dbcp:");
+			driver.registerPool("chap14", connectionPool);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+}
+
+
+
+
+/*	web.xml	 추가 내용 	*/
+  <servlet>
+  	<servlet-name>DBCPInit</servlet-name>
+  	<servlet-class>jdbc.DBCPInit</servlet-class>
+  	<load-on-startup>1</load-on-startup>
+  </servlet>
+  
+
+-----------
+
+//2.5 Message 클래스 작성 
+;guestbook_message 테이블에서 읽어온 값을 저장하거나 또는 사용자가 입력한 값을 DAO 에 전달할 때 사용되는 클래스
+
+/*	chap15/src/guestbook/model/Message.java	*/
+package guestbook.model;
+
+public class Message {
+	private int id;
+	private String guestName;
+	private String password;
+	private String message;
+	
+	public int getId() {
+		return id;
+	}
+	public void setId(int id) {
+		this.id = id;
+	}
+	public String getGuestName() {
+		return guestName;
+	}
+	public void setGuestName(String guestName) {
+		this.guestName = guestName;
+	}
+	public String getPassword() {
+		return password;
+	}
+	public void setPassword(String password) {
+		this.password = password;
+	}
+	public String getMessage() {
+		return message;
+	}
+	public void setMessage(String message) {
+		this.message = message;
+	}
+	public boolean hasPassword(){
+		return password!=null&&!password.isEmpty();
+	}
+	public boolean matchPassword(String pwd){
+		return password!=null&&password.equals(pwd);
+	}	
+}
+  
+-----------
+
+//2.6 MessageDao 클래스 구현
+;guestbook_message 테이블에 대한 CRUD 메소드를 제공
+
+package guestbook.dao;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import guestbook.model.Message;
+import jdbc.JdbcUtil;
+
+public class MessageDao {
+	//싱글톤 패턴
+	private static MessageDao messageDao=new MessageDao();
+	private MessageDao(){}
+	public static MessageDao getInstance(){
+		return messageDao;
+	}
+	
+	//insert 쿼리 실행 메소드
+	public int insert(Connection conn,Message message) throws SQLException{
+		PreparedStatement pstmt=null;
+		try{
+			//message_id는 자동으로 1씩 증가하므로 삽입X
+			pstmt=conn.prepareStatement("insert into guestbook_message "+"(guest_name,password,message) values(?,?,?)");
+			pstmt.setString(1,message.getGuestName());
+			pstmt.setString(2,message.getPassword());
+			pstmt.setString(3,message.getMessage());
+			return pstmt.executeUpdate();			
+		}finally{
+			JdbcUtil.close(conn);
+		}
+	}
+	
+	//select 쿼리 실행 메소드
+	public Message select(Connection conn,int messageId) throws SQLException{
+		PreparedStatement pstmt=null;
+		ResultSet rs=null;
+		try{
+			pstmt=conn.prepareStatement("select * from guestbook_message where message_id=?");
+			pstmt.setInt(1,messageId);
+			rs=pstmt.executeQuery();			
+			if(rs.next()){	//messageId의 레코드가 존재하면
+				return makeMessageFromResultSet(rs);
+			}else{		//존재하지 않으면
+				return null;
+			}
+		}finally{
+			JdbcUtil.close(rs);
+			JdbcUtil.close(pstmt);
+		}
+	}
+	
+	//guestbook_message 테이블의 전체 레코드 개수 
+	public int selectCount(Connection conn) throws SQLException{
+		Statement stmt=null;
+		ResultSet rs=null;
+		try{
+			stmt=conn.createStatement();
+			rs=stmt.executeQuery("select count(*) from guestbook_message");
+			rs.next();
+			return rs.getInt(1);
+		}finally{
+			JdbcUtil.close(rs);
+			JdbcUtil.close(stmt);			
+		}
+	}
+	
+	//guestbook_message 테이블의 데이터를 message_id 내림차순으로 정렬해서 조회
+	public List<Message> selectList(Connection conn,int firstRow,int endRow) throws SQLException{
+		PreparedStatement pstmt=null;
+		ResultSet rs=null;
+		try{
+			pstmt=conn.prepareStatement("select * from guestbook_message "+"order by message_id desc limit ?,?"); //select 쿼리에서 내림차순 정렬
+			pstmt.setInt(1,firstRow-1);
+			pstmt.setInt(2,endRow-firstRow+1);
+			rs=pstmt.executeQuery();
+			
+			if(rs.next()){
+				List<Message> messageList=new ArrayList<Message>();
+				do{
+					messageList.add(makeMessageFromResultSet(rs));	//저장순서 유지하게끔 ArrayList 사용
+				}while(rs.next());
+				return messageList;
+			}else{
+				return Collections.emptyList();
+			}			
+		}finally{
+			JdbcUtil.close(rs);
+			JdbcUtil.close(pstmt);
+		}
+	}
+	
+	//guestbook_message 테이블에서 message_id 칼럼 값이 messageId인 레코드 삭제
+	public int delete(Connection conn,int messageId) throws SQLException{
+		PreparedStatement pstmt=null;
+		try{
+			pstmt=conn.prepareStatement("delete from guestbook_message where member_id=?");
+			pstmt.setInt(1,messageId);
+			return pstmt.executeUpdate();
+		}finally{
+			JdbcUtil.close(pstmt);
+		}
+	}	
+		
+	
+	//ResultSet에서 Message 생성 & 반환
+	private Message makeMessageFromResultSet(ResultSet rs) throws SQLException{
+		Message message=new Message();
+		message.setId(rs.getInt("message_id"));
+		message.setGuestName(rs.getString("guest_name"));
+		message.setPassword(rs.getString("password"));
+		message.setMessage(rs.getString("message"));
+		return message;
+	}
+}
+
+
+
+=>
+select * from TABLENAME .. limit [시작행번호],[읽어올개수]
+:지정한 행부터 지정한 개수만큼 행을 가져옴(시작행은 0임)
+
+=>limit문을 사용하면 간단하게 페이징을 구현할 수 있음
+--첫 번째 행부터 10개의 행 조회
+select * from guestbook_message order by message_id desc limit 0,10;
+
+--11번째 행부터 10개의 행 조회
+select * from guestbook_message order by message_id desc limit 10,10;
+
+--21번째 행부터 10개의 행 조회
+select * from guestbook_message order by message_id desc limit 20,10;
+
+
+-----------
+
+//2.7 서비스 클래스의 구현
+
+-GeMEssageListService	: 방명록에 등록된 메시지 목록 제공
+-WriteMessageService	: 신규 메시지 등록 기능
+-DeleteMessageService	: 메시지 삭제 기능
+
+
+=>방명록 예제에서 사용하는 서비스 클래스들은 DAO 클래스 사용과정에서 예외처리를 아래와 같이 할 것
+try{	
+	...
+}catch(SQLException ex){
+	..
+	throw new ServiceException("메시지 목록 구하기 실패",ex);
+}
+
+
+/* chap15/src/guestbook/service/ServiceException.java	*/
+package guestbook.service;
+
+public class ServiceException extends RuntimeException{
+	public ServiceException(String message,Exception cause){
+		super(message,cause);
+	}
+	
+	public ServiceException(String message){
+		super(message);
+	}
+}
+
+
+------
+
+/2.7.1 GetMessageListService 클래스의 구현
+;요청한 페이지 번호에 해당하는 메시지 목록을 제공하는 getMessageList() 메소드를 제공
+public class GetMessageListService{
+	...
+	public MessageListView getMessageList(int pageNumber){
+		throws ServiceException{
+		...
+	}
+}
+
+MessageListView 클래스 : 요청한 페이지 번호, 요청한 페이지의 메시지 목록, 전체 메시지 개수, 페이지 개수, 페이지 당 보여줄 메시지 개수 등
+
+
+/*	chap15/src/guestbook/service/MessageListView.java	*/
+package guestbook.service;
+
+import java.util.List;
+import guestbook.model.Message;
+
+public class MessageListView {
+	private int messageTotalCount;
+	private int currentPageNumber;
+	private List<Message> messageList;
+	private int pageTotalCount;
+	private int messageCountPerPage;
+	private int firstRow;
+	private int endRow;
+	
+	public MessageListView(List<Message> messageList,int messageTotalCount,int currentPageNumber,int mesageCountPerPage,int startRow,int endRow){
+		this.messageList=messageList;
+		this.messageTotalCount=messageTotalCount;
+		this.currentPageNumber=currentPageNumber;
+		this.messageCountPerPage=messageCountPerPage;
+		this.firstRow=startRow;
+		this.endRow=endRow;
+	}
+	
+	public void calculatePageTotalCount(){
+		if(messageTotalCount==0)
+			pageTotalCount=0;
+		else{
+			pageTotalCount=messageTotalCount/messageCountPerPage;
+			if(messageTotalCount%messageCountPerPage>0)
+				pageTotalCount++;
+		}
+	}
+	
+	public int getMessageTotalCount(){
+		return messageTotalCount;
+	}
+	
+	public int getCurrentPageNumber(){
+		return currentPageNumber;
+	}
+	
+	public List<Message> getMessageList(){
+		return messageList;
+	}
+	
+	public int getPageTotalCount(){
+		return pageTotalCount;		
+	}
+	
+	public int getMessageCountPerPage(){
+		return messageCountPerPage;
+	}
+	
+	public int getFirstRow(){
+		return firstRow;
+	}
+	
+	public int getEndRow(){
+		return endRow;
+	}
+	
+	public boolean isEmpty(){
+		return messageTotalCount==0;
+	}	
+}
+
+
+/*	GetMessageListService	*/
+1.전체 메시지 개수를 구한다. MessageDao의 selectCount() 메소드를 사용하낟.
+2.요청한 페이지 번호에 해당하는 메시지의 시작 행과 끝 행을 구한다
+3.시작 행과 끝 행에 포함된 메시지 목록을 구한다. MessageDao의 select() 메소드를 사용한다.
+4.MessageViewList 객체를 리턴한다.
+
+
+
+package guestbook.service;
+
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.List;
+import java.util.Collections;
+
+import guestbook.dao.MessageDao;
+import guestbook.model.Message;
+import jdbc.JdbcUtil;
+import jdbc.connection.ConnectionProvider;
+
+
+
+public class GetMessageListService {
+	private static GetMessageListService instance=new GetMessageListService();
+	private static final int MESSAGE_COUNT_PER_PAGE=3;
+	private GetMessageListService(){}
+	
+	public static GetMessageListService getInstance(){
+		return instance;
+	}
+	
+	public MessageListView getMessageList(int pageNumber){
+		Connection conn=null;
+		int currentPageNumber=pageNumber;
+		try{
+			conn=ConnectionProvider.getConnection();
+			MessageDao messageDao=MessageDao.getInstance();
+			
+			int messageTotalCount=messageDao.selectCount(conn);
+			
+			List<Message> messageList=null;
+			int firstRow=0;
+			int endRow=0;
+			
+			if(messageTotalCount>0){
+				firstRow=(pageNumber-1)*MESSAGE_COUNT_PER_PAGE+1;
+				endRow=firstRow+MESSAGE_COUNT_PER_PAGE-1;
+				messageList=messageDao.selectList(conn, firstRow,endRow);				
+			}else{
+				currentPageNumber=0;
+				messageList=Collections.emptyList();
+			}
+			
+			return new MessageListView(messageList,messageTotalCount,currentPageNumber,MESSAGE_COUNT_PER_PAGE,firstRow,endRow);			
+		}catch(SQLException e){
+			throw new ServiceException("목록 구하기 실패 : "+e.getMessage(),e);
+		}finally{
+			JdbcUtil.close(conn);
+		}
+	}
+}
+
+------
+
+/2.7.2 WriteMessageService 클래스 구현
+
+/*	guestbook/service/WriteMessageService.java	*/
+
+package guestbook.service;
+
+import java.sql.Connection;
+import java.sql.SQLException;
+
+import guestbook.dao.MessageDao;
+import guestbook.model.Message;
+import jdbc.JdbcUtil;
+import jdbc.connection.ConnectionProvider;
+
+public class WriteMessageService {
+	private static WriteMessageService instance=new WriteMessageService();
+	private WriteMessageService(){}
+	public static WriteMessageService getInstance(){
+		if(instance==null)
+			instance=new WriteMessageService();
+		return instance;
+	}
+	
+	public void writeMessage(Message message){
+		Connection conn=null;
+		try{
+			conn=ConnectionProvider.getConnection();
+			MessageDao messageDao=MessageDao.getInstance();
+			messageDao.insert(conn, message);			
+		}catch(SQLException ex){
+			throw new ServiceException("메시지 등록 실패 : "+ex.getMessage(),ex);
+		}finally{
+			JdbcUtil.close(conn);
+		}
+	}	
+}
+
+=>Write에서는 SQL INSERT 에 맞춰서 예외 검사를 해줘야함
+if(message.getGuestName()==null||message.getGuestName.isEmpty()){
+	throw new IllegalArgumentException("invalid guest name",message);
+}
+
+------
+
+/2.7.3 DeleteMessageService 클래스의 구현
+
+1.지정한 번호에 해당하는 메시지를 검색한다.MessageDao.select() 메소드를 사용
+2.메시지가 존재하지 않으면 익셉션을 발생한다.
+3.메시지에 암호가 지정되어 있지 않으면 익셉션을 발생한다.
+4.메시지의 메시지와 파라미터로 전달받은 암호가 다르면 익셉션을 발생
+5.메시지를 삭제한다. MessageDao.delete() 메소드 이용
+
+
+예외처리 클래스 : MessageNotFoundException , InvalidPasswordException
+
+/*	없는 메시지 삭제 요청 : guestbook.service.MessageNotFoundException	*/
+package guestbook.service;
+
+public class MessageNotFoundException extends ServiceException{	
+	public MessageNotFoundException(String message){
+		super(message);
+	}
+}
+
+
+/*	잘못 된 비밀번호 : guestbook.service.InvalidPasswordException	*/
+package guestbook.service;
+
+public class InvalidPasswordException extends ServiceException{
+	
+	public InvalidPasswordException(String message){
+		super(message);
+	}
+}
+
+
+/*	guestbook.service.DeleteMessageService.java		*/
+package guestbook.service;
+
+import java.sql.Connection;
+import java.sql.SQLException;
+
+import guestbook.dao.MessageDao;
+import guestbook.model.Message;
+import jdbc.JdbcUtil;
+import jdbc.connection.ConnectionProvider;
+
+public class DeleteMessageService {
+	private static DeleteMessageService instance=new DeleteMessageService();
+	private DeleteMessageService(){}
+	public static DeleteMessageService getInstance(){
+		if(instance==null)
+			instance=new DeleteMessageService();
+		return instance;
+	}
+	
+	public void deleteMessage(int messageId,String password){
+		Connection conn=null;
+		try{
+			conn=ConnectionProvider.getConnection();
+			conn.setAutoCommit(false);	//트랜잭션 
+			
+			MessageDao messageDao=MessageDao.getInstance();
+			Message message=messageDao.select(conn, messageId);	//삭제할 message 인스턴스 얻음
+			
+			if(message==null)	//메시지가 존재하지 않으면 예외처리
+				throw new MessageNotFoundException("메시지 없음");
+			
+			if(!message.matchPassword(password))	//비밀번호 틀린 것 예외처리
+				throw new InvalidPasswordException("bad password");
+			
+			messageDao.delete(conn, messageId);	//해당 메시지 삭제
+			conn.commit();	//커밋		
+		}catch(SQLException ex){
+			JdbcUtil.rollback(conn); //처리 도중 예외 발생하면 롤백
+			throw new ServiceException("삭제 실패 : "+ex.getMessage(),ex);
+		}finally{
+			JdbcUtil.close(conn);
+		}
+	}
+}
+
+-----------
+
+//2.8 JSP에서 서비스 사용하기
+;DB와 자바 코드 완성 -> JSP 에서 이들 클래스를 사용해서 방명록 기능 완성하기
+
+------
+
+/2.8.1 메시지 목록을 보여주는 list.jsp
+
+
+/*	list.jsp	*/
+
+
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ page import="guestbook.model.Message" %>
+<%@ page import="guestbook.service.MessageListView" %>
+<%@ page import="guestbook.service.GetMessageListService" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%
+	//page 파라미터의 값을 이용해서 읽어올 페이지 번호 생성
+	String pageNumberStr=request.getParameter("page");
+	int pageNumber=1;
+	if(pageNumberStr!=null){
+		pageNumber=Integer.parseInt(pageNumberStr);
+	}
+	
+	GetMessageListService messageListService=GetMessageListService.getInstance();	//지정한 해당 페이지 목록 구하기
+	MessageListView viewData=messageListService.getMessageList(pageNumber);
+%>
+<c:set var="viewData" value="<%= viewData %>" /><%--viewData를 EL에서 사용할 수 있도록 변수 지정 --%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>방명록 메시지 목록</title>
+</head>
+<body>
+
+<%--신규 메시지 입력 폼 --%>
+<form action="writeMessage.jsp" method="post">
+이름:<input type="text" name="guestName"><br>
+암호:<input type="password" name="password"><br>
+메시지:<textarea name="message" cols="30" rows="3"></textarea><br>
+</form>
+
+<%--메시지 없는 경우 --%>
+<hr>
+<c:if test="${viewData.isEmpty() }">
+등록된 메시지가 없습니다.
+</c:if>
+
+<%--메시지가 존재할 경우 <c:forEach>를 이용해서 메시지를 차례대로 출력 --%>
+<c:if test="${!viewData.isEmpty() }">
+<table border="1">
+	<c:forEach var="message" items="${viewData.messageList}">
+	<tr>
+		<td>
+		메시지 번호 : ${messageId }<br/>
+		손님 이름:${message.guestName }<br/>
+		메시지:${message.message }<br/>
+		<a href="confirmDelection.jsp?messageId=${message.id}">[삭제하기]</a>
+		</td>
+	</tr>
+	</c:forEach>
+</table>
+
+<%--전체 페이지 목록 --%>
+<c:forEach var="pageNum" begin="1" end="${viewData.pageTotalCount}" >
+<a href="list.jsp?page=${pageNum}">[${pageNum }]</a>
+</c:forEach>
+
+</c:if>
+</body>
+</html>
+
+
+------
+
+/2.8.2 메시지 등록을 처리하는 write.jsp
+
+
+/*	write.jsp	*/
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ page import="guestbook.model.Message" %>
+<%@ page import="guestbook.service.WriteMessageService" %>
+<%
+	request.setCharacterEncoding("utf-8");
+%>
+<%--Message 객체 생성 & 요청 파라미터의 값을 Message 객체에 저장 --%>
+<jsp:useBean id="message" class="guestbook.model.Message">
+	<jsp:setProperty name="message" property="*"/>
+</jsp:useBean>
+
+<%
+	WriteMessageService writeService=WriteMessageService.getInstance();
+	writeService.write(message);
+%>
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<%--정상적으로 방명록을 남겼으면 안내 문구 + 목록 화면으로 이동할 수 있는 링크를 출력 --%>
+<title>방명록 메시지 남김</title>
+</head>
+<body>
+
+방명록에 메시지를 남겼습니다.
+<br/>
+<a href="list.jsp">[목록보기]</a>
+
+</body>
+</html>
+
+
+------
+
+/2.8.3 메시지 삭제 폼을 제공하는 confirmDelection.jsp
+
+list.jsp에서
+<a href="confirmDelection.jsp?messageId=${message.id}">[삭제하기]</a>
+클릭하면 confirmDelection.jsp로 이동
+
+/*	confirmDelection.jsp	*/
+
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>방명록 메시지 삭제 확인</title>
+</head>
+<body>
+
+<form action="deleteMessage.jsp" method="post">
+<input type="hidden" name="messageId" value="${param.messageId}">	<%--hidden 타입의 <input>태그를 이용 -> 삭제할 메시지 번호 설정 --%>
+메시지를 삭제하려면 암호를 입력하세요 <br>
+암호:<input type="password" name="password"><br>
+<input type="submit" value="메시지 삭제하기 " >
+</form>
+
+</body>
+</html>
+
+------
+
+/2.8.4 메시지 삭제 요청을 처리하는 deleteMessage.jsp
+
+/*	deleteMessage.jsp	*/
+
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ page import="guestbook.service.DeleteMessageService" %>
+<%@ page import="guestbook.service.InvalidPasswordException" %>
+<%
+	int messageId=Integer.parseInt(request.getParameter("messageId"));
+	String password=request.getParameter("password");
+	boolean invalidPassword=false;
+	try{
+		DeleteMessageService deleteService=DeleteMessageService.getInstance();
+		deleteService.deleteMessage(messageId,password);
+	}catch(InvalidPasswordException ex){
+		invalidPassword=true;
+	}
+%>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>방명록 메시지 삭제함</title>
+</head>
+<body>
+
+<%
+	if(!invalidPassword){
+		out.println("메시지를 삭제하였습니다.");
+	}else{
+		out.println("입력한 암호가 올바르지 않습니다. 암호를 확인해주세요.");
+	}
+%>
+<br/>
+<a href="list.jsp">[목록보기]</a>
+
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

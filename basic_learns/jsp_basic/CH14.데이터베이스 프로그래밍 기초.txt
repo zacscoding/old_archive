@@ -1,0 +1,1650 @@
+-----------CH14.데이터베이스 프로그래밍 기초-----------------
+;다루는 내용
+-데이터베이스 기초
+-SQL 기초
+-JDBC 기초
+-트랜잭션 처리
+-DBCP를 이용한 커넥션 풀
+
+
+---------------------------------------------------------------------------------------------
+
+//01 데이터베이스 기초
+
+/1.1 데이터베이스와 DBMS
+;DBMS-오라클,MySQL,MS SQL..etc
+
+DBMS의 기능
+-데이터의 추가/조회/변경/삭제
+-데이터의 무결성(integrity)유지
+-트랜잭션 관리
+-데이터의 백업 및 복원
+-데이터 보안
+
+/1.2테이블과 레코드
+
+/1.3 주요키(Primary Key)와 인덱스(Index)
+
+/1.4 데이터베이스 프로그래밍의 일반적 순서
+DBMS 클라이언트					DBMS
+		1.연결 -------------->
+		2.명령어 전송(SQL 실행)->
+		<-----------3.결과 전송
+		4.연결종료------------>
+
+/1.5 데이터베이스 프로그래밍의 필수 요소
+-DBMS		: 데이터베이스를 관리해주는 시스템
+-데이터베이스	: 데이터를 저장할 공간
+-DBMS 클라이언트: 데이터베이스를 사용하는 어플리케이션(오라클 : SQL Plus,TOAD // MySQL mysql.ext,MySQL Workbench // JDBC Driver
+
+---------------------------------------------------------------------------------------------
+
+//02 예제 실행을 위한 데이터베이스 생성
+설치 
+http://dev.mysql.com/downloads/mysql/
+
+-새로운 계정 생성
+create user '[계정]'@'[호스트]' identified by '[암호]'
+
+-권한 부여
+grant [권한목록] on [데이터베이스].[대상] to '[계정]'@'[호스트]'
+=>all privileges : 모든 권한 + select,insert,update,delete,create,drop
+
+e.g)
+create user 'jspexam'@'localhost' IDENTIFIED by 'jsppw';
+GRant all privileges on chap14.* to 'jspexamp'@'localhost';
+
+create user 'jspexam'@identified by 'jsppw';
+grant all privileges on chap14.* to 'jspexam'@'%';
+
+=>jspexam 으로 워크벤치에서 연결 확인해보기
+
+---------------------------------------------------------------------------------------------
+
+//03 SQL 기초
+;SQL(Structured Query Language) =>데이터를 조회,삭제 등등
+
+//3.1 주요 SQL 타입
+SQL타입			설명
+CHAR			확정 길이의 문자열을 저장한다. 표준의 경우 255글자까지만 저장할 수 있다.
+VARCHAR			가변 길이의 문자열을 저장한다. 표준의 경우 255글자 까지만 저장할 수 있다.
+LONG VARCHAR	긴 가변 길이의 문자열을 저장한다.
+NUMERIC			숫자를 저장한다.
+DECIMAL			10진수를 저장
+INTEGER			정수를 저장한다.
+TIMESTAMP		날짜와 시간을 저장한다.
+TIME			시간을 저장한다.
+DATE			날짜를 저장한다.
+CLOB			대량의 문자열 데이터를 저장한다.
+BLOG			대량의 이진데이터를 저장한다.
+
+cf)DBMS에 따라서 표준 SQL과 이름은 같지만 다른 경우도 존재 => 사용하는 DBMS의 기본적인 제약사항을 알고 타입을 사용해야함
+
+-----------
+
+//3.2 테이블 생성 쿼리
+[MySQL 설치폴더 ] =>Program Files\MySQL\Server 5.7
+;C:\[MySQL 설치폴더]\bin> mysql -u jspexam -p chap14 --default-characterset=utf8
+
+create table TABLENAME(
+	COL_NAME1	COL_TYPE1(LEN1),
+	COL_NAME2	COL_TYPE2(LEN2),
+	...,
+	COL_NAMEn	COL_TYPEn(LENn),
+)
+
+=>
+-TABLENAME	: 테이블을 식별할 때 사용할 이름
+-COL_NAME	: 각 칼럼의 이름
+-COL_TYPE	: 각 칼럼에 저장될 값의 타입
+-LEN		: 저장될 값의 최대 길이
+
+e.g)MEMBER 테이블 생성
+create table MEMBER(
+	MEMBERID VARCHAR(10) NOT NULL PRIMARY KEY,
+	PASSWORD VARCHAR(10) NOT NULL,
+	NAME VARCHAR(20) NOT NULL,
+	EMAIL VARCHAR(80)
+)engine=InnoDB default character set=utf8;
+
+=>주요키ID // password,name은 필수 사항
+=>InnoDB 라는 저장 엔진에 저장(트랜잭션 처리 때문)
+
+-----------
+
+//3.3 데이터 삽입 쿼리
+insert into [테이블이름]([칼럼1],[칼럼2],...,[칼럼n]) values([값1],[값2],...,[값n]);
+
+e.g)
+insert into MEMBER (MEMBERID,PASSWORD,NAME) values('madvirus','1234','최범균');
+insert into MEMBER values('era13','5678','최범균','madvirus@madvirus.net');
+
+=>'를 표현하고 싶으면 values('최''범균',...) 이렇게 해야함.
+
+-----------
+
+//3.4 데이터 조회 쿼리 -조회 및 조건
+select [칼럼1],[칼럼2],...[칼럼n] from [테이블이름]
+
+e.g)
+select MEMBERID,NAME from MEMBER	//MEMBER 테이블에서 MEMBERID,NAME 칼럼보기
+select * from MEMBER				//MEMBER 테이블에서 모든 칼럼 보기
+select * from MEMBER where name='최범균';	//name값이 '최범균'
+select * from MEMBER where name='최범균' and EMAL='madvirus@madvirus.net';	//name,eail이 조건에 맞는
+
+=>where 조건
+AND,OR
+<> : 같지 않음
+is NULL; : NULL인것
+is not NULL; : NULL이 아닌것
+>,<,<=,>=
+like : e.g)최% , %최%
+
+cf)like는 검색 속도가 느림 => 빠른 검색을 위해서는 별도의 검색 엔진이 필요
+
+-----------
+
+//3.5 데이터 쿼리 조회 - 정렬
+select .. from [테이블이름] where [조건절] order by [칼럼1] asc,[칼럼2] desc,..;
+
+e.g)
+select * from MEMBER order by NAME asc,MEMBERID asc;
+
+=>
+NAME을 오름차순 정렬 & NAME이 같은 레코드들의 MEMBERID를 기준으로 오름차순 정렬
+
+-----------
+
+//3.6데이터 쿼리 조회 -집합
+sum(),max(),min(),count() 등의 함수
+
+e.g)
+select max(SALARY),min(SALARY),sum(SALARY) from ...;	
+
+e.g)
+select count(*) from MEMBER;	//MEMBER레코드의 총 개수
+
+e.g)
+select count(*) from MEMBER where NAME like '최%';	//NAME이 최로 시작하는 레코드들의 수 
+
+-----------
+
+//3.7 데이터 수정 쿼리
+update [테이블이름] set [칼럼1]=[값1],[칼럼2]=[값2],.. where [조건절];
+
+e.g)모든 레코드의 이름을 '최범균'으로 수정
+update MEMBER set name='최범균';
+
+=>전체 레코드가 변경되지 않도록 where절 알맞게 사용하기
+
+-----------
+
+//3.8 데이터 삭제 쿼리
+delete from [테이블이름] where [조건절]
+
+e.g)모든 레코드 삭제
+delete from MEMBER
+
+e.g)MEMBERID가 'era13'인 레코드 삭제
+delete from MEMBER where MEMBERID='era13';
+
+-----------
+
+//3.9조인
+select A.칼럼1,A.칼럼2,B.칼럼3,B.칼럼4
+from [테이블1] as A,[테이블2] as B
+where A.[칼럼x]=B.[칼럼y]
+
+e.g)
+select * from MEMBER as A,MEMBER_etc as B where A.memberid=B.memberid;
+
+
+---------------------------------------------------------------------------------------------
+
+//JSP에서 JDBC 프로그래밍 하기
+;JDBC(Java DataBase Connectivity)
+=>자바는 JDBC에 상관없이 하나의 JDBC API를 사용해서 데이터베이스 작업을 처리할 수 있음
+
+
+//5.1 JDBC의 구조
+
+자바(웹)		--->	JDBC-------->JDBC드라이버 -- 데이터베이스
+어플리케이션			API -------->JDBC드라이버 -- 데이터베이스
+
+//5.2 JDBC 드라이버 준비하기
+책378
+
+-----------
+
+//5.3 JDBC 프로그래밍의 코딩 스타일
+
+1.JDBC 드라이버 로딩
+2.데이터베이스 커넥션 구함
+3.쿼리 실행을 위한 Statement 객체 생성
+4.쿼리 실행
+5.쿼리 실행 결과 사용
+6.Statement 종료
+7.데이터베이스 커넥션 종료
+
+
+/*DBMS에서 이름/ID/EMAIL 읽어와서 출력하는 예제 : vieMemberList.jsp  */
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ page import="java.sql.DriverManager" %>
+<%@ page import="java.sql.Connection" %>
+<%@ page import="java.sql.Statement" %>
+<%@ page import="java.sql.ResultSet" %>
+<%@ page import="java.sql.SQLException" %>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>회원 목록</title>
+</head>
+<body>
+
+MEMBER 테이블의 내용
+<table width="100%" border="1">
+<tr>
+	<td>이름</td><td>아이디</td><td>이메일</td>
+</tr>
+<%
+	//1.JDBC 드라이버 로딩
+	Class.forName("com.mysql.jdbc.Driver");
+	
+	Connection conn=null;
+	Statement stmt=null;
+	ResultSet rs=null;
+	try{
+		String jdbcDriver="jdbc:mysql://localhost:3306/chap14?"+"useUnicode=true&characterEncoding=utf8";
+		String dbUser="jspexam";
+		String dbPass="jsppw";
+		
+		String query="select* from MEMBER  order by MEMBERID";
+		
+		//2.데이터베이스 커넥션 생성
+		conn=DriverManager.getConnection(jdbcDriver,dbUser,dbPass);
+		
+		//3.Statement 생성
+		stmt=conn.createStatement();
+		
+		//4.쿼리실행
+		rs=stmt.executeQuery(query);
+		
+		//5.쿼리 실행 결과 출력
+		while(rs.next()){
+%>
+<tr>
+	<td><%=rs.getString("NAME") %></td>
+	<td><%=rs.getString("MEMBERID") %></td>
+	<td><%=rs.getString("EMAIL") %></td>
+</tr>
+<%			
+		}
+		
+	}catch(SQLException ex){
+		out.println(ex.getMessage());
+		ex.printStackTrace();
+	}finally{
+		//6.사용한 Statement 종료
+		if(rs!=null)
+			try{
+				rs.close();
+			}catch(SQLException ex){}
+		if(stmt!=null)
+			try{
+				stmt.close();
+			}catch(SQLException ex){}		
+		//7.커넥션 종료
+		if(conn!=null)
+			try{
+				conn.close();
+			}catch(SQLException ex){}
+	}
+%>
+</table>
+
+
+</body>
+</html>
+
+
+<< 실행 결과 >>
+MEMBER 테이블의 내용
+이름			아이디		이메일
+최범균		era13		madvirus@madvirus.net
+최범균		madvirus	null
+
+
+
+
+-----------
+
+//5.4 DBMS와의 통신을 위한 JDBC 드라이버
+
+;JDBC드라이버는 DBMS와의 통신을 담당하는 클래스
+try{
+	Class.forName("JDBC 드라이버 클래스의 완전한 이름");
+}catch(ClassNotFoundException ex){
+	//지정한 클래스가 존재하지 않는 경우 에러 발생
+}
+
+=>
+-MySQL : com.mysql.jdbc.Driver
+-오라클 : oracle.jdbc.driver.OracleDriver
+-MS SQL 서버 : com.microsoft.sqlserver.jdbc.SQLServerDriver
+
+e.g)오라클 JDBC 드라이버 로딩
+try{
+	Class.forName("oracle.jdbc.driver.OracleDriver");
+}catch(ClassNotFoundException ex){
+	//지정한 클래스가 존재하지 않을 경우 예외 발생
+	//예외 처리
+}
+
+=>Class.forName() 메소드는 지정한 클래스 정보를 담고 있는 Class 인스턴스를 구해주는 기능
+=>JDBC 드라이버에 해당하는 클래스들은 Class.forName() 메소드를 통해서 로딩될 때 자동으로 JDBC 드라이버로 등록
+
+=>viewMemberList.jsp에서
+Class.forName("com.mysql.jdbc.Driver");
+-----------
+
+//5.5 데이터베이스 식별을 위한 JDBC URL
+;데이터베이스를 구분할 때도 JDBC URL을 사용
+jdbc:[DBMS]:[데이터베이스식별자]	//사용하는 JDBC 드라이버에 따라서 URL 표현 방식에 차이있음
+
+e.g)MySQL JDBC 드라이버
+jdbc:mysql://HOST[:PORT]/DBNAME[?param=value&param1=value2&..]
+
+=>
+[HOST] : MySQL 서버의 호스트 주소
+[DBNAME] : 데이터베이스 이름
+[PORT] : MySQL 서버가 사용하는 포트 번호
+
+
+e.g)오라클 JDBC 드라이버
+jdbc:oracle:thin:@HOST:PORT:SID
+=>
+HOST,PORT : 오라클이 설치된 호스트의 주소와 포트 번호
+SID : 사용할 데이터베이스의 SID
+=>
+jdbc:oracle:thin:@127.0.0.1:1521:ORCL //SID가 ORCL인 데이터베이스에 접근
+
+
+cf)오라클 드라이버
+Thin 드라이버 : 자바 언어로만 구현된 JDBC 드라이버 => JDK만 설치되어 있으면 어디서든 사용 할 수 있음 
+OCI 드라이버 : 네이티브(native)모듈을 사용하는 JDBC 드라이버 => 해당 모듈을 설치해주어야만 사용할 수 있음.
+
+=>viewMemberList.jsp에서
+String jdbcDriver="jdbc:mysql://localhost:3306/chap14?"+"useUnicode=true&characterEncoding=utf8";
+
+-----------
+
+//5.6데이터베이스 커넥션
+;데이터베이스와 연결된 커넥션을 구하고 JDBC를 이용해서 데이터베이스를 사용
+=>java.sql.Connection (인터페이스) 타입 : 데이터베이스 커넥션
+=>java.sql.DriverManager.getConnection();
+
+=>java.sql.DriverManger 의 getConnection() 메소드
+
+static Connection getConnection(String url) 
+Attempts to establish a connection to the given database URL.
+ 
+static Connection getConnection(String url, Properties info) 
+Attempts to establish a connection to the given database URL.
+ 
+static Connection getConnection(String url, String user, String password) 
+Attempts to establish a connection to the given database URL. 
+
+=>Connection  객체를 생성하지 못하면 SQLException 발생
+
+=>viewMemberList.jsp 에서
+
+		String jdbcDriver="jdbc:mysql://localhost:3306/chap14?"+"useUnicode=true&characterEncoding=utf8";
+		String dbUser="jspexam";
+		String dbPass="jsppw";
+		
+		String query="select* from MEMBER  order by MEMBERID";
+		
+		//2.데이터베이스 커넥션 생성
+		conn=DriverManager.getConnection(jdbcDriver,dbUser,dbPass);
+		...
+		finally{	
+		//7.커넥션 종료
+		if(conn!=null)
+			try{
+				conn.close();
+			}catch(SQLException ex){}
+		}
+			
+-----------
+
+//5.7 Statement를 사용한 쿼리 실행
+;Connection 객체 생성 => Connection 객체로 Statement 생성 => 쿼리실행
+
+Statement stmt=conn.createStatement();
+
+=>Statement 객체를 사용해서 쿼리 실행
+-ResultSet executeQuery(String query)	//SELECT 쿼리를 실행 & 결과값을 ResultSet에 저장 & 반환
+-int executeUpdate(String query)		//INSERT,UPDATE,DELETE 쿼리를 실행 & 변경된(삽입된) 레코드 개수 리턴
+
+
+/*아이디와 새로운 이름을 입력받는 예제*/
+
+/* 아이디와 이름 입력받는 폼 : /update/updateForm.jsp */
+
+
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>이름 변경 폼</title>
+</head>
+<body>
+
+<form actiuon="/chap14/update/update.jsp" method="post">
+<table border="1">
+<tr>
+	<td>아이디</td>
+	<td><input type="text" name="memberID" size="10"></td>
+	<td>이름</td>
+	<td><input type="text" name="name" size="10"></td>
+</tr>
+<tr>
+	<td colspan="4"><input type="submit" value="변경"></td>
+</tr>
+</table>
+</form>
+</body>
+</html>
+
+
+
+/*	/update/update.jsp	*/
+
+
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ page import="java.sql.DriverManager" %>
+<%@ page import="java.sql.Connection" %>
+<%@ page import="java.sql.Statement" %>
+<%@ page import="java.sql.SQLException" %>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<%
+	request.setCharacterEncoding("utf-8");
+	
+	//memberID 파라미터와 name 파라미터 값을 구하기
+	String memberID=request.getParameter("memberID");
+	String name=request.getParameter("name");
+	
+	int updateCount=0;
+	
+	Class.forName("com.mysql.jdbc.Driver");
+	
+	Connection conn=null;
+	Statement stmt=null;
+	
+	try{
+		String jdbcDriver="jdbc:mysql://localhost:3306/chap14?"+"useUnicode=true&characterEncoding=utf8";
+		String dbUser="jspexam";
+		String dbPass="jsppw";
+		
+		//MEMBER 테이블의 name 칼럼을 변경하는 UPDATE 쿼리 생성
+		String query="update MEMBER set name='"+name+"' where MEMBERID='"+memberID+"'";
+		
+		//데이터베이스와 연결된 Connection 생성
+		conn=DriverManager.getConnection(jdbcDriver,dbUser,dbPass);
+		//Connection으로부터 Statement 생성
+		stmt=conn.createStatement();
+		//Statement의 executeUpdate() 메소드를 이용해 쿼리 실행 & 변경된 레코드 수 반환
+		updateCount=stmt.executeUpdate(query);
+		
+	}catch(SQLException e){
+		e.printStackTrace();
+	}finally{
+		//사용한 자원 반환
+		if(stmt!=null)	try{stmt.close();}catch(SQLException ex){}
+		if(conn!=null) try{conn.close();}catch(SQLException ex){}		
+	}	
+%>
+
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>이름변경</title>
+</head>
+<body>
+
+<%
+	
+	if(updateCount>0){ //변경된 값이 있으면
+		out.println(memberID+"의 이름을 "+name+"으로 변경");
+	}else{	//변경된 값이 없으면
+		out.println(memberID+"아이디가 존재하지 않음");
+	}	
+%>
+<br>
+</body>
+</html>
+
+
+
+=>JDBC 드라이버는 웹 어플리케이션이 구동할 때 한번만 로딩하면 됨(위의 예제들은 jsp페이지 하나당 연결하도록되어있음)
+
+
+-----------
+
+//5.8 ResultSet에서 값 읽어오기
+;Statement의 executeQuery() 메소드는 Select 쿼리를 실행하고 결과를 java.sql.ResultSet 객체에 담아서 리턴
+
+ResultSet 클래스의 주요 데이터 읽기 메소드(매개변수는 String name | int index)
+getString(),getInt(),getLong(),getDouble(),getFloat(),
+getCharacterStream()(칼럼값을 스트림 형태로 읽어옴 LONG VARCHAR 타입읽을때 사용),
+getTimestamp()(지정한 칼럼값을 Timestamp타입으로 읽어옴 SQL TIMESTAMP 타입읽을때 사용),
+getDate() (지정한 칼럼 값을 Date 타입으로 읽어옴, SQL DATE 타입을 읽을때 사용),
+getTime() (지정한 칼럼 값을 Time 타입으로 읽어옴, SQL TIME 타입을 읽을때 사용)
+
+=>리턴된 ResultSet은 1번째 레코드 전을 가리키고 있음.
+=>첫번째 레코드 읽기
+rs=stmt.executeQuery("select* from member");
+if(rs.next()){ //다음행(첫번째 행)이 존재하면 rs.next()는 true리턴
+	String name=rs.getString("NAME");
+}else{
+	//첫번째 행이 존재하지 않는다. 즉 결과가 없다
+}
+
+=>while문으로 레코드 읽기
+rs=stmt.executeQuery("select* from member");
+while(rs.next()){
+	//한 행씩 반복 처리
+	String name=rs.getString("NAME");
+}
+
+=>do~while문을 이용하기
+rs=stmt.executeQuery("select* from member");
+if(rs.next()){
+	do{
+		String name=rs.getString("NAME");
+	}while(rs.next());
+}else{
+	//레코드가 존재하지 않으면
+}
+
+
+
+
+/*  memberID를 파라미터로 전달해서 ResultSet 활용 : viewMember.jsp	*/
+
+
+
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ page import="java.sql.DriverManager" %>
+<%@ page import="java.sql.Connection" %>
+<%@ page import="java.sql.Statement" %>
+<%@ page import="java.sql.SQLException" %>
+<%@ page import="java.sql.ResultSet" %>
+
+<%
+	String memberID=request.getParameter("memberID");
+%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>회원정보</title>
+</head>
+<body>
+
+<%
+	Class.forName("com.mysql.jdbc.Driver");
+	
+	Connection conn=null;
+	Statement stmt=null;
+	ResultSet rs=null;
+	
+	try{
+		String jdbcDriver="jdbc:mysql://localhost:3306/chap14?"+"useUnicode=true&characterEncoding=utf8";
+		String dbUser="jspexam";
+		String dbPass="jsppw";
+		
+		String query="select * from MEMBER where MEMBERID='"+memberID+"'";
+		
+		conn=DriverManager.getConnection(jdbcDriver,dbUser,dbPass);
+		stmt=conn.createStatement();
+		rs=stmt.executeQuery(query);
+		if(rs.next()){
+%>
+<table border="1">
+<tr>
+	<td>아이디</td><td><%=memberID %></td>
+<tr>
+<tr>
+	<td>암호</td><td><%=rs.getString("PASSWORD")%></td>
+<tr>	
+<tr>
+	<td>이름</td><td><%=rs.getString("NAME")%></td>
+<tr>
+<tr>
+	<td>이메일</td><td><%=rs.getString("EMAIL")%></td>
+<tr>
+</table>
+<%			
+		}else{
+		out.println(memberID+"에 해당하는 정보가 존재하지 않습니다.");
+		}	
+	}catch(SQLException ex){
+		out.println("예외 발생 : "+ex.getMessage());
+	}finally{
+		if(rs!=null) try{rs.close();}catch(SQLException e){}
+		if(stmt!=null) try{stmt.close();} catch(SQLException e){}
+		if(conn!=null) try{conn.close();} catch(SQLException e){}		
+	}	
+%>
+
+</body>
+</html>
+
+-----------
+
+//5.9 ResetSet 에서 LONG VARCHAR 타입 값 읽어오기
+;SQL에서 LONG VARCHAR 타입은 대량의 텍스트 데이터를 저장할 때 사용
+=>ResultSet.getCharacterStream() 메소드 => java.io.Reader 타입 리턴
+
+
+String data=null;	//스트림으로 읽어온 데이터를 저장
+java.io.Reader reader=null;	//LONG VARCHAR 데이터를 읽어올 스트림
+try{
+	//1.ResultSet의 getCharacterStream()으로 Reader 구함
+	reader=rs.getCharacterStream("FILED");	//스트림 읽어옴
+	
+	if(reder!=null){
+		//2.스트림에서 읽어온 데이터를 저장할 버퍼를 생성
+		StringBuilder buff=new StringBuilder();
+		char[] ch=new char[512];
+		int len=-1;
+		
+		//3.스트림에서 데이터를 읽어와 버퍼에 저장
+		while( (len=reader.read(ch)) !=-1){
+			buff.append(ch,0,len);
+		}
+		
+		//4.버퍼에 저장한 내용을 String으로 변환
+		data=buff.toString();
+}catch(IOException ex){
+	//5.IO 관련 처리 도중 문제가 있으면 IOException 발생
+	//익셉션 발생
+}finally{
+	//6.Reader를 종료한다
+	if(reader!=null) try{reader.close;}catch(IOException ex){}
+}
+//data를 사용~~
+
+
+e.g)LONG VARCHAR타입의 값을 읽어와 출력하는 JSP 페이지 
+
+1)LONG VARCHAR를 포함하는 테이블 만들기
+create table MEMBER_HISTORY(
+	MEMBERID VARCHAR(10) NOT NULL PRIMARY KEY, 
+	HISTORY LONG VARCHAR
+)default character set=utf8;
+
+=>default character set=utf8;은 MySQL에서만 작동
+
+
+2)insert
+insert into MEMBER_HISTORY values('madvirus',
+    concat(
+    '2015 스프링4 프로그래밍입문<br>',
+    '2013 Sprint4.0프로그래밍<br>',
+    '2012 객체 지향과 디자인 패턴<br>',
+    '2012 JSP 2.2 웹프로그래밍\n')
+);
+
+=>concat()함수는 MySQL에서 문자열을 연결할 때 사용(,를 통해 가독성 좋게)
+
+
+3)JSP페이지 작성 viewMemberHistory.jsp
+
+
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ page import="java.sql.DriverManager" %>
+<%@ page import="java.sql.Connection" %>
+<%@ page import="java.sql.Statement" %>
+<%@ page import="java.sql.ResultSet" %>
+<%@ page import="java.sql.SQLException" %>
+<%@ page import="java.io.Reader" %>
+<%@ page import="java.io.IOException" %>
+
+<%
+	String memberID=request.getParameter("memberID");
+%>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>회원 정보</title>
+</head>
+<body>
+<%
+	Class.forName("com.mysql.jdbc.Driver");
+	
+	Connection conn=null;
+	Statement stmt=null;
+	ResultSet rs=null;
+	
+	try{
+		String jdbcDriver="jdbc:mysql://localhost:3306/chap14?"+"useUnicode=true&characterEncoding=utf8";
+		String dbUser="jspexam";
+		String dbPass="jsppw";
+		String query="select * from member_history "+"where memberID='"+memberID+"'";
+		
+		conn=DriverManager.getConnection(jdbcDriver,dbUser,dbPass);
+		stmt=conn.createStatement();
+		rs=stmt.executeQuery(query);
+		if(rs.next()){
+%>	
+<table border="1">
+<tr>
+	<td>아이디</td><td><%=memberID %></td>
+</tr>
+<tr>
+	<td>히스토리</td>
+	<td>
+<%
+			String history=null;
+			Reader reader=null;
+			try{
+				reader=rs.getCharacterStream("HISTORY");
+				if(reader!=null){
+					StringBuilder buff=new StringBuilder();
+					char[] ch=new char[512];
+					int len=-1;
+					while((len=reader.read(ch))!=-1){
+						buff.append(ch,0,len);
+					}			
+					history=buff.toString();
+				}
+			}catch(IOException ex){
+			out.println("익셉션 발생 : "+ex.getMessage());		
+			}finally{
+				if(reader!=null) try{reader.close();}catch(IOException e){}			
+			}
+%>
+	<%=history %>
+	</td>
+</tr>
+</table>
+
+<%
+		}else{
+			out.println(memberID+"회원의 히스토리가 없습니다.");
+		}
+	}catch(SQLException ex){
+		out.println("에러 발생 : "+ex.getMessage());
+	}finally{
+		if(rs!=null) try{rs.close();}catch(SQLException ex){}
+		if(stmt!=null) try{stmt.close();}catch(SQLException ex){}
+		if(conn!=null) try{conn.close();}catch(SQLException ex){}
+	}
+%>
+
+
+</body>
+</html>
+
+
+
+
+
+<< 실행 결과 : http://localhost:8080/chap14/viewMemberHistory.jsp?memberID=madvirus >>
+아이디 	madvirus 
+		2015 스프링4 프로그래밍입문
+히스토리	2013 Sprint4.0프로그래밍
+		2012 객체 지향과 디자인 패턴
+		2012 JSP 2.2 웹프로그래밍  
+
+
+
+=>LONG VARCHAR 타입과 DBMS의 타입
+1)오라클
+LONG VARCHAR를 LONG으로 표시
+=>getLong() 메소드가 아닌 getCharacterStream(); 사용
+
+2)MySQL
+;MEDIUMTEXT // TINYTEXT // TEXT // LONGTEXT 네가지 TEXT 타입 지원
+=>getCharacterStream() 메소드로 읽어와야함
+
+
+=>다수의 JDBC 드라이버는 getString() 메소드를 통해 LONG VARCHAR 타입을 읽을 수 있음
+String history=null;			
+history=rs.getString("HISTORY"); //사용 가능
+						
+-----------
+
+//5.10 Statement 를 이용한 쿼리 실행 시 작은 따옴표 처리
+;SQL에서 작은 따옴표(')사용시 ''2개가 들어가야함
+
+=>update TABLENAME set SOMEFILED='king''s choice' where...
+=>String 클래스의 replaceAll()로 대체 가능
+e.g)
+String value="king's choice";
+String replaced=value.replaceALL("'","''");
+=>매번 귀찮을 수 있어서 PreparedStatement 를 사용
+
+-----------
+
+//5.11 PreparedStatement를 사용한 쿼리 실행
+;java.sql.PreparedStatement : SQL 쿼리의 틀을 미리 생성해 놓고 값을 나중에 지정
+
+1.Connection.prepareStatement() 메소드를 사용하여 PreparedStatement 생성
+2.PreparedStatement의 set 메소드를 사용하여 필요한 값 지정
+3.PreparedStatement의 executeQuery() 또는 executeUpdate() 메소드를 사용하여 쿼리 실행
+4.finally 블록에서 사용한 PrepardStatement 닫음(close()메소드 실행)
+
+=>
+PreparedStatement pstmt=null;
+...
+pstmt=conn.prepareStatement("insert into MEMBER(MEMBERID,NAME,EMAIL) values(?,?,?)");
+pstmt.setString(1,"madvirus");	//1번째 물음표의 값 지정
+pstmt.setString(2,"최범균");		//2번째 물음표의 값 지정
+
+=>첫 번째 물음표의 인덱스는 1임.
+
+PreparedStatement 클래스가 제공하는 set 메소드
+setString,setCharacterStream//LONG VARCHAR 타입,setInt,setLong,setDouble,setFloat,setTimeStamp,setDate,setTime 등등
+
+=>쿼리 실행
+ResultSet executeQuery()	: SELECT 쿼리를 실행할 때 사용 & ResultSet 결과 값 리턴
+int executeUpdate()			: INSERT,UPDATE,DELETE 쿼리를 실행할 때 사용 & 변경된 레코드의 개수 반환
+
+
+e.g)PreparedStatement를 이용하여 MEMBER 테이블의 레코드 삽입 예제
+
+1)폼 만들기 \insert\insertForm.jsp
+
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>MEMBER 테이블 레코드 삽입</title>
+</head>
+<body>
+
+<form action="/chap14/insert/insert.jsp" method="post">
+<table border="1">
+<tr>
+	<td>아이디</td>
+	<td><input type="text" name="memberID" size="10"></td>
+	<td>암호</td>
+	<td><input type="text" name="password" size="10"></td>
+</tr>
+<tr>
+	<td>이름</td>
+	<td><input type="text" name="name" size="10"></td>
+	<td>이메일</td>
+	<td><input type="text" name="email" size="10"></td>
+</tr>
+<tr>
+	<td colspan="4"><input type="submit" value="삽입"></td>
+</tr>
+</table>
+</form>
+</body>
+</html>
+
+
+
+
+
+2)PreparedStatement를 이용해서 테이블에 레코드를 삽입하는 JSP 페이지 : \insert\insert.jsp
+
+
+
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ page import="java.sql.DriverManager" %>
+<%@ page import="java.sql.Connection" %>
+<%@ page import="java.sql.PreparedStatement" %>
+<%@ page import="java.sql.SQLException" %>
+
+<%
+	request.setCharacterEncoding("utf-8");
+	
+	String memberID=request.getParameter("memberID");
+	String password=request.getParameter("password");
+	String name=request.getParameter("name");
+	String email=request.getParameter("email");
+	
+	Class.forName("com.mysql.jdbc.Driver");
+	
+	Connection conn=null;
+	PreparedStatement pstmt=null;
+	int result=0;
+	
+	try{
+		String jdbcDriver="jdbc:mysql://localhost:3306/chap14?"+"useUnicode=true&characterEncoding=utf8";
+		String dbUser="jspexam";
+		String dbPass="jsppw";
+		
+		conn=DriverManager.getConnection(jdbcDriver,dbUser,dbPass);
+		pstmt=conn.prepareStatement("insert into MEMBER values(?,?,?,?)");
+		pstmt.setString(1,memberID);
+		pstmt.setString(2,password);
+		pstmt.setString(3,name);
+		pstmt.setString(4,email);
+		
+		result=pstmt.executeUpdate();		
+	}catch(SQLException ex){
+		out.println("예외 발생 : "+ex.getMessage());
+	}finally{
+		if(pstmt!=null) try{pstmt.close();}catch(SQLException e){}
+		if(conn!=null) try{pstmt.close();}catch(SQLException e){}
+	}
+%>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>삽입</title>
+</head>
+<body>
+<%
+	if(result>0)
+		out.println("MEMBER 테이블에 새로운 레코드를 삽입했습니다.");
+	else
+		out.println("MEMBER 테이블에 새로운 레코드 삽입을 실패하였습니다.");
+%>
+
+
+
+</body>
+</html>
+
+
+-----------
+
+//5.12 PreparedStatement에서 LONG VARCHAR 타입 값 지정하기
+;setCharacterStream(int idx,Reader reader,int length)
+=>Reader로부터 length 만큼 글자수를 읽어와서 저장.
+
+
+e.g1)getCharacterStream()을 이용해서 String 타입의 값을 저장 => String Reader 이용
+
+PreparedStatement pstmt=null;
+try{
+	String value="...";	//LONG VARCHAR에 넣을 값
+	pstmt=conn.prepareStatement(...);
+	java.io.StringReader reader=new java.io.StringReader(value);
+	pstmt.setCharacterStream(1,reader,value.length());
+	pstmt.execute...();
+	...
+}catch(SQLException ex){
+	...
+}finally{
+	if(pstmp!=null)try{pstmt.close();}catch(SQLException e){}
+}
+
+
+e.g2)텍스트 파일로부터 데이터를 읽어와 저장 => FileReader 이용
+
+PreparedStatement pstmt=null;
+FileReader reader=null;
+try{	
+	pstmt=conn.prepareStatement(...);
+	reader=new java.io.FileReader(파일경로);	
+	pstmt.setCharacterStream(1,reader);
+	...
+}catch(SQLException ex){
+	...
+}catch(IOException ex){
+	...
+}finally{
+	if(pstmp!=null)try{pstmt.close();}catch(SQLException e){}
+	if(reader!=null)try{reader.close();}catch(SQLException e){}
+}
+
+-----------
+
+//5.13 PreparedStatement 쿼리를 사용하는 이유
+;Statement 대신 PreparedStatement 사용이유
+-값 변환을 자동으로 하기 위해
+-간결한 코드를 위해
+
+examples)
+1)value : 최'범균 을 이용
+stmt.executeQuery("select * from member where name ='"+"최'범균".replaceALL("'","''")+"'");
+=>
+pstmt.setString(1,"최'범균");	//알맞게 따옴표(')처리
+
+
+2)TIMESTAMP나 DATE,TIME 타입의 경우 더욱 복잡해서 DBMS마다 날짜와 시간을 표현하는 방식이 다름
+	=>Statement를 사용할 경우 DBMS마다 코드가 달라짐
+=>
+Timestamp time=new Timestamp(System.currentTimeMillis());
+pstmt.set(3,time);
+
+
+3)코드 간결 & 실수 확률 줄임
+stmt.executeQuery("update member set NAME='"+name+"' where MEMBERID='" +id+"'");
+=>
+PreparedStatement pstmt=conn.prepareStatement("update member set NAME=? where MEMBERID=?");
+pstmt.setString(1,name);
+pstmt.setString(2,id);
+
+---------------------------------------------------------------------------------------------
+
+//06 웹 어플리케이션 구동 시 JDBC 드라이버 로딩하기
+;Class.forName(jdbcDriverClass);
+=>지금까지 JSP를 실행할 때 마다 JDBC 드라이버를 로딩.
+=>JDBC 드라이버를 로딩하기에 가장 좋은 시점 : 웹 어플리케이션이 시작할 때(톰캣과 같은 웹 컨테이너가 시작될 ? )
+=>서블릿 클래스 사용
+
+/*	chap14/src/jdbc/MySQLDriverLoader.java	*/
+
+package jdbc;
+
+import javax.servlet.http.HttpServlet;
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
+
+public class MySQLDriverLoader extends HttpServlet{	//HttpServlet 클래스 상속
+	@Override
+	public void init(ServletConfig config) throws ServletException{	//서블릿  초기화할 때 호출되는 init() 메소드를 구현
+		try{
+			Class.forName("com.mysql.jdbc.Driver");	//MySQL JDBC 드라이버를 로딩			
+		}catch(Exception ex){		//익셉션 발생
+			throw new ServletException(ex);
+		}
+	}
+}
+
+=>HttpServlet은 서블릿을 위한 상위 클래스(서블릿은 init() 메소드 제공)
+=>서블릿을 초기화할 때 최초에 init() 메소드 한번 실행
+=>톰캣과 같은 컨테이너는 서블릿을 사용하기 전에 초기화를 수행
+=>init()메소드에서 JDBC 드라이버를 로딩하도록 구현
+=>컨테이너를 실행할 때 JDBC 드라이버를 로딩할 수 있음 
+
+
+=>웹 어플리케이션이 시작될 때 자동으로 MySQLDriverLoader 서블릿 클래스를 실행하도록 해야함
+=>web.xml 파일을 만들어 <servlet> 태그를 추가
+
+....
+  <servlet>
+  	<servlet-name>mysqlDriverLoader</servlet-name>
+  	<servlet-class>jdbc.MySQLDriverLoader</servlet-class>
+  	<load-on-startup>1</load-on-startup>
+  </servlet>
+  
+</web-app>
+
+=>
+<servlet>...</servlet> : MySQLDriverLoader 서블릿 클래스에 대한 설정을 추가
+<load-on-startup>1</load-on-startup> : 웹 어플리케이션이 시작될 때, 서블릿 클래스를 자동으로 로딩하도록 설정
+
+=>
+웹 어플리케이션 구동 시 자동으로 MySQLDriverLoader 서블릿 클래스의 init() 메소드 실행
+(결과적으로 웹 어플리케이션을 시작할 때 MySQL JDBC 드라이버를 로딩)
+
+
+---------------------------------------------------------------------------------------------
+
+//07 JDBC에서 트랜잭션 처리
+pstmtIns=conn.prepareState("insert into ARTICLE (ID,TITLE,CONTENT) values(?,?,?)");
+pstmtIns.setInd(1,id);
+...
+pstmtIns.executeUpdate();
+
+pstmtUpdate=conn.prepareState("update BOARD set LASTARTICLEID=? where BOARDID=?");
+pstmtUpdate.setInd(1,id);
+...
+pstmtUpdate.executeUpate();
+
+
+=>
+1)정상적인 처리 
+pstmtInst를 통해 ARTICLE 테이블에 레코드 삽입
+pstmtUpdate를 통해 BOARD 테이블의 레코드 변경
+=>삽입과 변경이 성공적으로 처리
+
+2)비정상적인 처리
+pstmtInst를 통해 ARTICLE 테이블에 레코드 삽입
+pstmtUpdate를 통해 BOARD 테이블의 레코드 변경 중 익셉션 발생
+=>삽입 정상 BUT 변경 X(LASTARTICLEID가 업데이트 안된 상태)
+
+
+=>
+DBMS는 트랜잭션(transaction)을 이용해서 두 개 이상의 쿼리를 마치 하나의 쿼리 처럼 처리할 수 있도록 해줌
+
+
+트랜젝션 시작(트랜잭션 시작 이후 실행되는 쿼리를 하나의 작업으로 처리)
+	쿼리1 (트랜잭션 범위 내에서 실행되는 쿼리 결과는 커밋 전까지는 DB에 반영X)
+	쿼리2
+	쿼리3
+	쿼리4		->트랜잭션 롤백(에러가 발생하면 실행된 쿼리 결과를 DB에 반영하지 않고 취소)
+	쿼리5		
+트랜잭션 커밋 (트랜잭션 시작 이후 에러가 발생하지 않으면 쿼리 결과를 DB에 반영)
+
+=>트랜잭션을 구현하는 방법
+-JDBC의 오토 커밋 모드를 false로 지정하는 방법 (단일 데이터베이스에 접근)
+-JTA(Java Transaction API)를 이용하는 방법	(두 개 이상의 데이터베이스를 트랜잭션으로 처리) //이책 범위 넘어감
+
+=>실행 흐름
+try{
+	conn=DriverManager.getConnection(..);
+	//트랜잭션 시작
+	conn.setAutoCommit(false);
+	
+	...//쿼리실행
+	...//쿼리실행
+	
+	//트랜잭션 커밋
+	conn.commit();
+}catch(SQLException ex){
+	if(conn!=null){
+		//트랜잭션 롤백
+		conn.rollback();
+	}
+}finally{
+	if(conn!=null) try{conn.close();}catch(SQLException ex){}
+}
+
+
+e.g)트랜잭션 동작 예제
+
+1)테이블 생성
+
+create table ITEM(
+	ITEM_ID int not null primary key,
+    name varchar(100)
+)engine=InnoDB default character set =utf8;
+
+create table ITEM_DETAIL(
+	ITEM_ID int not null primary key,
+    DETAIL varchar(200)
+)engine=InnoDB default character set=utf8;
+
+
+2)두 테이블에 데이터를 삽입하는 JSP 코드 : insertItem.jsp
+
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ page import="java.sql.DriverManager" %>
+<%@ page import="java.sql.Connection" %>
+<%@ page import="java.sql.PreparedStatement" %>
+<%@ page import="java.sql.SQLException" %>
+
+<%
+	String idValue=request.getParameter("id");
+
+	Connection conn=null;
+	PreparedStatement pstmtItem=null;
+	PreparedStatement pstmtDetail=null;
+	
+	String jdbcDriver="jdbc:mysql://localhost:3306/chap14?"+"useUnicode=true&characterEncoding=utf8";
+	String dbUser="jspexam";
+	String dbPass="jsppw";
+	
+	Throwable occuredException=null;
+	
+	try{
+		int id=Integer.parseInt(idValue);
+		
+		conn=DriverManager.getConnection(jdbcDriver,dbUser,dbPass);
+		//트랜잭션 시작
+		conn.setAutoCommit(false);
+		
+		//첫 번째 쿼리 : ITEM 테이블에 데이터 삽입
+		pstmtItem=conn.prepareStatement("insert into ITEM values(?,?)");
+		pstmtItem.setInt(1,id);
+		pstmtItem.setString(2,"상품 이름"+id);
+		pstmtItem.executeUpdate();
+		//error 파라미터가 존재할 경우 익셉션 발생
+		if(request.getParameter("error")!=null)
+			throw new Exception("의도적 익셉션 발생");
+		
+		//두 번째 쿼리 : ITEM_DETAIL 테이블에 데이터 삽입
+		pstmtDetail=conn.prepareStatement("insert int ITEM_DETAIL values(?,?)");
+		pstmtDetail.setInt(1,id);
+		pstmtDetail.setString(2,"상세 설명 : "+id);
+		pstmtDetail.executeUpdate();
+		
+		//트랜잭션 커밋
+		conn.commit();
+	}catch(Throwable e){
+		//익셉션이 발생할 경우 트랜잭션을 롤백 & occuredException에 할당
+		if(conn!=null){
+			try{
+				conn.rollback();
+			}catch(SQLException ex){}
+		}
+		occuredException =e;
+	}finally{
+		if(pstmtItem!=null)try{pstmtItem.close();}catch(SQLException ex){}
+		if(pstmtDetail!=null)try{pstmtDetail.close();}catch(SQLException ex){}
+		if(conn!=null)try{conn.close();}catch(SQLException ex){}
+	}
+%>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>ITEM 값 입력</title>
+</head>
+<body>
+
+<% 
+	//occuredException이 null이 아닌 경우 익셉션 메세지 출력
+	if(occuredException !=null){
+		out.println("에러가 발생하였슴 : "+occuredException.getMessage());
+	}else{
+		out.println("데이터 성공적으로 저장");
+	}
+%>
+
+</body>
+</html>
+
+
+<< 실행 결과1 : http://localhost:8080/chap14/insertItem.jsp?id=1 >>
+데이터 성공적으로 저장 
+
+<< 실행 결과2 : http://localhost:8080/chap14/insertItem.jsp?id=2&error=t >>
+에러가 발생하였슴 : 의도적 익셉션 발생 
+
+
+=>실행결과2에서 첫번째 쿼리 실행 & 익셉션 발생 => 첫번째 실행 결과 롤백 됨
+
+---------------------------------------------------------------------------------------------
+
+//08 커넥션 풀
+;위의 예제들은 JSP 페이지를 실행할 때 마다 커넥션을 생성하고 닫는데 시간이 소요
+=>일반적인 방식은 커넥션 풀 기법 사용
+
+-----------
+
+//8.1 커넥션 풀이란
+;데이터베이스와 연결된 커넥션을 미리 만들어서 풀(pool) 속에 저장해두고 있다가 필요한 때에 커넥션을 풀에서 가져다 쓰고 다시 풀에 반환
+
+
+1.풀에서 커넥션을 가져온다		<----커넥션-----		풀
+											커넥션
+2.커넥션을 사용한다.								커넥션
+											커넥션
+3.커넥션을 풀에 반환 한다.		-----커넥션------>
+
+=>특징
+-풀 속에 미리 커넥션이 생성되어 있기 때문에 커넥션을 생성하는 데 드는 연결 시간을 줄일 수 있음
+-커넥션을 계속해서 재사요여하기 때문에 생성되는 커넥션 수가 일정하게 유지
+
+=>다양한 커넥션 풀 라이브러리 존재
+=>이장에서는 DBCP API를 이용해서 커넥션 풀을 제공하는 방법 공부
+											
+-----------
+
+//8.2DBCP를 이용해서 커넥션 풀 사용하기
+;자카르타 프로젝트의 DBCP2 API를 사용할 때에는 다음과 같은 과정
+1. DBCP 관련 jar파일과 JDBC 드라이버 jar 파일 설치하기
+2. 커넥션 풀 초기화 하기
+3. 커넥션 풀로부터 커넥션 사용하기
+
+----
+
+/8.2.1 필요한 jar파일 복사하기
+DBCP API를 사용하기 위한 라이브러리
+1.Commons DBCP API 관련 jar 파일
+2.Commons DBCP API가 사용하는 Commons Pool API의 jar파일
+3.로그 기록에 사용하는 Commons Logging API 관련 jar 파일
+
+=>
+http://commons.apache.org/에서 다운
+
+-commons-dbcp2-2.1.1-bin.zip
+-commons-pool2-2.4.2-bin.zip
+-commons-logging-1.2-bin.zip
+
+=> 압축 풀고 jar 파일
+
+----
+
+/8.2.2 커넥션 풀 초기화 서블릿 클래스
+
+/*chap14/src/jdbc/DBCPinit.java	*/
+package jdbc;
+
+import java.sql.DriverManager;
+import java.util.Properties;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+
+import org.apache.commons.dbcp2.BasicDataSource;
+import org.apache.commons.dbcp2.BasicDataSourceFactory;
+import org.apache.commons.dbcp2.ConnectionFactory;
+import org.apache.commons.dbcp2.DriverManagerConnectionFactory;
+import org.apache.commons.dbcp2.PoolableConnection;
+import org.apache.commons.dbcp2.PoolableConnectionFactory;
+import org.apache.commons.dbcp2.PoolingDriver;
+import org.apache.commons.pool2.ObjectPool;
+import org.apache.commons.pool2.impl.GenericObjectPool;
+import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
+
+public class DBCPInit extends HttpServlet {
+
+	@Override
+	public void init() throws ServletException {
+		loadJDBCDriver();
+		initConnectionPool();
+	}
+
+	private void loadJDBCDriver() {
+		try {
+			Class.forName("com.mysql.jdbc.Driver");	//MySQL용 JDBC 드라이버 로딩
+		} catch (ClassNotFoundException ex) {
+			throw new RuntimeException("fail to load JDBC Driver", ex);
+		}
+	}
+
+	private void initConnectionPool() {
+		try {
+			String jdbcUrl = 
+					"jdbc:mysql://localhost:3306/chap14?" + 
+					"useUnicode=true&characterEncoding=utf8";
+			String username = "jspexam";
+			String pw = "jsppw";
+
+			//커넥션 풀이 새로운 커넥션을 생성할 때 사용할 커넥션 팩토리 생성
+			//MySQL에 연결할 때 사용할 JDBC URL,DB 계정,암호를 생성자로 전달
+			ConnectionFactory connFactory = 
+					new DriverManagerConnectionFactory(jdbcUrl, username, pw);				
+			
+			
+			//PoolableConnection을 생성하는 팩토리를 생성(DBCP는 커넥션 풀에 커넥션을 보관할 때 PoolableConnection을 사용)
+			//내부적으로 커넥션을 담고 있고 커넥션 풀을 관리하는데 필요한 기능을 추가로 제공
+			//(e.g : close()메소드 호출 -> 실제 커넥션 종료X 풀에 커넥션 반환)
+			PoolableConnectionFactory poolableConnFactory = 
+					new PoolableConnectionFactory(connFactory, null);
+			//커넥션이 유효한지 여부를 검사할 때 사용할 쿼리를 지정		
+			poolableConnFactory.setValidationQuery("select 1");
+			
+			//커넥션 풀의 설정 정보를 설정
+			GenericObjectPoolConfig poolConfig = new GenericObjectPoolConfig();
+			poolConfig.setTimeBetweenEvictionRunsMillis(1000L * 60L * 5L);	//유휴 커넥션 검사주기
+			poolConfig.setTestWhileIdle(true);	//풀에 보관 중인 커넥션이 유효한지 검사할지 여부
+			poolConfig.setMinIdle(4);	//커넥션 최소 개수
+			poolConfig.setMaxTotal(50);	//커넥션 최대 개수
+
+			//커넥션 풀 생성(사용할 팩토리,커넥션 풀 설정을 파라미터로)
+			GenericObjectPool<PoolableConnection> connectionPool = 
+					new GenericObjectPool<>(poolableConnFactory, poolConfig);
+			poolableConnFactory.setPool(connectionPool);//PoolableConnectionFactory에도 생성한 커넥션 풀 연결
+			
+			//커넥션 풀을 제공하는 JDBC 드라이버를 등록
+			Class.forName("org.apache.commons.dbcp2.PoolingDriver");
+						
+			PoolingDriver driver = 
+					(PoolingDriver) DriverManager.getDriver("jdbc:apache:commons:dbcp:");
+			driver.registerPool("chap14", connectionPool);	//커넥션 풀 드라이버에 생성한 커넥션 풀을 등록
+			//프로그램에서 사용하는 JDBC URL은 "jdbc:apache:commons:dbcp:chap14"
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+}
+
+
+<< 요약 >>
+-실제 커넥션을 생성할 ConnectionFactory 생성
+-커넥션 풀로 사용할 PoolableConnection을 생성하는 PoolableConnectionFactory를 생성
+-커넥션 풀의 설정 정보를 생성
+-커넥션 풀을 사용할 JDBC 드라이버를 등록
+
+----
+
+/8.2.3 커넥션 풀 초기화 서블릿 설정
+
+;web.xml
+..
+	<servlet-name>DBCPInit</servlet-name>
+  	<servlet-class>jdbc.DBCPInit</servlet-class>
+  	<load-on-startup>1</load-on-startup>
+  </servlet>
+...
+추가
+
+=>웹 어플리케이션이 시작할 때 DBCPInit 서블릿 클래스가 자동 시작 & init() 메소드 호출
+
+----
+
+/8.2.4 커넥션 풀로부터 커넥션 사용하기
+;DBCP가 제공하는 PoolingDriver는 커넥션 풀을 위한 JDBC 드라이버
+=>PoolingDriver를 통해 커넥션 풀로부터 커넥션을 가져오려면 JDBC URL을 사용하면됨
+jdbc:apache:commons:dbcp:풀이름
+
+=>풀 이름은 PoolingDriver에 커넥션 풀을 등록할 때 지정
+		Class.forName("org.apache.commons.dbcp2.PoolingDriver");
+		PoolingDriver driver = 
+				(PoolingDriver) DriverManager.getDriver("jdbc:apache:commons:dbcp:");
+		driver.registerPool("chap14", connectionPool);
+=>풀의 이름 : "chap14" 사용
+
+=>
+Connection conn=null;
+...
+try{
+	String jdbcUrl="jdbc:appache:commons:dbcp:chap14";
+	//커넥션 풀에서 커넥션을 구함
+	conn=DriverManager.getConnection(jdbcUrl);
+	..
+}finally{
+	..
+	//커넥션을 풀에 반환함
+	if(conn!=null)try{conn.close();}catch(SQLException ex){}
+}
+
+
+
+/*	e.g : viewMemberUsingPool.jsp	*/
+
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ page import="java.sql.DriverManager" %>
+<%@ page import="java.sql.Connection" %>
+<%@ page import="java.sql.Statement" %>
+<%@ page import="java.sql.ResultSet" %>
+<%@ page import="java.sql.SQLException" %>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>회원 목록</title>
+</head>
+<body>
+
+MEMBER테이블의 내용
+<table width="100%" border="1">
+<tr>
+	<td>이름</td><td>아이디</td><td>이메일</td>
+</tr>
+<%
+	Connection conn=null;
+	Statement stmt=null;
+	ResultSet rs=null;
+	
+	try{
+		String jdbcDriver="jdbc:apache:commons:dbcp:chap14";
+		String query="select * from MEMBER order by MEMBERID";
+		conn=DriverManager.getConnection(jdbcDriver);
+		stmt=conn.createStatement();
+		rs=stmt.executeQuery(query);
+		while(rs.next()){
+%>
+<tr>
+	<td><%=rs.getString("NAME") %></td>
+	<td><%=rs.getString("MEMBERID") %></td>
+	<td><%=rs.getString("EMAIL") %></td>
+</tr>
+<%	
+		}
+	}finally{
+		if(rs!=null)try{rs.close();}catch(SQLException ex){}
+		if(stmt!=null)try{rs.close();}catch(SQLException ex){}
+		if(conn!=null)try{rs.close();}catch(SQLException ex){}
+	}
+%>
+</table>
+
+</body>
+</html>
+
+
+
+
+----
+
+/8.2.5 커넥션 풀 속성 설명
+;GenericObjectPoolConfig 클래스 => 커넥션 풀의 크기, 검사 주기 등 설정할 수 있는 메소드 제공
+
+
+1)GenericObjectPoolConfig 클래스의 커넥션 개수와 대기 관련 설정 메소드
+
+메소드						설명												기본값
+ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+setMaxTotal(int)			풀이 관리하는 커넥션의 최대 개수 설정.(음수는 제한없음)		8
+
+setMaxIdle(int)				커넥션 풀이 보관할 수 있는 최대 유휴 개수 지정(음수 제한X)		8	
+
+setMinIdle(int)				커넥션풀이 유지할 최소 유휴 커넥션 개수 지정				0
+							(maxIdle 보다 크면 maxIdle을 minIdle값으로 사용)
+							
+setBlockWhen				풀이 관리하는 커넥션이 모두 사용중인 상태에서 커넥션을 요청		true
+Exhausted(boolean)			할 때 풀에 커넥션이 반환될 때까지 대기할지 여부를 지정
+							(true: 대기 false : NoSuchElementExcepion 발생)
+
+setMaxWaitMillis(long)		blockWhenExhausted가 true일 때, 최대 대기 시간을 설정	-1L
+							음수면 풀에서 커넥션을 구할 수 있을 때까지 대기한다.
+							(단위 : 밀리초)
+
+2)GenericObjectPoolConfig 클래스의 유휴 커넥션 제거 및 검사 관련 설정 메소드
+;사용되지 않는 유휴 커넥션을 제거하는 기능.(주기적으로 커넥션 검사 & DBMS에서 연결을 끊기 전에 먼저 커넥션을 풀에서 제거할 수 있음)
+
+메소드							설명										기본값
+ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+setTimeBetweenEvictionRuns		풀에있는 유휴 커넥션 검사 주기를 설정				-1L
+Millis(long)					(양수가 아니면 검사하지 않음 // 단위 : 밀리초)
+
+setNumTestsPerEviction			각 주기때마다 검사할 커넥션의 개수를 설정			3
+Run(int)						(음수면 유휴 커넥션 개수를 검사 개수의 절대값으로
+								나눈 값을 사용)
+
+setMinEvictableIdleTime			풀에 머물 수 있는 최소 유휴 시간을 설정			1800000L
+Millis(long)					(커넥션을 검사할 때 이 시간을 초과한 커넥션이 제거	(30분)
+								대상이 됨. 이 시간이 양수가 아니면 유휴 시간으로 
+								검사하지 않는다. 단위 : 밀리초)
+
+setTestWhileIdle(boolean)		true : 유휴 커넥션이 유효한지 검사				false
+
+setTestOnBorrow(boolean)		true : 커넥션 풀에서 커넥션을 가져 올때 유효한지 	false
+										검사
+
+setTestOnReturn(boolean)		true :  커넥션을 풀에 반환할 때 유효한지 검사		false
+
+
+=>커넥션 풀에 있는 커넥션 중 오랜 시간 동안 사용되지 않는 커넥션은 DBMS와 연결이 끊길 가능성 높음
+=>연결이 끊긴 커넥션을 사용하면 프로그램 실행 도중 오류가 발생
+=>주기적으로 커넥션 풀에 있는 커넥션을 검사해서 사전에 제거해주는 것이 좋음
+
+-DBCP의 풀에 있는 커넥션 검사 기준
+1)커넥션이 최소 유휴 시간보다 오래 풀에 있는 경우(minEvictableIdleTimeMillis)
+2)커넥션이 유효한지 여부 확인(testWhileIdle)
+(검사주기(timeBetweenEvictionRunsMillis)가 양수일때 적용)
+
+=>testWhileIdle이 true면 PoolableConnectionFactory의 커넥션 검사 기능을 사용
+PoolableConnectionFactory poolableConnFactory =	new PoolableConnectionFactory(connFactory, null);
+poolableConnFactory.setValidationQuery("select 1");
+
+
+3)PoolableConnectionFactory의 커넥션 검사 기능과 관련된 설정 메소드
+
+메소드						설명										기본값
+ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+setMaxConnLifeTime			커넥션의 최대 사용 시간을 설정					-1L
+Millis(long)				(커넥션을 생성한 뒤 최대 사용 시간이 지나면
+							유효하지 않은 것으로 간주. 양수일때 적용 단위:밀리초)
+
+setValidationQuery(String)	커넥션을 검사할 때 사용할 쿼리를 설정한다.
+
+
+=>GenericObjectPoolConfig 클래스에서 설정하는 풀의 몇 가지 속성은 성능에 큰 영향을 미치므로
+  웹 어플리케이션의 사용량에 따라서 알맞게 지정해야 함.
+  
+-maxTotal 	: 사이트의 최대 커넥션 사용량을 기준으로 지정.
+			(불필요하게 커질 경우 커넥션 개수가 비대하게 늘어나 DBMS가 수용할 수 있는 수준을 넘으면 성능에 -영향)
+			
+-minIdle	: 사용되지 않는 커넥션의 최소 개수를 0으로 지정하면 풀에 저장된 커넥션 개수가 0이 될 수 있음
+			(이 경우 커넥션이 필요할 때 다시 커넥션을 생성 => 커넥션의 최소 개수는 시스템 사용이 가장 적은 시간을 기준으로 설정)
+			
+-timeBetweenEvctionRunsMillis	: 이값을 설정해서 주기적으로 유휴 커넥션을 풀에서 제거하는 것이 좋음
+(커넥션의 동시 사용량은 새벽에 최저 & 낮에 최대 => 두 시간대에 필요한 커넥션 개수 차이는 수십~수백개에 이름
+ =>최대 상태 -> 최소 상태로 가게되면 풀에서 사용되지 않는 커넥션의 개수가 점차 증가
+ =>DB와 연결이 끊기기 전에 유휴 커넥션을 미리 풀에서 제거해주는 것이 좋음
+ =>보통 10~30분 단위로 유휴 커넥션을 검사하도록 지정하는것이 좋음
+ 
+-testWhileIdle	: 유휴 커넥션을 검사할 때 유효하지 않은 커넥션도 검사해서 연결이 끊긴 커넥션을 사전에 제거하는 것이 좋음
+
+-setMaxWaitMillis	: 커넥션 풀에 커넥션이 없으면 일정 시간 대기 후 익셉션을 발생시키는 것이 좋음.
+(커넥션을 대기하느라 수십 초 이상 대기하면 사용자는 응답이 없으므로 브라우저의 새로 고침을 누르거나 DB를 사용하는 다른
+페이지로 이동해서 다시 풀에서 가져오기 위해 대기하게 됨.
+=>사용자가 아무 응답 없이 대기하는 것 보다 1초 미만의 길지 않은 시간 안에 커넥션을 구하지 못하면 익셉션을 발생시켜서 알맞은 
+  화면을 보여주는게 더 좋음
+  
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

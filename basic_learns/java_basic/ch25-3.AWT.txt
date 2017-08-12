@@ -1,0 +1,275 @@
+AWT 
+
+
+//현재 윈도우 얻기
+Dimension screen=Toolkit.getDefaultToolkit().getScreenSize(); //윈도우 		
+
+
+//배치관리자
+=>AWT는 디폴트로 FlowLayout 안됨
+=>FlowLayout , GridLayout , BorderLayout
+
+
+//창크기 조절
+this.setResizable(false);
+
+//Dialog
+
+
+package day15;
+
+import java.awt.BorderLayout;
+import java.awt.Button;
+import java.awt.Dialog;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.Frame;
+import java.awt.Label;
+import java.awt.Toolkit;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+
+class MyFrame extends Frame{
+	
+	private Dialog diaLog=new Dialog(this,"경고",true);
+	private Label label = new Label("경고입니다.");
+	
+	
+	public MyFrame(String title){
+		super(title);
+		this.init();
+	}
+	
+	private void init(){
+		///////////////////////////////////////////
+		//초기 설정		
+		this.setSize(300,400);			
+		Dimension screen=Toolkit.getDefaultToolkit().getScreenSize(); 		
+		int xpos=(int)(screen.getWidth()/2.0-this.getWidth()/2.0); 
+		int ypos=(int)(screen.getHeight()/2.0-this.getHeight()/2.0);		
+		this.setLocation(xpos, ypos); 
+		this.setResizable(false);		
+		this.addWindowListener(new WindowAdapter(){
+			@Override
+			public void windowClosing(WindowEvent e){
+				System.exit(0);
+			}			
+		});
+		///////////////////////////////////////////		
+		
+		diaLog.setLayout(new BorderLayout());
+		label.setFont(new Font("",Font.BOLD,20));
+		diaLog.add(label,BorderLayout.CENTER);
+		diaLog.addWindowListener(new WindowAdapter(){
+			@Override
+			public void windowClosing(WindowEvent e){
+				diaLog.setVisible(false);
+			}			
+		});
+		
+		Button btn=new Button("open to the new window");
+		btn.addActionListener(event -> {
+			diaLog.setBounds(120,120,100,100);
+			diaLog.setVisible(true);
+			
+		});
+		this.setLayout(new FlowLayout());
+		this.add(btn);
+		
+	}	
+	
+	public void start(){
+		this.setVisible(true);
+		
+	}	
+}
+
+public class DiaLogTest {
+	public static void main(String[] args){
+		MyFrame frm=new MyFrame("");
+		frm.start();		
+	}
+}
+
+
+//FileDialog
+
+
+package day15;
+
+import java.awt.Button;
+import java.awt.Dimension;
+import java.awt.FileDialog;
+import java.awt.Frame;
+import java.awt.Toolkit;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+
+class MyFrame2 extends Frame{
+	
+	private FileDialog fileDialog=new FileDialog(this,"저장",FileDialog.LOAD);	
+	private Button btnOpenFile = new Button("OPEN");
+	private String filePath;
+	
+	public MyFrame2(String title){
+		super(title);
+		this.init();
+	}
+	
+	private void init(){
+		///////////////////////////////////////////
+		//초기 설정		
+		this.setSize(300,400);			
+		Dimension screen=Toolkit.getDefaultToolkit().getScreenSize(); 		
+		int xpos=(int)(screen.getWidth()/2.0-this.getWidth()/2.0); 
+		int ypos=(int)(screen.getHeight()/2.0-this.getHeight()/2.0);		
+		this.setLocation(xpos, ypos); 
+		this.setResizable(false);		
+		this.addWindowListener(new WindowAdapter(){
+			@Override
+			public void windowClosing(WindowEvent e){
+				System.exit(0);
+			}			
+		});
+		///////////////////////////////////////////
+		
+		this.add(btnOpenFile);
+		btnOpenFile.addActionListener(event -> {
+			fileDialog.setVisible(true);
+		});
+		
+		String file = fileDialog.getFile();
+		System.out.println(file);
+	}	
+	public void start(){
+		this.setVisible(true);		
+	}	
+}
+
+public class FileDialogTest {
+	public static void main(String[] args){
+		MyFrame2 frm=new MyFrame2("Test");
+		frm.start();
+	}
+}
+
+
+
+//MenuBar 
+
+
+
+package day15;
+import java.awt.CheckboxMenuItem;
+import java.awt.Dimension;
+import java.awt.Frame;
+import java.awt.Menu;
+import java.awt.MenuBar;
+import java.awt.MenuItem;
+import java.awt.Toolkit;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+
+class MyFrame03 extends Frame{
+	
+	private MenuBar menuBar=new MenuBar(); //메뉴바 선언
+	private Menu menuFile=new Menu("파일");
+	private Menu menuEdit=new Menu("편집");
+	private Menu menuHelp=new Menu("도움말");
+	
+	private MenuItem newFileItem=new MenuItem("새파일");
+	private MenuItem fileOpenItem=new MenuItem("파일열기");
+	private MenuItem fileSaveItem=new MenuItem("파일저장");
+	private MenuItem exitItem=new MenuItem("종료");
+	
+	private Menu ecolor=new Menu("색상 선택");
+	
+	private CheckboxMenuItem cbmiRed=new CheckboxMenuItem("빨간색");
+	private CheckboxMenuItem cbmiGreen=new CheckboxMenuItem("녹색");
+	private CheckboxMenuItem cbmiBlue=new CheckboxMenuItem("파란색");
+	
+	public MyFrame03(String title){
+		super(title);
+		this.init();
+	}
+	
+	private void init(){
+		///////////////////////////////////////////
+		//초기 설정		
+		this.setSize(300,400);			
+		Dimension screen=Toolkit.getDefaultToolkit().getScreenSize(); 		
+		int xpos=(int)(screen.getWidth()/2.0-this.getWidth()/2.0); 
+		int ypos=(int)(screen.getHeight()/2.0-this.getHeight()/2.0);		
+		this.setLocation(xpos, ypos); 
+		this.setResizable(false);		
+		this.addWindowListener(new WindowAdapter(){
+			@Override
+			public void windowClosing(WindowEvent e){
+				System.exit(0);
+			}			
+		});
+		///////////////////////////////////////////		
+		
+		this.setMenuBar(menuBar); // 메뉴바 사용(레이아웃에 무관)
+		menuBar.add(menuFile); //파일
+		menuBar.add(menuEdit); //편집
+		menuBar.add(menuHelp); //도움말
+		
+		menuFile.add(newFileItem);
+		menuFile.addSeparator();
+		menuFile.add(fileOpenItem);
+		menuFile.add(fileSaveItem);
+		menuFile.addSeparator();
+		menuFile.add(exitItem);
+		
+		menuEdit.add(ecolor);
+		
+		ecolor.add(cbmiRed);
+		ecolor.add(cbmiGreen);
+		ecolor.add(cbmiBlue);
+		
+	}	
+	
+	public void start(){
+		this.setVisible(true);
+	}	
+}
+
+
+public class MenuBarTest {
+	public static void main(String[] args){
+		MyFrame03 frm=new MyFrame03("Test");
+		frm.start();
+		
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 

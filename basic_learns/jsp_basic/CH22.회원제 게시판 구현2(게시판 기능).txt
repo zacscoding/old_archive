@@ -1,0 +1,1657 @@
+-----------CH22.회원제 게시판 구현2(게시판 기능)-----------------
+
+//01 게시판 기능 목록
+-게시글 등록
+-게시글 목록 조회
+-게시글 내용 조회
+-게시글 수정
+=>서비스로 알맞은 로직을 구현하고 DAO로 DB 연동 처리하고 MVC 패턴을 이용해서 웹 브라우저 요청을 제어
+
+-한 게시글이 갖는 데이터
+ 게시글 번호(아이디)
+ 작성자(아이디,이름)
+ 제목
+ 내용
+ 최초 작성일시
+ 마지막 수정일시
+ 조회수
+
+-DB
+ article : 게시글 작성자, 제목, 작성일시 , 수정일시 , 조회수 데이터
+ article_content : 내용 데이터
+=>내용 데이터를 별도의 테이블에 저장하는 이유 : 두 테이블에 담긴 데이터를 사용하는 비율이 다름
+(e.g : 게시글 목록을 조회하는 경우에 내용은 사용하지 않음 // 게시글을 등록할 때는 모든 데이터를 사용 
+ =>즉, 게시글의 내용 데이터는 다른 데이터와 함께 사용되기도 하고 함께 사용되지 않기도 함)
+ 
+/*	board/sql/ddl.sql : article 테이블 생성 쿼리 */
+create table board.article(
+	article_no int auto_increment primary key,
+    writer_id varchar(50) not null,
+    writer_name varchar(50) not null,
+    title varchar(255) not null,
+    regdate datetime not null,
+    moddate datetime not null,
+    read_cnt int
+)engine=InnoDB default character set=utf8;
+
+
+create table board.article_content(
+	article_no int primary key,
+    content text
+)engine=InnoDB default character set =utf8;
+
+=>게시글 데이터가 article 테이블과 article_content 테이블에 저장되므로 한 게시글에 대해
+  article 테이블의 article_no == article_content 테이블의 article_no
+  
+---------------------------------------------------------------------------------------------
+
+//03 Writer,Article, ArticleContent 구현
+
+/*	board/src/article/model/Writer.java	*/
+
+
+package article.model;
+
+public class Writer {
+	private String id;
+	private String name;
+	
+	public Writer(String id,String name){
+		this.id=id;
+		this.name=name;
+	}
+	
+	public String getId(){
+		return id;
+	}
+	
+	public String getName(){
+		return name;
+	}
+}
+
+
+
+
+
+/*	board/src/article/model/Article.java	*/
+
+	
+package article.model;
+
+import java.util.Date;
+
+public class Article {
+	private Integer number;
+	private Writer writer;
+	private String title;
+	private Date regDate;
+	private Date modifiedDate;
+	private int readCount;
+	
+	public Article(Integer number,Writer writer,String title,Date regDate,Date modifiedDate,int readCount){
+		this.number=number;
+		this.writer=writer;
+		this.title=title;
+		this.regDate=regDate;
+		this.modifiedDate=modifiedDate;
+		this.readCount=readCount;
+	}
+
+	public Integer getNumber() {
+		return number;
+	}
+
+	public Writer getWriter() {
+		return writer;
+	}
+
+	public String getTitle() {
+		return title;
+	}
+
+	public Date getRegDate() {
+		return regDate;
+	}
+
+	public Date getModifiedDate() {
+		return modifiedDate;
+	}
+
+	public int getReadCount() {
+		return readCount;
+	}
+}
+
+
+
+
+
+/*	board/src/article/model/ArticleContent.java	*/
+
+
+package article.model;
+
+public class ArticleContent {
+	private Integer number;
+	private String content;
+	
+	public ArticleContent(Integer number,String content){
+		this.number=number;
+		this.content=content;
+	}
+	
+	public Integer getNumber(){
+		return number;
+	}
+	
+	public String getContent(){
+		return content;
+	}
+}
+
+
++ 22-1 클래스와 테이블 간의 연결 관계 그림
+
+---------------------------------------------------------------------------------------------
+
+//04 게시글 쓰기 기능 구현
+
+- 기능 명세
+ 게시글에 쓰기 위한 폼은 제ㅐ목과 내용을 제공한다.
+ 폼에 제목을 입력하지 않았으면 다시 폼을 보여준다.
+ 로그인 한 사용자만 게시글 쓰기를 할 수 있다.
+ 
++22-2 게시글 쓰기 기능 구현 그림
+
+-----------
+
+/4.1 ArticleDao와 ArticleContentDao의 데이터 추가 기능 구현
+
+/*	board/src/article/dao/ArticleDao	*/
+
+
+
+package article.dao;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Timestamp;
+import java.util.Date;
+
+import article.model.Article;
+import jdbc.JdbcUtil;
+
+public class ArticleDao {
+	
+	public Article insert(Connection conn,Article article) throws SQLException{
+		PreparedStatement pstmt=null;
+		Statement stmt=null;
+		ResultSet rs=null;
+		
+		try{
+			//insert 쿼리를 실행해서 article 테이블에 데이터를 삽입.(article_no는 자동 증가 칼럼이므로 쿼리에 실행 x)
+			pstmt=conn.prepareStatement("insert into article"+"(writer_id,wrtier_name,title,regdate,moddate,read_cnt)"
+								+"values(?,?,?,?,?,0)");
+			pstmt.setString(1,article.getWriter().getId());
+			pstmt.setString(2,article.getWriter().getName());
+			pstmt.setString(3,article.getTitle());
+			pstmt.setTimestamp(4,toTimestamp(article.getRegDate()));
+			pstmt.setTimestamp(5,toTimestamp(article.getRegDate()));
+			int insertedCount=pstmt.executeUpdate();
+			
+			 
+			if(insertedCount>0){ // 성공적으로 데이터 저장
+				stmt=conn.createStatement();
+				//위에서 새롭게 추가한 데이터의 article_no 값을 구함.
+				rs=stmt.executeQuery("select last_insert_id() from article");
+				if(rs.next()){
+					Integer newNum=rs.getInt(1); //신규 게시글의 번호를 구함
+					return new Article(newNum,article.getWriter(),article.getTitle(),article.getRegDate(),article.getModifiedDate(),0);
+					//article테이블에 추가한 데이터를 담은 Article 인스턴스를 반환
+				}				
+			}
+			return null;
+		}finally{
+			JdbcUtil.close(rs);
+			JdbcUtil.close(stmt);
+			JdbcUtil.close(pstmt);
+		}
+	}
+	
+	private Timestamp toTimestamp(Date date){
+		return new Timestamp(date.getTime());
+	}
+
+}
+
+
+=>ArticleDao 클래스의 insert() 메소드의 반환형은 Article 
+=>
+Article savedArticle=articleDao.insert(article);
+if(savedArticle==null){
+	//데이터 저장 실패 처리
+}else{
+	//데이터 저장 성공 처리
+}
+
+
+
+
+
+/*	board/src/article/dao/ArticleContentDao.java	*/
+
+
+
+package article.dao;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+
+import article.model.ArticleContent;
+import jdbc.JdbcUtil;
+
+public class ArticleContentDao {
+	
+	public ArticleContent insert(Connection conn,ArticleContent content) throws SQLException{
+		PreparedStatement pstmt=null;
+		
+		try{
+			pstmt=conn.prepareStatement("insert into article_content (article_no,content) values(?,?)");
+			pstmt.setLong(1, content.getNumber());
+			pstmt.setString(2, content.getContent());
+			
+			int insertedCount=pstmt.executeUpdate();
+			
+			if(insertedCount>0)
+				return content;
+			else 
+				return null;			
+		}finally{
+			JdbcUtil.close(pstmt);
+		}		
+	}
+}
+
+-----------
+
+/4.2 WriteArticleService 구현
+게시글 데이터를 DB에 삽입하는 필요한 DAO를 구현 => 이 DAO를 이용해서 게시글 쓰기 구현
+-WriteRequest : 게시글 쓰기에 필요한 데이터를 제공
+-WrtieArticleService : 게시글 쓰기 기능을 제공
+
+
+
+
+/*	board/src/article/service/WriteRequest.java	*/
+
+
+package article.service;
+
+import java.util.Map;
+
+import article.model.Writer;
+
+public class WriteRequest {
+	//게시글 쓰는데 필요한 작성자, 제목, 내용데이터 정의
+	private Writer writer;
+	private String title;
+	private String content;
+	
+	public WriteRequest(Writer writer, String title , String content){
+		this.writer=writer;
+		this.title=title;
+		this.content=content;
+	}
+
+	public Writer getWriter() {
+		return writer;
+	}
+
+	public String getTitle() {
+		return title;
+	}
+
+	public String getContent() {
+		return content;
+	}
+	
+	//데이터가 유효한지 여부를 검사.잘못된 데이터가 존재하면 errors 맵 객체에 관련 코드를 추가
+	public void validate(Map<String,Boolean> errors){
+		if(title==null || title.trim().isEmpty())
+			errors.put("title",Boolean.TRUE);
+	}
+}
+
+
+
+
+/*	board/src/article/service/WriteArticleService.java	*/
+
+
+
+package article.service;
+
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.Date;
+
+import article.dao.ArticleContentDao;
+import article.dao.ArticleDao;
+import article.model.Article;
+import article.model.ArticleContent;
+import jdbc.JdbcUtil;
+import jdbc.connection.ConnectionProvider;
+
+public class WriteArticleService {
+	private ArticleDao articleDao=new ArticleDao();
+	private ArticleContentDao contentDao=new ArticleContentDao();
+	
+	//WriteRequest의 인스턴스를 이용해서 게시글을 등록하고 결과로 게시글 번호를 리턴
+	public Integer write(WriteRequest req){
+		Connection conn=null;
+		try{
+			conn=ConnectionProvider.getConnection();
+			conn.setAutoCommit(false); //트랜잭션 시작
+			
+			Article article=toArticle(req); //WriteRequest 인스턴스로 Article 객체 생성
+			Article savedArticle=articleDao.insert(conn, article); //ArticleDao의 insert() 실행 & 결과를 savedArticle에 저장.
+																	//article테이블에 추가한 데이터의 주요 키값을 number 값으로 갖음.
+			
+			if(savedArticle==null){ //article 테이블에 삽입한 레코드가 없으면
+				throw new RuntimeException("fail to insert article"); //익셉션 발생
+			}
+			
+			ArticleContent content=new ArticleContent(savedArticle.getNumber(),req.getContent()); //ArticaleContent 인스턴스 생성
+																								//savedArticle의 게시글 번호 이용
+			ArticleContent savedContent=contentDao.insert(conn, content); //ArticleContentDao를 이용해서 insert()메소드 실행 & article_content에 데이터 삽입
+			if(savedContent==null){ //ArticleDao의 insert() 실행 결과가 null이면
+				throw new RuntimeException("fail to insert article_content"); //익셉션 발생				
+			}
+			
+			conn.commit(); //트랜잭션 커밋(article,article_content 테이블에 성공적으로 데이터 삽입되면 커밋됨)
+			
+			return savedArticle.getNumber(); //새로 추가한 게시글 번호 리턴			
+		}catch(SQLException e){ // 예외 발생하면
+			JdbcUtil.rollback(conn); //롤백
+			throw new RuntimeException(e);		
+		}finally{
+			JdbcUtil.close(conn);
+		}		
+	}
+	
+	private Article toArticle(WriteRequest req){
+		Date now=new Date();
+		return new Article(null,req.getWriter(),req.getTitle(),now,now,0);	//게시글을 저장해야 id를 알 수 있으므로 null을 전달	
+	}
+}
+
+-----------
+
+/4.3 WriteArticleHandler 구현
+
+
+/*	board/src/article/command/WriteArticleHandler.java	*/
+
+
+package article.command;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import article.model.Writer;
+import article.service.WriteArticleService;
+import article.service.WriteRequest;
+import auth.service.User;
+import mvc.command.CommandHandler;
+
+public class WriteArticleHandler implements CommandHandler{
+	private static final String FORM_VIEW="/WEB-INF/view/newArticleForm.jsp";
+	private static final String NEW_ARTICLE_SUCCESS="/WEB-INF/view/newArticleSuccess.jsp";
+	private WriteArticleService writeService=new WriteArticleService();
+	
+	@Override
+	public String process(HttpServletRequest req, HttpServletResponse res) throws Exception{
+		if(req.getMethod().equalsIgnoreCase("GET")){
+			return processForm(req,res);
+		}else if(req.getMethod().equalsIgnoreCase("POST")){
+			return processSubmit(req,res);
+		}else{
+			res.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+			return null;
+		}		
+	}
+	
+	private String processForm(HttpServletRequest req,HttpServletResponse res){
+		return FORM_VIEW;
+	}
+	
+	private String processSubmit(HttpServletRequest req,HttpServletResponse res){
+		Map<String,Boolean> errors=new HashMap<>();
+		req.setAttribute("errors", errors);
+		
+		User user=(User)req.getSession(false).getAttribute("authUser"); //세션에서 로그인한 사용자 정보를 구하기
+		WriteRequest writeReq=createWriteRequest(user,req); //user와 HttpServletRequest 를 이용해서 WriteRequest 객체를 생성
+		writeReq.validate(errors); //writeReq의 유효성 검사
+		
+		if(!errors.isEmpty()) //예외가 존재하면 폼을 다시 보여줌
+			return FORM_VIEW; 
+		
+		int newArticleNo=writeService.write(writeReq); //WriteArticleService를 이용해서 게시글 등록 & 등록된 게시글의 ID를 리턴 받음
+		req.setAttribute("newArticleNo",newArticleNo); //새 글의 ID를 request의 newArticleId 속성에 저장.
+		
+		return NEW_ARTICLE_SUCCESS;		
+	}
+	
+	private WriteRequest createWriteRequest(User user,HttpServletRequest req){
+		return new WriteRequest( 
+				new Writer(user.getId(),user.getName()),
+				req.getParameter("title"),
+				req.getParameter("content"));
+	}
+}
+
+
+
+/*	board/WebContent/WEB-INF/commandHandlerURI.properties	*/
+/article/write.do=article.command.WriteArticleHandler
+
+추가
+
+-----------
+
+/4.4 newArticleForm.jsp 와 newArticleSuccess.jsp 구현
+
+
+/*	board/WebContent/WEB-INF/view/newArticleForm.jsp	*/
+
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>게시글 쓰기</title>
+</head>
+<body>
+
+<form action="write.do" method="post">
+<p>
+	제목:<br/><input type="text" name="title" value="${param.title}">
+	<c:if test="${errors.title}"> 제목을 입력하세요.</c:if>
+</p>
+
+<p>
+	내용:<br/>
+	<textarea name="content" rows="5" cols="30">${param.content}</textarea>	
+</p>	
+<input type="submit" value="새 글 등록">
+</form>
+</body>
+</html>
+
+
+/*	board/WebContent/WEB-INF/view/
+
+
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>게시글 등록</title>
+</head>
+<body>
+
+게시글을 등록했습니다.
+<br>
+${ctxPath=pageContext.request.contextPath;''}
+<a href="${ctxPath}/article/list.do">[게시글목록보기]</a>
+<a href="${ctxPath}/article/read.do?no=${newArticleNo}">[게시글 내용보기]</a>
+</body>
+</html>
+
+
+-----------
+
+/4.5 로그인 검사 필터 적용
+
+
+기존에 LoginCheckFilter를 비번 변경할때 사용 => 매핑 정보 추가
+
+
+/*	board/WebContent/WEB-INF/web.xml	*/
+
+	...
+	<filter>
+		<filter-name>LoginCheckFilter</filter-name>
+		<filter-class>filter.LoginCheckFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>LoginCheckFilter</filter-name>
+		<url-pattern>/changePwd.do</url-pattern>
+		<url-pattern>/article/write.do</url-pattern>
+	</filter-mapping>  
+</web-app>
+
+-----------
+
+/4.6 게시글 쓰기 기능 테스트
+
+http://localhost:8080/board/article/write.do 
+
+1)제목안쓰고 저장
+2)내용안쓰고 저장(내용은 없어도 상관 없게 구현)
+3)저장
+
+---------------------------------------------------------------------------------------------
+
+//05 게시글 목록 조회 기능
+게시글 조회 기능의 요구 사항
+-게시글 목록을 요청하면 10개 게시글의 번호, 제목, 작성자, 조회를 표 형식으로 출력
+-게시글 목록을 요청할 때 페이지 번호를 지정하지 않으면, 가장 최근에 작성한 게시글 10개를 최근 순으로 보여준다.
+-요청한 페이지가 n이면, 가장 최근 게시글을 순서로 (10*n)+1 부터 10*(n+1)까지 게시글 목록을 출력
+ e.g)게시글 번호가 1~55인 게시글이 55개 있다고 가정. 3페이지 요청 (55~46 1페이지 // 45~36 2페이지 // 35~26 3페이지 ..)
+-게시글 목록과 함께 이동 가능한 페이지 번호를 5페이지 단위로 표시
+
+-----------
+
+/5.1 ArticleDao의 목록 조회 관련 기능 구현
+
+게시글 목록을 표현하기 위해 필요한 데이터
+- 페이지 개수를 구하기 귀한 전체 게시글 개수
+- 지정한 행 번호에 해당하는 게시글 목록
+
+/*	board/src/article/dao/ArticleDao.java	*/
+public class ArticleDao{
+	....
+
+	//전체 게시글 구하기
+	public int selectCount(Connection conn) throws SQLException{
+		Statement stmt=null;
+		ResultSet rs=null;
+		try{
+			stmt=conn.createStatement();
+			rs=stmt.executeQuery("select count(*) from article");
+			if(rs.next()){
+				return rs.getInt(1);
+			}
+			return 0;
+		}finally{
+			JdbcUtil.close(rs);
+			JdbcUtil.close(stmt);
+		}
+	}
+
+
+	public List<Article> select(Connection conn,int startRow,int size) throws SQLException {
+		PreparedStatement pstmt=null;
+		ResultSet rs=null;
+		try{
+			pstmt=conn.prepareStatement("select * from article"
+					+"order by article_no desc limit ?,?");
+			pstmt.setInt(1, startRow);
+			pstmt.setInt(2, size);
+			
+			rs=pstmt.executeQuery();
+			
+			List<Article> result=new ArrayList();
+			while(rs.next()){
+				result.add(convertArticle(rs));
+			}
+			return result;			
+		}finally{
+			JdbcUtil.close(pstmt);
+			JdbcUtil.close(rs);
+		}
+	}
+	
+	private Article convertArticle(ResultSet rs) throws SQLException {
+		return new Article(rs.getInt("article_no"),
+						new Writer(
+								rs.getString("writer_id"),
+								rs.getString("writer_name")),
+						rs.getString("title"),
+						toDate(rs.getTimestamp("regDate")),
+						toDate(rs.getTimestamp("moddate")),
+						rs.getInt("read_cnt"));						
+	}
+	
+	private Date toDate(Timestamp timestamp){
+		return new Date(timestamp.getTime());
+	}
+}
+
+=>
+limit ?,? => 첫번째 : 읽어올 레코드의 첫 번째 행 번호 , 두번째 레코드의 개수
+e.g)게시글 번호 1-9존재 && select * from article order by article_no desc limit 4,2
+  -> "order by article_no desc" 게시글 번호 내림차순 정렬
+  -> 내림차순(역순) [9,8,7,6,5,4,3,2,1] 순으로 레코드 정렬  
+  -> limit 4,2에 따라 5번째 레코드부터 2개의 레코드인 [5,4] 레코드를 읽어옴.
+  -> limit 6,3이면 7번째 레코드 부터 3개인 [3,2,1]레코드를 읽어옴
+
+-----------
+
+/5.2 ArticlePage와 ListArticleService 구현
+
+
+/*	board/src/article/service/ArticlePage.java	*/
+
+
+
+
+package article.service;
+
+import java.util.List;
+
+import article.model.Article;
+
+/*
+ * 게시글 데이터와 페이징 관련 정보를 담을 클래스
+ */
+public class ArticlePage {
+	//instance variables
+	private int total; //전체 게시글 수 보관
+	private int currentPage; //사용자가 요청한 페이지 번호 보관
+	private List<Article> content; //화면에 출력할 게시글 목록 보관
+	private int totalPages; //전체 페이지 개수를 보관
+	private int startPage; //화면 하단에 보여줄 페이지 이동 링크의 시작 (5개 보여줌)
+	private int endPage; //화면 하단에 보여줄 페이지 이동 링크의 끝
+	
+	//constructor
+	public ArticlePage(int total,int currentPage,int size,List<Article> content){
+		this.total=total;
+		this.currentPage=currentPage;
+		this.content=content;
+		if(total==0){ //게시글 개수가 0개 
+			totalPages=0;
+			startPage=0;
+			endPage=0;			
+		}else{
+			//전체 게시글과 보여줄 페이지(size)에 따른 전체 페이지 수 구하기
+			totalPages=total/size;
+			if(total%size>0){ //전체 게시글 개수를 size로 나눈 나머지가 0보다 크면 페이지 수 1 증가
+				totalPages++; //e.g) total 34, size 10 -> (34/10) ==3페이지 , (34%10)==4개의 게시글 => 1페이지 추가 필요 -> 4(3+1)페이지 필요 
+			}
+			
+			//화면 하단에 보여줄 페이지 이동 링크의 시작 페이지 번호 구하기
+			//[1,2,3,4,5] 처럼 5개 출력
+			int modVal=currentPage%5; 	//e.g)currentPage==3 -> modVal==3 // currentPage=5 -> modVal == 0 
+			startPage=currentPage/5*5+1;//startPage==1 					 //startPage=6
+			if(modVal==0)				
+				startPage-=5;			//변동X							//startPage=1
+			endPage=startPage+4;		//endPage == 5					//endPage == 5
+			if(endPage > totalPages)	//총 34페이지 인데, 현재 30페이지 일경우 endPage==35 -> endPage==34로 바꿈
+				endPage=totalPages;			
+		}		
+	}
+	
+	public int getTotal(){
+		return total;
+	}
+	
+	public boolean hasNoArticles(){
+		return total==0;
+	}
+	
+	public boolean hasArticles(){
+		return total>0;
+	}
+	
+	public int getCurrentPage(){
+		return currentPage;
+	}
+	
+	public int getTotalPages(){
+		return totalPages;
+	}
+	
+	public List<Article> getContent(){
+		return content;
+	}
+	
+	public int getStartPage(){
+		return startPage;
+	}
+	
+	public int getEndPage(){
+		return endPage;
+	}
+}
+
+
+
+
+
+/*	board/src/article/service/ListArticleService.java	*/
+
+
+
+package article.service;
+
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.List;
+
+import article.dao.ArticleDao;
+import article.model.Article;
+import jdbc.connection.ConnectionProvider;
+
+public class ListArticleService {
+	private ArticleDao articleDao=new ArticleDao();
+	private int size=10;
+	
+	//public ArticlePage(int total,int currentPage,int size,List<Article> content);
+	public ArticlePage getArticlePage(int pageNum){
+		try(Connection conn=ConnectionProvider.getConnection()){
+			//전체 게시글 구하기
+			int total=articleDao.selectCount(conn);
+			//pageNum에 해당하는 게시글 목록을 구함.
+			List<Article> content=articleDao.select(conn, (pageNum-1)*size , size); //시작행은 0번 기준으로, 3페이지 요청하면 (3-1)*10==20이 시작 행번호
+			return new ArticlePage(total,pageNum,size,content);			
+		}catch(SQLException e){
+			throw new RuntimeException(e);
+		}
+	}
+
+}
+
+-----------
+
+/5.3 ListArticleHandler 구현
+
+
+
+package article.command;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import article.service.ArticlePage;
+import article.service.ListArticleService;
+import mvc.command.CommandHandler;
+
+public class ListArticleHandler implements CommandHandler{
+	private ListArticleService listService=new ListArticleService();
+	
+	@Override
+	public String process(HttpServletRequest req,HttpServletResponse res) throws Exception{
+		String pageNoVal=req.getParameter("pageNo");
+		int pageNo=1;
+		if(pageNoVal!=null){
+			pageNo=Integer.parseInt(pageNoVal);
+		}
+		ArticlePage articlePage=listService.getArticlePage(pageNo);
+		req.setAttribute("articlePage",articlePage);
+		return "/WEB-INF/view/listArticle.jsp";		
+	}
+}
+
+
+
+/*	board/WebContent/WEB-INF/commandHandlerURI.properties	*/
+/article/list.do=article.command.ListArticleHandler
+
+-----------
+
+/5.4 listArticle.jsp 구현
+
+
+/*	board/WebContent/WEB-INF/view/listArticle.jsp	*/
+
+
+
+
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>게시글 목록</title>
+</head>
+<body>
+
+<table border="1">
+	<tr>
+		<td colspan="4"><a href="write.do">[게시글 쓰기]</a></td>
+	</tr>
+	<tr>
+		<td>번호</td>
+		<td>제목</td>
+		<td>작성자</td>
+		<td>조회수</td>
+	</tr>
+<!-- 게시글이 존재하지 않을 경우 알맞은 메시지 출력 -->	
+<c:if test="${articlePage.hasNoArticles()}" >
+	<tr>
+		<td colspan="4">게시글이 없습니다.</td>
+	</tr>	
+</c:if>
+
+<!-- 게시글 목록 출력.  -->
+<c:forEach var="article" items="${articlePage.content}">
+	<tr>
+		<td>${article.number}</td>
+		<td>
+		<a href="read.do?no=${article.number}&pageNo=${articlePage.currentPage}"> <!-- 게시글 읽기 링크 제공 -->
+			<c:out value="${article.title }"/>
+		</a>
+		</td> 
+		<td>${article.writer.name}</td>
+		<td>${article.readCount}</td>
+	</tr>
+</c:forEach>
+
+
+<c:if test="${articlePage.hasArticles()}">
+	<tr>
+		<td colspan="4">
+			<!-- 페이지이동 링크의 시작 번호가 5보다 클 때 이전으로 이동할 수 있는 링크를 제공 -->
+			<c:if test="${articlepage.startPage > 5}">
+			<a href="list.do?pageNo=${articlePage.startPage-5}">[이전]</a> <!-- 페이지 이전 링크 -->
+			</c:if>
+			<!-- 페이지 이동 링크를 생성(5페이지씩) -->
+			<c:forEach var="pNo" begin="${articlePage.startPage}" end="${articlePage.endPage }">
+			<a href="list.do?pageNo=${pNo}">[${pNo}]</a>			
+			</c:forEach>
+			<!-- 페이지 이동 링크의 끝 번호가 마지막 페이지보다 작을 때, 다음으로 이동할 수 있는 링크 제공 -->
+			<c:if test="${articlePage.endPage < articlePage.totalPages }">
+			<a href="list.do?pageNo=${articlePage.startPage+5 }">[다음]</a>
+			</c:if>
+		</td>
+	</tr>
+</c:if>
+</table>
+</body>
+</html>
+
+---------------------------------------------------------------------------------------------
+
+//06 게시글 조회 기능
+:게시글 조회 기능의 요구 사항
+ - 요청한 번호에 해당하는 게시글의 내용을 출력한다.
+ - 게시글 조회수를 1 증가한다.
+ - 존재하지 않는 게시글 번호를 요청하면 페이지 없음 상태 코드(404)를 응답한다.
+ 
++22-3.게시글 조회 기능.jpg 클래스들
+
+-----------
+
+/6.1 ArticleDao의 조회 관련 기능 구현
+
+-특정 번호에 해당하는 게시글 데이터 읽기
+-특정 번호에 해당하는 게시글 데이터의 조회수 증가
+
+
+/*	board/src/article/dao/ArticleDao.java : 조회 관련 기능	*/
+
+
+public class ArticleDao {
+	...
+	/*
+	 * 게시글 조회 관련 기능 구현
+	 */
+	//게시글 번호 article_no 로 Article 인스턴스 구하기
+	public Article selectById(Connection conn,int no) throws SQLException{
+		PreparedStatement pstmt=null;
+		ResultSet rs=null;
+		try{
+			pstmt=conn.prepareStatement("select * from article where article_no = ?");
+			pstmt.setInt(1, no);
+			rs=pstmt.executeQuery();
+			Article article=null;
+			if(rs.next())
+				article=convertArticle(rs);
+			return article;			
+		}finally{
+			JdbcUtil.close(rs);
+			JdbcUtil.close(pstmt);
+		}
+	}
+	
+	//게시글 조회수 1 증가
+	public void increaseReadCount(Connection conn,int no) throws SQLException{
+		try(PreparedStatement pstmt=
+				conn.prepareStatement("update article set read_cnt = read_cnt +1 where article_no = ?")){
+			pstmt.setInt(1, no);
+			pstmt.executeQuery();
+		}		
+	}	
+}
+
+-----------
+
+/6.2 ArticleContentDao의 조회 관련 기능 구현
+
+
+/*	board/src/article/dao/ArticleContentDao.java : selectById() 메소드	*/
+
+
+
+public class ArticleContentDao {
+	....
+	
+	/*
+	 * 조회 관련 기능
+	 */
+	public ArticleContent selectById(Connection conn,int no) throws SQLException{
+		PreparedStatement pstmt=null;
+		ResultSet rs=null;
+		try{
+			pstmt=conn.prepareStatement("select * from article_content where article_no = ?");
+			pstmt.setInt(1,no);
+			rs=pstmt.executeQuery();
+			
+			ArticleContent content=null;
+			if(rs.next())
+				content=new ArticleContent(rs.getInt("article_no"),rs.getString("content"));
+			return content;
+		}finally{
+			JdbcUtil.close(rs);
+			JdbcUtil.close(pstmt);			
+		}
+	}
+}
+
+-----------
+
+/6.3 ArticleData 클래스 구현
+
+
+/*	board/src/article/service/ArticleData.java	*/
+
+
+package article.service;
+
+import article.model.Article;
+import article.model.ArticleContent;
+
+/*
+ * ReadArticleService 클래스에서 구현할  getArticle() 메소드의 리턴타입으로 
+ * Article 인스턴스와 ArticleContent 인스턴스를 한 객체에 담기 위한 용도로 사용
+ */
+
+public class ArticleData {
+	
+	private Article article;
+	private ArticleContent content;
+	
+	public ArticleData(Article article,ArticleContent content){
+		this.article=article;
+		this.content=content;
+	}
+	
+	public Article getArticle(){
+		return article;
+	}
+	
+	public String getContent(){
+		return content.getContent();
+	}
+}
+
+
+-----------
+
+/6.4 데이터가 없음을 의미하는 익셉션 클래스 구현
+
+/*	board/src/article/service/ArticleNotFoundException.java	*/
+
+
+package article.service;
+
+public class ArticleNotFoundException extends RuntimeException{
+	
+}
+
+
+
+/*	board/src/article/service/ArticleContentNotFoundException.java	*/
+
+package article.service;
+
+public class ArticleContentNotFoundException {
+
+}
+
+-----------
+
+/6.5 ReadArticleService 구현
+
+//게시판 읽기 기능을 제공
+
+/*	board/src/article/service/ReadArticleService.java	*/
+
+
+package article.service;
+
+import java.sql.Connection;
+import java.sql.SQLException;
+
+import article.dao.ArticleContentDao;
+import article.dao.ArticleDao;
+import article.model.Article;
+import article.model.ArticleContent;
+import jdbc.connection.ConnectionProvider;
+
+public class ReadArticleService {
+	private ArticleDao articleDao=new ArticleDao();
+	private ArticleContentDao contentDao=new ArticleContentDao();
+	
+	public ArticleData getArticle(int articleNum, boolean increasedReadCount){
+		try(Connection conn=ConnectionProvider.getConnection()){
+			Article article=articleDao.selectById(conn, articleNum); //article 테이블에서 지정한 번호의 Article 인스턴스를 구함
+			if(article==null) //게시글 데이터가 존재하지 않으면 익셉션 발생
+				throw new ArticleNotFoundException();
+			
+			
+			ArticleContent content=contentDao.selectById(conn, articleNum); //article_content 테이블에서 지정한 번호의 ArticleContent 인스턴스를 구함
+			if(content==null) //게시글 내용 데이터가 존재하지 않으면 익셉션 발생
+				throw new ArticleContentNotFoundException();		
+			
+			if(increasedReadCount) //increasedReadCount가 true면 조회수 증가(게시글 수정 기능에서도 getArticle()메소드를 사용하기 때문에)
+				articleDao.increaseReadCount(conn, articleNum);
+			
+			return new ArticleData(article,content); //ArticleData 인스턴스 반환			
+		}catch(SQLException e){
+			throw new RuntimeException(e);
+		}
+	}
+}
+
+-----------
+
+/6.6 ReadArticlehandler 구현
+
+
+/*	board/src/article/command/ReadArticleHandler.java	*/
+
+
+package article.command;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import article.service.ArticleContentNotFoundException;
+import article.service.ArticleData;
+import article.service.ArticleNotFoundException;
+import article.service.ReadArticleService;
+import mvc.command.CommandHandler;
+
+public class ReadArticleHandler implements CommandHandler{
+	private ReadArticleService readService=new ReadArticleService();
+	private final String VIEW_PAGE="/WEB-INF/view/readArticle.jsp";
+	
+	@Override
+	public String process(HttpServletRequest req,HttpServletResponse res) throws Exception{
+		String noVal=req.getParameter("no");
+		int articleNum=Integer.parseInt(noVal);
+		
+		try{
+			ArticleData articleData=readService.getArticle(articleNum, true); //articleNum이 존재하지 않으면 예외 발생
+			req.setAttribute("articleData",articleData); // request의 articleData 속성에 게시글 데이터를 저장.
+			return VIEW_PAGE;			
+		}catch(ArticleNotFoundException | ArticleContentNotFoundException e){ 
+			req.getServletContext().log("no article",e); //예외발생하면 로그 메시지 기록
+			res.sendError(HttpServletResponse.SC_NOT_FOUND); //404 에러 코드 전송
+			return null;
+		}		
+	}
+}
+
+
+
+
+/*	매핑 추가	*/
+
+/*	board/WebContent/WEB-INF/commandHandlerURI.properties	*/
+
+/article/read.do=article.command.ReadArticleHandler
+
+
+-----------
+
+/6.8 JSP에서 내용 출력을 위한 커스텀 태그 구현
+
+<br>이나 '<' ,'&' ===>'\n<br>', '&lt;' ,'&amp;'로 치환해줘야함
+
+/*	board/WebContent/WEB-INF/tags/pre.tag	*/
+
+
+
+<%@ tag body-content="empty" pageEncoding="utf-8" %>
+<%@ tag trimDirectiveWhitespaces="true" %>
+<%@ attribute name="value" type="java.lang.String" required="true" %>
+
+<%
+	value=value.replace("\n","\n<br>");
+	value=value.replace("&","&amp;");
+	value=value.replace("<","&alt;");
+	value=value.replace(" ","&nbsp;");
+%>
+<%=value %>
+	
+
+=>value=value.replace(" ","&nbsp;"); 공백문자 여러 개가 제대로 표시 되도록
+
+-----------
+
+/6.8 readArticle.jsp 구현	
+
+
+
+/*	board/WebContent/WEB-INF/view/readArticle.jsp	*/
+
+
+
+
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="u" tagdir="/WEB-INF/tags" %>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>게시글 읽기</title>
+</head>
+<body>
+
+<table border="1" width="100%">
+
+<!-- 게시글 번호,작성자 이름, 제목 출력 -->
+<tr>
+	<td>번호</td> 
+	<td>${articleData.article.number}</td>
+</tr>
+<tr>
+	<td>작성자</td>
+	<td>${articleData.article.writer.name}</td>
+</tr>
+
+<tr>
+	<td>제목</td>
+	<td><c:out value='${articleData.article.title}' /></td>
+</tr>
+
+<!-- pre 태그를 이용해서 내용 출력 -->
+<tr>
+	<td>내용</td>	
+	<td><u:pre value='${articleData.content}'/></td>
+</tr>
+<tr>
+	<td colspan="2">
+	<c:set var="pageNo" value="${empty param.pageNo ? '1':param.pageNo }" />
+		<!-- 목록으로 돌아갈 링크 출력 -->
+		<a href="list.do?pageNo=${pageNo}">[목록]</a>
+		
+		<!-- 게시글 작성자 아이디 == 로그인 아이디 삭제,수정 링크 출력 --> 
+		<c:if test="${authUser.id==articleData.article.writer.id }" >
+		<a href="modify.do?no=${articleData.article.number}">[게시글 수정]</a>
+		<a href="delete.do?no=${articleData.article.number}">[게시글 삭제]</a>
+		</c:if>
+	</td>
+</tr>
+</table>
+
+</body>
+</html>
+
+
+-----------
+
+/6.9 게시글 조회 기능 테스트
+
+http://localhost:8080/board/article/list.do
+
+---------------------------------------------------------------------------------------------
+
+//7.5 게시글 수정 기능
+
++ch22-4 그림보기
+
+
+-----------
+
+/7.1 ArticleDao와 ArticleContentDao의 수정 관련 기능 구현
+
+/*	board/src/article/dao/ArticleDao.java : 게시글 제목 수정 기능	*/
+
+
+public class ArticleDao {
+	...
+	
+	//제목 수정
+	public int update(Connection conn,int no,String title) throws SQLException{
+		try(PreparedStatement pstmt = 
+				conn.prepareStatement("update article set title = ?, moddate = now() where article_no = ?")) {
+			pstmt.setString(1, title);
+			pstmt.setInt(2, no);
+			return pstmt.executeUpdate();
+		}		
+	}
+}
+
+
+
+/*	board/src/article/dao/ArticleContentDao.java : 게시글 제목 수정 기능	*/
+
+public class ArticleContentDao {
+	....
+	/*
+	 * 수정 관련 기능
+	 */
+	public int update(Connection conn,int no,String content) throws SQLException{
+		try(PreparedStatement pstmt=
+				conn.prepareStatement("update article_content set content=? where article_no = ?")){
+			pstmt.setString(1, content);
+			pstmt.setInt(2, no);
+			
+			return pstmt.executeUpdate();
+		}
+	}	
+}
+
+-----------
+
+/7.2 게시글을 수정할 수 없을 때 사용할 익셉션 구하기
+
+게시글이 존재하지 않는 경우 : article.service.ArticleNotFoundException 이용
+게시글 수정 권한이 없는 경우 : article.service.PermissionDeniedException 이용
+
+
+/*	board/src/article/service/PermissionDeniedException.java	*/
+
+package article.service;
+
+public class PermissionDeniedException extends RuntimeException{
+	
+}
+
+-----------
+
+/7.3 ModifyRequest 와 ModifyArticleService 구현
+
+
+/*	board/src/article/service/ModifyRequest.java	*/
+
+
+package article.service;
+
+import java.util.Map;
+
+public class ModifyRequest {
+	private String userId;
+	private int articleNumber;
+	private String title;
+	private String content;
+	
+	public ModifyRequest(String userId,int articleNumber,String title,String content){
+		this.userId=userId;
+		this.articleNumber=articleNumber;
+		this.title=title;
+		this.content=content;		
+	}
+	
+	public String getUserId(){
+		return userId;
+	}
+	
+	public int getArticleNumber(){
+		return articleNumber;
+	}
+
+	public String getTitle() {
+		return title;
+	}
+
+	public String getContent() {
+		return content;
+	}
+	
+	public void validate(Map<String,Boolean> errors){
+		if(title==null || title.trim().isEmpty())
+			errors.put("title",Boolean.TRUE);
+	}
+}
+
+
+/*	board/src/article/service/ModifyArticleService.java	*/
+
+
+package article.service;
+
+import java.sql.Connection;
+import java.sql.SQLException;
+
+import article.dao.ArticleContentDao;
+import article.dao.ArticleDao;
+import article.model.Article;
+import jdbc.JdbcUtil;
+import jdbc.connection.ConnectionProvider;
+
+public class ModifyArticleService {
+	private ArticleDao articleDao=new ArticleDao();
+	private ArticleContentDao contentDao=new ArticleContentDao();
+	
+	public void modify(ModifyRequest modReq){
+		Connection conn=null;
+		try{
+			conn=ConnectionProvider.getConnection();
+			conn.setAutoCommit(false);
+			
+			Article article=articleDao.selectById(conn, modReq.getArticleNumber()); //게시글 번호에 해당하는 Article 인스턴스 구한다.
+			if(article==null) //해당 번호를 가진 게시글이 존재하지않으면 예외 발생
+				throw new ArticleNotFoundException();
+			
+			if(!canModify(modReq.getUserId(),article)) //수정하려는 사용자가 수정할 수 있는 지 확인 & 없으면 예외 발생
+				throw new PermissionDeniedException();
+			
+			articleDao.update(conn, modReq.getArticleNumber(), modReq.getTitle()); //제목 수정
+			contentDao.update(conn, modReq.getArticleNumber(), modReq.getContent()); //내용 수정
+			
+			conn.commit();			
+		}catch(SQLException e){
+			JdbcUtil.rollback(conn);
+			throw new RuntimeException(e);
+		}catch(PermissionDeniedException e){
+			JdbcUtil.rollback(conn);
+			throw e;
+		}finally{
+			JdbcUtil.close(conn);
+		}		
+	}
+	
+	//게시글 수정할 수 있는지 검사하는 기능
+	private boolean canModify(String modfyingUserId, Article article){
+		return article.getWriter().getId().equals(modfyingUserId);
+	}
+}
+
+-----------
+
+/7.4 ModifyArticleHandler 구현
+
+-GET 방식 : 수정할 게시글 데이터를 읽어와 폼에 보여준다.
+-POST 방식 : 전송한 요청 파라미터를 이용해서 게시글을 수정한다. 파라미터가 값이 잘못된 경우
+            전송한 데이터를 이용해서 폼을 다시 보여준다.
+			
+			
+
+/*	board/article/command/ModifyArticleHandler.java	*/
+
+
+
+package article.command;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import article.service.ArticleData;
+import article.service.ArticleNotFoundException;
+import article.service.ModifyArticleService;
+import article.service.ModifyRequest;
+import article.service.PermissionDeniedException;
+import article.service.ReadArticleService;
+import auth.service.User;
+import mvc.command.CommandHandler;
+
+public class ModifyArticleHandler implements CommandHandler{
+	private static final String FORM_VIEW="/WEB-INF/view/modifyForm.jsp";
+	
+	private ReadArticleService readService=new ReadArticleService();
+	private ModifyArticleService modifyService=new ModifyArticleService();
+	
+	@Override
+	public String process(HttpServletRequest req,HttpServletResponse res) throws Exception{
+		if(req.getMethod().equalsIgnoreCase("GET")){
+			return processForm(req,res);
+		}else if(req.getMethod().equalsIgnoreCase("POST")){
+			return processSubmit(req,res);
+		}else{
+			res.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+			return null;
+		}		
+	}
+	
+	//폼 요청 처리(GET)
+	private String processForm(HttpServletRequest req,HttpServletResponse res) throws IOException {
+		try{
+			String noVal=req.getParameter("no");
+			int no=Integer.parseInt(noVal);
+			ArticleData articleData=readService.getArticle(no, false); //폼에 보여줄 게시글을 구함
+			User authUser=(User)req.getSession().getAttribute("authUser"); //로그인한 사용자 정보를 구함
+			
+			if(!canModify(authUser,articleData)){ //로그인 사용자 != 게시글 작성자 => 403응답(금지 의미)를 전송
+				res.sendError(HttpServletResponse.SC_FORBIDDEN);
+				return null;
+			}
+			
+			ModifyRequest modReq=new ModifyRequest(authUser.getId(),no, //폼에 데이터를 보여줄 때 사용할 인스턴스 생성
+					articleData.getArticle().getTitle(),
+					articleData.getContent());
+			req.setAttribute("modReq",modReq); //request의 modReq 속성에 저장
+			return FORM_VIEW; //폼을 위한 뷰를 리턴
+		}catch(ArticleNotFoundException e){
+			res.sendError(HttpServletResponse.SC_NOT_FOUND);
+			return null;
+		}		
+	}
+	
+	//폼 전송 처리
+	private String processSubmit(HttpServletRequest req,HttpServletResponse res) throws Exception{
+		User authUser=(User)req.getSession().getAttribute("authUser"); //게시글 수정을 요청한 사용자 정보를 구함
+		String noVal=req.getParameter("no");
+		int no=Integer.parseInt(noVal);
+		
+		ModifyRequest modReq=new ModifyRequest(authUser.getId(),no, //요청 파라미터와 현재 사용자 정보를 이용해서 ModifyRequest 인스턴스 생성
+				req.getParameter("title"),
+				req.getParameter("content"));
+		
+		req.setAttribute("modReq",modReq); //ModifyRequest 인스턴스를 request의 modReq 속성에 저장
+		
+		Map<String,Boolean>  errors=new HashMap<>(); // 에러 정보를 담을 맵 인스턴스 생성
+		req.setAttribute("errors",errors);
+		modReq.validate(errors); //modReq가 유효한지 검사
+		
+		if(!errors.isEmpty())
+			return FORM_VIEW;
+		
+		try{
+			modifyService.modify(modReq); //게시글 수정 기능 수행
+			return "/WEB-INF/view/modifySuccess.jsp"; //수정 성공시 보여줄 뷰			
+		}catch(ArticleNotFoundException e){ 
+			res.sendError(HttpServletResponse.SC_NOT_FOUND);
+			return null;
+		}catch(PermissionDeniedException e){
+			res.sendError(HttpServletResponse.SC_FORBIDDEN);
+			return null;
+		}
+	}
+	
+	
+	//글 작성자 == 로그인 한 사용자 검사 여부
+	private boolean canModify(User authUser,ArticleData articleData){
+		String writerId=articleData.getArticle().getWriter().getId();
+		return authUser.getId().equals(writerId);
+	}
+}
+
+
+//매핑추가
+/*	board/WebContent/WEB-INF/commandHandlerURI.properties	*/
+/article/modify.do=article.command.ModifyArticleHandler
+
+
+//게시글 수정은 로그인한 사용자만 가능 -> web.xml의 LoginCheckFilter 설정에 추가
+/*	board/WebContent/WEB-INF/web.xml	*/
+
+...
+	<filter>
+		<filter-name>LoginCheckFilter</filter-name>
+		<filter-class>filter.LoginCheckFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>LoginCheckFilter</filter-name>
+		....
+		<url-pattern>/article/modify.do</url-pattern>
+	</filter-mapping>  
+</web-app>
+
+
+
+
+cf)로직의 중복처리
+
+//ModifyArticleService
+	private boolean canModify(String modfyingUserId, Article article){
+		return article.getWriter().getId().equals(modfyingUserId);
+	}
+	
+//ModifyArticleHandler
+	private boolean canModify(User authUser,ArticleData articleData){
+		String writerId=articleData.getArticle().getWriter().getId();
+		return authUser.getId().equals(writerId);
+	}
+	
+====>
+public class PermissionChecker{
+	public static boolean canModify(String userId,Article article){
+		return article.getWriter().getId().equals(userId);
+	}
+}
+
+	//ModifyArticleService
+	if(!PermissionChecker.canModify(modReq.getUserId(),article))
+		....
+	
+	//ModifyArticleHandler
+	if(!PermissionChecker.canModify(authUser.getId(),articleData.getArticle())
+		...
+
+	
+-----------
+
+/7.5 modifyForm.jsp 와 modifySuccess.jsp 구현
+
+
+/*	board/WebContent/WEB-INF/view/modifyForm.jsp	*/
+
+
+
+
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>게시글 수정</title>
+</head>
+<body>
+<form action="modify.do" method="post">
+<p>
+	번호:<br/>${modReq.articleNumber}
+</p>
+<p>
+	제목:<br/><input type="text" name="title" value="${modReq.title}">
+	<c:if test="${errors.title}">제목을 입력하세요 </c:if>
+</p>
+<p>
+	내용:<br/>
+	<textarea name="content" rows="5" cols="30">${modReq.content}</textarea>
+</p>
+<input type="submit" value="글 수정">
+</form>
+</body>
+</html>
+
+
+
+
+
+/*	board/WebContent/WEB-INF/view/modifySuccess.jsp	*/
+
+
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>게시글 수정</title>
+</head>
+<body>
+
+게시글을 수정했습니다.
+<br>
+${ctxPath=pageContext.request.contextPath ; ''}
+<a href="${ctxPath}/article/list.do">[게시글 목록보기]</a>
+<a href="${ctxPath}/article/read.do?no=${modReq.articleNumber}"> [게시글내용보기]</a>
+
+</body>
+</html>
+
+
+
+
+
+
+
+---------------------------------------------------------------------------------------------
+
+//8.게시글 삭제 기능 구현 (혼자 해보기)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

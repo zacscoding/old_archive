@@ -1,0 +1,4775 @@
+ㅡㅡㅡㅡㅡㅡㅡㅡch1 ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+
+/*파일 입출력 예제*/
+
+#include <iostream> //표준 헤더파일의 선언에서는 확장자를 생략하기로 약속
+
+int main(void)
+{
+	int num = 20;
+	std::cout << "Hello World!" << std::endl;
+	std::cout << "Hello " << "World!" << std::endl;
+	std::cout << num << ' ' << 'A';
+	std::cout << ' ' << 3.14 << std::endl;	//공백문자 출력 , 3.14 출력
+	
+	return 0;
+}
+
+/*두개의 정수(실수)를 받아 더하는 프로그램*/
+
+#include <iostream>
+
+int main(void)
+{
+//	int val1;
+	double val1;
+	std::cout << "첫 번째 숫자입력:";
+	std::cin >> val1;
+
+//	int val2;
+	double val2;	//중간에 지역변수 선언가능!
+	std::cout << "두 번째 숫자입력:";
+	std::cin >> val2;
+
+//	int result = val1 + val2;
+	double result = val1 + val2;
+	std::cout << "덧셈 결과 : " << result << std::endl;
+
+	return 0;
+
+}
+
+
+/*두개의 정수 입력을 받아 사이의 정수를 더하는 프로그램*/
+
+#include <iostream>
+
+int main(void)
+{
+	int val1, val2;
+	int result = 0;
+
+	std::cout << "두 개의 숫자입력: ";
+	std::cin >> val1 >> val2;	//탭,스페이스바,엔터 키와같은 공백으로 구별함.
+
+	if (val1 < val2)
+	{
+		for (int i = val1 + 1; i < val2; i++) {	//for문의 초기화 문장 내에서 변수 선언 가능
+			result += i;
+		}
+	}
+	else
+	{
+		for (int i = val2 + 1; i < val1; i++) {
+			result += i;
+		}
+	}
+
+	std::cout << "두 수 사이의 정수 합 : " << result << std::endl;
+
+	return 0;
+}
+
+
+
+
+/* 배열 기반의 문자열 입출력 예제*/
+
+#include <iostream>
+
+int main(void)
+{
+	char name[100];
+	char lang[200];
+
+	std::cout << "이름은 무엇입니까?";
+	std::cin >> name;
+
+	std::cout << "좋아하는 프로그래밍 언어는 무엇인가요? ";
+	std::cin >> lang;
+
+	std::cout << "내 이름은 " << name << "입니다.\n";
+	std::cout << "제일 좋아하는 언어는 " << lang << "입니다." << std::endl;
+
+	return 0;
+
+}
+
+
+
+
+/*
+함수의 오버로딩( function overloading )
+- 함수 오버로딩이란?
+  동일한 이름의 함수를 정의하는 것!
+
+- 함수 오버로딩의 조건
+   * 매개 변수의 개수 혹은 타입이 일치하지 않는다.
+   * 매개 변수의 자료형 순서가 달라야 한다.
+   * 반환형은 함수 호출방식과는 무관하므로 해당되지 않는다.
+
+- 함수 오버로딩이 가능한 이유
+   * C언어에서는 함수 호출 시 함수의 이름을 기준으로 호출 대상을 찾지만,
+     C++에서는 함수의 이름, 매개변수의 개수와 자료형을 기준으로 찾는다.
+   * 함수의 이름 + 매개 변수의 정보
+
+- 개요
+   * 함수의 이름을 동일하게 만들고, 전달하는 인자의 개수 에 따라서 
+     어떠한 함수를 호출할 것인지를 구분하는 방법
+   * C언어에서는 함수 호출 시 함수의 이름을 기준으로 호출 대상을 찾지만,
+     C++에서는 함수의 이름, 매개변수의 개수, 자료형을 기준으로 찾는다.
+   * 함수의 이름이 같더라도 매개변수의 자료형, 개수가 다르면 다른 함수이다.
+*/
+
+
+
+/* 함수의 오버로딩 예제*/
+//C에서는 함수이름으로, C++에서는 함수이름,매개변수 타입,개수로 함수를 구분!
+
+#include <iostream>
+
+void MyFunc(void)
+{
+	std::cout << "MyFunc(void) called" << std::endl;
+}
+
+void MyFunc(char c)
+{
+	std::cout << "MyFunc(char c) called" << std::endl;
+}
+
+void MyFunc(int a, int b)
+{
+	std::cout << "MyFunc(int a,int b) called" << std::endl;
+}
+
+int main(void)
+{
+	MyFunc();
+	MyFunc('A');
+	MyFunc(12,13);
+
+	return 0;
+}
+
+
+/*디폴트 매개변수*/
+
+/*
+디폴트 매개변수란?
+- Default Parmeter란 매개변수에 기본 값이 있는 함수를 말함
+- 함수 호출 시 전달되는 값이 있으면 전달된 값으로 대체되고 
+  전달되는 값이 없으면 자신의 기본 값을 사용하는 설정
+- 함수 오버로딩과 마찬가지로 Default Parameter 또한 하나의 함수가 
+  마치 여러 일을 하는 것처럼 정의할 수 있기 때문에 다형성(polymorphism)이 구현 됨
+
+디폴트 매개변수 규칙 1
+- 매개변수의 디폴트 값은 오른쪽에서부터 차례대로 할당
+
+  O => int func(int n1, int n2, int n3=10){  }
+  O => int func(int n1, int n2=5, int n3=10){  }
+  O => int func(int n1=1, int n2=5, int n3=10){  }
+
+  X => int func(int n1=1, int n2, int n3){  }
+	//func 하고 n2,n3만 전달할 수 X
+  X => int func(int n1=1, int n2=5, int n3){  }
+	//func 하고 n2,n3만 전달할 수 X
+
+  ※ 전달되는 인자가 왼쪽에서부터 채워지므로, 오른쪽이 빈 상태로 왼쪽의 매개변수에만 
+     일부 채워진 디폴트값은 의미를 갖지 못한다. 따라서 컴파일 에러를 일으킨다.
+
+디폴트 매개변수 규칙 2
+- 함수 선언과 정의를 나눠 쓸 경우 디폴트 값은 선언 부에만 사용 
+  그렇지 않으면 func()를 컴파일 할 수 없음.
+
+  int func(int n1=1, int n2=5);
+  int main(void){
+	cout<<func()<<endl;
+	cout<<func(5)<<endl;
+  }
+  int func(int n1, int n2){
+	return n1+n2;
+  }
+*/
+
+
+/* 매개변수의 디폴트 값 예제*/
+
+#include <iostream>
+
+//인자를 전달하지 않으면 num1=1,num2=2에 전달된 것으로 간주!
+int Adder(int num1 = 1, int num2 = 2)
+{
+	return num1 + num2;
+}
+
+int main(void)
+{
+	std::cout << Adder() << std::endl;
+	std::cout << Adder(5) << std::endl;	//5가 첫번째 매개변수로 전달
+	std::cout << Adder(3, 5) << std::endl;
+	return 0;
+}
+
+//함수의 선언시에는 디폴트 값은 함수의 선언 부분에만 위치!
+//그렇지 않으면 Adder()했을때 컴파일 오류.
+/*
+#include <iostream>
+
+int Adder(int num1 = 1, int num2 = 2);
+
+int main(void)
+{
+	std::cout << Adder() << std::endl;
+	std::cout << Adder(5) << std::endl;
+	std::cout << Adder(3, 5) << std::endl;
+	return 0;
+}
+
+int Adder(int num1, int num2)
+{
+	return num1 + num2;
+}
+*/
+
+
+/*매개변수의 디폴트 값 예제2*/
+
+#include <iostream>
+
+int BoxVolume(int length, int width = 1, int height = 1);
+
+int main(void)
+{
+	std::cout << "[3, 3, 3] : " << BoxVolume(3, 3, 3) << std::endl;
+	std::cout << "[5, 5, D] : " << BoxVolume(5, 5) << std::endl;
+	std::cout << "[7, D, D] : " << BoxVolume(7) << std::endl;
+//	std::cout << "[D, D, D] : " << BoxVolume() << std::endl;
+	
+	return 0;
+}
+
+int BoxVolume(int length, int width, int height)
+{
+	return length*width*height;
+}
+
+
+/*인라인 함수 예제1*/
+
+#include <iostream>
+
+inline int SQUARE(int x)
+{
+	return x*x;
+}
+
+int main(void)
+{
+	std::cout << SQUARE(5) << std::endl;
+	std::cout << SQUARE(12) << std::endl;
+
+	return 0;
+}
+
+
+/*템플릿 예제*/
+#include <iostream>
+
+template <typename T>
+inline T SQUARE(T x)
+{
+	return x*x;
+}
+
+int main(void)
+{
+	std::cout << SQUARE(5.5) << std::endl;
+	std::cout << SQUARE(12) << std::endl;
+	return 0;
+}
+
+
+/*인라인 함수 예제2*/
+//두개의 정수를 받아 합,차,곱,몫을 구하는 프로그램
+//1부터 매개변수 값 까지의 랜던수 발생해서 반환 
+// 매개변수 값 동안의 시간만큼 프로그램 실행 정지
+#include <iostream>
+#include <ctime>
+#include <cstdlib>
+#include <Windows.h>
+
+
+inline void cal(int x, int y)
+{
+	std::cout << "합 : " << x + y << std::endl;
+	std::cout << "차 : " << x - y << std::endl;
+	std::cout << "곱 : " << x*y << std::endl;
+	std::cout << "몫 :" << x / y << std::endl;
+}
+
+inline int RANDOMIZE(int x)
+{
+	srand(time(NULL));
+	return rand()%x + 1;
+}
+
+inline void delay(int x)
+{
+	for (int i = 0; i < x; i++) {
+		std::cout << i+1 << "초" << std::endl;
+		Sleep(1000);
+	}
+}
+
+int main(void)
+{
+	int x, y;
+	std::cout << "두개의 정수 입력 : ";
+	std::cin >> x >> y;
+	cal(x, y);
+
+	int a,ran;
+	std::cout << "입력 값까지 랜덤수 발생 : ";
+	std::cin >> a;
+	ran = RANDOMIZE(a);
+
+	std::cout << "Delay("<<ran<<"초) 작동" << std::endl;
+	delay(ran);
+
+
+}
+
+
+/*namespace 의 예제 */
+
+#include <iostream>
+
+namespace BestComImp1
+{
+	void SimpleFunc(void)
+	{
+		std::cout << "BestCom이 정의한 함수" << std::endl;
+	}
+}
+
+namespace ProgComImp1
+{
+	void SimpleFunc(void)
+	{
+		std::cout << "ProgCom이 정의한 함수" << std::endl;
+	}
+}
+
+int main(void)
+{
+	BestComImp1::SimpleFunc();	//::(범위지정 연산자(scope resolution operator)
+	ProgComImp1::SimpleFunc();
+
+	return 0;
+}
+
+
+
+/*이름공간 기반에서 함수의 선언과 정의를 구분하는 방법*/
+
+#include <iostream>
+
+namespace BestComImpl
+{
+	void SimpleFunc(void);
+}
+
+namespace ProgComImpl
+{
+	void SimpleFunc(void);
+}
+
+int main(void)
+{
+	BestComImpl::SimpleFunc();
+	ProgComImpl::SimpleFunc();
+
+	return 0;
+}
+
+void BestComImpl::SimpleFunc(void)
+{
+	std::cout << "BestCom이 정의한 함수" << std::endl;
+}
+
+void ProgComImpl::SimpleFunc()
+{
+	std::cout << "ProgCom이 정의한 함수" << std::endl;
+}
+
+
+
+/*이름공간 기반에서 함수의 선언과 정의를 구분하는 방법2*/
+
+
+#include <iostream>
+
+namespace BestComImpl
+{
+	void SimpleFunc(void);
+}
+namespace BestComImpl
+{
+	void PrettyFunc(void);
+}
+
+
+namespace ProgComImpl
+{
+	void SimpleFunc(void);
+}
+
+int main(void)
+{
+	BestComImpl::SimpleFunc();
+//	ProgComImpl::SimpleFunc();
+
+	return 0;
+}
+
+void BestComImpl::SimpleFunc(void)
+{
+	std::cout << "BestCom이 정의한 함수" << std::endl;
+	PrettyFunc();
+	ProgComImpl::SimpleFunc();
+}
+
+void BestComImpl::PrettyFunc(void)
+{
+	std::cout << "So Pretty!" << std::endl;
+}
+
+
+void ProgComImpl::SimpleFunc()
+{
+	std::cout << "ProgCom이 정의한 함수" << std::endl;
+}
+
+
+
+
+
+
+
+
+/*이름공간의 중첩 예제*/
+
+#include <iostream>
+
+namespace Parent
+{
+	int num = 2;
+	namespace SubOne
+	{
+		int num = 3;
+	}
+	namespace SubTwo
+	{
+		int num = 4;
+	}
+}
+
+int main(void)
+{
+	std::cout << Parent::num << std::endl;
+	std::cout << Parent::SubOne::num << std::endl;
+	std::cout << Parent::SubTwo::num << std::endl;
+
+	return 0;
+}
+
+
+
+
+
+/* using 예제1* /
+//using Hybrid::HybFunc; //사용하겠다 Hybrid의 공간의 HybFunc를 HybFunc란 이름으로만 가지고
+#include <iostream>
+
+namespace Hybrid
+{
+	void exfunc(void)
+	{
+		std::cout << "kkk" << std::endl;
+	}
+	void HybFunc(void)
+	{
+		std::cout << "So simple Function!" << std::endl;
+		std::cout << "In namespace Hybrid!" << std::endl;
+	}
+}
+
+int main(void)
+{
+	using Hybrid::HybFunc;
+	HybFunc();
+//	exfunc();
+	return 0;
+}
+
+
+
+
+/* using 예제2* /
+//using namespace를 할 수록 이름 충돌의 발생 확률이 높아짐.
+//상황을 판단해서 적절히 혼용해야함!
+
+
+#include <iostream>
+//using std::cout;
+//using std::cin;
+//using std::endl;
+using namespace std;
+
+void func(void)
+{
+	int x;
+	cout << "입력 : ";
+	cin >> x;
+	cout << x << endl;
+}
+
+int main(void)
+{
+	int num = 20;
+	cout << "Hello World!" << endl;
+	cout << "Hello " << "World!" << endl;
+	cout << num << ' ' << 'A';
+	cout << ' ' << 3.14 << endl;
+	func();
+	return 0;
+}
+
+
+
+
+/*이름공간의 별칭 지정하는 방법*/
+#include <iostream>
+using namespace std;
+
+namespace AAA
+{
+	namespace BBB
+	{
+		namespace CCC
+		{
+			int num1, num2;
+		}
+	}
+}
+
+int main(void)
+{
+	AAA::BBB::CCC::num1 = 20;
+	AAA::BBB::CCC::num2 = 30;
+
+	namespace ABC = AAA::BBB::CCC;
+	cout << ABC::num1 << endl;
+	cout << AAA::BBB::CCC::num2 << endl;
+
+	return 0;
+}
+
+
+
+/*범위지정 연산자(Scope Resolution Operator) 의 또다른 기능*/
+//현명한 프로그래머라면, 전역,지역변수의 이름을 다르게 설정!
+#include <iostream>
+
+int  val = 100; //전역변수
+
+void SimpleFunc(void)
+{
+	using std::cout;
+	using std::endl;
+
+	int val = 20;		//지역변수
+	val += 3;			//지역변수 val의 값 3 증가
+	::val += 7;			//전역변수 val의 값 7 증가
+
+	cout << "지역 변수 val : " << val << endl;
+	cout << "전역 변수 val : " << ::val << endl;
+
+}
+
+int main(void)
+{
+	SimpleFunc();
+
+	return 0;
+}
+
+
+
+ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡch2ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+
+/*
+BOOL 자료형
+(intro) 
+C에서 const int TRUE=1; 하면서 가독성을 높여줌(0,1써도 잘 되지만 한번에 알아보기 힘듬)
+BUT C++ 에서는 기본 자료형 제공
+
+자료형 bool에 대한 이해
+-기본 자료형의 일종
+-참을 의미하는 true, 거짓을 의미하는 false 중 하나의 값을 지닌다.
+-BOOL은 내부적으로는 숫자라고 해도 맞기는 함. true,false를 값 자체로 이해하는게 좋음
+-1과 0이 아니라, 논리적인 참과 거짓을 의미하는 키워드이다.
+-int형 데이터로 형 변환 시 1과 0이 된다.
+
+
+*/
+
+
+/*true 와 false 의 사용 및 바이트 크기*/
+
+#include <iostream>
+using namespace std;
+
+int main(void)
+{
+	int num = 10;
+	int i = 0;
+
+	cout << "true : " << true << endl;
+	cout << "false : " << false << endl;
+
+	while (true)
+	{
+		cout << i++ << ' ';
+		if (i > num) break;
+	}
+
+	cout << endl;
+
+	cout << "sizeof 1 : " << sizeof(1) << endl;
+	cout << "sizeof 0 : " << sizeof(0) << endl;
+	cout << "sizeof true : " << sizeof(true) << endl;
+	cout << "sizeof false : " << sizeof(false) << endl;
+	
+	return 0;
+}
+
+/*bool 자료형 예제*/
+
+#include <iostream>
+using std::cin;
+using std::cout;
+using std::endl;
+
+bool IsPositive(int num) 
+{
+	if (num < 0)
+		return false;	//false라는 값을 리턴(false는 논리적 거짓이다)
+	else
+		return true;	//true라는 것은 논리적 참
+}
+
+int main(void)
+{
+	bool isPos;	//bool형은 true아니면 false를 저장
+	int num;
+	cout << "Input number : ";
+	cin >> num;
+
+	isPos = IsPositive(num);
+	if (isPos) {
+		cout << "Positive number" << endl;
+	}
+	else {
+		cout << "Negative number" << endl;
+	}
+
+	return 0;
+}
+
+
+/*
+
+레퍼런스(Reference)의 이해
+
+개념
+-이름 지니는 대상에 별명을 붙여주는 행위
+-변수 : 메모리 공간에 붙은 이름
+e.g) int a; (메모리 공간이 할당되고, a라는 이름이 붙음. -> a라는 이름으로 메모리에 접근)
+=>c에서는 변수에 하나의 이름이 가능.
+=>BUT c++에서는 여러개의 이름이 가능
+
+e.g)
+c : &ref  ==>주소값을 얻기 위해 활용
+c++ : &ref ==> 주소값을 얻기 위해 활용 // 레퍼런스를 위해 활용
+
+int *p    int &ref
+*p=10     &ref
+사용되는 위치가 달라서 혼동이 안됨
+-레퍼런스와 변수는 생성되는 방법에서만 차이 존재. 그 이후에는 같음
+
+
+레퍼런스의 제약
+-이름이 존재하지 않는 대상을 레퍼런스 할 수 없다. 선언과 동시에 반드시 초기화 되어야 한다.
+
+
+단점 : 
+-
+기존 c에서
+swap(&a,&b) -> call-by-reference 구나
+swap(a,b) -> call-by-value 구나 하면서 구분할 수 있었음.
+
+but c++에서
+swap(a,b) -> call-by-value? call-by-reference?
+
+*/
+
+
+
+
+/*참조자의 이해*/
+
+#include <iostream>
+using namespace std;
+
+int main(void)
+{
+	int num1 = 1020;
+	int &num2 = num1;	// int & : int형 변수를 참조할 수 있는 레퍼런스로 선언하겠다.
+ 	//num1이 가리키는 메모리 공간에다가 num2라는 이름을 또 붙여라
+	//num1이라는 변수에 별명(별칭)을 num2로 또 부여.
+	//int &ref=20 //불가능
+	//int &ref;		//불가능
+	//int &ref=NULL	//불가능
+
+	num2 = 3047;
+	cout << "VAL : " << num1 << endl;
+	cout << "REF : " << num2 << endl;
+
+	cout << "VAL : " << &num1 << endl;
+	cout << "REF : " << &num2 << endl;
+
+	return 0;
+}
+
+
+
+/*배열과 참조자예제*/
+#include <iostream>
+using namespace std;
+
+int main(void)
+{
+	int arr[3] = { 1,3,5 };
+	int &ref1 = arr[0];
+	int &ref2 = arr[1];
+	int &ref3 = arr[2];
+
+	cout << ref1 << endl;
+	cout << ref2 << endl;
+	cout << ref3 << endl;
+
+	return 0;
+}
+
+
+/*참조자를 이용한 swap스왑함수 이용*/
+
+#include<iostream>
+using namespace std;			//Reference 사용
+void Swap(int & n1, int & n2)
+{
+	int temp = n1;
+	n1 = n2;
+	n2 = temp;
+}
+int main(void)
+{
+	int num1 = 10, num2 = 20;
+	cout << num1 << " " << num2 << endl;
+	Swap(num1, num2);
+	cout << num1 << " " << num2 << endl;
+	return 0;
+}
+
+
+
+
+/*포인터와 참조자 예제*/
+
+#include <iostream>
+using namespace std;
+
+
+int main(void)
+{
+	int num = 12;
+	int *ptr = &num;
+	int **dptr = &ptr;
+
+	int &ref = num;			//int형 변수 num의 별명 ref
+	int *(&pref) = ptr;		//int 의 포인터 변수 ptr의 별명 pref
+	int **(&dpref) = dptr;	//이중포인터 변수 dptr의 별명 dpref
+
+	cout << ref << endl;	//12나옴
+	cout << *pref << endl;	//12나옴
+	cout << **dpref << endl;	//12나옴
+
+	return 0;
+}
+
+
+
+// 예제 - 리턴타입이 변수형이고, 반환값을 레퍼런스 변수로 받는 경우
+
+#include <iostream>
+using namespace std;
+int Reference(int &ref) { //일반변수로 받을때는 반환형에 연산자를 빼줘도무방하다.
+	return ++ref;
+}
+int main(void) {
+	int num1 = 10;
+	// int & num2 = Reference(num1); ( X )
+	int num2 = Reference(num1);	//num1=11, num2=11
+
+	num1++;//12
+	num2++;//12
+
+	cout << "num1 : " << num1 << endl;
+	cout << "num2 : " << num2 << endl;
+}
+
+
+
+/*참조연산자를 이용해서 스왑하는 예제*/
+#include <iostream>
+using namespace std;
+
+void SwapbyRef2(int &ref1, int &ref2)
+{
+	int temp = ref1;
+	ref1 = ref2;
+	ref2 = temp;
+}
+
+int main(void)
+{
+	int val1 = 10;
+	int val2 = 20;
+
+	SwapbyRef2(val1, val2);
+
+	cout << "val1 : " << val1 << endl;
+	cout << "val2 : " << val2 << endl;
+
+	return 0;
+}
+
+
+
+/*반환형이 참조형인 경우*/
+#include <iostream>
+using namespace std;
+
+int& RefRetFuncOne(int &ref)
+{
+	ref++;
+	return ref;
+}
+
+
+int main(void)
+{
+	int num1 = 1;
+	//int &num2 = RefRetFuncOne(num1);	//num1에 별명 num2
+	int num2 = RefRetFuncOne(num1);		//num2라는 변수 생성, 값 저장
+
+	num1++;
+	num2 += 100;
+	cout << "num1 : " << num1 << endl;
+	cout << "num2 : " << num2 << endl;
+
+	return 0;
+}
+
+/*함수의 반환형이 int, int& 에 따른 예제*/
+
+#include <iostream>
+
+using std::cout;
+using std::endl;
+
+int & ex_1(int &val)
+{
+	val++;
+	return val;
+}
+
+int ex_2(int &val)
+{
+	val++;
+	return val;
+}
+
+int ex_3(int &val)
+{
+	val++;
+	return val;
+}
+
+
+int main(void)
+{
+	int n1 = 10, n2 = 10, n3 = 10;
+	int& ref1 = ex_1(n1);
+//	int &ref2 = ex_2(n2); //컴파일 오류   int&ref2=11 이므로 오류. 
+	int ref3= ex_2(n3);
+
+	cout << "n1 : " << n1 << endl;
+	cout << "n3 : " << n3 << endl;
+
+	return 0;
+}
+
+
+
+/* 함수의 반환이 레퍼런스일 경우 주의해야 할 예제*/
+
+#include <iostream>
+
+using std::cout;
+using std::endl;
+
+int& function(void)
+{
+	int val = 10;
+	return val;
+}
+
+int main(void)
+{
+	int &ref = function();
+	//지역변수 이므로 val을 반환하고 없어져야됨
+	//출력은 되더라도, 문제가 있음(나중에 프로그램이 오랜시간 지속되면)
+	cout << ref << endl;
+	return 0;
+
+}
+
+
+/*Const 참조자의 또다른 특징*/
+
+#include <iostream>
+using namespace std;
+
+int main(void)
+{
+	const int num = 20;
+	//int &ref = num; //컴파일 에러
+	const int &ref = num;
+
+	//ref += 10;		//에러	//ref+=0; 해도 에러. 결과가 변하는게 중요한게 아니라, 그 식 자체를 에러 발생 시킴
+	cout << num << endl;
+}
+
+
+
+
+/*Const 참조자의 또다른 특징2*/
+
+#include <iostream>
+using namespace std;
+
+//상수를 임시변수 공간을 확보하고 그 공간에 대입후 참조함.
+int Adder(const int&ref1, const int & ref2)
+{
+	return ref1 + ref2;
+}
+
+
+
+
+int main(void)
+{
+	int num = 20 + 30;	//20,30 리터럴(literal) or 리터럴상수(literal constant)
+						//다음 행으로 넘어가면 존재하지 x -> 임시적 상수
+	const int &ref = 30;	//가능. 임시변수를 만들고, 그 공간에 30을 넣고 참조한다.
+
+	cout << Adder(3, 5) << endl;
+
+	return 0;
+
+}
+
+
+
+/*c언어 문자열 길이만큼 동적할당하는 예제*/
+/*단점 : 할당할 대상의 정보를 무조건 바이트 크기단위로 전달해야 한다.
+         반환형이 void형 포인터이기 때문에 적절한 형 변환을 거쳐야 한다.
+*/
+
+#include <iostream>
+#include <string.h>
+#include <stdlib.h>
+using namespace std;
+
+char * MakeStrAdr(int len)
+{
+	char *str = (char*)malloc(sizeof(char)*len);
+	return str;
+}
+
+int main(void)
+{
+	char *str = MakeStrAdr(20);
+	strcpy(str, "I am so happy~");
+	cout << str << endl;
+	free(str);
+	return 0;
+}
+
+
+
+/*
+
+c++식 동적 할당 예제
+-훨씬 간편해 졌다 임
+
+-NULL 포인터 리턴하는 new 연산자.
+=>if(arr==NULL){} 이라고 검사해주는 코드 넣어도 안정적
+=>일부 프로그래머는 운영체제 좋아지고, 프로그래머도 실수 안해서 불필요하다고 생각
+==>
+#define DEBUG 0 
+#define DEBUG 1 삽입해서 테스트할때는 0을 //, 배포할때는 1로 함
+
+*/
+
+
+#include <iostream>
+#include <string.h>
+using namespace std;
+
+char *MakeStrAder(int len)
+{
+	char *str = new char[len];
+	return str;
+	//int * ptr1=new int;
+}
+
+
+
+int main(void)
+{
+	char *str = MakeStrAder(20);
+	strcpy(str, "I am so happy~");
+	cout << str << endl;
+
+	delete []str;
+
+	return 0;
+
+}
+
+/*c++식 동적 할당 예제2 */
+
+#include <iostream>
+#include <string.h>
+using namespace std;
+
+int main(void)
+{
+	int *ptr1 = new int;
+	double *ptr2 = new double;
+	int *arr1 = new int[3];
+	double *arr2 = new double[7];
+	
+	delete ptr1;
+	delete ptr2;
+	delete[]arr1;	//인덱스 연산자 사용!
+	delete[]arr2;
+
+	return 0;
+}
+
+
+/*힙에 할당된 변수를 참조자로 값을 대입하는 예제*/
+//흔히 사용되지는 않음.
+
+#include <iostream>
+using namespace std;
+
+int main(void)
+{
+	int *ptr = new int;
+	int &ref = *ptr;
+	ref = 20;
+	cout << *ptr << endl;
+	delete ptr;
+
+	return 0;
+
+}
+
+
+
+
+/*c++에서 c언어의 표준함수 호출하기*/
+//c를 더하고 h 를 뺴라
+/*
+#include <stdio.h>  --> #include <cstdio>
+#include <stdlib.h> --> #include <cstdlib>
+#include <math.h>   --> #include <cmath>
+#include <string.h< --> #include <cstring>
+*/
+
+
+
+#include <cmath>
+#include <cstdio>
+#include <cstring>
+using namespace std;
+
+int main(void)
+{
+	char str1[] = "Result";
+	char str2[30];
+
+	strcpy(str2, str1);
+	printf("%s: %f\n", str1, sin(0.14));
+	printf("%s: %f\n", str2, sin(-1.25));
+
+	return 0;
+}
+
+
+
+ㅡㅡㅡㅡㅡㅡㅡㅡch3 ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+
+/*3-1 C++에서 구조체*/
+
+/*c++식 구조체 선언 및 데이터를 담는 구조체, 처리하는 함수의 관계*/
+//밑의 함수들은 구조체 Car에 종속성을 띄고 있음. 그러나 전역변수를 선언함으로써 종속적임을 나타내지 못하는 상황
+
+
+//기존 C와 같은 구조체 예제
+#include <iostream>
+using std::cout;
+using std::endl;
+
+//구조체 Car와 관련된 각종 정보를 상수화
+#define ID_LEN 20
+#define MAX_SPD 200
+#define FUEL_STEP 2
+#define ACC_STEP 10
+#define BRK_STEP 10
+
+struct Car {
+	char gamerID[20];	//소유자  ID
+	int fuelGauge;		//연료량
+	int curSpeed;		//현재속도
+};
+
+//차의 정보를 출력하는 기능의 함수(단순히 정보만 출력하므로 const참조자를 매개변수로 선언)
+//안정성을 위해 const 키워드 사용
+void ShowCarState(const Car &car)
+{
+	cout << "소유자 ID : " << car.gamerID << endl;
+	cout << "연료량 : " << car.fuelGauge << "%" << endl;
+	cout << "현재 속도 : " << car.curSpeed << "km/s" << endl;
+}
+
+//엑셀을 밟을 때마다 속도 증가 , 연료 감소하는 함수
+void Accel(Car &car)
+{
+	if (car.fuelGauge <= 0) {
+		return;
+	}
+	else {
+		car.fuelGauge -= FUEL_STEP;
+	}
+
+	if (car.curSpeed + ACC_STEP >= MAX_SPD) {
+		car.curSpeed = MAX_SPD;
+		return;
+	}
+
+	car.curSpeed += ACC_STEP;
+	
+}
+
+//브레이크를 밟은 상황을 표현한 함수(단순히 속도만 감소하는 것으로 표현)
+void Break(Car &car)
+{
+	if (car.curSpeed < BRK_STEP)
+	{
+		car.curSpeed = 0;
+		return;
+	}
+	car.curSpeed -= BRK_STEP;
+}
+
+int main(void)
+{
+	//C++식 구조체 선언 (기존 C : struct Car run99={};)
+	Car run99 = { "run99",100,0 };	//소유자 id , 현재 연료량 , 현재 속도
+	Accel(run99);		//엑셀 -> 속도 10증가 , 연료 2 감소 - 속도 10 , 연료 98%
+	Accel(run99);		//엑셀 -> 속도 10증가 , 연료 2 감소 - 속도 20 , 연료 96%
+	ShowCarState(run99);	//현재 자동차 상태보여주기
+	cout << "----------------------------" << endl;
+	Break(run99);		//브레이크 -> 속도 10감소  - 속도 10 , 연료 96%
+	ShowCarState(run99);
+	cout << "----------------------------" << endl;
+	Car sped77 = { "sped77",100,0 };
+	Accel(sped77);	//엑셀 - > 속도 10증가 , 연료 2감소 - 속도 10 , 연료 98%
+	Break(sped77);  //브레이크 -> 속도 10감소  - 속도 0 연료 98%
+	ShowCarState(sped77);
+	cout << "----------------------------" << endl;
+
+	return 0;
+}
+
+
+//Want : 구조체 안으로 함수를 넣고 싶음.
+/*구조체 안의 함수 멤버*/
+
+#include <iostream>
+using std::cout;
+using std::endl;
+
+//구조체 Car와 관련된 각종 정보를 상수화
+#define ID_LEN 20
+#define MAX_SPD 200
+#define FUEL_STEP 2
+#define ACC_STEP 10
+#define BRK_STEP 10
+
+//함수를 멤버로 지니는 구조체의 정의를 보이고 있음
+struct Car {
+	char gamerID[20];	//소유자  ID
+	int fuelGauge;		//연료량
+	int curSpeed;		//현재속도
+
+	//차의 정보를 출력하는 기능의 함수
+	void ShowCarState()
+	{
+		cout << "소유자 ID : " << gamerID << endl;
+		cout << "연료량 : " << fuelGauge << "%" << endl;
+		cout << "현재 속도 : " <<curSpeed << "km/s" << endl;
+	}
+
+	//엑셀을 밟을 때마다 속도 증가 , 연료 감소하는 함수
+	void Accel()
+	{
+		if (fuelGauge <= 0) {
+			return;
+		}
+		else {
+			fuelGauge -= FUEL_STEP;
+		}
+
+		if (curSpeed + ACC_STEP >= MAX_SPD) {
+			curSpeed = MAX_SPD;
+			return;
+		}
+		curSpeed += ACC_STEP;
+	}
+
+	//브레이크를 밟은 상황을 표현한 함수(단순히 속도만 감소하는 것으로 표현)
+	void Break()
+	{
+		if (curSpeed < BRK_STEP)
+		{
+			curSpeed = 0;
+			return;
+		}
+		curSpeed -= BRK_STEP;
+	}
+};
+
+
+
+int main(void)
+{
+	//초기화 대상은 함수가 아닌 변수이다. 함수가 삽입되었어도 초기화 방법은 달라지지 않는다.
+	Car run99 = { "run99",100,0 };	//소유자 id , 현재 연료량 , 현재 속도
+	//구조체 run99에 존재하는(실제로는 x 존재하는 것으로 이해) Accel함수를 호출하고 있음
+	//구조체 내에 선언된 변수에 접근하는 바업ㅂ과 동일한 방식으로 함수의 호출이 이뤄진다.
+	run99.Accel();		//엑셀 -> 속도 10증가 , 연료 2 감소 - 속도 10 , 연료 98%
+	run99.Accel();		//엑셀 -> 속도 10증가 , 연료 2 감소 - 속도 20 , 연료 96%
+	run99.ShowCarState();	//현재 자동차 상태보여주기
+	cout << "----------------------------" << endl;
+	run99.Break();		//브레이크 -> 속도 10감소  - 속도 10 , 연료 96%
+	run99.ShowCarState();
+	cout << "----------------------------" << endl;
+	Car sped77 = { "sped77",100,0 };
+	//sped77에 대한 함수 접근
+	sped77.Accel();	//엑셀 - > 속도 10증가 , 연료 2감소 - 속도 10 , 연료 98%
+	sped77.Break();  //브레이크 -> 속도 10감소  - 속도 0 연료 98%
+	sped77.ShowCarState();
+	cout << "----------------------------" << endl;
+
+	return 0;
+}
+
+//위의 매크로도 구조체에 포함된다.
+
+/*매크로 상수도 구조체에 넣는 예제1*/
+struct Car {
+
+	enum {
+		ID_LEN = 20,
+		MAX_SPD = 200,
+		FUEL_STEP = 2,
+		ACC_STEP = 10,
+		BRK_STEP = 10
+	};
+	char gamerID[20];	//소유자  ID
+	int fuelGauge;		//연료량
+	int curSpeed;		//현재속도
+	//+함수들
+
+};
+
+
+/*매크로 상수도 구조체에 넣는 예제2*/
+//상수 매크로를 namespace CAR_CONST안의 enum으로  정의 ==>>훨씬 가독성 좋음
+#include <iostream>
+using std::cout;
+using std::endl;
+
+namespace CAR_CONST
+{
+	enum {
+		ID_LEN = 20,
+		MAX_SPD = 200,
+		FUEL_STEP = 2,
+		ACC_STEP = 10,
+		BRK_STEP = 10
+	};
+}
+
+
+struct Car {
+	char gamerID[CAR_CONST::ID_LEN];
+	int fuelGauge;		
+	int curSpeed;		
+
+	void ShowCarState()
+	{
+		cout << "소유자 ID : " << gamerID << endl;
+		cout << "연료량 : " << fuelGauge << "%" << endl;
+		cout << "현재 속도 : " << curSpeed << "km/s" << endl;
+	}
+
+	void Accel()
+	{
+		if (fuelGauge <= 0) {
+			return;
+		}
+		else {
+			fuelGauge -= CAR_CONST::FUEL_STEP;
+		}
+
+		if (curSpeed + CAR_CONST::ACC_STEP >= CAR_CONST::MAX_SPD) {
+			curSpeed = CAR_CONST::MAX_SPD;
+			return;
+		}
+		curSpeed += CAR_CONST::ACC_STEP;
+	}
+
+	//브레이크를 밟은 상황을 표현한 함수(단순히 속도만 감소하는 것으로 표현)
+	void Break()
+	{
+		if (curSpeed < CAR_CONST::BRK_STEP)
+		{
+			curSpeed = 0;
+			return;
+		}
+		curSpeed -= CAR_CONST::BRK_STEP;
+	}
+};
+
+
+
+int main(void)
+{
+	Car run99 = { "run99",100,0 };
+
+	run99.Accel();
+	run99.Accel();
+	run99.ShowCarState();
+	cout << "----------------------------" << endl;
+	run99.Break();		
+	run99.ShowCarState();
+	cout << "----------------------------" << endl;
+	
+	Car sped77 = { "sped77",100,0 };
+	sped77.Accel();
+	sped77.Break();
+	sped77.ShowCarState();
+	cout << "----------------------------" << endl;
+
+	return 0;
+}
+//구조체가 너무 커짐. 실제로 함수 세부를 들여다 보기 보다는 , 함수의 선언과 주석을 보기 전체적인 흐름을 봄.
+//함수가 구조체 안에 있을때는 inline화 되어 있음. BUT 밖으로 빼면 인라인화 안됨
+//그래서 inline을 써주면 함수가 구조체 안에 코드가 있을때, 밖으로 뺄때 완전이 똑같음.
+
+//-------------완성본 -----------------
+#include <iostream>
+using std::cout;
+using std::endl;
+
+namespace CAR_CONST
+{
+	enum {
+		ID_LEN = 20,
+		MAX_SPD = 200,
+		FUEL_STEP = 2,
+		ACC_STEP = 10,
+		BRK_STEP = 10
+	};
+}
+
+struct Car {
+	char gamerID[CAR_CONST::ID_LEN];
+	int fuelGauge;		
+	int curSpeed;		
+
+	void ShowCarState();	// 상태 정보 출력
+	void Accel();		// 엑셀, 속도증가 연료감소
+	void Break();		// 브레이크 , 속도감소
+};
+
+
+//inline void Car::ShowCarState()
+void Car::ShowCarState()
+{
+	cout << "소유자 ID : " << gamerID << endl;
+	cout << "연료량 : " << fuelGauge << "%" << endl;
+	cout << "현재 속도 : " << curSpeed << "km/s" << endl;
+}
+
+//inline void Car::Accel()
+void Car::Accel()
+{
+	if (fuelGauge <= 0) {
+		return;
+	}
+	else {
+		fuelGauge -= CAR_CONST::FUEL_STEP;
+	}
+
+	if (curSpeed + CAR_CONST::ACC_STEP >= CAR_CONST::MAX_SPD) {
+		curSpeed = CAR_CONST::MAX_SPD;
+		return;
+	}
+	curSpeed += CAR_CONST::ACC_STEP;
+}
+
+//inline void Car::Break() 
+void Car::Break()
+{
+	if (curSpeed < CAR_CONST::BRK_STEP)
+	{
+		curSpeed = 0;
+		return;
+	}
+	curSpeed -= CAR_CONST::BRK_STEP;
+}
+
+int main(void)
+{
+	Car run99 = { "run99",100,0 };
+
+	run99.Accel();
+	run99.Accel();
+	run99.ShowCarState();
+	cout << "----------------------------" << endl;
+	run99.Break();		
+	run99.ShowCarState();
+	cout << "----------------------------" << endl;
+	
+	Car sped77 = { "sped77",100,0 };
+	sped77.Accel();
+	sped77.Break();
+	sped77.ShowCarState();
+	cout << "----------------------------" << endl;
+
+	return 0;
+}
+
+
+/*3-2 클래스(Class)와 객체(Object)*/
+
+/*클래스 예제(구조체와 차이)*/
+#include <iostream>
+using std::cout;
+using std::endl;
+
+namespace CAR_CONST
+{
+	enum {
+		ID_LEN = 20,
+		MAX_SPD = 200,
+		FUEL_STEP = 2,
+		ACC_STEP = 10,
+		BRK_STEP = 10
+	};
+}
+
+class Car {	//struct 대신 class라는 키워드 사용
+private:	//private : 내부 접근만 허용(클래스 내에서만)
+//레이블 (접근제어 지시자의 뒤에 : 가 붙음 , 접근제어 지시자가 특정 위치정보를 알리는 '레이블(라벨)'이기 때문. switch문의 case도 레이블이기 때문에 :가 붙음
+	char gamerID[CAR_CONST::ID_LEN];
+	int fuelGauge;		
+	int curSpeed;		
+public:  //내부 + 외부 접근 허용(어디서든)
+	void InitMember(char*ID, int fuel);	//클래스 초기화
+	void ShowCarState();				//상태 정보 출력
+	void Accel();						//엑셀, 속도증가(연료감소)
+	void Break();						//브레이크, 속도감소
+};
+
+
+void Car::InitMember(char*ID, int fuel)
+{
+	strcpy(gamerID, ID);
+	fuelGauge = fuel;
+	curSpeed = 0;
+}
+
+void Car::ShowCarState()
+{
+	cout << "소유자 ID : " << gamerID << endl;
+	cout << "연료량 : " << fuelGauge << "%" << endl;
+	cout << "현재 속도 : " << curSpeed << "km/s" << endl;
+}
+
+void Car::Accel()
+{
+	if (fuelGauge <= 0) {
+		return;
+	}
+	else {
+		fuelGauge -= CAR_CONST::FUEL_STEP;
+	}
+
+	if (curSpeed + CAR_CONST::ACC_STEP >= CAR_CONST::MAX_SPD) {
+		curSpeed = CAR_CONST::MAX_SPD;
+		return;
+	}
+	curSpeed += CAR_CONST::ACC_STEP;
+}
+
+void Car::Break()
+{
+	if (curSpeed < CAR_CONST::BRK_STEP)
+	{
+		curSpeed = 0;
+		return;
+	}
+	curSpeed -= CAR_CONST::BRK_STEP;
+}
+
+int main(void)
+{
+	Car run99;
+	run99.InitMember("run99", 100);	//클래스의 변수에는 접근x BUT 함수에는 접근이 가능
+	run99.Accel();
+	run99.Accel();
+	run99.Accel();
+	run99.ShowCarState();
+	cout << "----------------------------" << endl;
+	run99.Break();		
+	run99.ShowCarState();
+	cout << "----------------------------" << endl;
+	
+	return 0;
+}
+
+
+
+
+/*파일 분할*/
+////////////////////////////
+/*Car.h*/
+#ifndef __CAR_H__ //헤더파일 중복포함 문제를 해결하기 위한 매크로 선언
+#define __CAR_H__
+
+namespace CAR_CONST
+{
+	enum {
+		ID_LEN = 20,
+		MAX_SPD = 200,
+		FUEL_STEP = 2,
+		ACC_STEP = 10,
+		BRK_STEP = 10
+	};
+}
+
+class Car {	
+private:	
+			
+	char gamerID[CAR_CONST::ID_LEN];
+	int fuelGauge;
+	int curSpeed;
+public:  
+	void InitMember(char*ID, int fuel);
+	void ShowCarState();			
+	void Accel();					
+	void Break();					
+};
+
+#endif
+
+
+////////////////////////////
+/*Car.cpp*/
+#include <iostream>
+#include <cstring>
+#include "Car.h"
+using std::cout;
+using std::endl;
+
+void Car::InitMember(char*ID, int fuel)
+{
+	strcpy(gamerID, ID);
+	fuelGauge = fuel;
+	curSpeed = 0;
+}
+
+void Car::ShowCarState()
+{
+	cout << "소유자 ID : " << gamerID << endl;
+	cout << "연료량 : " << fuelGauge << "%" << endl;
+	cout << "현재 속도 : " << curSpeed << "km/s" << endl;
+}
+
+void Car::Accel()
+{
+	if (fuelGauge <= 0) {
+		return;
+	}
+	else {
+		fuelGauge -= CAR_CONST::FUEL_STEP;
+	}
+
+	if (curSpeed + CAR_CONST::ACC_STEP >= CAR_CONST::MAX_SPD) {
+		curSpeed = CAR_CONST::MAX_SPD;
+		return;
+	}
+	curSpeed += CAR_CONST::ACC_STEP;
+}
+
+void Car::Break()
+{
+	if (curSpeed < CAR_CONST::BRK_STEP)
+	{
+		curSpeed = 0;
+		return;
+	}
+	curSpeed -= CAR_CONST::BRK_STEP;
+}
+
+
+
+
+////////////////////////////
+/*RacingMain.cpp*/
+#include "Car.h"
+
+int main(void)
+{
+	Car run99;
+	run99.InitMember("run99", 100);	//클래스의 변수에는 접근x BUT 함수에는 접근이 가능
+	run99.Accel();
+	run99.Accel();
+	run99.Accel();
+	run99.ShowCarState();
+	run99.Break();
+	run99.ShowCarState();
+	
+	return 0;
+}
+
+////inline화 할때는 h에 inline void func() {,,,,,} 직접 써주기
+
+
+/*과일장수 , 과일사는 사람 프로그램*/
+
+
+
+#include <iostream>
+using std::cout; using std::endl;
+
+class FruitSeller
+{
+private:
+	int APPLE_PRICE;
+	int numOfApples;
+	int myMoney;
+public:
+	void InitMembers(int price, int num, int money)
+	{
+		APPLE_PRICE = price;
+		numOfApples = num;
+		myMoney = money;
+	}
+	int SaleApples(int money)
+	{
+		int num = money / APPLE_PRICE;
+		numOfApples -= num;
+		myMoney += money;
+		return num;
+	}
+	void ShowSaleResult()
+	{
+		cout << "남은 사과 : " << numOfApples << endl;
+		cout << "판매 수익 : " << myMoney << endl;
+	}
+};
+
+class FruitBuyer
+{
+	int myMoney;		//private:
+	int numOfApples;	//private:
+public:
+	void InitMember(int money)
+	{
+		myMoney = money;
+		numOfApples = 0;
+	}
+
+	void BuyApples(FruitSeller &seller, int money)
+	{
+		numOfApples += seller.SaleApples(money);	//과일 장수에게 구매 목적으로 SaleApples 함수를 호출
+													//메시지 전달(Message Passing)
+		myMoney -= money;
+	}
+	void ShowBuyResult()
+	{
+		cout << "현재 잔액 : " << myMoney << endl;
+		cout << "사과 개수 : " << numOfApples << endl;
+	}
+};
+
+int main(void)
+{
+	FruitSeller seller;
+	seller.InitMembers(1000, 20, 0);
+	FruitBuyer buyer;
+	buyer.InitMember(5000);
+	buyer.BuyApples(seller, 2000);	//과일 구매
+
+	cout << "과일 판매자의 현황 " << endl;
+	seller.ShowSaleResult();
+	cout << "과일 구매자의 현황" << endl;
+	buyer.ShowBuyResult();
+
+	return 0;
+}
+
+
+
+
+
+-------------------------ch4--------------------------------------
+//4장 클래스의 완성
+/*
+(3장은 c->c++ 넘어가는 과정에서의 클래스를 설명함)
+핵심내용
+
+*클래스 디자인 기본 원칙
+ -캡슐화, 정보 은닉 -->>★Why???가 중요
+ -캡슐화와 정보 은닉의 유용성
+
+*클래스 객체의 생성과 소멸 -->★과정이 중요
+ -생성자, 소멸자
+ -생성자, 소멸자의 유용성(★필요성이 중요)
+*/
+
+
+----04-1 정보은닉(Information Hiding)------
+
+
+
+/*정보 은닉의 필요성*/
+/*
+InfoHiding1.cpp
+*/
+#include<iostream>
+using std::cout;
+using std::endl;
+using std::cin;
+
+//Point라는 클래스에 가정 : 화이트보드의 좌표값(좌 상단 ->(0,0) / 우 하단 ->(100,100)
+//프로그래밍에 있어서 데이터의 제약이 필요할때가 존재
+//e.g)사람의 나이 : int age; ,where age>=1
+class Point
+{
+private:
+//public:
+	int x;   // x좌표의 범위 : 0 ~ 100
+	int y;   // y좌표의 범위 : 0 ~ 100
+public:
+	void SetX(int _x) { //SetX를 통해 간접 접근(x,y에 직접 접근할 수 는 없어도)
+		if (_x < 0 || _x>100)//데이터의 경계 검사와 그에 따른 적절한 처리
+		{
+			cout << "잘못된 데이터 입력" << endl;
+			return;
+		}
+		x = _x;
+	}
+};
+
+int main()
+{
+	int x, y;
+	cout << "좌표입력 : ";
+	cin >> x >> y;	//그림판의 클릭 좌표가 들어왔다고 가정
+					//-10 100이라는 데이터가 들어왔다고 가정.(사용자 실수 or 프로그래머의 모듈러 실수 등등)
+					//문제점 1.잘못된 값이 클래스에 초기됨.
+					//문제점 2.잘못된 값이 들어갔는데 , 잘못됬다고 알려주지 못하는 것
+					//public에 의해 직접 접근하는 것이 문제. ==> 직접 접근을 못하도록 막으면 됨 
+	Point p;
+	p.SetX(x);
+	//p.x = x;
+	//p.y = y;
+
+	cout << "입력 된 데이터를 이용해서 그림을 그림" << endl; //입력된 데이터를 기준으로 그림이 그려진다.라고 가정
+	return 0;
+}
+
+
+
+/*
+   InfoHiding2.cpp
+*/
+#include<iostream>
+using std::cout;
+using std::endl;
+using std::cin;
+
+class Point
+{
+	int x;   // x좌표의 범위 : 0 ~ 100
+	int y;   // y좌표의 점위 : 0 ~ 100
+public:
+	//Get,Set은 관례임 ==>Access Method
+	//x,y를 참조하기 위한 함수(간접 접근)
+	int GetX(){	return x; }
+	int GetY(){	return y; }
+
+	//x,y에 접근하기 위한 함수(직접 접근)
+	void SetX(int _x){ x=_x; }
+	void SetY(int _y){ y=_y; }
+	//==>>>무늬만 정보은닉이지 실제로는 은닉 안됨
+};
+
+int main()
+{
+	int x, y;
+	cout<<"좌표입력 : ";
+	cin>>x>>y;
+
+	Point p;
+	p.SetX(x);
+	p.SetY(y);
+
+	cout<<"입력 된 데이터를 이용해서 그림을 그림"<<endl;
+	return 0;
+}
+
+
+
+
+----04-2 캡슐화(Encapsulation)------
+
+
+
+/*캡슐화*/
+/*
+캡슐화(Encapsulation)의 기본 개념
+ -관련 있는 데이터와 함수를 하나로 묶는 것(e.g : Account(계좌))
+
+C언어에서 함수 : 1 function = 1 기능.
+이게 하나의 기능인지 두개인지 판별하기 힘듬. => 전체적인 프로그램을 놓고 보면 어느정도 판별이 됨
+BUT 캡슐화는 더 어려움. 이러한 데이터와 함수를 클래스에 넣어야 하나 말아야 하나..
+
+★==>프로그래밍 할 때 클래스를 정의함에 있어서 캡슐화를 잘 시켜야겠다는 생각을 항상 가지기.!★
+
+
+
+*/
+
+
+
+//캡슐화가 잘 진행되지 않은 예제
+//프로젝트가 어느정도 진행되면, 클래스를 바꾸면 어렵고 위험함.
+#include<iostream>
+using std::cout;
+using std::endl;
+using std::cin;
+
+class Point
+{
+	int x;   // x좌표의 범위 : 0 ~ 100
+	int y;   // y좌표의 범위 : 0 ~ 100
+public:
+	//Access Method
+	int GetX() { return x; }
+	int GetY() { return y; }
+
+	void SetX(int _x);
+	void SetY(int _y);
+};
+
+void Point::SetX(int _x)
+{
+	//경계검사
+	if (_x<0 || _x>100) {
+		cout << "X좌표 입력 오류, 확인 요망" << endl;
+		return;
+	}
+	x = _x;
+}
+void Point::SetY(int _y)
+{
+	if (_y<0 || _y>100)
+	{
+		cout << "Y좌표 입력 오류, 확인 요망" << endl;
+		return;
+	}
+	y = _y;
+}
+
+class PointShow
+{
+public:
+	void ShowData(Point p)
+	{
+		cout << "x좌표: " << p.GetX() << endl;
+		cout << "y좌표: " << p.GetY() << endl;
+	}
+};
+
+int main()
+{
+	int x, y;
+	cout << "좌표입력 : ";
+	cin >> x >> y;
+
+	Point p;
+	p.SetX(x);
+	p.SetY(y);
+
+	PointShow show;
+	show.ShowData(p);
+
+	return 0;
+}
+
+
+
+
+
+
+/*캡슐화가 된 예제*/
+
+/*
+Encapsulation2.cpp
+*/
+#include<iostream>
+using std::cout;
+using std::endl;
+using std::cin;
+
+class Point
+{
+	int x;   // x좌표의 범위 : 0~100
+	int y;   // y좌표의 범위 : 0~100
+public:
+	int GetX() { return x; }
+	int GetY() { return y; }
+
+	void SetX(int _x);
+	void SetY(int _y);
+
+	void ShowData();  //캡슐화를 위해 추가된 함수.
+};
+
+void Point::SetX(int _x)
+{
+	if (_x<0 || _x>100) {
+		cout << "X좌표 입력 오류, 확인 요망" << endl;
+		return;
+	}
+	x = _x;
+}
+void Point::SetY(int _y)
+{
+	if (_y<0 || _y>100)
+	{
+		cout << "Y좌표 입력 오류, 확인 요망" << endl;
+		return;
+	}
+	y = _y;
+}
+
+void Point::ShowData()
+{
+	cout << "x좌표: " << x << endl;
+	cout << "y좌표: " << y << endl;
+}
+
+int main()
+{
+	int x, y;
+	cout << "좌표입력 : ";
+	cin >> x >> y;
+
+	Point p;
+	p.SetX(x);
+	p.SetY(y);
+	p.ShowData();
+
+	return 0;
+}
+
+
+/*캡슐화를 왜 해야 하는가 ????
+e.g)
+y2k 문제 ( 연도수를 2자리로 표기하는데, 4자리로 표현해야함.
+(C 언어)
+time : 전역변수 => 이와 관련된 모든 함수(입금,출금,이체,....) 다 뒤져봐야됨
+(C++)
+time 에 대한 모든 데이터와 함수를 클래스화(캡슐화를 잘함) => TIME만 보면됨.
+
+===> 캡슐화 요령 : CLASS에 A,B,C라는 변수가 있다고 가정 => 이 멤버변수와 관련된 모든 함수는 클래스에 들어와야됨. 다른 클래스에서 조작하면 안됨
+*/
+
+
+
+----04-3 생성자(Constructor)와 소멸자(Destructor)------
+
+//생성자
+**객체의 생성 과정
+ -첫째. 메모리 할당
+ -둘째. 이니셜라이저를 이용한 멤버변수(객체)의 초기화 //선택사항
+ -셋째. 생성자의 호출
+==>객체를 위해서는 생성자의 호출까지 완료(e.g 클래스 100개 생성 -> 생성자 100번 호출)
+
+*public 생성자, private 생성자
+ - public 생성자 : 어디서든 객체 생성 가능
+ - private 생성자 : 클래스 내부에서만 가능
+
+*생성자의 특징
+ - 생성자도 함수다!
+ - 따라서 함수 오버로딩이 가능하다.
+ - 디폴트 매개 변수의 설정도 가능하다.
+
+*디폴트(default) 생성자
+ -생성자가 하나도 정의되어 있지 않은 경우
+ -자동으로 삽입이 되는 생성자(컴파일러가) 
+ -디폴트 생성자(void 생성자)가 하는 일? !!아무것도 없다!!
+ -Default1.cpp
+
+//소멸자
+
+*객체가 소멸되는 시점은?
+ -기본 자료형 변수, 구조체 변수가 소멸되는 시점과 동일하다
+
+*함수 내에 선언된 객체
+ -함수 호출이 끝나면 소멸된다.
+
+*전역적으로 선언된 객체
+ -프로그램이 종료될 때 소멸된다.
+ -이렇게 객체 생성할 일 (거의) 없다!
+  ==>객체 지향에는 전역이라는 개념이 존재 하지 않음.
+
+--Summary--
+*생성자
+ - 객체의 맴버 변수 초기화를 위해 객체 생성 시 자동 호출 되는 함수
+*소멸자
+ - 객체의 메모리 반환을 위해서 객체 소멸 시 자동 호출되는 함수
+ - 클래스의 이름 앞에 ~가 붙는 형태
+ - 리턴하지 않으며, 리턴 타입도 없다.
+ - 전달인자 항상 void!
+ - 따라서 오버로딩, 디폴트 매개 변수의 선언 불가능!
+
+*객체 소멸 순서
+ - 첫째 : 소멸자 호출
+ - 둘째 : 메모리 반환
+
+*디폴트(Default)소멸자
+ -객체의 소멸 순서를 만족시키기 위한 소멸자
+ -명시적으로 소멸자 제공되지 않을 경우 자동 삽입
+ -디폴트 생성자와 마찬가지로 하는 일 없다.
+e.g) Point(){} // ~Point(){} <<디폴트 생성자, 소멸자
+
+*소멸자의 명시적 제공
+ -생성자에서 메모리 동적 할당을 하는 경우
+ -Debugging 코드의 작성(객체가 소멸 되는 시점을 알고 싶을때)
+
+
+
+
+
+/*생성자 함수 오버로딩 예제*/
+
+#include <iostream>
+
+using std::cout; using std::endl;
+
+class SimpleClass {
+private:
+	int num1;
+	int num2;
+public:
+	SimpleClass()
+	{
+		num1 = 0;
+		num2 = 0;
+	}
+	SimpleClass(int n)
+	{
+		num1 = n;
+		num2 = 0;
+	}
+	SimpleClass(int n1, int n2)
+	{
+		num1 = n1;
+		num2 = n2;
+	}
+	//SimpleClass(int n1 = 0, int n2 = 0)//위의 생성자 다 주석하고 이거만 해제하면 동일함
+	//{
+	//	num1 = n1;
+	//	num2 = n2;
+	//}
+	void ShowData() const
+	{
+		cout << num1 << ' ' << num2 << endl;
+	}
+};
+
+int main(void)
+{
+	SimpleClass sc1;
+	//SimpleClass sc1();		//함수 원형 선언과 동일함!!!! ==> 함수의 원형 선언으로 사용하기로 약속!
+	//SimpleClass ptr1=new SimpleClass;	//동적할당 형태
+	//SimpleClass ptr1=new Simpleclass();//동적할당 형태2
+	sc1.ShowData();	//Simple() 호출 -> num1=0, num2=0
+
+	SimpleClass sc2(100);						//정적할당 형태
+	//SimpleClass *ptr2=new SimpleClass(100)	//동적할당 형태
+	sc2.ShowData();	//Simple(int) 호출 -> num1=100, num2=0
+
+	SimpleClass sc3(100,200);
+	//SimpleClass *ptr3=new SimpleClass(100,200);	//동적할당 형태
+	sc3.ShowData(); //Simple(int,int) 호출 -> num1=100, num2=200
+
+	return 0;
+}
+
+
+
+
+
+/*멤버 이니셜라이저(Member Initializer)를 이용한 멤버 초기화*/
+
+#include <iostream>
+using std::cout; using std::endl;
+
+class Point {
+private:
+	int x;
+	int y;
+public:
+	Point(const int &xpos,const int &ypos);
+	//bool InitMembers(int xpos, int ypos); //기존 초기화
+	//int GetX() const;
+	//int GetY() const;
+	//bool SetX(int xpos);
+	//bool SetY(int ypos);
+};
+
+Point::Point(const int &xpos, const int &ypos)
+{
+	x = xpos;
+	y = ypos;
+}
+
+class Rectangle {
+private:
+	Point upLeft;
+	Point lowRight;
+public:
+	Rectangle(const int &x1, const int &y1, const int &x2, const int &y2);
+};
+
+Rectangle::Rectangle(const int &x1, const int &y1, const int &x2, const int &y2)
+	:upLeft(x1,y1),lowRight(x2,y2)	//멤버 이니셜라이저
+	//객체 upLeft의 생성과정에서 x1과 y1을 인자로 전달받는 생성자를 호출하라
+	//객체 lowRight의 생성과정에서 x2와 y2을 인자로 전달받는 생성자를 호출하라.
+{
+//empty
+}
+
+
+
+/*멤버 이니셜라이저를 이용한 변수 및 const 상수(변수) 초기화 예제1*/
+//이점 : 1)초기화의 대상을 명확히 인식할 수 있다 2)성능에 약간의 이점이 있다
+
+#include <iostream>
+
+class SoSimple 
+{
+private:
+	int num1;
+	int num2;
+public:
+	SoSimple(int n1, int n2) :num1(n1) //num1을 n1 값으로 초기화해라
+										//like )int num1=n1; =>바이너리 코드 구성
+	{
+		num2 = n2;	//like ) int num2; num2=n2;
+	}
+};
+
+
+/*멤버 이니셜라이저를 이용한 변수 및 const 상수(변수) 초기화 예제2*/
+
+#include <iostream>
+using namespace std;
+
+class FruitSeller
+{
+	const int APPLE_PRICE;
+	int numOfApples;
+	int myMoney;
+public:
+	FruitSeller(int price, int num, int money)
+		: APPLE_PRICE(price), numOfApples(num), myMoney(money)
+	{
+	}
+
+//cf) const : 변수를 상수화시키는 키워드 => const 선언에 의해서 상수화 된 변수를 가리켜 
+// 'const 상수' or 'const 변수'
+
+
+/*이니셜라이저의 특징으로 멤버변수로 참조자를 선언*/
+//흔한 것음 아님. 그래도 이해를 위해
+#include <iostream>
+using std::cout; using std::endl;
+
+class AAA
+{
+public:
+	AAA()
+	{
+		cout << "empty object" << endl;	//객체 생성시 실제로 생성자가 호출되는지 확인하기 위해서 삽입한 출력문
+	}
+	void ShowYourName()
+	{
+		cout << "I`m class AAA" << endl;
+	}
+};
+
+class BBB
+{
+private :
+	AAA &ref;	//참조자가 멤버변수로 선언되었다. 따라서 이니셜라이저를 통해서 초기화를 해야한다.
+	const int &num;	//const 참조자가 선언되었다. 따라서 이니셜라이저를 통해서 정수형 상수로도 초기화가 가능하다.
+public:
+	BBB(AAA &r, const int &n)
+		:ref(r), num(n)
+	{//empty constructor body
+	}
+	void ShowYourName()
+	{
+		ref.ShowYourName();
+		cout << "and" << endl;
+		cout << "I ref num" << num << endl;
+	}
+};
+
+int main(void)
+{
+	AAA obj1;
+	BBB obj2(obj1, 20);
+	obj2.ShowYourName();
+
+
+	return 0;
+}
+
+
+
+
+/*디폴트 생성자(Default Constructor) 예제*/
+
+#include <iostream>
+
+class AAA
+{
+private:
+	int num;
+public:
+	//AAA(){} //디폴트 생성자(아무런 입력이 없으면 왼쪽과 같은 코드가 생성된것과 같이 호출된다)
+	int GetNum() { return num; }
+};
+
+int main(void)
+{
+	AAA a1;
+	AAA *ptr = new AAA; 
+	//위의 2개 모두 객체의 생성과정에서 생성자가 호출된다.
+	
+	//AAA *ptr = (AAA*)malloc(sizeof(AAA));
+	//생성자 호출되지 않음(malloc 함수호출 시, 실제로 AAA클래스의 크기정보만 바이트 단위로 전달되기 때문에 생성자가 호출 될 일 없음)
+}
+
+
+
+
+/*생성자의 불일치 예제*/
+
+#include <iostream>
+
+class SoSimple
+{
+private:
+	int num;
+public:
+	SoSimple(int n) : num(n) {};
+	//생성자를 선언했으므로, 디폴트 생성자가 생성되지 않는다.
+};
+
+int main(void)
+{
+	SoSimple simObj1(10);	//가능
+	//SomSimple simObj2;	// 불가능(디폴트 생성자가 생성되지도 않고, 생성자의 인수 불일치
+		
+	SoSimple *ptr = new SoSimple(5); //가능
+	//SoSimple *ptr2 = new SoSimple;
+	
+	delete ptr;
+}
+
+#include <iostream>
+using std::cout; using std::endl;
+
+class AAA
+{
+private:
+	int num;
+public:
+	AAA() : num(0) {} //public 생성자가 정의 -> 클래스 외부에서는 이 생성자를 기반으로 객체를 생성해야 한다.
+	AAA& CreateInitObj(int n) const	//함수 내에서, 밑의 private 생성자를 이용해서 AAA 객체를 생성 및 반환하고 있다.
+	{
+		AAA *ptr = new AAA(n);
+		return *ptr;
+	}
+	void ShowNum() const { cout << num << endl; }
+private:
+	AAA(int n) : num(n) {}
+};
+
+int main(void)
+{
+	AAA base;
+	base.ShowNum();
+	//AAA base(10);//컴파일 오류( 생성자 불일치, 외부 접근 )
+
+	AAA &obj1 = base.CreateInitObj(3); //힙에 할당된 메모리 공간은 변수로 간주하여, 참조자를 통한 참조가 가능
+	obj1.ShowNum();
+
+	AAA &obj2 = base.CreateInitObj(12);
+	obj2.ShowNum();
+
+	delete &obj1;
+	delete &obj2;
+	return 0;
+	//객체의 생성방법을 제한하고자 하는 경우에는 매우 유용하게 사용된다.
+}
+
+
+
+
+
+/*객체 동적할당과 소멸자의 예제*/
+
+#include <iostream>
+#include <cstring>
+using std::cout; using std::endl;
+
+class Person
+{
+private:
+	char *name;
+	int age;
+public:
+	Person(char * myname, int myage)
+	{
+		int len = strlen(myname) + 1;
+		name = new char[len];
+		strcpy(name, myname);
+		age = myage;
+	}
+	void ShowPersonInfor() const
+	{
+		cout << "이름 : " << name << endl;
+		cout << "나이 : " << age << endl;
+	}
+
+	void delMemory(void)
+	{
+		delete[]name;
+	}
+
+	~Person()
+	{
+		delete[]name;
+		cout << "called destructor!" << endl;
+	}
+};
+
+int main(void)
+{
+	Person man1("Lee dong woo", 29);
+	Person man2("Jang dong gun", 41);
+
+	man1.ShowPersonInfor();
+	man2.ShowPersonInfor();
+
+	//만약 소멸자가 없다면?
+	//man1.delMemory();
+	//man2.delMemory();
+	//객체 생성하고 기억하고 소멸하기 직전에 무조건 heap 영역 해제 해야됨 -> 부담스러움!
+	return 0;
+}
+
+----04-4 클래스와 배열 그리고 this 포인터------
+*객체 배열과 생성자
+ -객체 배열은 객체를 맴버로 지니는 배열이다.
+ -객체 배열은 기본적으로  void 생성자의 호출을 요구한다.
+ -PointArr1.cpp
+ 
+*객체 포인터 배열
+ -객체를 가리킬 수 있는 포인터를 멤버로 지니는 배열
+ -객체의 동적 생성 방법(PointArr2.cpp) <<중요!!!
+
+
+
+/*객체 배열과 생성자 예제*/
+
+#include <iostream>
+#include <cstring>
+using std::cout; using std::endl; using std::cin;
+
+class Person {
+private:
+	char *name;
+	int age;
+public:
+	Person(char *myname, int myage) 
+	{
+		int len = strlen(myname) + 1;
+		name = new char[len];
+		strcpy(name, myname);
+		age = myage;
+	}
+	Person()	//배열 생성시 필요한 생성자를 추가
+	{
+		name = NULL;
+		age = 0;
+		cout << "called Person()" << endl;
+	}
+	void SetPersonInfo(char *myname, int myage)	//원하는 데이터로 초기화를 목적으로 정의된 함수이다.
+	{	//myname은 동적할당해서 heap영역에 생성된 char[]형을 가리키는 포인터와 같은 값(주소값)을 가지게 됨
+		name = myname;	//main()에서 각 입력 받는 이름 마다 동적 할당하므로 얕은복사와 같이 하나의 메모리를 가리키지 않음
+		age = myage;
+	}
+	void ShowPersonInfor() const
+	{
+		cout << "이름:" << name << ',';
+		cout << "나이:" << age << endl;
+	}
+	~Person()
+	{
+		delete[]name;
+		cout << "called destructor!" << endl;
+	}
+};
+
+
+int main(void)
+{
+	Person parr[3];
+	char namestr[100];
+	char *strptr;
+	int age;
+	int len;
+	for (int i = 0; i < 3; i++)	//반복문 안에서 이름과 나이 정보를 입력 받아서 객체를 초기화 하고 있음
+	{
+		cout << "이름:";
+		cin >> namestr;
+		cout << "나이:";
+		cin >> age;
+		len = strlen(namestr) + 1;
+		strptr = new char[len];
+		strcpy(strptr, namestr);
+		parr[i].SetPersonInfo(strptr, age);
+	}
+	parr[0].ShowPersonInfor();
+	parr[1].ShowPersonInfor();
+	parr[2].ShowPersonInfor();
+	return 0;
+}
+
+
+
+/*객체 포인터 배열 예제*/
+
+#include <iostream>
+#include <cstring>
+using std::cout; using std::endl; using std::cin;
+
+class Person
+{
+private:
+	char *name;
+	int age;
+public:
+	Person(char *myname, int myage)
+	{
+		int len = strlen(myname) + 1;
+		name = new char[len];
+		strcpy(name, myname);
+		age = myage;
+	}
+	Person()
+	{
+		name = NULL;
+		age = 0;
+		cout << "called Person()" << endl;
+	}
+	void SetPersonInfo(char *myname, int myage)	
+	{	
+		name = myname;	
+		age = myage;
+	}
+	void ShowPersonInfor() const
+	{
+		cout << "이름:" << name << ',';
+		cout << "나이:" << age << endl;
+	}
+	~Person()
+	{
+		delete[]name;
+		cout << "called destructor!" << endl;
+	}
+};
+
+int main(void)
+{
+	Person * parr[3];	//포인터 배열이 선언되었다. 이는 객체의 주소 값 3개를 저장할 수 있는 배열이다.
+	char namestr[100];
+	int age;
+
+	for (int i = 0; i < 3; i++) {
+		cout << "이름:";
+		cin >> namestr;
+		cout << "나이:";
+		cin >> age;
+		parr[i] = new Person(namestr, age);	//객체를 생성해서, 이 객체의 주소 값을 배열에 저장하고 있다.
+	}
+	parr[0]->ShowPersonInfor();
+	parr[1]->ShowPersonInfor();
+	parr[2]->ShowPersonInfor();
+	delete parr[0];	//총 3회에 걸쳐서 new 연산을 진행했으니, 총 3회에 걸쳐서 delete를 진행.
+	delete parr[1];
+	delete parr[2];
+
+	return 0;
+}
+
+
+
+//4-5 this 포인터
+(연산자 오버로딩때 많이 쓰임 =>이번 쳅터에서는 어디에 쓰이냐 보다는 무엇이냐 가 중요)
+this : 자기 참조 포인터
+
+/*this 포인터 예제*/
+
+#include <iostream>
+#include <cstring>
+using std::cout; using std::endl;
+
+class SoSimple
+{
+private:
+	int num;
+public:
+	SoSimple(int n) : num(n)
+	{
+		cout << "num=" << num << ',';
+		cout << "address=" << this << endl;
+	}
+	void ShowSimpleData()
+	{
+		cout << num << endl;
+	}
+	SoSimple* GetThisPointer()
+	{
+		return this;	//this를 반환. 이는 이 문장을 실행하는 객체의 포인터를 반환하라는 의미. 그래서 반환형도 SoSimple* 형으로 선언
+	}
+};
+
+int main(void)
+{
+	SoSimple sim1(100);
+	SoSimple * ptr1 = sim1.GetThisPointer();//sim1 객체의 주소 값 저장
+	//객체 sim1에 의해 반환된 this를 ptr1에 저장하고 있다. 이 때 this는 SoSimple의 포인터이므로
+	//SoSimple형 포인터 변수에 저장해야 한다.
+	cout << ptr1 << ", ";//ptr1에 저장된 주소 값을 출력하고 있다.
+	ptr1->ShowSimpleData();//ptr1이 가리키는 객체의 ShowSimpleData 함수를 호출하고 있다.
+
+	SoSimple sim2(200);
+	SoSimple * ptr2 = sim2.GetThisPointer();
+	cout << ptr2 << ", ";
+	ptr2->ShowSimpleData();
+
+	return 0;
+}
+
+
+
+/*this 포인터의 활용*/
+
+
+
+#include <iostream>
+using std::cout; using std::endl;
+
+class TwoNumber
+{
+private:
+	int num1;
+	int num2;
+public:
+	TwoNumber(int num1, int num2)
+	{
+		this->num1 = num1;	//this->num1 은 멤버변수, num1은 매개 변수 => 매개변수 num1,num2를 통해서 전달된 값이 멤버변수 num1,num2에 저장
+		this->num2 = num2;
+	}
+	//TwoNumber(int num1, int num2)
+	//	:num1(num1), num2(num2)	//멤버 이니셜라이저에서는 this포인터를 사용할 수 X.BUT 저장하는 변수는 멤버변수로, 저장되는 값은(소괄호 안의 변수 및 상수는) 매개변수
+	//{//empty					//로 인식하기 때문에 여기서 보이는 형태의 문장 구성이 가능. i.e 위의 생성자를 대신할 수 있음
+	//}
+	void ShowTwoNumber()
+	{	//this 포인터를 사용함으로써, 멤버변수에 접근함을 명확히 하였다. 그러나 일반적으로 이러한 경우에는 this 포인터를 생략해서 표현한다.
+		cout << this->num1 << endl;
+		cout << this->num2 << endl;
+	}
+};
+
+
+
+/*Self-Reference 의 반환 예제*/
+
+int main(void)
+{
+	TwoNumber two(2, 4);
+	two.ShowTwoNumber();
+	return 0;
+}
+//변수 짓기는 의외로 신경쓰임 -> 특히 유사한 성격을 지니는 두 변수의 이름을 구별되게 짓는 것은 고민 스러움 -> 위 예제처럼 멤버변수와 매개변수의 이름을 동일 & this 포인터를
+//이용해서 이둘을 구분하는 것을 좋아하는 프로그래머들도 있음.
+
+
+#include <iostream>
+using std::cout; using std::endl; using std::cin;
+
+class SelfRef
+{
+private:
+	int num;
+public:
+	SelfRef(int n) : num(n)
+	{
+		cout << "객체생성" << endl;
+	}
+	SelfRef& Adder(int n)	//함수 Adder에서는 선언된 반환형과 반환의 내용을 함께 살펴야 한다. 반환의 내용은 *this인데, 이는 이 문장을 실행하는 객체 자신의 포인터가 아닌
+	{						//객체 자신을 반환하겠다는 의미가 됨. 그런데 반환형이 참조형 SelfRef&으로 선언되었다. 따라서 객체 자신을 참조 할 수 있는
+		num += n;			//'참조의 정보(이하 참조 값)가 반환된다.
+		return *this;
+	}
+	SelfRef& ShowTwoNumber()	//위와 마찬가지로 객체 자신을 참조할 수 있는 참조 값을 반환하도록 정의되었다.
+	{
+		cout << num << endl;
+		return *this;
+	}
+};
+
+int main(void)
+{
+	SelfRef obj(3);
+	SelfRef &ref = obj.Adder(2);	//객체 obj의 Adder함수를 호출 -> 객체 자신의 참조 값 반환(즉, 객체 obj의 참조 값을 반환) 따라서 참조자 ref는 객체 obj를 참조
+
+	obj.ShowTwoNumber();	//28행에서 일어나는 일의 확인을 위해서 저장되어 있는 값을 출력
+	ref.ShowTwoNumber();	
+
+	ref.Adder(1).ShowTwoNumber().Adder(2).ShowTwoNumber();	//ref.Adder(1) 호출(num=6) -> ref.ShowTwoNumer() 호출 (6출력)-> ref.Adder(2) 호출 (num=8)
+															//-> ref.ShowTwoNumber() 호출 (8출력)
+	//위의 예제에서는 하나의 객체만을 생성. 다만 그 객체가 반환하는 참조 값을 대상으로 다양한 바업ㅂ으로 
+        //멤버 함수를 호출															//이는 Adder와 ShowTwoNumber가 객체의 참조 값을 반환하기 때문에 구성이 가능한 문장.
+	return 0;
+}
+
+
+
+/*참조의 정보(참조 값)에 대한 이해*/
+
+#include <iostream>
+
+int main(void)
+{
+	int num = 7;
+	int &ref = num; //변수 num을 참조할 수 있는 참조의 정보가 전달된다.
+					//변수 num을 참조할 수 있는 참조 값이 참조자 ref에 전달되어, ref가 변수 num을 참조하게 된다.
+	//대입 연산자의 왼편에 '참조자의 선언'이 오거나, 반환형으로 '참조형'이 선언되면, 그 때 전달되는 정보를 표현하기 위해서
+	//'참조의 정보' 또는 '참조 값'이라는 표현을 사용한 것.
+	return 0;
+}
+
+
+
+
+
+//4-6 Friend 선언
+(스토리 보다는 그냥 문법적인 키워드로 따로 생각)
+
+*전역 함수에 대한 friend 선언
+-friend1.cpp
+-전역 함수에게 private 영역 접근 허용
+
+*class에 대한 friend 선언
+-friend2.cpp
+
+-->friend는 단방향성임
+
+*friend 선언의 유용성
+ -유용하지 않다!
+ -정보 은닉에 위배되는 개념
+ -연산자 오버로딩에서 유용하게 사용
+ -그 전에는 사용하지 말자!
+
+*friend 선언으로만 해결 가능한 문제
+ -그런 것은 존재하지 않는다.
+ -연산자 오버로딩에서는 예외!
+
+
+/*friend 예제 1*/
+
+#include <iostream>
+using std::cout;
+using std::endl;
+
+class Counter
+{
+private:
+	int val;
+public:
+	Counter() { 
+		val=0;
+	}
+	void Print() const {
+		cout<<val<<endl;
+	}
+		
+	friend void SetX(Counter& c, int val);  //friend 선언.
+};
+
+//만약 count의 멤버 함수면 void count::SetX(~~)
+void SetX(Counter& c, int val) // 전역함수.
+{
+	c.val=val;
+}
+
+int main()
+{
+	Counter cnt;
+	cnt.Print();
+
+	SetX(cnt, 2002);
+	cnt.Print();
+
+	return 0;
+}
+
+
+
+
+/*friend 선언 예제2*/
+
+#include <iostream>
+using std::cout;
+using std::endl;
+
+class AAA
+{
+private:
+	int data;
+	friend class BBB;  // class BBB를 friend로 선언함!
+};
+
+class BBB
+{
+public:
+	void SetData(AAA& aaa, int val){
+		aaa.data=val; //class AAA의 private 영역 접근!
+	}
+};
+
+int main()
+{
+	AAA aaa;
+	BBB bbb;
+
+	bbb.SetData(aaa, 10);
+
+	return 0;
+}
+
+
+
+
+
+
+
+
+-------------------------ch5--------------------------------------
+
+-------------------------ch5--------------------------------------
+5장 복사 생성자 => (의미 // 필요성 // 정의)
+
+
+//----5-1-1 복사 생성자의 의미----
+
+/*두가지 형태의 초기화*/
+#include <iostream>
+
+int main(void)
+{
+	//1번
+	int val1 = 20;
+	AAA a1 = 10;	//묵시적 변환(==AAA a1(10);)
+	//2번
+	int val2(20);
+	AAA a1(10);
+	//==>1,2번은 완전히 같음. 1번(c스타일 초기화) // 2번(c++스타일 초기화)
+}
+
+
+
+//----5-1-2 복사 생성자의 형태----
+
+#include <iostream>
+using std::cout; using std::endl;
+
+class SoSimple
+{
+private:
+	int num1;
+	int num2;
+public:
+	//오버로딩 관계로 구성 된 생성자들
+	SoSimple()
+		:num1(0),num2(0)
+	{
+		cout << "Called SoSimple()" << endl;
+	}
+	SoSimple(int n1, int n2) 
+		:num1(n1), num2(n2)
+	{
+		//empty
+	}
+	//복사 생성자(copy constructor)
+	SoSimple(const SoSimple &copy)			//SoSimple 객체를 인자로 받는 생성자가 추가. 복사 : 원본 변경x =>const
+		:num1(copy.num1),num2(copy.num2)	
+	{
+		cout << "Called SoSimple(SoSimple &copy)" << endl;	//생성자 호출을 확인하기 위한 문장
+	}
+	void ShowSimpleData()
+	{
+		cout << num1 << endl;
+		cout << num2 << endl;
+	}
+};
+
+int main(void)
+{
+	SoSimple sim0();				//메모리 공간 할당 -> 생성자 호출(인자를 받지 않는 void 생성자)
+	SoSimple sim1(15, 30);	//메모리 공간 할당 -> 생성자 호출((15,30)이라는 인자를 받는 생성자)
+	cout << "생성 및 초기화 직전" << endl;
+	SoSimple sim2 = sim1;	//SoSimple sim2(sim1) 으로 묵시적 변환
+	//3개의 객체 생성 -> 생성자 3번 호출
+	sim2.ShowSimpleData();
+
+	return 0;
+}
+
+
+/*복사 생성자의 예제*/
+
+
+#include <iostream>
+using std::cout; using std::endl;
+
+class Point
+{
+	int x, y;
+public:
+	Point(int _x, int _y) {
+		x = _x;
+		y = _y;
+	}
+
+	Point(const Point &p) { //복사하는 용도로 사용 가능
+		x = p.x;
+		y = p.y;
+	}
+
+	void ShowData()
+	{
+		cout << x << ' ' << y << endl;
+	}
+};
+
+int main(void)
+{
+	Point p1(10, 20);	//10,20으로 초기화 객체 생성
+	Point p2(p1);		//p1의 값을 p2에 복사 하기 원한다
+						//p1이라는 객체에 p라는 별칭을 부여해서 p1의 멤버 변수 접근
+	p1.ShowData();
+	p2.ShowData();
+
+	return 0;
+
+	//	생성자 중 Point(const Point&p) 생성자 주석해도 컴파일 오류 X
+	//	==>디폴트 복사 생성자
+	//	Point(const Point&p){} 이렇게 정의하면 p2.x, p2.y 쓰레기값 
+	//	==>디폴트 복사 생성자는 멤버변수의 개수,타입에 따라 달라진다.
+}		
+
+
+
+
+
+//----5-2 디폴트 복사 생성자----
+/*
+*디폴트 복사 생성자
+ -사용자 정의 복사 생성자가 없을 때 자동 삽입
+ -멤버 변수 대 멤버 변수의 복사를 수행
+ -CopyCon2.cpp , CopyCon3.cpp
+
+*디폴트 복사 생성자 복사 형태
+ -얕은 복사(Shallow Copy)!
+
+*디폴트 복사 생성자의 문제점
+ -얕은 복사에 의한 메모리 참조 오류!
+ -CopyCon4.cpp, CopyCon5.cpp
+*/
+
+
+
+/*변환에 의한 초기화를 막는 explicit*/
+#include <iostream>
+using std::cout; using std::endl;
+
+class AAA
+{
+private:
+	int num;
+public:
+	//AAA(int n) :num(n)
+	explicit AAA(int n) : num(n)	//밑의 묵시적 변환( AAA obj1=3; == AAA obj1(3) )을 막는 키워드
+	{
+	}
+	void ShowData(void) const
+	{
+		cout << num << endl;
+	}
+};
+
+int main(void)
+{
+	//AAA obj1 = 3;
+	AAA obj1(3);
+	obj1.ShowData();
+
+	return 0;
+}
+
+
+//얕은 복사(shallow copy) , 깊은 복사(deep copy)
+
+/* 얕은 복사의 예제*/
+
+#include <iostream>
+#include <cstring>
+using std::cout; using std::endl;
+
+class Person
+{
+private:
+	char *name;
+	int age;
+public:
+	Person(char * myname, int myage)	//생성자에서 new를 이용한 동적할당
+	{
+		printf("생성자 myname ; %u\n", myname);
+		int len = strlen(myname) + 1;
+		name = new char[len];
+		strcpy(name, myname);
+		age = myage;
+	}
+	////디폴트 복사 생성자
+	//Person(Person &p) {
+	//	name = p.name;
+	//	age = p.age;
+	//}
+
+	void ShowPersonInfo() const
+	{
+		cout << "이름:" << name << endl;
+		cout << "나이:" << age << endl;
+	}
+
+	~Person()						//생성자에서 delete를 이용한 메모리의 해제
+	{
+		delete[]name;
+		cout << "called destructor!" << endl;
+	}
+};
+
+int main(void)
+{
+	Person man1("Lee dong woo", 29);
+	Person man2 = man1;		//묵시적 Person man2(man1);		
+							//디폴트 복사 생성자에 의한 맴버 대 맴버 복사
+	man1.ShowPersonInfo();
+	man2.ShowPersonInfo();
+
+	return 0;
+	//문제점 : stack 구조에 의해 man2가 먼저 소멸 & heap에 할당 된 Lee dong woo를 delete 연산에 의해 해제
+	//man1가 소멸하는 과정에서 이미 소멸 된 주소값을 delete 연산하게 됨 => 오류
+}
+
+
+
+
+/*깊은 복사의 예제*/
+
+	//깊은 복사를 위한 복사 생성자 정의
+	Person(Person &p) 
+		: age(p.age)
+	{
+		name = new char[strlen(p.name) + 1];
+		strcpy(name, p.name);		
+	}
+	
+//==> 복사 생성자 결론 : 생성자를 확인하고 동적 할당하면 ->소멸자(동적할당해제) + 복사생성자(깊은복사) 제공
+
+
+
+
+//----5-3 복사 생성자 호출 형태----
+/*
+*복사 생성자 호출 형태 3가지
+(3가지 경우 몰라도 복사 생성자 잘 정의하면 문제x 그러나 클래스를 디자인 할때 시아가 넓어짐)
+
+ -case 1
+   : 기존에 생성된 객체로 새로운 객체 초기화
+
+ -case 2
+   : Call-by-value 방식의 함수호출 과정에서 객체를 인자로 전달하는 경우
+
+ -case 3
+   : 객체를 반환하되, 참조형으로 반환하지 않는 경우
+
+공통점 : 
+객체를 새로 생성해야 한다. 단 생성과 동시에 동일한 자료형의 객체로 초기화해야 한다.
+
+*cf)
+process : 프로그램 -> 클래스 A -> 동적할당 -> 복사 생성자
+만약 위의 3가지 이외에 복사 생성자가 호출 될 일이 없으면, 복사 생성자 정의 vs 정의X??
+=>반드시 복사 생성자 정의(프로그램에 의해서가 아니라, 클래스에 의해서 구분)
+*/
+
+
+
+//변수에 있어서 메모리 할당과 동시에 초기화 되는 경우(위의 3가지 케이스)
+
+case 1:
+int num1=num2;
+//(num1이 메모리에 할당 & num2가 가지고 있는 값으로 초기화)
+
+case2:
+
+int SimpleFunc(int n)
+{..}
+
+int main(void)
+{
+  int num=10;
+  SimpleFunc(num);
+}
+
+//(SimpleFunc()가 호출되는 순간 n이라는 변수를 메모리 할당 & num 이 가진 값으로 초기화
+
+
+case3:
+
+int SimpleFunc(int n)
+{
+ ...
+ return n;  //(return n;에서 반환하는 순간 메모리 공간이 할당되면서 동시에 초기화!)
+}
+int main(void)
+{
+ int num=10;
+ cout<<SimpleFunc(num)<<endl; //SimpleFunc(num)의 리턴을 저장해야함 -> 메모리 할당 & 초기화
+}
+
+//(함수가 값을 반환하면 별도의 메모리 공간이 할당되고, 이 공간에 반환 값이 저장된다.(반환 값으로 
+초기화 된다)
+
+
+
+
+
+
+/*객체에서의 복사 생성자 호출 형태*/
+
+
+#include <iostream>
+using namespace std;
+
+class AAA
+{
+	int val;
+public:
+	//생성자 1
+	AAA(int i) {
+		val = i;
+	}
+	//복사 생성자 정의
+	AAA(const AAA& a) {
+		cout << "AAA(const AAA& a)호출" << endl;
+		val = a.val;
+	}
+	void ShowData() {
+		cout << "val :" << val << endl;
+	}
+};
+
+void function2(AAA a2)
+{
+	a2.ShowData();
+}
+
+AAA function3(void)
+{
+	AAA a3(10);
+	return a3;
+}
+
+int main(void)
+{
+	//case 1.
+	AAA obj1(10);
+	AAA obj2 = obj1;//AAA obj2(obj1) //obj1 : 기존의 객체 obj2 : 새로운 객체
+					//->기존의 객체를 가지고 새로운 객체를 초기화
+	//case 2.
+	function2(obj1);//참조가 아니라 값에 의해 전달 받겠다
+	//1.메모리 공간 할당 //2.복사 생성자 호출 객체 (obj1가 객체 a2에게전달 & 복사)
+	//function2함수의 }를 만나면 소멸
+
+	//case 3.
+	function3().ShowData();
+	//1.메모리 공간 할당(클래스 AAA에 상응하는) //2.복사 생성자 호출 (객체 a3가 새로 할당 된 객체에 복사)
+
+	return 0;
+}
+
+
+/*복사 생성자 호출에서 함수의 반환형 예제*/
+
+
+#include <iostream>
+using std::cout; using std::endl;
+
+class SoSimple
+{
+private:
+	int num;
+public:
+	SoSimple(int n) :num(n)
+	{}
+	SoSimple(const SoSimple & copy) :num(copy.num)
+	{
+		cout << "Called SoSimple(const SoSimple &copy)" << endl;
+	}
+	SoSimple& Addnum(int n)
+	{
+		num += n;
+		return *this;	
+	}
+	void ShowData()
+	{
+		cout << "num: " << num << endl;
+	}
+};
+
+SoSimple SimpleFuncObj(SoSimple ob)
+{
+	cout << "return 이전" << endl;
+	return ob;	//ob객체를 반환 -> BUT 참조형X -> 객체의 복사본이 만들어지면서 반환이 진행
+}
+
+int main(void)
+{
+	SoSimple obj(7);
+	SimpleFuncObj(obj).Addnum(30).ShowData();	//SimpleFuncObj 함수가 반환한 객체(임시객체)를 대상으로 AddNum 함수를 호출하고
+												//이어서 AddNum 함수가 반환하는 참조 값을 대상으로 ShowData함수를 호출
+	obj.ShowData();
+	return 0;
+}
+
+
+
+
+
+
+
+/*임시 객체의 소멸에 대한 예제*/
+
+
+#include <iostream>
+using std::cout; using std::endl;
+
+class Temporary
+{
+private:
+	int num;
+public:
+	Temporary(int n) :num(n)
+	{
+		cout << "Create obj :" << num << endl;
+	}
+	~Temporary()
+	{
+		cout << "destroy obj:" << num << endl;
+	}
+	void ShowTempInfo()
+	{
+		cout << "My num is" << num << endl;
+	}
+};
+
+int main(void)
+{
+	Temporary(100);			//임시 객체 생성
+	cout << "**** After Make!" << endl<< endl;
+	Temporary(200).ShowTempInfo();//임시 객체(200으로 초기화 된) 생성 -> (임시객체의 참조 값).ShowTempInfor();
+	cout << "**** After Make!" << endl << endl;
+
+	const Temporary &ref = Temporary(300);
+	cout << "**** After Make!" << endl << endl;
+	return 0;
+	//결론 : 임시객체는 1)접근이 불가능 하면 다음행에서 소멸 2)접근이 가능하면 바로 소멸x
+}
+
+
+
+
+
+
+
+/*객체의 생성과 소멸의 이해 예제*/
+
+
+#include <iostream>
+using std::cout; using std::endl;
+
+class SoSimple
+{
+private:
+	int num;
+public:
+	SoSimple(int n) :num(n)
+	{
+		cout << "New object:" << this << endl;
+	}
+	SoSimple(const SoSimple& copy) :num(copy.num)
+	{
+		cout << "New Copy Obj:" << this << endl;
+	}
+	~SoSimple()
+	{
+		cout << "Destroy obj:" << this << endl;
+	}
+};
+
+SoSimple SimpleFuncObj(SoSimple ob)
+{
+	cout << "Parm ADR: " << &ob << endl;
+	return ob;
+}
+
+int main(void)
+{
+	SoSimple obj(7);
+	SimpleFuncObj(obj);
+
+	cout << endl;
+	SoSimple tempRef = SimpleFuncObj(obj);
+	// tempRef라는 객체를 새로 생성해서 복사하는게 아님. SimpleFuncObj의 반환 된 임시 객체에 tempRef라는 이름을 할당하고 있음
+	//(객체의 생성 수를 하나 줄여서 효율성을 높이기 위해서)
+	cout << "Return Obj" << &tempRef << endl;
+	return 0;
+}
+
+
+-------------------------ch6--------------------------------------
+
+-------------------------ch6--------------------------------------
+//6장.const , friend , static
+
+
+//6-1 const의 추가적인 이야기
+
+/*
+(intro)
+//const 키워드 복습1
+const double PI = 3.14;
+//PI = 3.141592; //컴파일 오류
+//const int val; //쓰레기 값으로 초기화 ->컴파일 오류
+//val = 20;
+
+//const 키워드 복습2
+int n1 = 10; int n2 = 20;
+const int* pN = &n1; //pN이 가리키는 값을 상수화(pN을 통해서만 변경 불가능)
+//*pN = 20; //컴파일 오류
+n1 = 20;
+
+int *const pN2 = &n2;
+*pN2 = 20; //가능
+//*pN2 = &n1; //불가능 컴파일 에러!
+
+
+
+//const 객체와 const 객체의 특성들
+/*
+*멤버 변수의 상수화, 그리고 초기화
+ -멤버 이니셜 라이저(member initializer)
+ -ConstMember1.cpp
+
+*const 멤버 함수
+ -멤버 변수의 값 변경 허용 않는다.
+ -멤버 변수 값의 변경에 대한 기회제공도 불가
+ -ConstMember2.cpp,ConstMember3.cpp
+
+
+
+/*const, 멤버 변수의 상수화 및 초기화 예제*/
+//e.g) 학생의 학번이라는 id는 값이 변하면 문제점 찾기 힘듬 -> 그래서 상수화가 필요 
+
+//1단계
+class Student
+{
+	const int id;	//id가 초기화 된 이후 바꾸지X	
+			//1)메모리 할당(id가 쓰레기 값으로 생성됨) 2)생성자 호출 =>컴파일 오류
+
+public:
+	Student(int _id, int _age, char* _name, char* _major)
+	{
+		id = _id;
+
+}
+
+//2단계
+public:
+	Student(int _id, int _age, char* _name, char* _major)
+	 : id(_id)
+	//생성자 호출 이전에 이루어짐(쓰레기 값으로 생성되기 전에 초기화됨)
+	{....}
+
+
+
+
+
+/*const, 멤버 함수의 예제*/
+
+
+void ShowData() const	//멤버 함수의 상수화 -> 멤버 변수의 조작 불가능
+			//const는 프로그램을 안정적으로 구성하도록 도움을 준다!
+{	
+	//age = 20;	//컴파일 에러
+	cout << "이름: " << name << endl;
+}
+
+
+//
+
+
+class Count
+{
+	const int cnt;
+public:
+	Count() : cnt(0) {}
+	//int* GetPtr() const {
+	//	return &cnt;  // Compile Error		
+	//}	//멤버 변수 cnt를 조작할 기회를 가짐(간접적으로 제공) => 컴파일 에러!
+	const int* GetPtr() const {
+		return &cnt; 
+	}
+	
+
+	void Increment() {
+		cnt++;
+	}
+
+	void ShowData() const {
+		ShowIntro();  // Compile Error
+		cout << cnt << endl;
+	}
+	
+	void ShowIntro() {
+		cout << "현재 count의 값 : " << endl;
+	}
+	//컴파일타임 : ShowData()를 상수화 -> ShowIntro()함수 호출 ->
+	//내부에 변수를 조작하는 가 를 보는 것이 아니라, 상수화 함수 인지 아닌지를 봄(가능성)
+	//==>void ShowIntro() const{} <<상수화하면 에러x
+};
+
+//==>const키워드를 이용해 코딩을 하다보면, 계속적으로 요구하게됨 
+//==>그때마다 const키워드를 삭제하기 보다는, 다른 함수에도 추가할 수 있는 연습하기
+*/
+
+
+
+
+
+
+
+//const와 함수 오버로딩
+/*const 멤버 함수의 오버로딩 예제*/
+
+
+#include <iostream>
+using std::cout; using std::endl;
+
+class SoSimple
+{
+private :
+	int num;
+public:
+	SoSimple(int n)
+		:num(n) {}
+	SoSimple& AddNum(int n)
+	{
+		num += n;
+		return *this;
+	}
+	void SimpleFunc()
+	{
+		cout << "SimpleFunc: " << num << endl;
+	}
+	void SimpleFunc() const
+	{
+		cout << "const SimpleFunc: " << num << endl;
+	}
+};
+
+void YourFunc(const SoSimple &obj)
+{
+	obj.SimpleFunc();
+}
+
+int main(void)
+{
+	SoSimple obj1(2);	//일반 객체 생성
+	const SoSimple obj2(7);	//const 객체 생성
+
+	//SimpleFunc()의 오버로딩
+	obj1.SimpleFunc();	//멤버 함수 void SimpleFunc() 호출
+	obj2.SimpleFunc();	//멤버 함수 void SimpleFunc() const 호출
+
+	YourFunc(obj1);		//YourFunc의 인자는 const 참조자로 받는다. => const 멤버 함수가 호출
+	YourFunc(obj2);
+
+	return 0;
+}
+
+
+
+
+
+//6-2 클래스와 함수에 대한 friend 선언
+
+/*클래스의 friend 선언의 예제*/
+#include <iostream>
+#include <cstring>
+using std::cout; using std::cin; using std::endl;
+//class Gril;	//Girl 이라는 이름이 클래스의 이름임을 알림 (없어도 컴파일 가능 밑의 friend 에 설명)
+class Boy
+{
+private:
+	int height;
+	friend class Girl;	//Gril 클래스에 대한 friend 선언 (위치는 클래스 내 어디든 가능)
+	//==>1)Girl 은 클래스의 이름이다  2)그 Girl 클래스를 friend로 선언한다.
+public:
+	Boy(int n)
+		:height(n) {}
+	void ShowYourFriendInfor(const Girl &frn) const;	//위의 class Girl 이라는 선언을 통해 가능
+};
+
+class Girl
+{
+private :
+	char phNum[20];
+public:
+	Girl(char *num)
+	{
+		strcpy(phNum, num);
+	}
+	void ShowYourFriendInfo(const Boy &frn) const;
+	friend class Boy;//class 내의 어디서든 선언 가능
+};
+
+//Girl 클래스가 선언되고, friend 를 통해 출력문 선언 (순서)
+void Boy::ShowYourFriendInfor(const Girl &frn) const
+{
+	cout << "Her phone number:" << frn.phNum << endl;
+	//Girl 클래스의 phNum을 알아야 컴파일 가능. -> 위에서 Girl 클래스 선언.
+}
+
+void Girl::ShowYourFriendInfo(const Boy &frn) const
+{
+	cout << "His height : " << frn.height << endl;
+}
+
+
+int main(void)
+{
+	Boy boy(170);
+	Girl girl("010-1234-5678");
+
+	boy.ShowYourFriendInfor(girl);
+	girl.ShowYourFriendInfo(boy);
+	
+	return 0;
+}
+
+//friend의 문법적인 이해만(나중에 friend 선언에 대한 나름의 기준이 설 때까지는 사용X)
+
+
+
+
+/*함수(전역,멤버함수)의 friend 선언 예제*
+
+
+
+#include <iostream>
+using std::cout; using  std::endl;
+
+class Point; //PointOP클래스의 Point 를 컴파일 하기 위해서 Point가 클래스라고 선언
+
+class PointOP
+{
+private:
+	int opcnt;
+public:
+	PointOP() :opcnt(0) {}
+	
+	Point PointAdd(const Point&, const Point&);
+	Point PointSub(const Point&, const Point&);
+	~PointOP()
+	{
+		cout << "Opertation time: " << opcnt << endl;
+	}
+};
+
+class Point
+{
+private:
+	int x;
+	int y;
+public:
+	Point(const int& xpos, const int& ypos) :x(xpos), y(ypos)
+	{}
+	//PointOP 클래스의 멤버함수 PointAdd(),PointSub()에 대해 frined 선언
+	//위의 2 멤버함수는 Point클래스의 멤버에 접근할 수 있음.
+	friend Point PointOP::PointAdd(const Point&, const Point&);
+	friend Point PointOP::PointSub(const Point&, const Point&);
+	friend void ShowPointPos(const Point& pos);	//함수 선언 & 프렌드 선언
+};
+
+Point PointOP::PointAdd(const Point& pnt1, const Point& pnt2)
+{
+	opcnt++;
+	return Point(pnt1.x + pnt2.x, pnt1.y + pnt2.y);
+}
+
+Point PointOP::PointSub(const Point& pnt1, const Point& pnt2)
+{
+	opcnt++;
+	return Point(pnt1.x - pnt2.x, pnt1.y - pnt2.y);
+}
+
+
+int main(void)
+{
+	Point pos1(1, 2);
+	Point pos2(2, 4);
+	PointOP op;
+
+	ShowPointPos(op.PointAdd(pos1, pos2));
+	ShowPointPos(op.PointSub(pos2, pos1));
+
+	return 0;
+}
+
+//ShowPointPos함수도 Point 클래스의 friend 선언 => private 멤버 변수 접근 가능
+void ShowPointPos(const Point& pos)
+{
+	cout << "x: " << pos.x << ",";
+	cout << "y: " << pos.y << endl;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+//6-3 클래스와 static
+
+//c에서의 static
+1)전역변수에 선언된 static의 의미
+ -선언된 파일 내에서만 참조를 허용하겠다는 의미
+2)함수 내에 선언된 static의 의미
+ -한번만 초기화되고, 지역변수와 달리 함수를 빠져나가도 소멸되지 않는다.
+==>static int cnt; //0으로 초기화
+
+
+/*
+
+//객체 지향(Object Oriented)에는 전역이라는 개념이 X
+*static 멤버의 등장
+ -전역 변수와 전역 함수를 일부 대체하기 위해서 등장
+ -PersonCount1.cpp
+
+*static 키워드의 효과
+ -모든 객체가 공유할 수 있는 멤버
+ -PersonCount2.cpp, PersonCount3.cpp
+
+
+*static 멤버의 특징
+ -클래스 변수,클래스 함수라 한다.
+ -main 함수 호출 이전에 메모리 공간에 올라 가서 초기화(전역변수와 동일)
+ -선언된 클래스의 객체 내에 직접 접근 허용
+ -static 멤버 초기화문으로 초기화해야함
+ -외울 생각 말자! 이해하자!
+
+==>static int n;
+==>클래스에서는 1.직접접근 권한 2.가릴 수 있는 권한(AAA::n=10; 안됨)
+
+
+
+//1단계 : 전역변수가 필요한 상황
+
+#include <iostream>
+using std::cout; using std::endl;
+
+int simObjCnt = 0;
+int cmxObjCnt = 0;
+
+class SoSimple
+{
+public:
+	explicit SoSimple()
+	{
+		simObjCnt++;
+		cout << simObjCnt << "번째 SoSimple 객체" << endl;
+	}
+};
+
+class SoComplex
+{
+public:
+	explicit SoComplex()
+	{
+		cmxObjCnt++;
+		cout << cmxObjCnt << "번째 SoComplex 객체" << endl;
+	}
+	explicit SoComplex(SoComplex &copy)
+	{
+		cmxObjCnt++;
+		cout << cmxObjCnt << "번째 SoComplex 객체" << endl;
+	}
+};
+
+int main(void)
+{
+	SoSimple sim1;
+	SoSimple sim2;
+
+	SoComplex com1;
+	SoComplex com2(com1);
+	SoComplex();
+
+	return 0;
+}
+
+
+//2단계
+class SoSimple
+{
+private:
+simObjCnt=1;
+...
+}
+
+class SoComplex
+{
+private:
+comObjCnt=1;
+}
+//=>각 객체의 ~ObjCnt=1; 즉 객체를 생성할때 마다 새로운 Cnt 생성 & 1로 초기화
+
+
+//3단계
+
+
+#include <iostream>
+using std::cout; using std::endl;
+
+
+
+
+class SoSimple
+{
+	static int simObjCnt;
+	//SoSimple 클래스의 변수. 객체의 변수x 
+public:
+	explicit SoSimple()
+	{
+		simObjCnt++;
+		cout << simObjCnt << "번째 SoSimple 객체" << endl;
+	}
+};
+
+class SoComplex
+{
+	static int cmxObjCnt;
+public:
+	explicit SoComplex()
+	{
+		//객체가 멤버 변수처럼 접근이 가능 BUT 멤버변수는 아님!!!
+		cmxObjCnt++;
+		cout << cmxObjCnt << "번째 SoComplex 객체" << endl;
+	}
+	explicit SoComplex(SoComplex &copy)
+	{
+		cmxObjCnt++;
+		cout << cmxObjCnt << "번째 SoComplex 객체" << endl;
+	}
+};
+
+//변수 simObjCnt는 객체가 생성될 때 동시에 생성되는 변수가 아니고, 이미 메모리 공간에 할당이
+//이루어진 변수이다. => static 변수의 초기화 문법은 별도로 정의.
+int SoSimple::simObjCnt = 0;
+int SoComplex::cmxObjCnt = 0;
+
+int main(void)
+{
+	SoSimple sim1;
+	SoSimple sim2;
+
+	SoComplex com1;
+	SoComplex com2(com1);
+	SoComplex();
+
+	return 0;
+}
+
+
+//static 멤버변수의 또 다른 접근방법
+
+
+
+#include <iostream>
+using std::cout; using std::endl;
+
+class SoSimple
+{
+public:
+	static int simObjCnt;
+public:	//불필요하지만 변수와 함수의 구분을 목적으로 삽입하기도 함
+	SoSimple()
+	{
+		simObjCnt++;
+	}
+};
+
+int SoSimple::simObjCnt = 0;	//static 클래스 변수 초기화 방법
+
+int main(void)
+{
+	cout << SoSimple::simObjCnt << "번째 SoSimple 객체" << endl;
+	//클래스의 이름을 이용해서 simObjCnt에 접근(static 변수가 객체 내에 존재하지 않음을 증명)
+	SoSimple sim1;
+	SoSimple sim2;
+
+	cout<<SoSimple::simObjCnt<< "번째 SoSimple 객체" << endl;
+	cout<<sim1.simObjCnt<< "번째 SoSimple 객체" << endl;
+	cout<<sim2.simObjCnt<< "번째 SoSimple 객체" << endl;
+	//sim1.simObjCnt , sim2.simObjCnt 는 좋지 않은 표현(sim1,sim2객체의 멤버 변수 같이 보임!)
+	//=>public static 변수에 접근할때는 SoSimple::simObjCnt와 같이 접근하는 것이 좋음
+	return 0;
+}
+
+
+
+
+//static 멤버함수
+
+
+#include <iostream>
+using std::cout; using std::endl;
+
+class SoSimple
+{
+private:
+	int num1;
+	static int num2;
+public:	
+	SoSimple(int n) : num1(n)
+	{}
+	static void Adder(int n)
+	{
+		num1 += n;	//컴파일 에러
+		num2 += n;
+	}
+};
+int SoSimple::num2 = 0;
+
+//num1+=n; 컴파일 에러 이유
+//1)객체의 멤버가 아닌데, 어떻게 멤버변수에 접근을 하겠는가?
+//2)객체생성 이전에도 호출이 가능하다. 그런데 어떻게 멤버변수에 접근이 가능하겠는가?
+//3)멤버변수에 접근을 한다고 치자. 그렇다면 어떤 객체의 멤버변수에 접근을 해야겠는가?
+//==>static 멤버함수 내에서는 static 멤버변수와 static 멤버함수만 호출이 가능하다.
+//전역변수와 전역함수를 대체할 수 있음
+
+
+
+
+//const static 멤버
+
+
+#include <iostream>
+using std::cout; using std::endl;
+
+class CountryArea
+{
+public:
+	const static int RUSSIA = 1707540;
+	const static int CANADA = 998467;
+	const static int CHINA = 957290;
+	const static int SOUTH_KOREA = 9922;
+	//const static 상수는 하나의 클래스에 둘 이상 모이는 것이 보통
+};
+
+int main(void)
+{
+	cout << "러시아 면적:" << CountryArea::RUSSIA << "㎢" << endl;
+	cout << "캐나다 면적:" << CountryArea::CANADA << "㎢" << endl;
+	cout << "중국 면적:" << CountryArea::CHINA << "㎢" << endl;
+	cout << "한국 면적:" << CountryArea::SOUTH_KOREA << "㎢" << endl;
+
+	//클래스에 정의된 상수에 접근하기 위해 굳이 객체를 생성할 필요가 없다.
+	//클래스의 이름을 통해서 접근하는 것이 편하고, 접근하는 대상에 대한 정보를 쉽게 노출하는 방법
+	return 0;
+}
+
+
+
+
+
+
+
+
+//explicit & mutable
+
+/*
+
+*explicit
+ -명시적 호출만 허용한다.
+ -explicit.cpp
+
+/*
+explicit.cpp
+*/
+
+#include<iostream>
+using std::cout;
+using std::endl;
+
+class AAA
+{
+public:
+	explicit AAA(int n) {
+		cout << "explicit AAA(int n)" << endl;
+	}
+};
+
+int main(void)
+{
+	//AAA a1 = 10; //컴파일 에러
+	//혼란을 피하기 위해서
+
+	AAA a1(10);
+
+	return 0;
+}
+
+
+
+*mutable
+ -const에 예외를 둔다
+ -mutable.cpp
+//유용하지 x 가급적 쓰지 x
+
+/*
+mutable.cpp
+*/
+#include<iostream>
+using std::cout;
+using std::endl;
+
+class AAA
+{
+private:
+	mutable int val1;
+	//상수함수 내에서 멤버변수 조작이 가능
+	//이게 필요한 상황이 오면 1)함수의 const를 빼라 2)두 변수를 나눠서 함수2개로 만들어라
+	//안쓰는게 좋음
+	int val2;
+
+public:
+	void SetData(int a, int b) const
+	{
+		val1 = a;  // val1이 mutable이므로 OK!
+		val2 = b;  // Error!
+	}
+};
+
+int main(void)
+{
+	AAA a1;
+	a1.SetData(10, 20);
+	return 0;
+}
+
+*/
+
+
+
+
+
+
+-------------------------ch7--------------------------------------
+
+-------------------------ch7--------------------------------------
+
+//7-1 상속에 들어가기에 앞서
+
+*상속을 정복하기 위한 접근 방식
+
+1단계: 상속과 더불어 다형성의 개념을 적용해야만 해결 가능한 문제를 먼저 제시한다.
+
+2단계: 상속의 문법적 요소를 하나씩 소개해 나간다. 그리고 그 과정에서 앞서 제시한 문제의 해결책을 함께 고민한다.
+
+3단계: 처음 제시한 문제를 상속을 적용하여 해결한다. 그리고 이 때 여러분의 감탄사를 기대한다.
+
+
+--------------------------------
+
+1단계 : 문제제기
+
+*OrangeMedia 급여 담당자의 요구사항
+ -급여 관리를 위해 직원 정보의 저장
+   *고용직(Permanent) : 연봉제(매달 급여가 결저오디어 있다)
+ -매달 지불되어야 할 급여 정보 확인
+ -EmployeeManager1.cpp
+
+
+/*EmployeeManager1.cpp*/
+
+#include <iostream>
+using std::cout; using std::endl;
+
+class PermanentWorker
+//entity 클래스(데이터) 
+//데이터 적인 측면이 강함. 
+//(e.g : 파워 종료 => 데이터 저장해야됨 => 데이터 저장의 기본 단위가 Permanent)
+{
+private:
+	char name[100];
+	int salary;		//매달 지불하는 금액
+public:
+	PermanentWorker(char *name, int money)
+		:salary(money)
+	{
+		strcpy(this->name, name);
+	}
+	int GetPay() const
+	{
+		return salary;
+	}
+	void ShowSalaryInfo() const
+	{
+		cout << "name : " << name << endl;
+		cout << "salary : " << GetPay() << endl;
+	}
+};
+
+
+class EmployeeHandler
+//컨트롤 클래스(사용자가 제공되어지는 기능적 측면)	 or 핸들러 클래스
+//프로그램의 전체적인 flow(흐름)을 담당(PermanentWorker를 보면 무슨 프로그램인지 알수 x
+//BUT EmployeeHandler(컨트롤 클래스)를 보면 어떤 프로그램인지 알 수 있음
+{
+private:
+	PermanentWorker * empList[50];
+	int empNum;
+public:
+	EmployeeHandler() : empNum(0)
+	{}
+	void AddEmployee(PermanentWorker* emp)//새로운 직원정보의 등록
+	{
+		empList[empNum++] = emp;
+	}
+	void ShowAllSalaryInfo() const	//모든 직원의 이번 달 급여정보 출력
+	{		
+		for (int i = 0; i < empNum; i++) {
+			empList[i]->ShowSalaryInfo();
+		}
+	}
+	void ShowTotalSalaryInfo() const	//이번 달 급여의 총액 출력
+	{
+		int sum = 0;
+		for (int i = 0; i < empNum; i++) {
+			sum += empList[i]->GetPay();
+		}
+		cout << "salary sum :" << sum << endl;
+	}
+	~EmployeeHandler()
+	{
+		for (int i = 0; i < empNum; i++) {
+			delete empList[i];
+		}
+	}
+};
+
+
+int main(void)
+{
+	//직원관리를 목적으로 설계된 컨트롤 클래스의 객체 생성
+	EmployeeHandler handler;
+
+	//직원등록
+	handler.AddEmployee(new PermanentWorker("KIM", 1000));
+	handler.AddEmployee(new PermanentWorker("LEE", 1500));
+	handler.AddEmployee(new PermanentWorker("JUN", 2000));
+
+	//이번 달에 지불해야 할 급여의 정보
+	handler.ShowAllSalaryInfo();
+
+	//이번 달에 지불해야 할 급여의 총합
+	handler.ShowTotalSalaryInfo();
+
+	return 0;
+}
+
+
+
+//위의 프로그램은 얼핏 보기에는 문제 X
+//모든 소프트웨어의 설계에 있어서 중요시하는 것 중 하나
+-요구사항의 변경에 대응하는 프로그램의 유연성
+-기능의 추가에 따른 프로그램의 확장성
+(요구사항의 변경에 대한 프로그램의 유연성과 확장성의 확보는 쉽지 않음. 다만 조금이라도 더 유연하고
+조금이라도 더 확장성이 좋게 프로그램을 디자인 하도록 노력! 
+i.e+변경되는 요구사항에 얼마나 잘 프로그램을 변경하는가 중요!!)
+
+
+
+===>문제 제기
+
+*요구 사항의 변경
+ -급여의 형태 다양화
+ -판매직(Sales Person) : 연봉제 + 인센티브제
+ -임시직(Temporary) : 일한 시간 x 시간당 급여
+
+---------------'오렌지미디어 급여관리 확장성 문제'라고 인식 => ch8에서 해결. 7장은 문법에 focus
+
+
+
+
+//7-2 상속의 문법적인 이해 
+
+*상속의 예
+ -"철수는 아버지로부터 좋은 목소리와 큰 키를 물려 받았다." //물질적 + 이외의 특성
+==>철수는 자신이 지니고 있는 고유의 특성 이외에 아버지로부터 물려 받은 좋은 목소리 & 큰 키라는 또다른 특성을 함께 지님
+
+
+==>과정
+1.첫째 : 메모리 공간 할당
+2.둘째 : Base 클래스의 생성자 실행
+3.셋째 : Derived 클래스의 생성자 실행
+(호출은 Derived가 먼저 되지만, 실행은 Base가 먼저 호출 및 실행)
+
+
+
+/*상속의 예제*/
+
+
+//1단계
+
+
+#include <iostream>
+using std::cout; using std::endl;
+
+class Person	//Base클래스
+{
+private:
+	int age;
+	char name[50];
+public:
+	Person(int myage=1, char *myname="noname")
+		: age(myage)
+	{
+		strcpy(name, myname);
+	}
+	void WhatYourName() const
+	{
+		cout << "My name is " << name << endl;
+	}
+	void HowOldAreYou() const
+	{
+		cout << "I am" << age << "years old" << endl;
+	}
+};
+
+//Derived 클래스
+class UnivStudent : public Person
+{
+private:
+	char major[50];
+public:
+	UnivStudent(char*mymajor)
+	{
+		strcpy(major, mymajor);
+	}
+	void WhoAreYou() const
+	{	//Person을 상속했기 때문에 호출 가능.
+		WhatYourName();
+		HowOldAreYou();
+		cout << "My major is " << major << endl;
+	}
+};
+
+
+int main(void)
+{
+	UnivStudent Kim("computer");
+	//UnivStudent 클래스의 생성자 호출 -> Person 생성자 호출 및 실행 -> UnivStudent 클래스 생성자 실행
+	//문제점 : UnivStudent 객체를 생성하면서 이름과 나이를 원하는 값으로 초기화 못시킴!
+	//초기화를 못시키면, Person 클래스에 멤버함수추가 + Student 에 멤버함수 추가 + 메인에 또 써야됨
+	//==>프로그램이 복잡해짐!!
+	Kim.WhoAreYou();
+	return 0;
+}
+
+
+
+
+
+
+
+
+//2단계
+*멤버 이니셜 라이저
+ -Base 클래스의 생성자 명시적 호출
+
+
+class UnivStudent : public Person
+{
+private:
+	char major[50];
+public:
+	UnivStudent(char *myname, int myage, char* mymajor)
+	Person(_myage,mymajor)
+{
+	strcpy(major,mymajor);
+} ....
+}
+
+int main(void)
+{
+ UnivStudent stu1("Kim",20,"computer);
+}
+
+//Derived 클래스의 생성자 호출 -> Base 클래스의 생성자 호출 및 실행 -> Derived 클래스의 생성자 실행
+//클래스의 멤버는 해당 클래스의 생성자를 통해서 초기화해야 한다!
+
+-------------------------------
+
+**용어의 정리 **
+
+Person			UnivStudetn
+상위 클래스		하위 클래스
+기초(base)클래스	유도(derived)클래스
+슈퍼(super)클래스	서브(sub)클래스
+부모클래스		자식클래스
+
+
+
+-------------------------------
+
+
+//상속의 소멸
+
+*첫째 : Derived 객체 소멸자 호출
+*둘째 : Base 객체 소멸자 호출
+*셋째 : 메모리 반환
+//=>Base , Derived 의 클래스 내에서 동적할당한다면 소멸자를 통해 해제가 이루어 져야 메모리 유출X
+
+
+/*소멸의 예제*/
+#include <iostream>
+using std::endl; using std::cout;
+
+class SoBase
+{
+private:
+	int baseNum;
+public:
+	SoBase(int n)
+		:baseNum(n)
+	{
+		cout << "SoBase() : " << baseNum << endl;
+	}
+	~SoBase()
+	{
+		cout << "~SoBase() : " << baseNum << endl;
+	}
+};
+
+class SoDerived : public SoBase
+{
+private :
+	int derivNum;
+public:
+	SoDerived(int n)
+		:SoBase(n), derivNum(n)
+	{
+		cout << "SoDerived() : " << derivNum << endl;
+	}
+	~SoDerived()
+	{
+		cout << "~SoDerived() : " << derivNum << endl;
+	}
+};
+
+int main(void)
+{
+	SoDerived drv1(15);
+	SoDerived drv2(27);
+	return 0;
+}
+
+//스택에 생성된 객체의 소멸순서는 생성순서와 반대이다.
+
+-------------------------------
+
+//7-3 protected 선언과 세 가지 형태의 상속
+
+
+/*
+
+//protected로 선언된 멤버가 허용하는 접근의 범위
+
+ -상속 관계에 놓여있을 경우 접근을 허용
+ -그 외에는 private 멤버와 동일!!! 
+==> 차이 : private(클래스 내에서만 접근, 상속도 불가능) // protected(상속에서 접근 가능)
+
+/*protected의 접근 범위에 대한 예제*/
+#include <iostream>
+using std::cout; using std::endl;
+
+class Base
+{
+private:
+	int num1;
+protected:
+	int num2;
+public:
+	int num3;
+};
+
+class Derived : public Base
+{
+public:
+	void ShowBaseMember()
+	{
+		//cout << num1;	//컴파일 에러!
+		cout << num2;
+		cout << num3;
+	}
+};
+
+
+==>기초 클래스와 이를 상속하는 유도클래스 사이에서도 '정보은닉'은 지켜지는 게 좋음
+
+
+*/
+
+
+
+
+/*
+
+//세 가지 형태의 상속(private 상속 , protected 상속 , public 상속)
+
+*접근 권한 변경
+ -Base 클래스의 멤버는 상속되는 과정에서 접근 권한 변경
+ 
+
+
+//protected 상속
+
+#include <iostream>
+using std::cout; using std::endl;
+
+class Base
+{
+private:
+	int num1;
+protected:
+	int num2;
+public:
+	int num3;
+	Base()
+		:num1(1), num2(2), num3(3) {}
+};
+
+class Derived : protected Base
+//protected보다 접근의 범위가 넓은 멤버는 protected로 변경시켜서 상속하겠다.
+{
+
+public:
+	void ShowBaseData()
+	{
+		//cout << num1 << endl; //컴파일 에러(private 멤버 num1은 접근 불가)
+		cout << num2 << endl;	//protected 멤버 num2는 Derived클래스에서만 접근 가능
+		cout << num3 << endl;	//
+	}
+};
+				
+
+int main(void)
+{
+	Derived drv;
+	//cout << drv.num3 << endl;	//drv는 protected 상속 -> num3는 protected -> main에서 접근 불가능
+	drv.ShowBaseData();
+	return 0;
+}
+
+
+
+
+//private 상속
+
+
+#include <iostream>
+using std::cout; using std::endl;
+
+class Base
+{
+private:
+	int num1;
+protected:
+	int num2;
+public:
+	int num3;
+	Base()
+		:num1(1), num2(2), num3(3) {}
+};
+
+class Derived : private Base
+//private보다 접근의 범위가 넓은 멤버는 private으로 변경시켜서 상속하겠다.
+{
+
+//private: => 접근 불가
+//	int num1;
+//protected: =>private :
+//	int num2;
+//public: =>private :
+//	int num3;
+//num1은 어디서든 접근 불가, num2, num3는 클래스 내에서만 접근 가능
+
+
+public:
+	void ShowBaseData()	{
+		//cout << num1 << endl; //컴파일 에러
+		cout << num2 << endl;
+		cout << num3 << endl;
+	}
+};
+
+
+class DeDerived : private Derived
+{
+//접근불가
+//	int num1;
+//접근불가
+//	int num2;
+//접근 불가
+//	int num3;
+//=>DeDerived를 통해서 모든 멤버 접근 불가 => 무의미함
+
+};
+
+int main(void)
+{
+	Base b1;
+	b1.num3 = 2;
+	cout << b1.num3 << endl;
+	Derived drv;
+	//drv.num3 = 3;	//컴파일 에러! drv는 모든 멤버 변수가 private임
+	drv.ShowBaseData();
+
+	return 0;
+}
+
+
+//public 상속
+// == private는 접근 불가, 나머지는 그대로 상속
+
+
+
+*/
+
+
+
+
+
+
+
+
+
+
+/*
+
+//7-4 상속을 위한 조건
+
+//1) IS-A 관계의 성립
+
+*예제
+무선 전화기 is a 전화기
+노트북 컴퓨터 is a 컴퓨터
+
+
+/*IS-A 관계가 성립하는 클래스 상속의 예제*/
+
+#include <iostream>
+using std::endl; using std::cout;
+
+class Computer
+{
+private:
+	char owner[50];
+public:
+	Computer(char *name)
+	{
+		strcpy(owner, name);
+	}
+	void Calculate()
+	{
+		cout << "요청 내용을 계산합니다." << endl;
+	}
+};
+
+class NotebookComp : public Computer
+{
+private :
+	int Battery;
+public:
+	NotebookComp(char *name, int initChag)
+		:Computer(name), Battery(initChag)
+	{}
+	void Charging()
+	{
+		Battery += 5;
+	}
+	void UseBattery()
+	{
+		Battery -= 1;
+	}
+
+	int GetBatteryInfor()
+	{
+		return Battery;
+	}
+	void MovingCal()
+	{
+		if (GetBatteryInfor()< 1)
+		{
+			cout << "충전이 필요합니다." << endl;
+			return;
+		}
+		cout << "이동하면서 ";
+		Calculate();
+		UseBattery();
+	}
+
+};
+
+class TabletNotebook : public NotebookComp
+{
+private:
+	char regstPenModel[50];
+public:
+	TabletNotebook(char *name, int initChag, char *pen)
+		:NotebookComp(name, initChag)
+	{
+		strcpy(regstPenModel, pen);
+	}
+	void Write(char *penInfo)
+	{
+		if (GetBatteryInfor() < 1)
+		{
+			cout << "충전이 필요합니다." << endl;
+			return;
+		}
+		if (strcmp(regstPenModel, penInfo) != 0)
+		{
+			cout << "등록된 펜이 아닙니다." << endl;
+			return;
+		}
+		cout << "필기 내용을 처리합니다." << endl;
+		UseBattery();
+	}
+};
+
+
+int main(void)
+{
+	NotebookComp nc("이수종", 5);
+	TabletNotebook tn("정수영", 5, "ISE-241-242");
+
+	nc.MovingCal();
+	tn.Write("ISE-241-242");
+
+	return 0;
+}
+
+//UML(Unified Modeling Language
+TabletNotebokk -> NotebookComp -> Computer
+
+
+
+
+
+
+
+
+
+
+//2) HAS-A 관계도 상속의 조건은 되지만 복합 관계로 이를 대신하는 것이 일반적이다.
+//소유의 관계도 상속으로 표현이 가능함(has a)
+
+/*소유의 관계로 클래스 상속을 보여주는 예제*/
+
+#include <iostream>
+#include <cstring>
+
+using std::endl; using std::cout;
+
+class Gun	//총을 표현한 클래스
+{
+private:
+	int bullet;		//장전된 총알의 수
+public:
+	Gun(int bnum)
+		:bullet(bnum) {}
+	void Shot()
+	{
+		cout << "BBANG!" << endl;
+		bullet--;
+	}
+};
+
+class Police : public Gun
+{
+private :
+	int handcuffs;		//소유한 수갑의 수
+public:
+	Police(int bnum, int bcuff)
+		:Gun(bnum), handcuffs(bcuff) {}
+	void PutHandcuff()
+	{
+		cout << "snap" << endl;
+		handcuffs--;
+	}
+};
+
+int main(void)
+{
+	Police pman(5, 3);	//총알 5개 수갑 3개
+	pman.Shot();
+	pman.PutHandcuff();
+	return 0;
+}
+
+
+/*같은 예제로 상속이 아닌 예제*/
+
+
+#include <iostream>
+#include <cstring>
+
+using std::endl; using std::cout;
+
+class Gun	//총을 표현한 클래스
+{
+private:
+	int bullet;		//장전된 총알의 수
+public:
+	Gun(int bnum)
+		:bullet(bnum) {}
+	void Shot()
+	{
+		cout << "BBANG!" << endl;
+		bullet--;
+	}
+};
+
+class Police
+{
+private :
+	int handcuffs;		//소유한 수갑의 수
+	Gun *pistol;
+public:
+	Police(int bnum, int bcuff)
+		:handcuffs(bcuff) 
+	{
+		if (bnum > 0) pistol = new Gun(bnum);
+		else pistol = NULL;
+	}
+	void PutHandcuff()
+	{
+		cout << "snap" << endl;
+		handcuffs--;
+	}
+	void Shot()
+	{
+		if (pistol == NULL) cout << "Hut BBANG!" << endl;
+		else pistol->Shot();
+	}
+	~Police()
+	{
+		delete pistol;
+	}
+};
+
+int main(void)
+{
+	Police pman1(5, 3);
+	pman1.Shot();
+	pman1.PutHandcuff();
+
+	Police pman2(0, 3);
+	pman2.Shot();
+	pman2.PutHandcuff();
+
+	return 0;
+}
+
+
+
+
+==>요구사항이
+1)권총을 소유하지 않은 경찰을 표현해야 합니다.
+2)경찰이 권총과 수갑뿐만 아니라, 전기봉도 소유하기 시작했습니다.
+
+==>상속으로 묶인 두 개의 클래스는 강한 연관성을 띤다.
+1) 
+pistol = NULL 하면됨
+
+2)
+상속 : 전기봉이라는 클래스는 만들어서 police에 상속 해야함. => 다중 상속
+일반 : 경찰이라는 클래스에 변수를 추가하면 됨
+
+
+
+==>결론 :
+상속은 IS-A 관계의 표현에 매우 적절하다. 그리고 경우에 따라서는 HAS-A 관계의 표현에도
+(소유 관계의 표현에도)사용될 수 있으나, 이는 프로그램의 변경에 많은 제약을 가져다 줄 수 있다.
+
+*/
+
+
+
+
+
+
+
+-------------------------ch4--------------------------------------
+-------------------------ch4--------------------------------------
+-------------------------ch4--------------------------------------
+-------------------------ch4--------------------------------------
+-------------------------ch4--------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

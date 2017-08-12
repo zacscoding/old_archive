@@ -1,0 +1,135 @@
+-------- ch04. 내장 객체와 액션태그 --------
+
+1.
+<jsp:include> 다른 jsp 페이지를 포함한다 <%@page include와는 다른 방식으로 진행된다.
+<jsp:forward> 요청 흐름을 제어하기 위해 다른 페이지로 이동한다.
+
+==>
+<jsp:include> 정적 혹은 동적인 자원을 현재 페이지의 내용에 포함한다. 페이지를 모듈화 할 때 사용
+<jsp:forward> 다른 사이트로 이동할 때 사용. 페이지의 흐름을 제어할 때 사용
+
+--------------------------------------------------------
+2.
+1)page 하나의 페이지에서만 유효한 기본 내장 객체
+2)request 하나의 페이지에서 다음 요청 페이지까지 유효한 기본 내장 객체
+3)session 하나의 웹 브라우저내에서 유효한 기본 내장 객체
+4)application 하나의 웹 애플리케이션에서 유효한 기본 내장 객체
+5)response 하나의 웹 페이지에서 다음 페이지로의 응답할 때 사용하는 기본 내장 객체
+6)out JSPWriter로서 출력을 담당하는 기본 내장 객체
+7)config jsp페이지의 설정을 담고있는 기본 내장 객체
+8)pageContext 한 페이지에서 유효한 기본 내장 객체
+9)exception 에러페이지일 경우 생성
+
+==>
+1)page 		하나의 JSP페이지를 처리할 때 해당 영역을 지시할 경우 사용
+2)request 	웹 서비스를 위한 클라이언트와 웹 서버 사이의 요청에 관련된 정보는 request 객체에 저장되어 관리
+3)session 	세션과 관련된 속성과 메소드를 제공해주는 객체
+4)application 하나의 웹 애플리케이션을 관리하고 웹 애플리케이션 안에서의 자원을 공유
+5)response 	클라이언트에 대한 응답 처리를 하는 객체인 response는 실행결과를 브라우저로 되돌려 줄때 사용하는 내장 객체
+6)out 		서버에서 클라이언트로 열려있는 출력 스트림
+7)config 	서블릿 관련 환경 설정과 관련된 객체
+8)pageContext 외부 환경 정보를 제공하는 객체
+9)exception 예외 처리를 위한 객체
+--------------------------------------------------------
+3.
+request			javax.servlet.http.HttpServletRequest
+response		javax.servlet.http.HttpServletResponse
+application		javax.servlet.Application
+out				javax.servlet.JSPWriter
+
+==>
+request			javax.servlet.http.HttpServletRequest
+response		javax.servlet.http.HttpServletResponse
+application		javax.servlet.SevletContext
+out				javax.servlet.jsp.JspWriter
+--------------------------------------------------------
+4.2
+
+==>
+1
+--------------------------------------------------------
+5.2
+
+
+==>
+--------------------------------------------------------
+6.2?
+
+
+==>
+4
+page는 java.lang.Object
+
+--------------------------------------------------------
+7.
+1)x
+2)o
+3)x
+4)o
+5)o
+6)x
+
+==>
+--------------------------------------------------------
+8.2
+
+
+==>
+--------------------------------------------------------
+9.
+
+
+==>
+HttpRequest , HttpResponse , HttpSession , ServletContext
+
+--------------------------------------------------------
+10.3
+
+
+==>
+--------------------------------------------------------
+11.3
+
+
+==>
+--------------------------------------------------------
+12.3
+
+
+==>
+--------------------------------------------------------
+13.
+1)request.getParameter("id")
+2)request.getParameter("pw")
+3)request.getParameter("desc")
+
+==>
+--------------------------------------------------------
+14.
+1)
+request.getParameter("edu");
+2)
+request.getParameter("na");
+3)
+request.getParameterValues("like");
+4)
+likes.length
+5)
+<%=likes[i]=>
+
+
+==>
+--------------------------------------------------------
+15.
+response.forward();
+
+==>
+sendRedirect();
+--------------------------------------------------------
+16.2
+
+
+==>
+
+
+

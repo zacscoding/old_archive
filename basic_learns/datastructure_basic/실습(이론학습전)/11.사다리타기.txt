@@ -1,0 +1,372 @@
+
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#include <Windows.h>
+#include <conio.h>
+
+#define WIDTH 31 //10명 선택했을때 맥스 31
+#define HEIGHT 12 
+#define MYTIME 300 //사다리 타기 *내려가는 속도
+#define MAXUSERNUM 10 //맥스유저10명(배열 1~10까지 사용, 0사용x)
+
+//출력 좌표를 저장
+typedef struct {
+ int x;
+ int y;
+}Coord;
+
+//(1)~ , (a)~ 내용을 저장 할 구조체
+typedef struct {
+ char text[20];
+}TEXT;
+
+void printStartMenu(void); //시작화면 출력
+void printMap(Coord *);  //맵출력
+void printUser1(Coord *);  //(1)~ () 출력
+void printUser2(Coord *);  //(a)~ () 출력
+void initMap(void);    //좌표 초기화 (1)(2) 밑으로는 다 5, 나머지는 0
+void setRand(void);    //ㅡ 만들기
+void gotoxy(int, int);  //기존 gotoxy
+void gotoxy2(int, int);   //map의 i,j를 인자로 받아서 맵에 대응하게 출력
+void showResult(int);
+void printStar(int, int);  //*출력
+void printPrevMap(int, int); //사다리 출력
+void printSubMenu(Coord *);
+int matchText(int); //idx1을 인자로 받아서 match시켜서 idx2를 반환
+void clearSubMenu(Coord *p);
+
+
+int map[HEIGHT][WIDTH];
+int userNum = 2; //기본 사용자 수
+int width = 4;  //기본 사용자수에 따른 map 사이즈 
+
+int main(void)
+{
+ int i, choice, select, k;
+ int idx1, idx2;
+
+ printStartMenu();//초기 메뉴 출력
+ scanf("%d", &userNum);//사람 수
+ while (getchar() != '\n'); //엔터 버퍼 지우기
+ width = 3 * (userNum - 1) + 1; //사람수에 따른 map의 출력 크기
+ system("cls");
+
+ //프린트 출력 좌표들
+ Coord txt1 = { 0,0 }; //(1)(2) 출력 좌표
+ Coord coordMap = { 0,2 };//사다리 출력 좌표
+ Coord txt2 = { 0,HEIGHT + 3 }; //(a)(b)출력 좌표
+ Coord subMenu = { 0,HEIGHT + 4 }; //서브메뉴 출력 좌표
+ Coord contents = { 2*width ,0 }; //문자열 입력 좌표
+ TEXT *ptxt1[MAXUSERNUM] = { '\0', }; //(1)~ 의 내용을 표시할 포인터
+ TEXT *ptxt2[MAXUSERNUM] = { '\0', }; //(a)~ 의 내용을 표시할 포인터
+ //INDEX *pidx[MAXUSERNUM] = { '\0', }; //idx구조체를 가리키는 포인터 초기화
+
+ ptxt1[0] = NULL; ptxt2[0] = NULL;
+
+ //선택 수 만큼 동적 할당
+ for (i = 1; i <= userNum; i++) {
+  ptxt1[i] = (TEXT *)malloc(sizeof(TEXT)); //(1)~(userNum)까지 저장할 구조체 생성
+  ptxt2[i] = (TEXT *)malloc(sizeof(TEXT)); //(a)~(userNum)까지 저장할 구조체 생성
+  //pidx[i] = (INDEX *)malloc(sizeof(INDEX));//(1) - (a) 맵핑 되는 구조체를 생성
+  //pidx[i]->index1 = i;       //pidx[i]->index1=i 초기화
+ }
+
+ printUser1(&txt1); //(1)(2)~(userNum)까지 출력
+ initMap();   //맵 초기화 user밑으로는 |(5) 그외에는 0
+ printMap(&coordMap);//맵 출력
+ printUser2(&txt2); //(a)(b)~ 출력
+
+ gotoxy(contents.x, contents.y);
+ printf("---입력---");
+
+ for (i = 1; i <= userNum; i++) {
+  contents.y++;
+  gotoxy(contents.x, contents.y);
+  printf("(%d) : ", i);
+  gets_s(ptxt1[i]->text);
+ }
+ contents.y++;
+ for (i = 1; i <= userNum; i++) {
+  contents.y++;
+  gotoxy(contents.x, contents.y);
+  printf("(%c) : ", 96 + i);
+  gets_s(ptxt2[i]->text);
+ }
+ system("cls");
+
+ //다시 (1)~ , (a)~ 출력 + 사다리 생성 + 출력
+ printUser1(&txt1);
+ printUser2(&txt2);
+ initMap();
+ setRand();
+ printMap(&coordMap);
+
+ contents.x = 2*width; contents.y = 0;
+ gotoxy(contents.x, contents.y);
+ printf("<<  출력 결과  >>");
+ contents.y++;
+ while (1) {
+  //sub메뉴 출력 (1)전체 출력 (2)선택 출력
+  printSubMenu(&subMenu);
+  scanf("%d", &choice); 
+  if (choice != 1 && choice != 2);
+  else if (choice == 1) { 
+   contents.x = 2 * width; contents.y = 1;
+   for (i = 1; i <= userNum; i++) {
+    idx1 = i;
+    idx2 = matchText(idx1);    
+    gotoxy(contents.x, contents.y);
+    printf("(%d) : %s", idx1, ptxt1[idx1]->text);
+    printf(" ~ (%c) : %s", 96 + idx2, ptxt2[idx2]->text);
+    contents.y++;
+   }
+  // system("pause");
+   break;
+  }
+  else {
+   for (i = 0; i < width; i++) {
+    gotoxy(i, 1);
+    printf(" ");
+    gotoxy(i, HEIGHT + 2);
+    printf(" ");
+   }
+   gotoxy(0, subMenu.y + 2);
+   printf("(1)~(%d)까지 선택 : ", userNum);
+   scanf("%d", &select);
+   idx1 = select;
+   showResult(idx1);
+   idx2 = matchText(idx1);   
+   gotoxy(contents.x, contents.y);
+   printf("(%d) : %s", idx1, ptxt1[idx1]->text);
+   printf(" ~ (%c) : %s", 96 + idx2, ptxt2[idx2]->text);
+   contents.y++;
+  }
+  clearSubMenu(&subMenu);
+ }
+
+ //동적할당 해제
+ for (i = 0; i <= userNum; i++) {
+  free(ptxt1[i]);
+  free(ptxt2[i]);
+ }
+ gotoxy(0, HEIGHT + 8);
+ return 0;
+}
+
+
+void gotoxy(int x, int y)
+{
+ COORD pos = { x,y };
+ SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), pos);
+}
+
+void gotoxy2(int x, int y)
+{
+ COORD pos = { x + 1,y + 2 };
+ SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), pos);
+}
+
+void printStartMenu(void)
+{
+ gotoxy(0, 0);
+ printf("<< 사다리 타기 >>");
+ gotoxy(0, 5);
+ printf("사람수를 입력하세요(2~10) : ");
+}
+
+
+//(1)~ () 출력
+void printUser1(Coord *p)
+{
+ int i;
+ gotoxy(p->x, p->y);
+ for (i = 1; i <= userNum; i++) {
+  printf("(%d)", i);
+ }
+}
+
+//(a)~ () 출력
+void printUser2(Coord *p)
+{
+ int i;
+ gotoxy(p->x, p->y);
+ for (i = 1; i <= userNum; i++) {
+  printf("(%c)", 96 + i);
+ }
+}
+
+void printMap(Coord *p)
+{
+ gotoxy(p->x, p->y);
+ int i, j;
+ for (i = 0; i < HEIGHT; i++) {
+  printf(" ");
+  for (j = 0; j < WIDTH; j++) {
+   printf("%c", map[i][j]);
+  }
+  printf("\n");
+ }
+
+}
+//좌표 초기화 (1)(2) 밑으로는 다 5, 나머지는 0
+void initMap(void)
+{
+ int i, j, k;
+ for (i = 0; i < HEIGHT; i++) {
+  k = 0;
+  for (j = 0; j < width; j++) {
+   if (j == k) {
+    map[i][j] = 5;
+    k += 3;
+   }
+   else {
+    map[i][j] = 0;
+   }
+  }
+ }
+}
+//ㅡ 만들기
+void setRand(void)
+{
+ srand(time(NULL));
+ int i, j;
+ int result; //0-3 : ㅡ 생성 , 4-9 안함
+
+ for (i = 0; i < HEIGHT; i++) {
+  for (j = 0; j < width - 3; j++) { // j가 | 인 부분만 고려
+   if (map[i][j] == 5) {//ㅡ 생성 or not
+    result = rand() % 10; //40% ㅡ만들고 , 60% 안만들기
+    if (result >= 0 && result <= 3) {
+     map[i][j] = 25;
+     map[i][j + 1] = 6;
+     map[i][j + 2] = 6;
+     map[i][j + 3] = 23;
+    }
+   }
+  }
+ }
+}
+//map[i][j]값 확인
+//void showCoordOfMap(void)
+//{
+// int i, j;
+// gotoxy(0, 15);
+// for (i = 0; i < HEIGHT; i++) {
+//  for (j = 0; j < width; j++) {
+//   printf("map[%d][%d]= %d  ", i, j, map[i][j]);
+//  }
+//  printf("\n");
+// }
+//}
+
+//(1)~ 하나씩 *로 사다리 타기
+void showResult(int select)
+{
+ //i,j는 map[i][j]
+ int k;
+ int i = -1, j = 3 * (select - 1);
+ printStar(i, j); //초기 * 출력
+ i++;
+ Sleep(MYTIME);
+ while (1) {
+  printStar(i, j);
+  if (i == HEIGHT) {
+   break;
+  }
+  else {
+   if (map[i][j] == 5) {
+    Sleep(MYTIME);
+    printPrevMap(i, j);
+    i++;
+    printStar(i, j);
+   }
+   else if (map[i][j] == 25) {
+    for (k = 0; k < 3; k++) {
+     Sleep(MYTIME - 200);
+     printPrevMap(i, j);
+     j++;
+     printStar(i, j);
+    }
+    Sleep(MYTIME);
+    printPrevMap(i, j);
+    i++;
+    printStar(i, j);
+   }
+   else if (map[i][j] == 23) {
+    for (k = 0; k < 3; k++) {
+     Sleep(MYTIME - 200);
+     printPrevMap(i, j);
+     j--;
+     printStar(i, j);
+    }
+    Sleep(MYTIME);
+    printPrevMap(i, j);
+    i++;
+    printStar(i, j);
+   }
+  }
+ }
+}
+
+void printStar(int x, int y)
+{
+ gotoxy2(y, x);
+ printf("*");
+}
+
+void printPrevMap(int x, int y)
+{
+ gotoxy2(y, x);
+ printf("%c", map[x][y]);
+}
+
+
+void printSubMenu(Coord *p)
+{
+ gotoxy(p->x, p->y);
+ printf("<1> : 전체 결과 출력    <2> : 개별 결과 출력\n");
+ printf("선택 : ");
+}
+
+void clearSubMenu(Coord *p)
+{
+ gotoxy(p->x, p->y);
+ printf("                                                \n");
+ printf("                                                \n");
+ printf("                                                \n");
+}
+
+//idx1을 인자로 받고 idx2를 리턴함
+int matchText(int idx1)
+{
+ int i, j, k;
+ i = 0; j = 3 * (idx1 - 1);
+ while (1)
+ {
+  if (i == HEIGHT) {
+   break;
+  }
+  else {
+   if (map[i][j] == 5) {
+    i++;
+   }
+   else if (map[i][j] == 25) {
+    for (k = 0; k < 3; k++) {
+     j++;
+    }
+    i++;
+   }
+   else if (map[i][j] == 23) {
+    for (k = 0; k < 3; k++) {
+     j--;
+    }
+    i++;
+   }
+  }
+ }
+ return (j / 3 + 1);
+}
+
+ 

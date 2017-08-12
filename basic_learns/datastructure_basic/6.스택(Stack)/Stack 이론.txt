@@ -1,0 +1,9 @@
+스택(Stack)
+;스택은 쉬운데, OS나 System level을 들어가면 많이 접하게 됨. BUT 일반 응용 Application에서는 쉽게 접하진 않음.
+=>대표적인 ex가 계산기 => 계산기에 대한 이해는 stack의 이해보다는 큼
+
+-스택의 기본연산
+push,pop,peek
+=>pop은 데이터 추출 + 삭제 !
+
+

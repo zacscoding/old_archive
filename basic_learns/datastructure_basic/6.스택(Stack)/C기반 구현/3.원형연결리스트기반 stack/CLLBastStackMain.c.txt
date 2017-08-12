@@ -1,0 +1,32 @@
+#include <stdio.h>
+#include "CLinkedList.h"
+#include "CLLBaseStack.h"
+
+int main(void) {
+	printf("Stack Test by using CLinkedList !!\n\n");
+	printf("Push from 1 to 5\n");
+	/**Stack 생성 및 초기화**/
+	Stack stack;
+	StackInit(&stack);
+	int i=1,data;
+
+	/** Pop 1~5 **/
+	SPush(&stack, 1);
+	printf("1 Push\n");
+	SPush(&stack, 2);	
+	printf("2 Push\n");
+	SPush(&stack, 3);
+	printf("3 Push\n");
+	SPush(&stack, 4);
+	printf("4 Push\n");
+	SPush(&stack, 5);
+	printf("5 Push\n");
+	printf("Pop from Stack\n");
+	
+	while (!SIsEmpty(&stack)) {
+		data = SPop(&stack);
+		printf("%d Pop\n", data);
+	}
+
+	return 0;
+}

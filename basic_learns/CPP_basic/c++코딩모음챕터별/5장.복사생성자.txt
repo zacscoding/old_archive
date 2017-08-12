@@ -1,0 +1,490 @@
+-------------------------ch5--------------------------------------
+5장 복사 생성자 => (의미 // 필요성 // 정의)
+
+
+//----5-1-1 복사 생성자의 의미----
+
+/*두가지 형태의 초기화*/
+#include <iostream>
+
+int main(void)
+{
+	//1번
+	int val1 = 20;
+	AAA a1 = 10;	//묵시적 변환(==AAA a1(10);)
+	//2번
+	int val2(20);
+	AAA a1(10);
+	//==>1,2번은 완전히 같음. 1번(c스타일 초기화) // 2번(c++스타일 초기화)
+}
+
+
+
+//----5-1-2 복사 생성자의 형태----
+
+#include <iostream>
+using std::cout; using std::endl;
+
+class SoSimple
+{
+private:
+	int num1;
+	int num2;
+public:
+	//오버로딩 관계로 구성 된 생성자들
+	SoSimple()
+		:num1(0),num2(0)
+	{
+		cout << "Called SoSimple()" << endl;
+	}
+	SoSimple(int n1, int n2) 
+		:num1(n1), num2(n2)
+	{
+		//empty
+	}
+	//복사 생성자(copy constructor)
+	SoSimple(const SoSimple &copy)			//SoSimple 객체를 인자로 받는 생성자가 추가. 복사 : 원본 변경x =>const
+		:num1(copy.num1),num2(copy.num2)	
+	{
+		cout << "Called SoSimple(SoSimple &copy)" << endl;	//생성자 호출을 확인하기 위한 문장
+	}
+	void ShowSimpleData()
+	{
+		cout << num1 << endl;
+		cout << num2 << endl;
+	}
+};
+
+int main(void)
+{
+	SoSimple sim0();				//메모리 공간 할당 -> 생성자 호출(인자를 받지 않는 void 생성자)
+	SoSimple sim1(15, 30);	//메모리 공간 할당 -> 생성자 호출((15,30)이라는 인자를 받는 생성자)
+	cout << "생성 및 초기화 직전" << endl;
+	SoSimple sim2 = sim1;	//SoSimple sim2(sim1) 으로 묵시적 변환
+	//3개의 객체 생성 -> 생성자 3번 호출
+	sim2.ShowSimpleData();
+
+	return 0;
+}
+
+
+/*복사 생성자의 예제*/
+
+
+#include <iostream>
+using std::cout; using std::endl;
+
+class Point
+{
+	int x, y;
+public:
+	Point(int _x, int _y) {
+		x = _x;
+		y = _y;
+	}
+
+	Point(const Point &p) { //복사하는 용도로 사용 가능
+		x = p.x;
+		y = p.y;
+	}
+
+	void ShowData()
+	{
+		cout << x << ' ' << y << endl;
+	}
+};
+
+int main(void)
+{
+	Point p1(10, 20);	//10,20으로 초기화 객체 생성
+	Point p2(p1);		//p1의 값을 p2에 복사 하기 원한다
+						//p1이라는 객체에 p라는 별칭을 부여해서 p1의 멤버 변수 접근
+	p1.ShowData();
+	p2.ShowData();
+
+	return 0;
+
+	//	생성자 중 Point(const Point&p) 생성자 주석해도 컴파일 오류 X
+	//	==>디폴트 복사 생성자
+	//	Point(const Point&p){} 이렇게 정의하면 p2.x, p2.y 쓰레기값 
+	//	==>디폴트 복사 생성자는 멤버변수의 개수,타입에 따라 달라진다.
+}		
+
+
+
+
+
+//----5-2 디폴트 복사 생성자----
+/*
+*디폴트 복사 생성자
+ -사용자 정의 복사 생성자가 없을 때 자동 삽입
+ -멤버 변수 대 멤버 변수의 복사를 수행
+ -CopyCon2.cpp , CopyCon3.cpp
+
+*디폴트 복사 생성자 복사 형태
+ -얕은 복사(Shallow Copy)!
+
+*디폴트 복사 생성자의 문제점
+ -얕은 복사에 의한 메모리 참조 오류!
+ -CopyCon4.cpp, CopyCon5.cpp
+*/
+
+
+
+/*변환에 의한 초기화를 막는 explicit*/
+#include <iostream>
+using std::cout; using std::endl;
+
+class AAA
+{
+private:
+	int num;
+public:
+	//AAA(int n) :num(n)
+	explicit AAA(int n) : num(n)	//밑의 묵시적 변환( AAA obj1=3; == AAA obj1(3) )을 막는 키워드
+	{
+	}
+	void ShowData(void) const
+	{
+		cout << num << endl;
+	}
+};
+
+int main(void)
+{
+	//AAA obj1 = 3;
+	AAA obj1(3);
+	obj1.ShowData();
+
+	return 0;
+}
+
+
+//얕은 복사(shallow copy) , 깊은 복사(deep copy)
+
+/* 얕은 복사의 예제*/
+
+#include <iostream>
+#include <cstring>
+using std::cout; using std::endl;
+
+class Person
+{
+private:
+	char *name;
+	int age;
+public:
+	Person(char * myname, int myage)	//생성자에서 new를 이용한 동적할당
+	{
+		printf("생성자 myname ; %u\n", myname);
+		int len = strlen(myname) + 1;
+		name = new char[len];
+		strcpy(name, myname);
+		age = myage;
+	}
+	////디폴트 복사 생성자
+	//Person(Person &p) {
+	//	name = p.name;
+	//	age = p.age;
+	//}
+
+	void ShowPersonInfo() const
+	{
+		cout << "이름:" << name << endl;
+		cout << "나이:" << age << endl;
+	}
+
+	~Person()						//생성자에서 delete를 이용한 메모리의 해제
+	{
+		delete[]name;
+		cout << "called destructor!" << endl;
+	}
+};
+
+int main(void)
+{
+	Person man1("Lee dong woo", 29);
+	Person man2 = man1;		//묵시적 Person man2(man1);		
+							//디폴트 복사 생성자에 의한 맴버 대 맴버 복사
+	man1.ShowPersonInfo();
+	man2.ShowPersonInfo();
+
+	return 0;
+	//문제점 : stack 구조에 의해 man2가 먼저 소멸 & heap에 할당 된 Lee dong woo를 delete 연산에 의해 해제
+	//man1가 소멸하는 과정에서 이미 소멸 된 주소값을 delete 연산하게 됨 => 오류
+}
+
+
+
+
+/*깊은 복사의 예제*/
+
+	//깊은 복사를 위한 복사 생성자 정의
+	Person(Person &p) 
+		: age(p.age)
+	{
+		name = new char[strlen(p.name) + 1];
+		strcpy(name, p.name);		
+	}
+	
+//==> 복사 생성자 결론 : 생성자를 확인하고 동적 할당하면 ->소멸자(동적할당해제) + 복사생성자(깊은복사) 제공
+
+
+
+
+//----5-3 복사 생성자 호출 형태----
+/*
+*복사 생성자 호출 형태 3가지
+(3가지 경우 몰라도 복사 생성자 잘 정의하면 문제x 그러나 클래스를 디자인 할때 시아가 넓어짐)
+
+ -case 1
+   : 기존에 생성된 객체로 새로운 객체 초기화
+
+ -case 2
+   : Call-by-value 방식의 함수호출 과정에서 객체를 인자로 전달하는 경우
+
+ -case 3
+   : 객체를 반환하되, 참조형으로 반환하지 않는 경우
+
+공통점 : 
+객체를 새로 생성해야 한다. 단 생성과 동시에 동일한 자료형의 객체로 초기화해야 한다.
+
+*cf)
+process : 프로그램 -> 클래스 A -> 동적할당 -> 복사 생성자
+만약 위의 3가지 이외에 복사 생성자가 호출 될 일이 없으면, 복사 생성자 정의 vs 정의X??
+=>반드시 복사 생성자 정의(프로그램에 의해서가 아니라, 클래스에 의해서 구분)
+*/
+
+
+
+//변수에 있어서 메모리 할당과 동시에 초기화 되는 경우(위의 3가지 케이스)
+
+case 1:
+int num1=num2;
+//(num1이 메모리에 할당 & num2가 가지고 있는 값으로 초기화)
+
+case2:
+
+int SimpleFunc(int n)
+{..}
+
+int main(void)
+{
+  int num=10;
+  SimpleFunc(num);
+}
+
+//(SimpleFunc()가 호출되는 순간 n이라는 변수를 메모리 할당 & num 이 가진 값으로 초기화
+
+
+case3:
+
+int SimpleFunc(int n)
+{
+ ...
+ return n;  //(return n;에서 반환하는 순간 메모리 공간이 할당되면서 동시에 초기화!)
+}
+int main(void)
+{
+ int num=10;
+ cout<<SimpleFunc(num)<<endl; //SimpleFunc(num)의 리턴을 저장해야함 -> 메모리 할당 & 초기화
+}
+
+//(함수가 값을 반환하면 별도의 메모리 공간이 할당되고, 이 공간에 반환 값이 저장된다.(반환 값으로 
+초기화 된다)
+
+
+
+
+
+
+/*객체에서의 복사 생성자 호출 형태*/
+
+
+#include <iostream>
+using namespace std;
+
+class AAA
+{
+	int val;
+public:
+	//생성자 1
+	AAA(int i) {
+		val = i;
+	}
+	//복사 생성자 정의
+	AAA(const AAA& a) {
+		cout << "AAA(const AAA& a)호출" << endl;
+		val = a.val;
+	}
+	void ShowData() {
+		cout << "val :" << val << endl;
+	}
+};
+
+void function2(AAA a2)
+{
+	a2.ShowData();
+}
+
+AAA function3(void)
+{
+	AAA a3(10);
+	return a3;
+}
+
+int main(void)
+{
+	//case 1.
+	AAA obj1(10);
+	AAA obj2 = obj1;//AAA obj2(obj1) //obj1 : 기존의 객체 obj2 : 새로운 객체
+					//->기존의 객체를 가지고 새로운 객체를 초기화
+	//case 2.
+	function2(obj1);//참조가 아니라 값에 의해 전달 받겠다
+	//1.메모리 공간 할당 //2.복사 생성자 호출 객체 (obj1가 객체 a2에게전달 & 복사)
+	//function2함수의 }를 만나면 소멸
+
+	//case 3.
+	function3().ShowData();
+	//1.메모리 공간 할당(클래스 AAA에 상응하는) //2.복사 생성자 호출 (객체 a3가 새로 할당 된 객체에 복사)
+
+	return 0;
+}
+
+
+/*복사 생성자 호출에서 함수의 반환형 예제*/
+
+
+#include <iostream>
+using std::cout; using std::endl;
+
+class SoSimple
+{
+private:
+	int num;
+public:
+	SoSimple(int n) :num(n)
+	{}
+	SoSimple(const SoSimple & copy) :num(copy.num)
+	{
+		cout << "Called SoSimple(const SoSimple &copy)" << endl;
+	}
+	SoSimple& Addnum(int n)
+	{
+		num += n;
+		return *this;	
+	}
+	void ShowData()
+	{
+		cout << "num: " << num << endl;
+	}
+};
+
+SoSimple SimpleFuncObj(SoSimple ob)
+{
+	cout << "return 이전" << endl;
+	return ob;	//ob객체를 반환 -> BUT 참조형X -> 객체의 복사본이 만들어지면서 반환이 진행
+}
+
+int main(void)
+{
+	SoSimple obj(7);
+	SimpleFuncObj(obj).Addnum(30).ShowData();	//SimpleFuncObj 함수가 반환한 객체(임시객체)를 대상으로 AddNum 함수를 호출하고
+												//이어서 AddNum 함수가 반환하는 참조 값을 대상으로 ShowData함수를 호출
+	obj.ShowData();
+	return 0;
+}
+
+
+
+
+
+
+
+/*임시 객체의 소멸에 대한 예제*/
+
+
+#include <iostream>
+using std::cout; using std::endl;
+
+class Temporary
+{
+private:
+	int num;
+public:
+	Temporary(int n) :num(n)
+	{
+		cout << "Create obj :" << num << endl;
+	}
+	~Temporary()
+	{
+		cout << "destroy obj:" << num << endl;
+	}
+	void ShowTempInfo()
+	{
+		cout << "My num is" << num << endl;
+	}
+};
+
+int main(void)
+{
+	Temporary(100);			//임시 객체 생성
+	cout << "**** After Make!" << endl<< endl;
+	Temporary(200).ShowTempInfo();//임시 객체(200으로 초기화 된) 생성 -> (임시객체의 참조 값).ShowTempInfor();
+	cout << "**** After Make!" << endl << endl;
+
+	const Temporary &ref = Temporary(300);
+	cout << "**** After Make!" << endl << endl;
+	return 0;
+	//결론 : 임시객체는 1)접근이 불가능 하면 다음행에서 소멸 2)접근이 가능하면 바로 소멸x
+}
+
+
+
+
+
+
+
+/*객체의 생성과 소멸의 이해 예제*/
+
+
+#include <iostream>
+using std::cout; using std::endl;
+
+class SoSimple
+{
+private:
+	int num;
+public:
+	SoSimple(int n) :num(n)
+	{
+		cout << "New object:" << this << endl;
+	}
+	SoSimple(const SoSimple& copy) :num(copy.num)
+	{
+		cout << "New Copy Obj:" << this << endl;
+	}
+	~SoSimple()
+	{
+		cout << "Destroy obj:" << this << endl;
+	}
+};
+
+SoSimple SimpleFuncObj(SoSimple ob)
+{
+	cout << "Parm ADR: " << &ob << endl;
+	return ob;
+}
+
+int main(void)
+{
+	SoSimple obj(7);
+	SimpleFuncObj(obj);
+
+	cout << endl;
+	SoSimple tempRef = SimpleFuncObj(obj);
+	// tempRef라는 객체를 새로 생성해서 복사하는게 아님. SimpleFuncObj의 반환 된 임시 객체에 tempRef라는 이름을 할당하고 있음
+	//(객체의 생성 수를 하나 줄여서 효율성을 높이기 위해서)
+	cout << "Return Obj" << &tempRef << endl;
+	return 0;
+}

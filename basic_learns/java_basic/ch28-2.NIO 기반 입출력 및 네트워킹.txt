@@ -1,0 +1,2467 @@
+-------------------ch28-2.NIO 기반 입출력 및 네트워킹-----------------------
+
+//1.NIO 소개
+
+자바 4부터 새로운 입출력(NIO:New Input/Output)이라는 뜻에서 java.nio 패키지가 포함 
+자바 7로 버전업하면서 자바 IO와 NIO 사이의 일관성 없는 클래스 설계를 바로 잡고 비동기 채널 등의 네트워크 지원을 대폭 강화한 NIO.2 API 추가
+=>NIO2는 기존 java.nio의 하위 패키지에 통합되어 있음
+
+
+NIO 패키지					포함되어 있는 내용
+java.nio					다양한 버퍼 클래스	
+java.nio.channels			파일 채널, TCP UDP 채널 등의 클래스
+java.nio.channels.spi		java.nio.channels 패키지를 위한 서비스 제공자 클래스
+java.nio.charset			문자셋,인코더,디코더 API
+java.nio.charset.spi		java.nio.charset 패키지를 위한 서비스 제공자 클래스
+java.nio.file				파일 및 파일 시스템에 접근하기 위한 클래스
+java.nio.file.attribute		파일 및 파일 시스템의 속성에 접근하기 위한 클래스
+java.nio.file.spi			java.nio.file 패키지를 위한 서비스 제공자 클래스
+
+------
+
+/1.1 IO vs NIO 차이점
+
+구분					IO					NIO	
+ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+입출력 방식			스트림 방식			채널 방식
+버퍼 방식				넌버퍼(non-buffer)	버퍼(buffer)
+비동기 방식			지원안함				지원
+블로킹/넌블로킹 방식		블로킹 방식만 지원		블로킹/넌블로킹 방식 모두 지원
+
+
+1)스트림 vs 채널
+IO -> 스트림(Stream) 기반 => 입력,출력 스트림 구분
+NIO -> 채널(Channel) 기반 => 양방향으로 입력과 출력이 가능 e.g)파일 데이터를 읽고 저장하려면 FileChannel 하나만 생성
+
+
+2)넌버퍼 vs 버퍼
+IO -> 1바이트 단위 => 보조 스트림으로 버퍼 기능 제공
+NIO -> 기본적으로 버퍼를 사용해서 입출력
+
+
+
+3)블로킹 vs 넌블로킹
+IO -> 블로킹(blocking)된다. 
+=> read(),write 메소드를 호출하면 데이터가 입력되기 전까지 스레드는 블로킹(대기 상태)가 됨
+=> IO 스레드가 블로킹되면 다른 일을 할 수 없고 블로킹을 빠져나오기 위해 인터럽트(Interrupt)도 할 수 없음.
+=> 블로킹을 빠져나오는 유일한 방법은 스트림을 닫는 것
+
+NIO -> 블로킹, 넌블로킹 특징을 모두가지고 있음
+=> IO와의 차이점은 스레드를 인터럽트함으로써 빠져나올 수 있음
+=> NIO의 넌블로킹은 입출력 작업 준비가 완료된 채널만 선택해서 작업 스레드가 처리하기 때문에 작업 스레드가 블로킹되지 않음
+   (작업 준비 완료 == 지금 바로 읽고 쓸 수 있는 상태)
+=>NIO 넌블로킹의 핵심 객체는 멀티플렉서(multiplexor)인 셀렉터(Selector)
+=>셀렉터는 복수 개의 채널 중에서 준비 완료된 채널을 선택하는 방법을 제공
+
+
+/1.2 IO와 NIO의 선택
+
+1)NIO
+=>불특정 다수의 클라이언트 연결 or 멀티 파일들을 넌블로킹이나 비동기로 처리할 수 있기 때문에 과도한 스레드 생성 피함 & 스레드를 효과적으로 재사용한다는 장점이 존재
+=> + 운영체제의 버퍼(다이렉트 버퍼)를 이용한 입출력이 가능하기 때문에 입출력 성능이 향상
+=>연결 클라이언트 수가 많고, 하나의 입출력 처리 작업이 오래 걸리지 않는 경우에 사용하는 것이 좋음
+  (스레드에서 입출력 처리가 오래 걸리면 대기하는 작업의 수 늘어남 -> 제한된 스레드로 처리하는 것이 오히려 분리)
+=>버퍼의 할당 크기 문제가 되고 모든 입출력 작업에 버퍼를 무조건 사용해야 함
+  
+2)IO
+=>연결 클라이언트 수가 적고, 전송되는 데이터가 대용량이면서 순차적으로 처리될 필요성이 있을 경우에는 IO로 서버를 구현하는 것이 좋음.
+
+-------------------------------------------------------------------------------------
+
+//2.파일과 디렉토리
+
+------
+
+/2.1 경로 정의(Path)
+
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Iterator;
+
+public class PathExample {
+	public static void main(String[] args){
+		Path path=Paths.get("C:/Users/명수/workspace/ThisIsJava/src/PathExample.java");
+		System.out.println("파일명 : "+path.getFileName());
+		System.out.println("부모 디렉토리명 : "+path.getParent().getFileName());
+		System.out.println("중첩 경로 수 : "+path.getNameCount());
+		
+		System.out.println();
+		for(int i=0;i<path.getNameCount();i++)
+			System.out.println(path.getName(i));
+		
+		System.out.println();
+		Iterator<Path> iterator=path.iterator();
+		while(iterator.hasNext()){
+			Path temp=iterator.next();
+			System.out.println(temp.getFileName());
+		}		
+	}
+}
+
+
+<< 실행 결과 >>
+파일명 : PathExample.java
+부모 디렉토리명 : src
+중첩 경로 수 : 6
+
+Users
+명수
+workspace
+ThisIsJava
+src
+PathExample.java
+
+Users
+명수
+workspace
+ThisIsJava
+src
+PathExample.java
+
+------
+
+/2.2 파일 시스템 정보(FileSystem)
+
+
+import java.io.IOException;
+import java.nio.file.FileStore;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
+import java.nio.file.Path;
+
+public class FileSystemExample {
+	public static void main(String[] args) throws IOException {
+		FileSystem fileSystem=FileSystems.getDefault();
+		for(FileStore store : fileSystem.getFileStores()){
+			System.out.println("드라이버 명 : "+store.name());
+			System.out.println("파일 시스템 : "+store.type());
+			System.out.println("전체 공간 : "+store.getTotalSpace()+"바이트");
+			System.out.println("사용중인 공간 : "+
+					(store.getTotalSpace()-store.getUnallocatedSpace())+" 바이트");
+			System.out.println("사용 가능한 공간 : "+store.getUsableSpace()+" 바이트");
+			System.out.println();			
+		}
+		
+		System.out.println("파일 구분자 : "+fileSystem.getSeparator());
+		System.out.println();
+		
+		for(Path path : fileSystem.getRootDirectories())
+			System.out.println(path.toString());
+		
+	}
+}
+
+
+<< 실행 결과 >>
+드라이버 명 : 
+파일 시스템 : NTFS
+전체 공간 : 475443228672바이트
+사용중인 공간 : 108882665472 바이트
+사용 가능한 공간 : 366560563200 바이트
+
+드라이버 명 : 
+파일 시스템 : NTFS
+전체 공간 : 523919945728바이트
+사용중인 공간 : 14939885568 바이트
+사용 가능한 공간 : 508980060160 바이트
+
+드라이버 명 : 
+파일 시스템 : FAT32
+전체 공간 : 7987511296바이트
+사용중인 공간 : 3792044032 바이트
+사용 가능한 공간 : 4195467264 바이트
+
+파일 구분자 : \
+
+C:\
+E:\
+F:\
+
+------
+
+/2.3 파일 속성 읽기 및 파일, 디렉토리 생성/삭제
+;java.nio.file.Files 클래스는 파일과 디렉토리의 생성 및 삭제 그리고 이들의 속성을 읽는 메소드를 제공
+
+//파일 속성을 읽고 출력
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+public class FileExample {
+	public static void main(String[] args) throws IOException {
+		Path path=Paths.get("C:/Users/명수/workspace/ThisIsJava/src/FileExample.java");
+		System.out.println("디렉토리 여부 : "+Files.isDirectory(path));	
+		System.out.println("파일 여부 : "+Files.isRegularFile(path)); //일반 파일인지 여부
+		System.out.println("마지막 수정 시간 : "+Files.getLastModifiedTime(path));
+		System.out.println("파일 크기 : "+Files.size(path));
+		System.out.println("소유자 : "+Files.getOwner(path).getName());
+		System.out.println("숨김 파일 여부 : "+Files.isHidden(path));
+		System.out.println("읽기 가능 여부 : "+Files.isReadable(path));
+		System.out.println("쓰기 가능 여부 : "+Files.isWritable(path));		
+	}
+}
+
+
+
+<< 실행 결과 >>
+디렉토리 여부 : false
+파일 여부 : true
+마지막 수정 시간 : 2016-11-27T13:01:37.177618Z
+파일 크기 : 853
+소유자 : zac\ZAC
+숨김 파일 여부 : false
+읽기 가능 여부 : true
+쓰기 가능 여부 : true
+
+
+//디렉토리와 파일을 생성하고, 디렉토리의 내용을 출력
+
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+public class DirectoryExample {
+	public static void main(String[] args) throws Exception {
+		Path path1=Paths.get("E:/Temp/dir/subdir");
+		Path path2=Paths.get("E:/Temp/file.txt");
+		
+		
+		if(Files.notExists(path1))
+			Files.createDirectories(path1); //디렉토리 생성
+		
+		if(Files.notExists(path2))
+			Files.createFile(path2); //파일 생성
+		
+		Path path3=Paths.get("E:/Temp");		
+		DirectoryStream<Path> directoryStream=Files.newDirectoryStream(path3); //디렉토리 내용을 스트림(반복자)으로 얻음
+		
+		for(Path path : directoryStream){
+			if(Files.isDirectory(path))
+				System.out.println("[디렉토리] : "+path.getFileName());
+			else
+				System.out.println("[파일] : "+path.getFileName()+"(크기 : "+Files.size(path)+")");
+		}
+		
+		directoryStream.close();
+	}
+}
+
+<< 실행 결과 >>
+[디렉토리] : dir
+[파일] : file.txt(크기 : 0)
+
+------
+
+/2.4 와치 서비스(WatchService)
+;자바 7에서 처음 소개 => 디렉토리 내부에서 파일 생성, 삭제, 수정 등의 내용 변화를 감시하는데 사용.
+e.g)에디터에서 파일을 편집하고 있을 때, 에디터 바깥에서 파일 내용을 수정하게 되면 파일 내용이 변경됐으니 
+ 파일을 다시 불러올 것인지 묻는 대화상자를 띄우는 것.
+ 
+
+//e.g ) C:\Temp 디렉토리를 감시 디렉토리로 설정
+import java.nio.file.FileSystems;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardWatchEventKinds;
+import java.nio.file.WatchEvent;
+import java.nio.file.WatchEvent.Kind;
+import java.nio.file.WatchKey;
+import java.nio.file.WatchService;
+import java.util.List;
+
+import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.scene.Scene;
+import javafx.scene.control.TextArea;
+import javafx.scene.layout.BorderPane;
+import javafx.stage.Stage;
+
+public class WatchServiceExample extends Application{
+	class WatchServiceThread extends Thread{
+		@Override
+		public void run(){
+			try{
+				WatchService watchService=FileSystems.getDefault().newWatchService(); //WatchService 인스턴스 얻기
+				Path directory=Paths.get("E:/Temp"); //감시 디렉터리 path 얻기
+				directory.register(watchService,StandardWatchEventKinds.ENTRY_CREATE, //생성 감시
+						StandardWatchEventKinds.ENTRY_DELETE, //삭제 감시
+						StandardWatchEventKinds.ENTRY_MODIFY); //변경 감시
+				
+				while(true){
+					WatchKey watchKey=watchService.take();//블로킹(WatchKey가 큐에 들어올 때 까지)
+					List<WatchEvent<?>> list=watchKey.pollEvents();	//WatchEvent 목록 얻기
+					
+					for(WatchEvent watchEvent : list){
+						//이벤트 종류 얻기
+						Kind kind=watchEvent.kind();						
+						//감지된 Path 얻기
+						Path path=(Path)watchEvent.context();
+						
+						if(kind==StandardWatchEventKinds.ENTRY_CREATE){
+							//생성되었을 경우, 실행할 코드
+							Platform.runLater(()->textArea.appendText("파일 생성됨 -> "+path.getFileName()+"\n"));							
+						}else if(kind==StandardWatchEventKinds.ENTRY_DELETE){
+							//삭제 되었을 경우 실행할 코드
+							Platform.runLater(()->textArea.appendText("파일 삭제됨 -> "+path.getFileName()+"\n"));
+							
+						}else if(kind==StandardWatchEventKinds.ENTRY_MODIFY){
+							//변경되었을 경우, 실행할 코드
+							Platform.runLater(()->textArea.appendText("파일 수정됨 -> "+path.getFileName()+"\n"));							
+						}else if(kind==StandardWatchEventKinds.OVERFLOW){
+							//Overflow 이벤트는 운영체제에서 이벤트가 소실됐거나 버려진 경우에 발생
+							//-> 별도 처리 필요 X
+						}						
+					}
+					boolean valid=watchKey.reset(); //WatchEvent가 발생하면 큐에 다시 들어가기 때문에 초기화 해야함.
+					if(!valid) //감시하는 디렉토리가 삭제 되었거나 키가 더이상 유효하지 않을 경우 false 반환 & break;
+						break;					
+				}			
+				
+			}catch(Exception e){}			
+		}				
+	}
+	
+	TextArea textArea;
+	
+	@Override
+	public void start(Stage primaryStage) throws Exception {
+		BorderPane root=new BorderPane();
+		root.setPrefSize(500, 300);
+		
+		textArea=new TextArea();
+		textArea.setEditable(false);
+		root.setCenter(textArea);
+		
+		Scene scene=new Scene(root);
+		primaryStage.setScene(scene);
+		primaryStage.setTitle("WatchServiceExample");
+		primaryStage.show();
+		
+		WatchServiceThread wst=new WatchServiceThread();
+		wst.start();
+	}
+	
+	public static void main(String[] args){
+		launch(args);
+	}
+}
+
+
+<< 실행 결과 >>
+1.파일 생성시 : 			파일 생성됨 -> 오리
+2.파일 변경시(이름 변경) : 	파일 삭제됨 -> 오리  
+						파일 생성됨 -> dir
+3.파일 변경시(내용 변경) : 	파일 수정됨 -> file.txt
+4.파일 삭제시 : 			파일 삭제됨 -> dir
+
+
+-------------------------------------------------------------------------------------
+
+//3 버퍼
+
+------
+
+/3.1 buffer 의 종류
+Buffer
+ByteBuffer <- MappedByteBuffer(파일의 내용에 랜덤하게 접근하기 위해서 파일의 내용을 메모리와 맵핑시킨 버퍼)
+CharBuffer , ShortBuffer , IntBuffer, LongBuffer
+FloatBuffer , DoubleBuffer
+
+
+
+/넌다이렉트와 다이렉트 버퍼
+
+구분					넌다이렉트 버퍼			다이렉트 버퍼	
+사용하는 메모리 공간		JVM의 힙 메모리		운영체제의 메모리
+버퍼 생성 시간			버퍼 생성이 빠르다		버퍼 생성이 느리다
+버퍼의 크기			작다					크다(큰 데이터를 처리할 때 유리)
+입출력 성능			낮다					높다(입출력이 빈번할 ? 유리)
+
+
+//넌다이렉트와 다이렉트 크기 비교
+
+import java.nio.ByteBuffer;
+
+public class BufferSizeExample {
+	public static void main(String[] args){
+		ByteBuffer directBuffer=ByteBuffer.allocateDirect(1500*1024*1024);
+		System.out.println("다이렉트 버퍼 생성");
+		
+		ByteBuffer nonDirectBuffer=ByteBuffer.allocate(1500*1024*1024);
+		System.out.println("넌다이렉트 버퍼 생성");			
+	}
+}
+
+<< 실행 결과 >>
+다이렉트 버퍼 생성
+Exception in thread "main" java.lang.OutOfMemoryError: Java heap space
+	at java.nio.HeapByteBuffer.<init>(Unknown Source)
+	at java.nio.ByteBuffer.allocate(Unknown Source)
+	at BufferSizeExample.main(BufferSizeExample.java:8)
+
+
+	
+//다이렉트 버퍼 vs 넌다이렉트 버퍼 성능 비교
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
+import java.util.EnumSet;
+
+public class PerformanceExample {
+	public static void main(String[] args) throws Exception{
+		Path from=Paths.get("E:/Temp/TOP.jpg");
+		Path to1=Paths.get("E:/Temp/TOP2.jpg");
+		Path to2=Paths.get("E:/Temp/TOP3.jpg");
+		
+		long size=Files.size(from);
+		
+		FileChannel fileChannel_from=FileChannel.open(from);
+		FileChannel fileChannel_to1=FileChannel.open(to1,
+				EnumSet.of(StandardOpenOption.CREATE,StandardOpenOption.WRITE));		
+		FileChannel fileChannel_to2=FileChannel.open(to2,
+				EnumSet.of(StandardOpenOption.CREATE,StandardOpenOption.WRITE));
+		
+		ByteBuffer nonDirectBuffer=ByteBuffer.allocate((int)size); //넌다이렉트 버퍼 생성
+		ByteBuffer directBuffer=ByteBuffer.allocateDirect((int)size); //다이렉트 버퍼생성
+		
+		long start,end;
+		
+		//넌다이렉트 버퍼 테스트
+		start=System.nanoTime();
+		for(int i=0;i<100;i++){
+			fileChannel_from.read(nonDirectBuffer);
+			nonDirectBuffer.flip();
+			fileChannel_to1.write(nonDirectBuffer);
+			nonDirectBuffer.clear();
+		}
+		end=System.nanoTime();
+		long nonDirectTime=end-start;
+		System.out.println("넌 다이렉트 : "+nonDirectTime+" ns");
+		
+		fileChannel_from.position(0); //파일의 위치를 0(처음)으로 설정
+		
+		//다이렉트 버퍼 테스트
+		start=System.nanoTime();
+		for(int i=0;i<100;i++){
+			fileChannel_from.read(directBuffer);
+			directBuffer.flip();
+			fileChannel_to2.write(directBuffer);
+			directBuffer.clear();
+		}
+		end=System.nanoTime();
+		long directTime=end-start;
+		System.out.println("다이렉트 : "+directTime+" ns");		
+		System.out.println("차이 : "+(nonDirectTime-directTime)+" ns");
+		
+		fileChannel_from.close();
+		fileChannel_to1.close();
+		fileChannel_to2.close();		
+	}
+}
+
+
+<< 실행 결과 >>
+넌 다이렉트 : 1781806 ns
+다이렉트 : 524838 ns
+차이 : 1256968 ns
+
+=>
+다이렉트 버퍼는 채널(Channel)을 사용해서 버퍼의 데이터를 읽고 저장할 경우에만 운영체제의 native I/O를 수행
+만약 채널을 사용하지 않고 ByteBuffer의 get()/put() 메소드를 사용해서 버퍼의 데이터를 읽고 저장하면
+이 작업은 내부적으로 JNI(Java Native Interface)를 호출해서 native I/O를 수행하기 때문에 JNI 호출이라는 오버 헤더가 추가
+( JNI : 자바 코드에서 C함수를 호룰할 수 있도록 해주는 API )
+
+------
+
+/3.2 Buffer 생성
+;각 데이터 타입별로 
+넌다이렉트 버퍼를 생성하기 위해서는 각 Buffer 클래스의 allocate()와 wrap() 메소드를 호출하면 되고
+다이렉트 버퍼는 ByteBuffer의 allocateDirect() 메소드를 호출하면 됨.
+
+
+
+1)allocate() 메소드
+;JVM 힙 메모리에 넌다이렉트 버퍼를 생성
+XXXBuffer.allocate(int capacity)
+
+
+
+
+2)wrap() 메소드
+;이미 생성되어 있는 자바 배열을 래핑해서 Buffer 객체를 생성.
+
+e.g)
+byte[] byteArray=new bytep[100]
+ByteBuffer byteBuffer=ByteBuffer.wrap(byteArray); // 길이가 100인 ByteBuffer를 생성
+//ByteBuffer byteBuffer=ByteBuffer.wrap(byteArray,0,50); //0인덱스부터 50개만 버퍼로 생성
+
+=>
+CharBuffer는 추가적으로 CharSequence 타입의 매개값을 갖는 wrap() 메소드도 제공
+(String이 CharSequence인터페이스를 구현했기 때문에 매개값으로 문자열을 제공할 수 있음
+ e.g ) CharBuffer charBuffer=CharBuffer.wrap("NIO 입출력은 버퍼를 이용합니다.");
+ 
+
+
+
+3)allocateDirect() 메소드
+;JVM 힙 메모리 바깥쪽, 즉 운영체제가 관리하는 메모리에 다이렉트 버퍼를 생성.ByteBuffer에서만 제공
+=>ByteBuffer의 allocateDirect() 메소드로 버퍼 생성 한후 asXXXBuffer() 메소드를 이용해서 해당 타입별 Buffer를 얻으면 됨
+
+
+import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
+import java.nio.IntBuffer;
+
+public class DirectBufferCapacityExample {
+	public static void main(String[] args){	
+		//100개의 byte값 저장
+		ByteBuffer byteBuffer=ByteBuffer.allocateDirect(100); 
+		System.out.println("저장용량 : "+byteBuffer.capacity()+"바이트");
+		
+		//50개의 char값 저장
+		CharBuffer charBuffer=ByteBuffer.allocateDirect(100).asCharBuffer(); // char는 2바이트
+		System.out.println("저장용량 : "+charBuffer.capacity()+"문자");
+		
+		//25개의 int값 저장
+		IntBuffer intBuffer=ByteBuffer.allocateDirect(100).asIntBuffer(); //int 4바이트 => 25개
+		System.out.println("저장용량 : "+intBuffer.capacity()+"정수");		
+	}
+}
+
+
+<< 실행 결과 >>
+저장용량 : 100바이트
+저장용량 : 50문자
+저장용량 : 25정수
+
+ 
+ 
+
+4)byte 해석 순서(ByteOrder)
+;데이터를 처리할 때 바이트 처리 순서는 운영체제마다 차이가 있음.
+Big endian : 앞쪽 데이터를 먼저 처리하는 것
+Little endian : 뒤쪽 바이트 먼저 처리
+
+Register 0A0B0C0D
+=>
+Big-endian : 
+Memory	0A	0B	0C	0D
+         a  a+1 a+2 a+3 
+		 
+Littel-endian : 
+Memory	0D	0C	0B	0A
+         a  a+1 a+2 a+3 
+
+
+import java.nio.ByteOrder;
+
+public class ComputerByteOrderExample {
+	public static void main(String[] args){
+		System.out.println("운영체제 종류 : "+System.getProperty("os.name"));
+		System.out.println("네이틔브의 바이트 해석 순서 : "+ByteOrder.nativeOrder());
+	}
+}
+
+
+<< 실행 결과 >>
+운영체제 종류 : Windows 10
+네이틔브의 바이트 해석 순서 : LITTLE_ENDIAN
+
+
+=>
+운영체제와 JVM의 바이트 해석 순서가 다를 경우에는 JVM이 운영체제와 데이터를 교환할 때 자동적으로 처리해주기 때문에 문제X
+BUT 다이렉트 버퍼의 경우 운영체제의 native I/O를 사용하므로 운영체제의 기본 해석 순서로 JVM의 해석 순서를 맞추는 것이 성능에 도움이 됨.
+
+e.g)
+ByteBuffer byteBuffer=ByteBuffer.allocateDirect(100).order(ByteOrder.nativeOrder());
+
+------
+
+/3.3 Buffer의 위치 속성
+position  :
+현재 읽거나 쓰는 위치 값. 인덱스 값이기 때문에 0부터 시작하며, limit보다 큰값을 가질 수 없다. 만약 position과
+limit의 값이 같아진다면 더 이상 데이터를 쓰거나 읽을 수 없다는 뜻이 된다.
+
+limit :
+버퍼에서 읽거나 쓸 수 있는 위치의 한계를 나타낸다. 이 값은 capacity보다 작거나 같은 값을 가진다. 최초에 버퍼를 만들었을 때는
+capacity와 같은 값을 가진다.
+
+capacity : 
+버퍼의 최대 데이터 개수(메모리 크기)를 나타낸다. 인덱스 값이 아니라 수량임을 주의
+
+mark : 
+reset() 메소드를 실행했을 때에 돌아오는 위치를 지정하는 인덱스로서 makk() 메소드로 지정할 수 있다. 주의할 점은 반드시 position
+이하의 값으로 지정해주어야 한다. position이나 limit의 값이 mark 값보다 작을 경우, mark는 자동 제거.
+mark가 없는 상태에서 reset() 메소드를 호출하면 InvalidMarkException 발생
+
+=>
+0 <= mark <= position <= limit <= capacity
+
+------
+
+/3.4 Buffer 메소드
+=>java.nio.Buffer 추상 클래스가 공통적으로 제공하는 메소드 존재.
+
+
+1)공통 메소드
+
+리턴타입		메소드(매개변수)		설명
+ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+Object		array()			버퍼가 래핑(wrap)한 배열을 리턴
+int		arrayOffset()		버퍼의 첫 번째 요소가 있는 내부 배열의 인덱스를 리턴
+int		capacity()			버퍼의 전체 크기를 리턴
+Buffer		clear()			버퍼의 위치 속성을 초기화(pisition=0, limit=capacity)
+boolean		flip()			limit을 position으로, position을 0으로 이동
+boolean		hasArray()		버퍼가 래핑(wrap)한 배열을 가지고 있는지 여부
+boolean		hasRemaining()		position과 limit 사이에 요소가 있는지 여부(position<limit)
+boolean		isDirect()			운영체제의 버퍼를 사용하는지 여부
+boolean		isReadOnly()		버퍼가 읽기 전용인지 여부
+int		limit()			limit 위치를 리턴
+Buffer		limit(int newLimit)		newLimit으로 limit위치를 설정
+Buffer		mark()			현재 위치를 mark로 표시	
+int		position()			position 위치를 리턴
+Buffer		position(int newPosition)	newPosition으로 position위치를 설정
+int		remaining()		position과 limit 사이의 요소의 개수
+Buffer		reset()			position을 mark 위치로 이동
+Buffer		rewind()			position을 0 인덱스로 이동
+
+
+
+
+2)데이터를 읽고 저장하는 메소드
+
+put() : 버퍼에 데이터를 저장하는 메소드
+get() : 버퍼에 데이터를 읽는 메소드
+상대적 : 현재 position의 위치에 따라 데이터를 읽고 저장
+절대적 : 현재 position의 위치에 상관없이 index값의 데이터를 읽고 저장
+
+
+
+
+3)버퍼 예외의 종류
+
+예외			설명
+BufferOverflowException	position이 limit에 도달했을 때 put()을 호출하면 발생
+BufferUnderflowException	position이 limit에 도달했을 때 get()을 호출하면 발생
+InvalidMarkException	mark가 없는 상태에서 reset() 메소드를 호출하면 발생
+ReadOnlyBufferException	읽기 전용 버퍼에서 put()또는 compact() 메소드를 호출하면 발생
+
+
+e.g)BufferExample
+package chap19;
+
+import java.nio.Buffer;
+import java.nio.ByteBuffer;
+
+public class BufferExample {
+	public static void main(String[] args){
+		System.out.println("[7바이트 크기로 버퍼 생성]");
+		ByteBuffer buffer=ByteBuffer.allocateDirect(7); //다이렉트 버퍼 생성
+		printState(buffer); // 버퍼 상태 출력
+		
+		//상대적 저장
+		buffer.put((byte)10);
+		buffer.put((byte)11);
+		System.out.println("[2바이트 저장후]");
+		printState(buffer);
+		
+		buffer.put((byte)12);
+		buffer.put((byte)13);
+		buffer.put((byte)14);
+		System.out.println("[3바이트 저장후]");
+		printState(buffer);
+		
+		buffer.flip();	//데이터를 읽기 위해 위치 속성값 변경
+		System.out.println("[flip() 실행 후 ]");
+		printState(buffer);
+		
+		//상대적 읽기
+		buffer.get(new byte[3]);
+		System.out.println("[3바이트 읽은 후 ]");
+		printState(buffer);
+		
+		//마크하기
+		buffer.mark();
+		System.out.println("---------[현재 위치를 마크 해놓음]");
+		
+		//상대적 읽기
+		buffer.get(new byte[2]);
+		System.out.println("[2바이트 읽은후]");
+		printState(buffer);
+		
+		//마크 위치로 position 이동
+		buffer.reset();
+		System.out.println("----------[position을 마크 위치로 옮김]");
+		printState(buffer);
+		
+		buffer.rewind();//position을 0으로 이동
+		System.out.println("[rewind() 실행 후]");
+		printState(buffer);
+		
+		buffer.clear(); //모든 위치 속성값을 초기화
+		System.out.println("[clear() 실행 후]");
+		printState(buffer);
+	}
+	
+	public static void printState(Buffer buffer){
+		System.out.print("\tposition : "+buffer.position()+", ");
+		System.out.print("\tlimit : "+buffer.limit()+", ");
+		System.out.println("\tcapacity : "+buffer.capacity());
+		System.ut.println();
+	}
+}
+
+
+<< 실행 결과 >>
+[7바이트 크기로 버퍼 생성]
+	position : 0, 	limit : 7, 	capacity : 7
+
+[2바이트 저장후]
+	position : 2, 	limit : 7, 	capacity : 7
+
+[3바이트 저장후]
+	position : 5, 	limit : 7, 	capacity : 7
+
+[flip() 실행 후 ]
+	position : 0, 	limit : 5, 	capacity : 7
+
+[3바이트 읽은 후 ]
+	position : 3, 	limit : 5, 	capacity : 7
+
+---------[현재 위치를 마크 해놓음]
+[2바이트 읽은후]
+	position : 5, 	limit : 5, 	capacity : 7
+
+----------[position을 마크 위치로 옮김]
+	position : 3, 	limit : 5, 	capacity : 7
+
+[rewind() 실행 후]
+	position : 0, 	limit : 5, 	capacity : 7
+
+[clear() 실행 후]
+	position : 0, 	limit : 7, 	capacity : 7
+
+
+	
+	
+e.g)compact() 
+import java.nio.ByteBuffer;
+
+public class CompactExample {
+	public static void main(String[] args){
+		System.out.println("[7바이트 크기로 버퍼 생성]");
+		ByteBuffer buffer=ByteBuffer.allocateDirect(7);
+		
+		//데이터 저장
+		buffer.put((byte)10);
+		buffer.put((byte)11);
+		buffer.put((byte)12);
+		buffer.put((byte)13);
+		buffer.put((byte)14);
+		buffer.flip(); //데이터를 읽기 위해 위치 속성값 변경
+		printState(buffer);
+		
+		buffer.get(new byte[3]); //3바이트 읽기
+		System.out.println("[3바이트읽음]");
+		
+		buffer.compact(); // 읽지 않은 데이터를 0부터 저장(13,14가 idx 0,1에 저장 & 나머지는 그대로)
+		System.out.println("[compact() 실행 후]");
+		printState(buffer);
+	}
+	
+	public static void printState(ByteBuffer buffer){
+		System.out.print(buffer.get(0)+", ");
+		System.out.print(buffer.get(1)+", ");
+		System.out.print(buffer.get(2)+", ");
+		System.out.print(buffer.get(3)+", ");
+		System.out.println(buffer.get(4));
+		
+		System.out.print("position : "+buffer.position()+", ");
+		System.out.print("limit : "+buffer.limit()+", ");
+		System.out.println("capacity : "+buffer.capacity());
+		System.out.println();		
+	}
+	
+}
+
+
+<< 실행 결과 >>
+[7바이트 크기로 버퍼 생성]
+10, 11, 12, 13, 14
+position : 0, limit : 5, capacity : 7
+
+[3바이트읽음]
+[compact() 실행 후]
+13, 14, 12, 13, 14
+position : 2, limit : 7, capacity : 7
+
+------
+
+/3.5 Buffer 변환
+채널이 데이터를 읽고 쓰는 버퍼는 모두 ByteBuffer 
+
+1)ByteBuffer <-> String
+import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
+
+public class ByteBufferToStringExample {
+	public static void main(String[] args){
+		Charset charset=Charset.forName("UTF-8"); // 문자셋을 표현하는 java.nio.charset.Charset
+		//Charset charset=Charset.defaultCharset();//운영체제가 사용하는 디폴트 문자셋
+		
+		//문자열 -> 인코딩 -> ByteBuffer
+		String data="Zaccoding`s Program";
+		ByteBuffer byteBuffer=charset.encode(data);
+		System.out.println("기존 문자열 : "+data);
+		data=null;		
+		
+		//ByteBuffer -> 디코딩 -> CharBuffer -> 문자열
+		data=charset.decode(byteBuffer).toString();
+		System.out.println("문자열 복원 : "+data);
+	}
+}
+
+
+<< 실행 결과 >>
+기존 문자열 : Zaccoding`s Program
+문자열 복원 : Zaccoding`s Program
+
+
+2)ByteBuffer <-> IntBuffer
+import java.nio.ByteBuffer;
+import java.nio.IntBuffer;
+import java.util.Arrays;
+
+public class ByteBufferToIntBufferExample {
+	public static void main(String[] args){
+		//int[] -> IntBuffer -> ByteBuffer
+		int[] writeData={10,20};
+		IntBuffer writeIntBuffer=IntBuffer.wrap(writeData); //int[]을 IntBuffer로 wrap
+		ByteBuffer writeByteBuffer=ByteBuffer.allocate(writeIntBuffer.capacity()*4); //바이트 버퍼 생성
+		for(int i=0;i<writeIntBuffer.capacity();i++){
+			writeByteBuffer.putInt(writeIntBuffer.get(i));
+		}
+		writeByteBuffer.flip(); //position을 0으로 돌리기
+		
+		//ByteBuffer -> IntBuffer -> int[]
+		ByteBuffer readByteBuffer=writeByteBuffer;
+		IntBuffer readIntBuffer=readByteBuffer.asIntBuffer(); //ByteBuffer -> IntBuffer
+		int[] readData=new int[readIntBuffer.capacity()];
+		readIntBuffer.get(readData);
+		System.out.println("배열 복원 : "+Arrays.toString(readData));
+	}
+}
+
+
+<< 실행 결과 >>
+배열 복원 : [10, 20]
+
+
+-------------------------------------------------------------------------------------
+
+//4.파일 채널
+;java.nio.channels.FileChannel 파일 읽기와 쓰기 할 수 있음
+=> 동기화 처리 => 멀티 스레드 환경에서 안전
+
+
+/4.1 FileChannel 생성 & 닫기
+1)FileChannel.open();
+2)FileOutputStream.getChannel();
+
+=> open(Path path, OpenOption .. options);
+열거 상수			설명
+READ				읽기용으로 파일을 연다
+WRITE				쓰기용으로 파일을 연다
+CREATE				파일이 없다면 새 파일을 생성한다
+CREATE_NEW			새 파일을 만든다. 이미 파일이 있으면 예외와 함께 실패한다.
+APPEND				파일 끝에 데이터를 추가한다(WRITE나 CREATE와 함께 사용됨)
+DELETE_ON_CLOSE		채널을 닫을 때 파일을 삭제한다(임시 파일을 삭제할 때 사용)
+TRUNCATE_EXISTING	파일을 0바이트로 잘라낸다(WRITE 옵션과 함께 사용됨)
+
+------
+
+/4.2 파일 쓰기와 읽기
+
+//e.g)FileChannel을 이용해서 문자열을 D:\Temp\file.txt에 저장
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
+
+public class FileChannelWriteExample {
+	public static void main(String[] args) throws IOException {
+		Path path=Paths.get("D:/Temp/file.txt");
+		Files.createDirectories(path.getParent());
+		
+		//FileChannel 생성(File을 생성하고 쓰는 열거 상수)
+		FileChannel fileChannel=FileChannel.open(path,
+				StandardOpenOption.CREATE,StandardOpenOption.WRITE);
+		
+		String data="Zaccoding`s program";
+		Charset charset=Charset.defaultCharset();
+		ByteBuffer byteBuffer=charset.encode(data);
+		
+		
+		int byteCount=fileChannel.write(byteBuffer); //byteBuffer의 position~limit 데이터까지 씌여짐
+													//저장 데이터의 바이트 수 반환
+		System.out.println("file.txt : "+byteCount+"bytes written");
+		
+		fileChannel.close();
+	}
+}
+
+
+<< 실행 결과 >>
+file.txt : 19bytes written
+
+
+
+
+//e.g)D:\Temp\file.txt 파일을 읽고 콘솔에 출력
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
+import java.nio.charset.Charset;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
+
+public class FileChannelReadExample {
+	public static void main(String[] args) throws IOException{
+		Path path=Paths.get("D:/Temp/file.txt");
+		
+		//FileChannel 생성
+		FileChannel fileChannel=FileChannel.open(path,StandardOpenOption.READ);
+				
+		//ByteBuffer 생성
+		ByteBuffer byteBuffer=ByteBuffer.allocate(100);
+		
+		//운영체제의 문자열 인,디코딩 방식 사용
+		Charset charset=Charset.defaultCharset();
+		StringBuilder data=new StringBuilder(byteBuffer.capacity());
+		int byteCount;
+		
+		while(true){			
+			//파일로 부터 데이터 읽기(데이터없으면 -1반환)
+			//리턴의 최대값은 capacity & 마지막 바이트의 위치 : position -1			
+			byteCount=fileChannel.read(byteBuffer); 
+			if(byteCount==-1) break;
+			byteBuffer.flip(); //limit을 현재 position & position 을 0으로 이동
+			data.append(charset.decode(byteBuffer).toString()); //byteBuffer를 디코딩 & 문자열로 StringBuilder에 append
+			byteBuffer.clear(); // limit을 capacity & position 을 0으로 초기화
+		}
+		
+		String readStr=data.toString();
+		System.out.println("읽은 문자열 : "+readStr);
+		
+		fileChannel.close();		
+	}
+}
+
+
+<< 실행 결과 >>
+읽은 문자열 : Zaccoding`s program
+
+------
+
+/4.3 파일 복사
+
+								프로그램
+소스파일 ---->FileChannel -->	버퍼	-->FileChannel ---> 타겟 파일
+
+
+e.g1) ByteBuffer와 FileChannel 2개를 직접 생성해서 복사
+
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
+
+public class FileCopyExample {
+	public static void main(String[] args) throws IOException {
+		Path from=Paths.get("D:/Temp/1.jpg");
+		Path to=Paths.get("D:/Temp/copy.jpg");
+		
+		//읽기 FileChannel 생성
+		FileChannel readFileChannel=FileChannel.open(from,
+				StandardOpenOption.READ);
+		
+		//생성 및 쓰기 FileChannel 생성
+		FileChannel writeFileChannel=FileChannel.open(to,
+				StandardOpenOption.CREATE,StandardOpenOption.WRITE);
+		
+		//채널에서 읽고 다시 채널로 쓰는 경우 다이렉트 버퍼가 좋은 성능을 냄
+		ByteBuffer buffer=ByteBuffer.allocateDirect(100);
+		int byteCount;
+		
+		while(true){
+			buffer.clear();
+			byteCount=readFileChannel.read(buffer); //읽기
+			if(byteCount==-1) break; //읽은 데이터 없으면 break;
+			buffer.flip(); //limit -> cur position & position -> 0
+			writeFileChannel.write(buffer); //쓰기
+		}
+		
+		readFileChannel.close();
+		writeFileChannel.close();
+		System.out.println("파일 복사 성공");				
+	}
+}
+
+
+e.g2)Files.copy(Path source,Path target,CopyOption .. options)
+열거 상수			설명
+RAPLACE_EXISTING	타켓 파일이 존재하면 대체한다.
+COPY_ATTRIBUTES		파일의 속성까지도 복사한다.
+NOFOLLOW_LINKS		링크 파일일 경우 링크 파일만 복사하고 링크된 파일은 복사하지 않는다.
+
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+
+public class FileCopytMethodExample {
+	public static void main(String[] args) throws IOException{
+		Path from=Paths.get("D:/Temp/1.jpg");
+		Path to=Paths.get("D:/Temp/copy2.jpg");
+		
+		Files.copy(from,to,StandardCopyOption.REPLACE_EXISTING);
+		System.out.println("파일 복사 성공");		
+	}
+
+}
+
+-------------------------------------------------------------------------------------
+
+//5. 파일 비동기 채널
+FileChannel의 read(),write() 메소드는 파일 입출력 작업 동안 블로킹 된다.
+=>UI 및 이벤트를 처리하는 스레드에서 이 메소드들을 호출하면 블로킹되는 동안에 UI 갱신이나 이벤트 처리를 할 수 없음
+=>별도의 작업 스레드 생성 & 이 메소드를 호출해야함.
+=>동시에 처리해야 할 파일 수가 증가하면 스레드의 수도 증가하기 때문에 문제가 됨.
+
+==>AsynchronousFileChannel : 불특정 다수의 파일 및 대용량 파일의 입출력 작업을 위해서 비동기 파일 채널을 제공
+=>파일의 데이터 입출력을 위해 read()와 wrtie() 메소드 호출 -> 스레드풀에게 작업 처리 요청하고 이 메소드들을 즉시 리턴 시킴.
+(실질적인 입출력 작업 처리는 스레드풀의 작업 스레드가 담당)
+=>작업 스레드가 파일 입출력을 완료하게 되면 콜백(callback) 메소드가 자동으로 호출(작업 완료 후 실행해야 할 코드가 있다면 콜백 메소드에 작성)
++AsynchronousFileChannel 사진 보기
+
+------
+
+/5.1 AsynchronousFileChannel 생성 과 닫기
+
+1)Path 객체와 열기 옵션 값을 매개값으로 생성
+AsynchronousFileChannel fileChannel=AsynchronousFileChannel.open(Path file,OpenOption ... options)
+=>내부적으로 생성되는 기본 스레드풀을 이용해서 스레드를 관리 
+=>개발자가 지정할 수 없음
+
+2)스레드 개수 지정하기
+AsynchronousFileChannel fileChannel=AsynchronousFileChannel.open(
+	Path file,
+	Set<? extends OpenOption> options,
+	ExecutorService executor,
+	FileAttribute<?> ... attrs //파일 생성 시 파일 속성값이 될 FileAttribute를 나열하면 됨.
+);
+
+
+3)닫기
+fileChannel.close();
+
+
+------
+
+/5.2 파일 읽기와 쓰기
+
+read(ByteBuffer dst,long position,A attachment,CompletionHandler<Integer,A> handler);
+//읽기위한 바이트 버퍼 , 파일에서 읽을 위치 , 콜백 메소드로 전달할 첨부 객체(필요 없음 null) ,  Integer : 입출력 작업 결과 타입 & A : 첨부 객체 타입
+write(ByteBuffer src,long position,A attachment,CompletionHandler<Integer,A> handler);
+//쓰기위한 바이트 버퍼 , 파일에서 쓸 위치 , 콜백 메소드로 전달할 첨부 객체(필요 없음 null) ,  Integer : 입출력 작업 결과 타입 & A : 첨부 객체 타입
+
+java.nio.channels.CompletionHandler<V,A>  //Interface
+Type Parameters:
+V - The result type of the I/O operation
+A - The type of the object attached to the I/O operation
+
+void completed(V result, A attachment) 
+Invoked when an operation has completed.
+ 
+void failed(Throwable exc, A attachment) 
+Invoked when an operation fails. 
+
+------
+e.g)파일생성 후 데이터 쓰기
+
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.channels.AsynchronousFileChannel;
+import java.nio.channels.CompletionHandler;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
+import java.util.EnumSet;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+public class AsynchronousFileChannelWriteExample {
+	public static void main(String[] args) throws IOException {
+		//스레드풀 생성(이용가능한 코어수 개수 대로)
+		ExecutorService executorService=Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+		
+		for(int i=0;i<10;i++){
+			Path path=Paths.get("D:/Temp/file"+i+".txt");
+			Files.createDirectories(path.getParent());
+			
+			//비동기 파일 채널 생성
+			AsynchronousFileChannel fileChannel=AsynchronousFileChannel.open(path, 
+					EnumSet.of(StandardOpenOption.CREATE,StandardOpenOption.WRITE),
+					executorService);
+			
+			//파일에 저장할 데이터를 ByteBuffer에 저장
+			Charset charset=Charset.defaultCharset();
+			ByteBuffer byteBuffer=charset.encode("Zaccoding`s Program");
+			
+			//첨부 객체 생성			
+			class Attachment{
+				Path path; // 파일 경로 저장
+				AsynchronousFileChannel fileChannel; // 비동기 파일 채널 저장				
+			}
+			Attachment attachment=new Attachment();
+			attachment.path=path;
+			attachment.fileChannel=fileChannel;
+			
+			//CompletionHandler 객체 생성
+			CompletionHandler<Integer,Attachment> completionHandler=
+					new CompletionHandler<Integer,Attachment>(){
+				@Override
+				public void completed(Integer result,Attachment attachment){
+					System.out.println(attachment.path.getFileName()+" : "+result+" byte written : "+Thread.currentThread().getName());
+				}
+				@Override
+				public void failed(Throwable exc,Attachment attachment){
+					exc.printStackTrace();
+					try{attachment.fileChannel.close();}catch(IOException e){}
+				}				
+			};
+			
+			fileChannel.write(byteBuffer, 0,attachment,completionHandler);	
+			//write() 메소드가 바로 리턴하므로 AsynchronoutFileChannel을 닫으면 안됨.
+			//작업을 정상적으로 완료했거나 실패일 경우 채널을 닫아야하므로 completed(),failed에서 닫아야함.		
+		}
+		//스레드풀 종료
+		executorService.shutdown();		
+	}
+}
+
+
+
+
+<< 실행 결과 >>
+file0.txt : 19 byte written : pool-1-thread-1
+file1.txt : 19 byte written : pool-1-thread-2
+file2.txt : 19 byte written : pool-1-thread-3
+file3.txt : 19 byte written : pool-1-thread-4
+file4.txt : 19 byte written : pool-1-thread-5
+file5.txt : 19 byte written : pool-1-thread-6
+file6.txt : 19 byte written : pool-1-thread-7
+file7.txt : 19 byte written : pool-1-thread-8
+file8.txt : 19 byte written : pool-1-thread-2
+file9.txt : 19 byte written : pool-1-thread-1
+
+
+
+
+e.g)파일 읽고 콘솔에 출력
+
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.channels.AsynchronousFileChannel;
+import java.nio.channels.CompletionHandler;
+import java.nio.charset.Charset;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
+import java.util.EnumSet;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+public class AsynchronousFileChannelReadExample {
+	public static void main(String[] args) throws Exception{
+		//스레드풀 생성
+		ExecutorService executorService=Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+		
+		for(int i=0;i<10;i++){
+			Path path=Paths.get("D:/Temp/file"+i+".txt");
+			
+			//비동기 파일 채널 생성
+			AsynchronousFileChannel fileChannel=AsynchronousFileChannel.open(path, 
+					EnumSet.of(StandardOpenOption.READ),
+					executorService);
+			
+			//파일 크기와 동일한 capacity를 갖는 버퍼 생성
+			ByteBuffer byteBuffer=ByteBuffer.allocate((int)fileChannel.size());
+			
+			//첨부 객체 생성
+			class Attachment{
+				Path path;	//파일 경로 저장
+				AsynchronousFileChannel fileChannel; //비동기 파일 채널 저장
+				ByteBuffer byteBuffer; //읽은 데이터를 저장할 버퍼				
+			}
+			Attachment attachment=new Attachment();
+			attachment.path=path;
+			attachment.fileChannel=fileChannel;
+			attachment.byteBuffer=byteBuffer;
+			
+			//CompletionHandler 객체 생성
+			CompletionHandler<Integer,Attachment> completionHandlernew=
+					new CompletionHandler<Integer,Attachment>(){
+				@Override
+				public void completed(Integer result,Attachment attachment){
+					attachment.byteBuffer.flip();
+					//버퍼에 저장된 데이터를 문자열로 복원
+					Charset charset=Charset.defaultCharset();
+					String data=charset.decode(attachment.byteBuffer).toString();
+					
+					System.out.println(attachment.path.getFileName()+" : "+data+" : "+Thread.currentThread().getName());
+					try{fileChannel.close();}catch(IOException e){}
+				}
+				
+				@Override
+				public void failed(Throwable exc,Attachment attachment){
+					exc.printStackTrace();
+					try{fileChannel.close();}catch(IOException e){}
+				}
+			};
+			
+			//파일 읽기
+			//매개변수 : 읽은 데이터를 저장한 버퍼 객체, 버퍼 인덱스 , 첨부 객체, 콜백 메소드를 가진 객체
+			fileChannel.read(byteBuffer, 0,attachment,completionHandlernew);
+			
+		}
+		
+		//스레드풀 종료
+		executorService.shutdown();
+	}
+}
+
+
+
+<< 실행 결과 >>
+file0.txt : Zaccoding`s Program : pool-1-thread-1
+file1.txt : Zaccoding`s Program : pool-1-thread-2
+file2.txt : Zaccoding`s Program : pool-1-thread-3
+file4.txt : Zaccoding`s Program : pool-1-thread-5
+file3.txt : Zaccoding`s Program : pool-1-thread-4
+file5.txt : Zaccoding`s Program : pool-1-thread-6
+file6.txt : Zaccoding`s Program : pool-1-thread-7
+file7.txt : Zaccoding`s Program : pool-1-thread-8
+file8.txt : Zaccoding`s Program : pool-1-thread-1
+file9.txt : Zaccoding`s Program : pool-1-thread-1
+
+-------------------------------------------------------------------------------------
+
+//6.TCP 블로킹 채널
+=>NIO를 이용해서 TCP 서버/클라이언트 애플리케이션을 개발하려면
+  블로킹 // 넌블로킹 // 비동기 구현 방식 중에서 하나를 결정
+
+------
+
+/6.1 서버소켓 채널과 소켓 채널의 용도
+
+java.net.ServerSocket,Socket : IO가 버퍼를 사용하지 않고 블로킹 입출력 방식만 지원
+
+java.nio.channels.SocketChannel,ServerSocketChannel : 버퍼를 이용 & 블로킹과 넌블로킹 방식 모두 지원
+
+------
+
+/6.2 서버소켓 채널 생성과 연결 수락
+
+
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.nio.channels.ServerSocketChannel;
+import java.nio.channels.SocketChannel;
+
+public class ServerExample {
+	public static void main(String[] args){
+		ServerSocketChannel serverSocketChannel=null;
+		
+		try{
+			//ServerSocketChannel 객체 생성
+			serverSocketChannel=ServerSocketChannel.open();
+			
+			//블로킹 방식(기본값은 BUT 명시적으로 넌블로킹과 구분)
+			serverSocketChannel.configureBlocking(true);
+			
+			//포트에 바인딩
+			serverSocketChannel.bind(new InetSocketAddress(5001));
+			
+			while(true){
+				//클라이언트가 연결 요청을 하기 전까지 블로킹됨.
+				System.out.println("[연결 기다림]");
+				SocketChannel socketChannel=serverSocketChannel.accept();
+				InetSocketAddress isa=(InetSocketAddress)socketChannel.getRemoteAddress();
+				System.out.println("[연결 수락함]");
+				System.out.println("클라이언트 IP : "+isa.getHostName());
+				System.out.println("클라이언트 포트 번호 : "+isa.getPort());
+				System.out.println("IP:포트번호 == "+isa.toString());
+			}			
+			
+		}catch(Exception e){}
+		
+		if(serverSocketChannel.isOpen()){
+			try{
+				serverSocketChannel.close();	//서버소켓채널 닫기			
+			}catch(IOException e){}
+		}		
+		
+	}
+}
+
+------
+
+/6.3 소켓 채널 생성과 연결 요청
+
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.nio.channels.SocketChannel;
+
+public class ClientExample {
+	public static void main(String[] args){
+		SocketChannel socketChannel = null;
+		
+		try{
+			//SocketChannel 인스턴스 생성
+			socketChannel=SocketChannel.open();
+			
+			//블로킹 방식(기본값임 BUT 넌블러킹과 구분하기 위해 명시)			
+			socketChannel.configureBlocking(true);
+			
+			System.out.println("[연결 요청]");			
+			socketChannel.connect(new InetSocketAddress("localhost",5001)); //연결이 완료될 때까지 블로킹 
+			//=>서버와 연결이 될 때까지 블로킹되므로 UI 및 이벤트를 처리하는 스레드에서 connect() 호출 하면 안됨			
+			System.out.println("[연결 성공]");		
+		}catch(Exception e){}
+		
+		if(socketChannel.isOpen()){
+			try{socketChannel.close();}catch(IOException e){}
+		}
+		
+		
+	}
+}
+
+
+<< 실행 결과 : Server >>
+[연결 기다림]
+[연결 수락함]
+클라이언트 IP : 127.0.0.1
+클라이언트 포트 번호 : 1071
+IP:포트번호 == 127.0.0.1/127.0.0.1:1071
+[연결 기다림]
+
+<< 실행 결과 : Client >>
+[연결 요청]
+[연결 성공]
+
+
+------
+
+/6.4 소켓 채널 데이터 통신
+
+e.g) 연결 성공 -> 클라이언트가 "Hello Server"전송 -> 서버가 이 데이터를 받고 -> "Hello Client" 전송 -> 클라이언트가 데이터를 받는다.
+
+
+/*
+*	Class : Client
+*/
+
+
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.nio.ByteBuffer;
+import java.nio.channels.SocketChannel;
+import java.nio.charset.Charset;
+
+public class ClientExample {
+	public static void main(String[] args){
+		SocketChannel socketChannel = null;
+		
+		try{
+			//1)연결 
+			//SocketChannel 인스턴스 생성
+			socketChannel=SocketChannel.open();			
+			//블로킹 방식(기본값임 BUT 넌블러킹과 구분하기 위해 명시)			
+			socketChannel.configureBlocking(true);			
+			System.out.println("[연결 요청]");			
+			socketChannel.connect(new InetSocketAddress("localhost",5001)); //연결이 완료될 때까지 블로킹 
+			//=>서버와 연결이 될 때까지 블로킹되므로 UI 및 이벤트를 처리하는 스레드에서 connect() 호출 하면 안됨			
+			System.out.println("[연결 성공]");	
+			
+			ByteBuffer byteBuffer=null;
+			Charset charset=Charset.forName("UTF-8");
+			
+			//클라이언트가 서버에 "Hello Server" 전송
+			byteBuffer=charset.encode("Hello Server");
+			socketChannel.write(byteBuffer);
+			System.out.println("[데이터 보내기 성공]");
+			
+			//클라이언트가 서버에서 데이터 받기
+			byteBuffer=ByteBuffer.allocate(100); //JVM 힙 메모리 영역에 100바이트 할당
+			int byteCount=socketChannel.read(byteBuffer);
+			byteBuffer.flip(); //position 0으로 변경
+			String message=charset.decode(byteBuffer).toString();
+			System.out.println("[데이터 받기 성공 ] : "+message);			
+			
+		}catch(Exception e){}
+		
+		if(socketChannel.isOpen()){
+			try{socketChannel.close();}catch(IOException e){}
+		}	
+	}
+}
+
+
+/*
+*	Class : Server
+*/
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.nio.ByteBuffer;
+import java.nio.channels.ServerSocketChannel;
+import java.nio.channels.SocketChannel;
+import java.nio.charset.Charset;
+
+public class ServerExample {
+	public static void main(String[] args){
+		ServerSocketChannel serverSocketChannel=null;
+		
+		try{
+			//ServerSocketChannel 객체 생성
+			serverSocketChannel=ServerSocketChannel.open();			
+			//블로킹 방식(기본값은 BUT 명시적으로 넌블로킹과 구분)
+			serverSocketChannel.configureBlocking(true);			
+			//포트에 바인딩
+			serverSocketChannel.bind(new InetSocketAddress(5001));
+			
+			while(true){
+				//클라이언트가 연결 요청을 하기 전까지 블로킹됨.
+				System.out.println("[연결 기다림]");
+				SocketChannel socketChannel=serverSocketChannel.accept();
+				InetSocketAddress isa=(InetSocketAddress)socketChannel.getRemoteAddress();
+				System.out.println("[연결 수락함]"+isa.getHostName());
+				
+				ByteBuffer byteBuffer = null;
+				Charset charset=Charset.forName("UTF-8");
+				
+				//데이터 받기
+				byteBuffer = ByteBuffer.allocate(100); //버퍼 100바이트 할당
+				int readCount=socketChannel.read(byteBuffer);
+				//read() 메소드
+				//1)상대방이 비정상적으로 종료했을 경우 IOException 발생
+				//2)정상적으로 Socket의 close()를 호출했을 경우 readCount==-1
+				//
+				byteBuffer.flip(); // pos 0으로 이동
+				String message=charset.decode(byteBuffer).toString();
+				if(readCount!=-1)
+					System.out.println("[데이터 받기 성공] : "+message);
+				
+				//데이터 전송
+				byteBuffer=charset.encode("Hello Client");
+				socketChannel.write(byteBuffer);
+				System.out.println("[데이터 보내기 성공]");	
+				break;
+			}			
+			
+		}catch(Exception e){}
+		
+		if(serverSocketChannel.isOpen()){
+			try{
+				serverSocketChannel.close(); //서버소켓채널 닫기				
+			}catch(IOException e){}
+		}		
+		
+	}
+}
+
+
+<< 실행 결과 : Server >>
+[연결 기다림]
+[연결 수락함]127.0.0.1
+[데이터 받기 성공] : Hello Server
+[데이터 보내기 성공]
+[연결 기다림]
+
+
+
+
+<< 실행 결과 : Client >>
+[연결 요청]
+[연결 성공]
+[데이터 보내기 성공]
+[데이터 받기 성공 ] : Hello Client
+
+------
+
+/6.5 스레드 병렬 처리
+=>클라이언트 연결(채널) 하나에 작업 스레드 하나를 할당해서 병렬 처리해야 한다.
+=>스레드풀을 생성할 경우, 작업 요청이 많아지면 큐의 작업량만 증가할 뿐 스레드 수에는 변함이 없기 때문에 서버 성능은 완만히 저하
+
+
+------
+
+/6.6 채팅 서버 구현
+
+//Server
+
+import java.net.InetSocketAddress;
+import java.nio.channels.ServerSocketChannel;
+import java.util.List;
+import java.util.Vector;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+import javax.swing.JFrame;
+
+public class Server extends JFrame {
+	private ExecutorService executorService; //스레드 풀
+	private ServerSocketChannel serverSocketChannel; //서버 소켓 채널
+	private List<Client> connections=new Vector<Client>(); //연결 Client 관리
+	
+	public Server(){
+		super("Zac`s Chatting program");
+		initFrame();
+	}
+	
+	private void startServer(){
+		//서버 시작 코드
+		executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors()); //코어 수 만큼 작업 스레드 생성
+		
+		//5001번 포트에서 클라이언트의 연결을 수락하는 ServerSocketChannel 생성
+		try{
+			serverSocketChannel=ServerSocketChannel.open();
+			serverSocketChannel.configureBlocking(true); //블러킹 방식(기본값임)
+			serverSocketChannel.bind(new InetSocketAddress(5001)); //5001 포트 번호로 바인딩
+			//5001포트가 사용중이면 BindException 발생
+		}catch(Exception e){
+			if(serverSocketChannel.isOpen())
+				stopServer();
+			return;
+		}
+		
+		
+	}
+	
+	private void stopServer(){
+		//서버 종료 코드		
+	}
+	
+	private class Client{
+		//데이터 통신 코드
+	}
+	/////////////////////////
+	//UI 생성 코드
+	
+	private void initFrame(){
+		
+	}
+	
+	public static void main(String[] args){
+		
+	}
+	
+
+}
+
+
+==>Server 코드
+package tcpblockingchannel;
+import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.nio.ByteBuffer;
+import java.nio.channels.ServerSocketChannel;
+import java.nio.channels.SocketChannel;
+import java.nio.charset.Charset;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Vector;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JTextArea;
+
+public class Server extends JFrame {
+	private ExecutorService executorService; //스레드 풀
+	private ServerSocketChannel serverSocketChannel; //서버 소켓 채널
+	private List<Client> connections=new Vector<Client>(); //연결 Client 관리
+	
+	public Server(){
+		super("Zac`s Chatting program");
+		initJFrame();
+	}
+	
+	private void startServer(){
+		//서버 시작 코드
+		executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors()); //코어 수 만큼 작업 스레드 생성
+		
+		//5001번 포트에서 클라이언트의 연결을 수락하는 ServerSocketChannel 생성
+		try{
+			serverSocketChannel=ServerSocketChannel.open();
+			serverSocketChannel.configureBlocking(true); //블러킹 방식(기본값임)
+			serverSocketChannel.bind(new InetSocketAddress(5001)); //5001 포트 번호로 바인딩
+			//5001포트가 사용중이면 BindException 발생
+		}catch(Exception e){
+			if(serverSocketChannel.isOpen())
+				stopServer();
+			return;
+		}
+		//연결 수락하는 스레드 생성
+		Runnable runnable=new Runnable(){
+			@Override
+			public void run(){
+				displayText("[서버 시작]");
+				btnStartStop.setText("[stop]");
+				
+				//연결 수락
+				while(true){
+					try{
+						System.out.println("연결 대기중");
+						SocketChannel socketChannel=serverSocketChannel.accept(); //연결 수락(연결 없으면 블로킹되어있음)
+						System.out.println("연결 완료");
+						String message="[연결 수락 : "+socketChannel.getRemoteAddress()+": "
+										+Thread.currentThread().getName()+" ]";
+						displayText(message);
+						
+						Client client=new Client(socketChannel);
+						connections.add(client);
+						
+					}catch(Exception e){
+						if(!serverSocketChannel.isOpen())
+							stopServer();
+						break;
+					}
+				}
+				
+			}
+		};
+		executorService.submit(runnable); //스레드풀에 등록		
+	}
+
+	private void stopServer(){
+		//서버 종료 코드		
+		try{
+			//모든 SocketChannel 닫기
+			Iterator<Client> iterator=connections.iterator();
+			while(iterator.hasNext()){
+				Client client=iterator.next();
+				client.socketChannel.close();
+				iterator.remove();
+			}
+			
+			//ServerSocketChannel 닫기
+			if(serverSocketChannel!=null && !executorService.isShutdown())
+				serverSocketChannel.close();
+			
+			//ExecutorService 종료
+			if(executorService!=null && !executorService.isShutdown())
+				executorService.shutdown();
+			
+			//UI처리
+			displayText("[서버 멈춤]");
+			btnStartStop.setText("start");
+			
+		}catch(Exception e){}
+	}
+	
+	//Client 클래스 : 서버에 연결하는 클라이언트 관리
+	private class Client{
+		SocketChannel socketChannel;
+		
+		Client(SocketChannel socketChannel){
+			this.socketChannel=socketChannel;
+			receive();
+		}
+		
+		//데이터 받기
+		void receive(){
+			Runnable runnable=new Runnable(){
+				@Override
+				public void run(){
+					while(true){
+						try{
+							ByteBuffer byteBuffer=ByteBuffer.allocate(100);
+						
+							//클라이언트가 비정상 종료를 했을 경우 IOException 발생
+							int readByteCount=socketChannel.read(byteBuffer);
+							
+							//클라이언트가 정상적으로 SocketChannel의 close()를 호출
+							if(readByteCount==-1)
+								throw new IOException();
+							
+							String message="[요청 처리 : "+socketChannel.getRemoteAddress()+": "
+												+Thread.currentThread().getName()+"]";
+							displayText(message);
+							
+							//문자열을 변환
+							byteBuffer.flip();
+							Charset charset=Charset.forName("UTF-8");
+							String data=charset.decode(byteBuffer).toString();
+							
+							//모든 클라이언트에게 보냄
+							for(Client client : connections)
+								client.send(data);							
+						}catch(Exception e){
+							try{
+								connections.remove(Client.this);
+								String message="[클라이언트 통신 안됨 : "+socketChannel.getRemoteAddress()+": "
+											+Thread.currentThread().getName()+"]";
+								displayText(message);
+								socketChannel.close();
+							}catch(IOException e2){}
+							break;
+						}
+						
+					}
+				}
+			};
+			//스레드풀에서 처리
+			executorService.submit(runnable);			
+		}
+		
+		//데이터 전송 
+		void send(String data){
+			Runnable runnable=new Runnable(){
+				@Override
+				public void run(){
+					try{
+						Charset charset=Charset.forName("UTF-8"); 
+						ByteBuffer byteBuffer=charset.encode(data); //data를 UTF-8로 인코딩 & byteBuffer에 바이트로 저장
+						socketChannel.write(byteBuffer);						
+					}catch(Exception e){ //write()메소드 실행 중 예외 발생 
+						try{
+							String message="[클라이언트 통신 안됨: "+socketChannel.getRemoteAddress()+": "
+											+Thread.currentThread().getName()+"]";
+							displayText(message); //메시지 출력
+							connections.remove(Client.this); //connections 컬렉션에서 예외가 발생한 Client 제거
+							socketChannel.close(); 
+						}catch(IOException e2){}
+					}
+				}
+			};
+			executorService.submit(runnable);			
+		}
+	}
+	
+	
+	/////////////////////////
+	//UI 생성 코드
+	JTextArea txtDisplay;
+	JButton btnStartStop;
+
+	public void initJFrame() {		
+		this.setBounds(120, 200,400, 200);
+		this.setLayout(new BorderLayout());
+
+		txtDisplay = new JTextArea();
+		txtDisplay.setEditable(false);
+		
+
+		btnStartStop = new JButton("start");
+		btnStartStop.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {				
+				if (btnStartStop.getText().equals("start")) {									
+					startServer();
+				} else if (btnStartStop.getText().equals("stop")) {					
+					stopServer();
+				}
+			}
+		});
+		
+		this.add(txtDisplay, BorderLayout.CENTER);
+		this.add(btnStartStop, BorderLayout.SOUTH);	
+		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+		this.addWindowListener(new WindowAdapter(){
+			@Override
+			public void windowClosed(WindowEvent e){
+				System.exit(0);
+			}
+		});		
+	}
+	
+	public void start(){
+		this.setVisible(true);
+	}
+	
+	private void displayText(String txt){
+		txtDisplay.append(txt+"\n");
+	}
+		
+	public static void main(String[] args){
+		Server server=new Server();
+		server.start();
+		
+	}
+}
+
+------
+
+6.8 채팅 클라이언트 구현
+
+package tcpblockingchannel;
+
+import java.awt.BorderLayout;
+import java.awt.Panel;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.nio.ByteBuffer;
+import java.nio.channels.SocketChannel;
+import java.nio.charset.Charset;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+
+public class Client extends JFrame {
+	SocketChannel socketChannel;
+	
+	public Client(){
+		super("Zac`s client program");
+		initJFrame();
+	}
+
+	// 연결 시작 코드
+	void startClient() {
+		Thread thread=new Thread(){
+			@Override 
+			public void run(){
+				//연결 
+				try{
+					socketChannel=SocketChannel.open(); //Socket Channel 생성
+					socketChannel.configureBlocking(true); //블러킹 방식 설정(기본값임)
+					socketChannel.connect(new InetSocketAddress("localhost",5001)); //5001포트로 연결
+					//UI처리
+					displayText("[연결완료 : "+socketChannel.getRemoteAddress()+"]");
+					btnConn.setText("stop");
+					btnSend.setEnabled(true);										
+				}catch(Exception e){
+					displayText("[서버 통신 안됨]");
+					if(socketChannel.isOpen())
+						stopClient();
+					return;
+				}
+				
+				//서버에서 보낸 데이터 받기
+				receive(); 
+				
+			}			
+		};
+		thread.start(); //스레드 시작
+	}
+
+	// 연결 끊기 코드
+	void stopClient() {
+		try{
+			//UI 처리
+			displayText("[연결 끊음]");
+			btnConn.setText("start");
+			btnSend.setEnabled(false);
+			
+			//socketChannel이 열려 있으면 닫기 
+			if(socketChannel!=null && socketChannel.isOpen())
+				socketChannel.close();
+		}catch(IOException e){}
+	}
+	
+	// 데이터 받기 코드
+	void receive() {
+		while(true){
+			try{
+				ByteBuffer byteBuffer=ByteBuffer.allocate(100); //ByteBuffer 100바이트 할당
+				
+				//서버가 비정상적으로 종료했을 경우 IOExcpetion 발생
+				int readByteCount=socketChannel.read(byteBuffer); //서버가 데이터 보내기전 까지 스레드 블러킹 되있음 
+				
+				//서버가 정상적으로 Socket의 close()를 호출했을 경우 IOException 발생 시키기
+				if(readByteCount==-1)
+					throw new IOException();
+				
+				byteBuffer.flip(); // limit을 pos로 pos 0 으로
+				Charset charset=Charset.forName("UTF-8");
+				String data=charset.decode(byteBuffer).toString(); //byteBuffer에 있는 데이터 UTF-8로 디코딩 & CharBuffer.toString
+				
+				displayText("[상대방] : "+data);				
+			}catch(Exception e){
+				displayText("[서버 통신 안됨]");
+				stopClient(); 
+				break; //while문 종료
+			}
+		}
+	}
+
+	// 데이터 전송 코드
+	void send(String data) {
+		Thread thread=new Thread(){
+			@Override
+			public void run(){
+				try{
+					Charset charset=Charset.forName("UTF-8");
+					ByteBuffer byteBuffer=charset.encode(data); //data를 UTF-8로 인코딩한 바이트 데이터 & 버퍼에 저장
+					socketChannel.write(byteBuffer); //전송 & 예외 발생 가능
+					displayText("[나] : "+data);
+				}catch(Exception e){ //wrtie()과정에서 예외 발생 시 
+					displayText("[서버 통신 안됨]");
+					stopClient();
+				}
+				
+			}
+		};
+		thread.start();
+	}
+	
+	private void displayText(String str){
+		txtDisplay.append(str+"\n");
+		scroll.getVerticalScrollBar().setValue(scroll.getVerticalScrollBar().getMaximum());
+	}
+
+	///////////////////////////
+	// UI 생성코드
+	//////////////////
+	// UI 코드
+	JTextArea txtDisplay;
+	JTextField txtInput;
+	JButton btnConn, btnSend;
+	JScrollPane scroll;
+
+	void initJFrame() {		
+		this.setBounds(300, 300, 400, 400);
+		this.setLayout(new BorderLayout());
+
+		txtDisplay = new JTextArea();
+		txtDisplay.setEditable(false);		
+		scroll=new JScrollPane(txtDisplay);
+
+		txtInput = new JTextField();
+		txtInput.addActionListener(event -> {
+			send(txtInput.getText());
+			txtInput.setText("");
+			});
+
+		btnConn = new JButton("start");
+		btnConn.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (btnConn.getText().equals("start")) {
+					startClient();
+				} else if (btnConn.getText().equals("stop")) {
+					stopClient();
+				}
+			}
+		});
+
+		btnSend = new JButton("send");
+		btnSend.setEnabled(false);
+		btnSend.addActionListener(event -> {
+			send(txtInput.getText());
+			txtInput.setText("");
+			});
+
+		Panel panel = new Panel(new BorderLayout());
+
+		panel.add(txtInput, BorderLayout.CENTER);
+		panel.add(btnConn, BorderLayout.WEST);
+		panel.add(btnSend, BorderLayout.EAST);
+
+		this.add(panel, BorderLayout.SOUTH);
+		this.add(scroll, BorderLayout.CENTER);
+
+		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+		this.addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosed(WindowEvent e) {
+				System.exit(0);
+			}
+		});
+		this.setVisible(true);
+	}
+	
+	public void start(){
+		this.setVisible(true);
+	}
+	
+	
+	public static void main(String[] args){
+		Client client=new Client();
+		client.start();
+	}
+}
+
+------
+
+/6.9 블로킹과 인터럽트
+
+1) IO
+IO의 Socket에서 입출력 스트림의 read(),write() 메소드로 인해 작업 스레드가 블로킹 되면
+->다른 스레드가 작업 스레드의 interrupt() 메소드를 호출해도 블로킹 상태가 풀리지 않음.
+
+2) NIO
+ (1)
+NIO의 SocketChannel의 read(),write() 메소드로 인해 작업 스레드가 블로킹 되면
+->다른 스레드가 작업의 interrupt() 메소드를 호출하면 ClosedByInterruptException 발생 & SocketChannel은 즉시 닫히면서 블로킹 상태가 풀림
+
+e.g
+Thread thread=null;
+public void receive(){
+	thread=new Thread(){
+		@Override
+		public void run(){
+		 try{
+			...
+			int byteCount=socketChannel.read(byteBuffer); //2)interrupt()에 의해 ClosedByInterruptException 
+			..
+		}catch(Exception e){ //3)예외 처리 부분
+			socketChannel.close();
+		}
+	};
+	thread.start();
+}
+
+public void stop(){
+	thread.interrupt(); //1)다른 스레드가 stop() 호출
+}
+
+ (2)
+close() 메소드 호출 SocketChannel 닫기 => AsynchronousCloseException 발생 => 블로킹 상태 풀림
+
+-------------------------------------------------------------------------------------
+
+//7. TCP 넌블로킹 채널
+ServerSocketChannel, SocketChannel은 블로킹/넌블로킹 방식 지원(Selector)
+
+------
+
+/7.1 넌블로킹 방식의 특징
+1)기존 블로킹 방식
+: 언제 클라이언트가 요청할지 몰라 accept() 에서 블로킹 && read()에서 항상 데이터를 바을 준비 위해 블로킹
+  =>ServerSocketChannel과 연결된 SocketChannel 당 하나의 스레드가 할당
+  =>클라이언트의 연결이 많을 수록 스레드 수 증가 => 서버 성능 문제 야기
+  =>스레드풀을 이용해서 작업큐에 할당하고 스레드로 처리
+
+2)넌블로킹 방식
+: connect(), accept(), read() ,write() 메소드에서 블로킹이 없다. 
+e.g)
+	클라이언트의 연결이 없으면 null 리턴, read()는 0 리턴 & ByteBuffer에는 데이터 저장X
+
+=>
+while(true){
+	SocketChannel socketChannel=serverSocketChannel.accept();
+	...
+}
+=> accept() 메소드가 블로킹되지 않고 바로 리턴 & 무한 루프 => CPU 과도하게 소비
+=>이벤트 리스너 역할을 하는 셀렉터(Selector)를 사용
+=>넌블로킹채널에 Selector 등록 -> 클라이언트 연결 요청 or 데이터가 도착 ->  채널은 Selector에 통보
+ ->Selector는 통보한 채널들을 선택해서 작업 스레드가 accept() 또는 read() 메소드를 실행해서 즉시 작업을 처리하도록 함.
+
+------
+
+/7.2 셀렉터 생성과 등록
+
+try{
+	//Selector 생성
+	Selector selector=Selector.open();
+	
+	//넌블로킹 설정
+	ServerSocket serverSocket=ServerSocketChannel.open();
+	serverSocket.configureBlocking(false);
+	
+	//Selector에 등록
+	SelectionKey selectionKey=serverSocketChannel.register(Selector sel,int ops);
+	//OPS : SelectionKey. OP_ACCEPT , OP_CONNECT , OP_READ , OP_WRITE
+	
+	//SelectionKey값 얻기
+	SelectionKey key=socketChannel.keyFor(selector);
+	
+}catch(IOException e){..}
+
+
+=>Selector에 등록할 수 있는 채널은 SelectableChannel의 하위 채널만 가능
+(TCP : ServerSocketChannel,SocketChannel   UDP : DatagramChannel )
+=>register는 두 번 이상 호출할 수 없음(작업 유형이 변경되면 이미 생성된 SelectionKey를 수정해야함)
+
+------
+
+/7.3 선택된 키셋
+
+-------------------------------------------------------------------------------------
+
+//8. TCP 비동기 채널
+; NIO는 블로킹, 넌블로킹 채널
+  + TCP 비동기 채널(AsynchronousServerSocketChannel, AsynchronousSocketChannel) 제공 
+
+------
+
+/8.1 비동기 채널의 특징 
++비동기 채널 방식 그림 보기
+
+------
+
+/8.2 비동기 채널 그룹
+비동기 채널 그룹(AsynchronousChannelGroup) : 같은 스레드풀을 공유하는 비동기 채널들의 묶음
++비동기 채널 그룹 그림 보기
+
+1.비동기 그룹 채널 생성
+
+1)기본 비동기 채널 그룹(채널 그룹 지정 안하면)
+new ThreadPoolExecutor(
+	0, Integer.MAX_VALUE,
+	LONG.MAX_VALUE, TimeUnit.MILLISECONDS,
+	new SynchronousQueue<Runnable>(),
+	threadFactory);
+
+=> Integer.MAX_VALUE 만큼 스레드 수가 증가할 수 있도록 되어있음(이론상) BUT 대부분 스레드풀은 최대 스레드 수를 지정
+
+2)스레드 수 지정
+AsynchronousChannelGroup channelGroup = AsynchronousChannelGroup.withFixedThreadPool(
+	Runtime.getRuntime().availableProcessors(), // 최대 스레드 수
+	Executors.defaultThreadFactory()
+);
+
+
+
+
+2.비동기 그룹 채널 종료
+channelGroup.shutdown(); // 비동기 채널 그룹에 포함된 모든 비동기 채널이 닫히면 비동기 채널 그룹 종료
+							=> shuwdown()메소드 호출 후 새로운 비동기 채널 포함하면 ShutdownChannelGroupException발생					
+channelGroup.shutdownNow(); //강제적으로 비동기 채널 그룹에 포함된 모든 비동기 채널을 닫아버리고 비동기 채널 그룹 종료
+							=> 단, 완료 콜백을 실행하고 있는 스레드는 종료되거나 인터럽트되지 않음.
+
+------
+
+/8.3 비동기 서버 소켓 채널
+
+1)비동기 그룹 채널 생성
+
+1-1)기본 비동기 채널 그룹에 포함되는 AsynchronousServerSocketChannel
+AsynchronousServerSocketChannel asynchronousServerSocketChannel = AsynchronousServerSocketChannel.open();
+
+1-2)별도 비동기 채널 그룹 생성 & 그 그룹에 포함
+AsynchronousChannelGroup channelGroup = AsynchronousChannelGroup.withFixedThreadPool(
+	Runtime.getRuntime().availableProcessors(),
+	Executors.defaultThreadFactory()
+);
+AsynchronousServerSocketChannel asynchronousServerSocketChannel = 
+	AsynchronousServerSocketChannel.open(channelGroup);
+
+
+2)포트 바인딩
+asynchronousServerSocketChannel.bind(new InetSocketAddress(5001));
+
+3)종료
+asynchronousServerSocketChannel.close();
+
+4)연결 수락 처리
+accept(A attachment, CompletionHandler<AsynchronousSocketChannel,? super A> handler) 
+=> 매개변수
+=> (1)연결 수락 작업에는 별도의 첨부 객체가 필요하지 않으므로 null
+=> (2)콜백 메소드
+
+e.g)
+		asynchronousServerSocketChannel.accept(null, 
+				new CompletionHandler<AsynchronousSocketChannel, Void>() {
+				@Override
+				public void completed(AsynchronousSocketChannel asynchronousSocketChannel,Void attachment){
+					//연결 수락 후 실행할 코드
+					asynchronousServerSocketChannel.accept(null,this);	//accept() 재 호출				
+				}
+				@Override
+				public void failed(Throwable exc,Void attchment){
+					//연결 수락 실패 시 실행할 코드
+				}
+		});
+
+	
+------
+
+/8.4 비동기 소켓 채널
+: AsynchronousServerSocketChannel은 연결 수락 후 AsynchronousServerSocketChannel이 생성하는 
+  AsynchronousSocketChannel은 자동적으로 AsynchronousServerSocketChannel과 같은 비동기 그룹 채널에 속함
+  
+
+1.Client
+
+1)AsynchronousSocketChannel 생성
+1-1)
+AsynchronousSocketChannel asynchronousSocketChannel = AsynchronousSocketChannel.open();
+
+1-2)별도의 그룹 생성
+AsynchronousSocketChannel asynchronousSocketChannel = AsynchronousSocketChannel.open(channelGroup);
+
+
+2)AsynchronousSocketChannel 의 소멸
+asynchronousSocketChannel.close();
+
+
+3)서버 연결 요청 작업
+connect(SocketAddress remote, A attachment, CompletionHandler<Void,? super A> handler) 
+=> 매개변수
+=> (1) 서버 IP와 연결 포트 정보를 가진 InetSocketAddress 객체
+=> (2) 콜백 메소드의 매개값으로 제공할 첨부 객체(연결 요청 작업에는 별도의 첨부 객체가 필요하지 않음 -> null)
+=> (3) CompletionHandler<Void,A> 구현 객체
+
+e.g)
+asynchronousSocketChannel.connect(new InetSocketAddress("localhost",5001),null,
+	new CompletionHandler<Void,Void>(){
+		@Override
+		public void completed(Void result,Void attachment){
+			//연결 성공 후 실행할 코드(서버가 보낸 데이터를 받기 위한 코드가 일반적)
+		}
+		@Override
+		public void failed(Throwable e,Void attachment){ //연결 요청에 문제가 생겨 예외가 발생하면 호출
+			//연결 실패 후 실행할 코드
+		}
+	}
+);
+
+
+------
+
+/8.5 비동기 소켓 채널 데이터 통신
+
+클라이언트 - 서버 => AsynchronousSocketChannel의 read() , write() 메소드로 통신
+
+asynchronousSocketChannel.read(byteBuffer,attachment,
+		new CompletionHandler<Integer,A>(){
+			@Override
+			public void completed(Integer result,A attachment){
+				//받은 데이터를 처리하는 코드
+				asynchronousSocketChannel.read(byteBuffer,attchment,this); //read()재호출
+			}
+			@Override
+			public void failed(Throwable exc,A attachment){
+				//실패된 경우 실행할 코드
+			}
+		}
+);
+
+
+asynchronousSocketChannel.write(byteBuffer,attachment){
+		new CompletionHandler<Integer,A>(){
+			@Override
+			public void completed(Integer result,A attachment){
+				//성공한 경우 실행할 코드				
+			}
+			@Override
+			public void failed(Throwable exc,A attachment){
+				//실패된 경우 실행할 코드
+			}
+		}
+);
+
+
+==> TCP 비동기화 채널 채팅 프로그램 예제
+
+-------------------------------------------------------------------------------------
+
+//9.UDP 채널
+:NIO에서 UDP 채널은 DatagramChannel (블로킹, 넌블로킹 방식 사용 가능)
+=> 책에서는 블로킹 방식만
+
+
+------
+
+/9.1 발신자 만들기
+
+
+package channel;
+
+import java.net.InetSocketAddress;
+import java.net.StandardProtocolFamily;
+import java.nio.ByteBuffer;
+import java.nio.channels.DatagramChannel;
+import java.nio.charset.Charset;
+
+public class UdpSend {
+	public static void main(String[] args) throws Exception{		
+		DatagramChannel datagramChannel=DatagramChannel.open(StandardProtocolFamily.INET); //IPv4
+		//DatagramChannel datagramChannel=DatagramChannel.open(StandardProtocolFamily.INET6); //IPv6
+		
+		System.out.println("[발신 시작]");
+		
+		for(int i=1; i<3; i++){
+			String data="메시지"+i;
+			Charset charset = Charset.forName("UTF-8");
+			ByteBuffer byteBuffer = charset.encode(data);
+			
+			int byteCount = datagramChannel.send(byteBuffer,new InetSocketAddress("localhost",5001) );
+			System.out.println("[보낸 바이트 수 : "+byteCount);
+		}
+		
+		System.out.println("[발신 종료]");
+		datagramChannel.close();
+	}
+}
+
+------
+
+/9.2 수신자 만들기
+
+package channel;
+
+import java.net.InetSocketAddress;
+import java.net.SocketAddress;
+import java.net.StandardProtocolFamily;
+import java.nio.ByteBuffer;
+import java.nio.channels.DatagramChannel;
+import java.nio.charset.Charset;
+
+public class UdpReceive extends Thread {
+	public static void main(String[] args) throws Exception {
+		DatagramChannel datagramChannel=DatagramChannel.open(StandardProtocolFamily.INET); //IPv4
+		//DatagramChannel datagramChannel=DatagramChannel.open(StandardProtocolFamily.INET6); //IPv6
+		
+		datagramChannel.bind(new InetSocketAddress(5001));
+		
+		Thread thread=new Thread(){
+			@Override
+			public void run(){
+				System.out.println("[수신 시작]");
+				try{
+					while(true){
+						ByteBuffer byteBuffer = ByteBuffer.allocateDirect(100);
+						SocketAddress socketAddress = datagramChannel.receive(byteBuffer);
+						byteBuffer.flip();
+						
+						Charset charset=Charset.forName("UTF-8");
+						String data=charset.decode(byteBuffer).toString();
+						System.out.println("[받은 내용 : "+socketAddress.toString()+"] "+data);						
+					}
+				}catch(Exception e){
+					System.out.println("[수신 종료]");
+				}
+			}
+		};
+		
+		thread.start();
+		Thread.sleep(3000);
+		datagramChannel.close();
+	}
+}
+
+
+=>데이터를 받기 전까지 receive() 메소드는 블로킹되고, 데이터를 받으면 리턴된다.
+=>작업스레드를 종료시키는 방법
+1)receive()메소드가 블로킹되어 있는 상태에서 작업 스레드의 interrupt()를 호출 -> ClosedByInterruptException 예외 발생
+2)DatagrameChannel의 close() 호출 -> AsynchronousCloseException 예외 발생
+
+
+<< 실행 결과 : UdpSend >>
+[발신 시작]
+[보낸 바이트 수 : 10
+[보낸 바이트 수 : 10
+[발신 종료]
+
+
+
+<< 실행 결과 : UdpReceive >>
+[수신 시작]
+[받은 내용 : /127.0.0.1:52856] 메시지1
+[받은 내용 : /127.0.0.1:52856] 메시지2
+[수신 종료]
+
+
+
+------
+------
+------
+------
+------
+------
+------
+
+
+
+
+-------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------
+
+------
+------
+------
+------
+------
+------
+------
+------
+------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

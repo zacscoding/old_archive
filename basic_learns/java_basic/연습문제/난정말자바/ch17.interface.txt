@@ -1,0 +1,71 @@
+-------ch17--------
+
+//17-1
+interface TV
+{
+	public abstract void onTV();
+}
+
+class TVImpl
+{
+	public void onTV()
+	{
+		System.out.println("영상 출력 중..");
+	}
+}
+
+interface Computer
+{
+	public abstract void dataReceive();
+}
+
+class ComputerImpl
+{
+	public void dataReceive()
+	{
+		System.out.println("영상 데이터 수신 중 ");
+	}
+}
+
+
+class IPTV implements TV,Computer
+{
+	TVImpl tv=new TVImpl();
+	ComputerImpl comp=new ComputerImpl();
+	
+	public void dataReceive()
+	{
+		comp.dataReceive();
+	}
+	public void onTV()
+	{
+		tv.onTV();
+	}	
+	public void powerOn(){
+		dataReceive();
+		onTV();
+	}
+}
+
+
+
+
+public class TEST1 {
+	public static void main(String[] args){
+		IPTV iptv=new IPTV();
+		iptv.powerOn();
+		
+		TV tv=iptv;
+		Computer comp=iptv;
+	}
+}
+
+
+
+
+
+
+
+
+
+

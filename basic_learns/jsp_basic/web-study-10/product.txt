@@ -1,0 +1,5 @@
+insert into product values(product_seq.nextval,'개념을 콕콕 잡아주는 데이터 베이스',27000,'db.jpg','데이터베이스...');
+insert into product values(product_seq.nextval,'웹표준을 위한 HTML5',25000,'html5.jpg','html5....');
+insert into product values(product_seq.nextval, 'Dynamic Programming book',25000  ,'oracle.jpg' , '오라클.....');
+insert into product values(product_seq.nextval, 'Visual C++ MFC 윈도우 프로그래밍',26000  ,'mfc.jpg' , 'C++...');
+commit;

@@ -1,0 +1,1804 @@
+¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ   01-1  ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ
+
+//1¹ø
+
+#include <iostream>
+
+int main(void)
+{
+	int input;
+	int sum=0;
+
+	for (int i = 0; i < 5; i++) {
+		std::cout << i + 1 << "¹øÂ° Á¤¼ö ÀÔ·Â :";
+		std::cin >> input;
+		sum += input;
+	}
+
+	std::cout << "ÇÕ°è: " << sum << std::endl;
+
+	return 0;
+}
+
+
+//2¹ø
+
+#include <iostream>
+
+int main(void)
+{
+	char name[50];
+	char phone_num[20];
+
+	std::cout << "ÀÌ¸§ ÀÔ·Â :";
+	std::cin >> name;
+
+	std::cout << "ÀüÈ­¹øÈ£ ÀÔ·Â :";
+	std::cin >> phone_num;
+
+	std::cout << "ÀÌ¸§ : " << name << std::endl;
+	std::cout << "ÀüÈ­ ¹øÈ£ :" << phone_num << std::endl;
+
+	return 0;
+
+}
+
+
+//3¹ø
+
+#include <iostream>
+
+int main(void)
+{
+	int n;
+
+	std::cout<<"Ãâ·Â ±¸±¸´Ü ÀÔ·Â : ";
+	std::cin >> n;
+
+	for (int i = 1; i <= 9; i++) {
+		std::cout << n << " x " << i << " = " << n*i << std::endl;
+	}
+
+	return 0;
+
+}
+
+
+//4¹ø
+
+
+#include <iostream>
+
+int main(void)
+{
+	int amount_sell;
+	double total_wage;
+
+	while (1) {
+		std::cout << "ÆÇ¸Å ±Ý¾×À» ¸¸¿ø ´ÜÀ§·Î ÀÔ·Â(-1 to end): ";
+		std::cin >> amount_sell;
+		if (amount_sell == -1) {
+			break;
+		}
+		else {
+			total_wage = 50 + (amount_sell*0.12);
+			std::cout << "ÀÌ¹ø ´Þ ±Þ¿©:" << total_wage << "¸¸¿ø" << std::endl;
+		}
+	}
+	return 0;
+}
+
+
+
+
+¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ   01-2  ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ
+//1¹ø
+/*ÇÔ¼öÀÇ ¿À¹ö·Îµù*/
+#include <iostream>
+
+void swap(int *p, int *q)
+{
+	int tmp;
+	tmp = *p;
+	*p = *q;
+	*q = tmp;
+}
+
+void swap(char *p, char *q)
+{
+	char tmp;
+	tmp = *p;
+	*p = *q;
+	*q = tmp;
+}
+void swap(double *p,double *q)
+{
+	double tmp;
+	tmp = *p;
+	*p = *q;
+	*q = tmp;
+}
+
+
+int main(void)
+{
+	int num1 = 20, num2 = 30;
+	swap(&num1, &num2);
+	std::cout << num1 << ' ' << num2 << std::endl;
+
+	char ch1 = 'A', ch2 = 'Z';
+	swap(&ch1, &ch2);
+	std::cout << ch1 << ' ' << ch2 << std::endl;
+
+	double dbl1 = 1.111, dbl2 = 5.555;
+	swap(&dbl1, &dbl2);
+	std::cout << dbl1 << ' ' << dbl2 << std::endl;
+
+	return 0;
+}
+
+
+
+¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ   01-3  ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ
+
+//1¹ø
+
+#include <iostream>
+
+int BoxVolume(int length, int width, int height)
+{
+	return length*width*height;
+}
+
+int BoxVolume(int length, int width)
+{
+	return length*width*1;
+}
+int BoxVolume(int length)
+{
+	return length*1 * 1;
+}
+int main(void)
+{
+	std::cout << "[3, 3, 3] : " << BoxVolume(3, 3, 3) << std::endl;
+	std::cout << "[5, 5, D] : " << BoxVolume(5, 5) << std::endl;
+	std::cout << "[7, D, D] : " << BoxVolume(7) << std::endl;
+	//	std::cout << "[D, D, D] : " << BoxVolume() << std::endl;
+
+	return 0;
+}
+
+
+//2¹ø
+
+#include <iostream>
+
+int SimpleFunc(int a = 10)
+{
+	return a + 1;
+}
+
+int SimpleFunc(void)
+{
+	return 10;
+}
+
+
+int main(void)
+{
+//	std::cout << SimpleFunc() << std::endl;
+//	À§¿Í °°ÀÌ SimpleFunc()¸¦ È£ÃâÇÏ¸é µÎ°³ÀÇ ÇÔ¼ö Áß ±¸º° ÇÒ ¼ö ¾ø´Ù.
+
+	return 0;
+}
+
+
+
+
+
+¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ   01-4  ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ
+
+Çì´õ.h
+
+namespace BestComImpl 
+{
+	void SimpleFunc(void);
+}
+
+namespace ProgComImpl
+{
+	void SimpleFunc(void);
+}
+
+
+¼Ò½º1.cpp
+
+
+#include <iostream>
+#include "Çì´õ.h"
+
+
+void BestComImpl::SimpleFunc(void)
+{
+	std::cout << "BestComÀÌ Á¤ÀÇÇÑ ÇÔ¼ö" << std::endl;
+}
+
+void ProgComImpl::SimpleFunc(void)
+{
+	std::cout << "ProgComÀÌ Á¤ÀÇÇÑ ÇÔ¼ö" << std::endl;
+}
+
+
+¼Ò½º2.cpp
+
+#include <iostream>
+#include "Çì´õ.h"
+
+int main(void)
+{
+	BestComImpl::SimpleFunc();
+	ProgComImpl::SimpleFunc();
+
+	return 0;
+}
+
+
+
+
+
+¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ   02-1  ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ
+//1¹ø
+
+#include <iostream>
+using namespace std;
+void increase(int & ref)
+{
+	++ref;
+}
+
+void change(int &ref2)
+{
+	ref2 = -ref2;	
+}
+
+int main(void)
+{
+	int num = 10;
+	int num2 = -20;
+
+	cout << "num : " << num << endl;
+	increase(num);
+	cout << "num : " << num << endl;
+
+	cout << "num2 : " << num2 << endl;
+	change(num2);
+	cout << "num2 : " << num2 << endl;
+
+	return 0;
+}
+
+
+//2¹ø
+
+#include <iostream>
+using namespace std;
+
+void SwapbyRef2(int &ref1, int &ref2)
+{
+	int temp = ref1;
+	ref1 = ref2;
+	ref2 = temp;
+}
+
+int main(void)
+{
+	int val1 = 10;
+	int val2 = 20;
+
+	SwapbyRef2(val1, val2);
+	//SwapbyRef2(23,45); //ÄÄÆÄÀÏ ¿À·ù(ÂüÁ¶¿¬»êÀÚ´Â ÃÊ±â¼±¾ð½Ã »ó¼ö°¡ ¾Æ´Ñ º¯¼ö°¡ µÇ¾ßÇÔ!)
+
+	cout << "val1 : " << val1 << endl;
+	cout << "val2 : " << val2 << endl;
+
+	return 0;
+}
+
+
+
+//3¹ø
+
+
+#include <iostream>
+using namespace std;
+
+
+void SwapPointer(int *(&ref1), int *(&ref2))
+{
+	int *temp;
+	temp = ref1;
+	ref1 = ref2;
+	ref2 = temp;
+}
+
+
+int main(void)
+{
+	int num1 = 5;
+	int *ptr1 = &num1;
+	int num2 = 10;
+	int *ptr2 = &num2;
+
+	SwapPointer(ptr1, ptr2);
+	cout << "*ptr1 : " << *ptr1 << endl;
+	cout << "*ptr2 : " << *ptr2 << endl;
+	return 0;
+
+}
+
+
+
+
+
+
+
+¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ   02-2  ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ
+
+//1¹ø
+
+
+#include <iostream>
+using namespace std;
+
+
+int main(void)
+{
+	const int num = 12;
+	const int *ptr1 = &num;
+	const int *(&ref) = ptr1;
+
+	cout << *ptr1 << endl;
+	cout << *ref << endl;
+
+	return 0;
+}
+
+¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ   02-3  ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ
+
+
+//1¹ø
+
+#include <iostream>
+using namespace std;
+
+typedef struct __Point{
+	int xpos;
+	int ypos;
+}Point;
+
+
+Point& PntAdder(const Point &p1, const Point &p2)
+{
+	Point *pptr = new Point;
+	pptr->xpos = (p1.xpos) + (p2.xpos);
+	pptr->ypos = (p1.ypos) + (p2.ypos);
+
+	return *pptr;
+}
+
+
+int main(void)
+{
+	Point * pptr1 = new Point;
+	pptr1->xpos = 3;
+	pptr1->ypos = 30;
+
+	Point *pptr2 = new Point;
+	pptr2->xpos = 70;
+	pptr2->ypos = 7;
+
+	Point &pref = PntAdder(*pptr1, *pptr2);
+
+	cout << "[" << pref.xpos << "," << pref.ypos << "]" << endl;
+	delete pptr1;
+	delete pptr2;
+	delete &pref;
+
+	return 0;
+}
+
+
+
+
+
+¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ   02-4  ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ
+
+//1¹ø ¹®Á¦
+
+#include <iostream>
+#include <cstring>
+using namespace std;
+
+int main(void)
+{
+	char str1[50] = "zac";
+	char str2[50] = "`s coding world!";
+	char str3[50];
+	char str4[50] = "I am missing deng";
+	char str5[50] = "Cat";
+	char str6[50] = "Cat";
+	
+	cout << "strlen(" << str1 << ") = " << strlen(str1) << endl;
+	cout << "strcat : " << strcat(str1, str2) << endl;
+	cout << "strcpy : " << strcpy(str3, str4) << endl;
+	cout << "strcmp : " << strcmp(str5, str6) << endl;
+
+	return 0;
+
+}
+
+
+//2¹ø ¹®Á¦
+
+#include <iostream>
+#include <ctime>
+#include <cstdlib>
+using namespace std;
+
+void get_rand(int *p)
+{
+	srand((unsigned)time(NULL));
+	for (int i = 0; i < 5; i++) {
+		*(p+i) = rand() % 100;
+	}
+}
+
+
+int main(void)
+{
+	int arr[5];
+	int *pa = arr;
+	get_rand(pa);
+	for (int i = 0; i < 5; i++) {
+		cout << arr[i] << endl;
+	}
+
+	return 0;
+}
+
+
+
+
+¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ   03-1  ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ
+
+#include <iostream>
+using std::cout;
+using std::endl;
+
+struct Point {
+	int xpos;
+	int ypos;
+
+	void MovePos(int x,int y)
+	{
+		xpos +=x ;
+		ypos +=y ;
+	}
+
+	void AddPoint(const Point &pos)
+	{
+		xpos += pos.xpos;
+		ypos += pos.ypos;
+	}
+	
+	void ShowPosition()
+	{
+		cout << "[" << xpos << " ," << ypos << "]" << endl;
+	}
+
+};
+
+int main(void)
+{
+	Point pos1 = { 12,4 };
+	Point pos2 = { 20,30 };
+
+	pos1.MovePos(-7,10);
+	pos1.ShowPosition();
+
+	pos1.AddPoint(pos2);
+	pos1.ShowPosition();
+	return 0;
+
+}
+
+¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ   03-2  ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ
+//¹®Á¦ 1
+#include <iostream>
+
+using std::cout;
+using std::endl;
+
+namespace CalCon {
+	enum {ADD,SUB,MUL,DIV};
+}
+
+class Calculator {
+private:
+	int count[4];
+public:
+	void Init(void);
+	double Add(double a, double b);
+	double Sub(double a, double b);
+	double Mul(double a, double b);
+	double Div(double a, double b);
+	void ShowOpCount(void);
+};
+
+void Calculator::Init(void)
+{
+	for (int i = 0; i < 4; i++) {
+		count[i] = 0;
+	}
+}
+
+void Calculator::ShowOpCount(void)
+{
+	cout << "µ¡¼À: " << count[CalCon::ADD]<<" ";
+	cout << "»¬¼À: " << count[CalCon::SUB] << " ";
+	cout << "°ö¼À : " << count[CalCon::MUL] << " ";
+	cout << "³ª´°¼À : " << count[CalCon::DIV] <<endl;
+}
+
+double Calculator::Add(double a, double b)
+{
+	count[CalCon::ADD]++;
+	return a + b;
+}
+
+double Calculator::Sub(double a, double b)
+{
+	count[CalCon::SUB]++;
+	return a - b;
+}
+
+double Calculator::Mul(double a, double b)
+{
+	count[CalCon::MUL]++;
+	return a * b;
+}
+double Calculator::Div(double a, double b)
+{
+	count[CalCon::DIV]++;
+	return a / b;
+}
+
+
+int main(void)
+{
+	Calculator cal;
+	cal.Init();
+	cout << "3.2 + 2.4 = " << cal.Add(3.2, 2.4) << endl;
+	cout << "3.5 / 1.7 = " << cal.Div(3.5, 1.7) << endl;
+	cout << "2.2 - 1.5 = " << cal.Sub(2.2, 1.5) << endl;
+	cout << "4.9 / 1.2 = " << cal.Div(4.9, 1.2) << endl;
+	cal.ShowOpCount();
+	return 0;
+}
+
+//¹®Á¦2
+
+#include <iostream>
+#include <cstring>
+
+using std::cout; using std::endl;
+
+class Printer
+{
+private:
+	char text[50];
+
+public:
+	void SetString(char *p);
+	void ShowString();
+};
+
+void Printer::SetString(char *p)
+{
+	strcpy(text, p);
+}
+void Printer::ShowString()
+{
+	cout << text << endl;
+}
+
+int main(void)
+{
+	Printer pnt;
+	pnt.SetString("Hello World!");
+	pnt.ShowString();
+
+	pnt.SetString("I Love C++");
+	pnt.ShowString();
+
+	return 0;
+}
+
+
+
+¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ   04-1  ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ
+#include <iostream>
+using namespace std;
+
+class FruitSeller
+{
+private:
+	int APPLE_PRICE;
+	int numOfApples;
+	int myMoney;
+
+public:
+	void InitMembers(int price, int num, int money)
+	{
+		APPLE_PRICE = price;
+		numOfApples = num;
+		myMoney = money;
+	}
+	int SaleApples(int money)
+	{
+		if (money < 0) {
+			cout << "Àß¸øµÈ Á¤º¸°¡ Àü´ÞµÇ¾î ÆÇ¸Å¸¦ Ãë¼ÒÇÕ´Ï´Ù." << endl;
+			return 0;
+		}
+		int num = money / APPLE_PRICE;
+		numOfApples -= num;
+		myMoney += money;
+		return num;
+	}
+	void ShowSalesResult() const
+	{
+		cout << "³²Àº »ç°ú: " << numOfApples << endl;
+		cout << "ÆÇ¸Å ¼öÀÍ: " << myMoney << endl << endl;
+	}
+};
+
+class FruitBuyer
+{
+	int myMoney;		// private:
+	int numOfApples;	// private:
+
+public:
+	void InitMembers(int money)
+	{
+		myMoney = money;
+		numOfApples = 0;
+	}
+	void BuyApples(FruitSeller &seller, int money)
+	{
+		if (money < 0) {
+			cout << "Àß¸øµÈ Á¤º¸°¡ Àü´ÞµÇ¾î ÆÇ¸Å¸¦ Ãë¼ÒÇÕ´Ï´Ù." << endl;
+			return;
+		}
+		numOfApples += seller.SaleApples(money);
+		myMoney -= money;
+	}
+	void ShowBuyResult() const
+	{
+		cout << "ÇöÀç ÀÜ¾×: " << myMoney << endl;
+		cout << "»ç°ú °³¼ö: " << numOfApples << endl << endl;
+	}
+};
+
+int main(void)
+{
+	FruitSeller seller;
+	seller.InitMembers(1000, 20, 0);
+	FruitBuyer buyer;
+	buyer.InitMembers(5000);
+	buyer.BuyApples(seller, -3000);
+
+	cout << "°úÀÏ ÆÇ¸ÅÀÚÀÇ ÇöÈ²" << endl;
+	seller.ShowSalesResult();
+	cout << "°úÀÏ ±¸¸ÅÀÚÀÇ ÇöÈ²" << endl;
+	buyer.ShowBuyResult();
+	return 0;
+}
+
+
+¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ   04-2  ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ
+
+#include <iostream>
+using std::cout;
+using std::endl;
+
+class Point
+{
+private:
+	int xpos, ypos;
+public:
+	void Init(int x, int y)
+	{
+		xpos = x;
+		ypos = y;
+	}
+	void ShowPointInfo() const
+	{
+		cout << "[" << xpos << ',' << ypos << "]" << endl;
+	}
+};
+
+class Circle
+{
+private:
+	Point center;
+	int radius;
+public:
+	void Init(int x, int y, int r)
+	{
+		if (r < 0) {
+			cout << "¹ÝÁö¸§ ÃÊ±â ¿À·ù" << endl;
+			return;
+		}
+		radius = r;
+		center.Init(x,y);
+	}
+	void ShowCircleInfo(void) const
+	{
+		cout << "radius:" << radius << endl;
+		center.ShowPointInfo();
+	}
+};
+
+class Ring
+{
+	Circle incircle;
+	Circle outcircle;
+public:
+	void Init(int inX, int inY, int inR, int outX, int outY, int outR)
+	{
+		incircle.Init(inX, inY, inR);
+		outcircle.Init(outX,outY,outR);
+	}
+	void ShowRingInfor() const
+	{
+		cout << "Inner Circle Infor.." << endl;
+		incircle.ShowCircleInfo();
+		cout << "Outter Circle Infor.." << endl;
+		outcircle.ShowCircleInfo();
+	}
+};
+
+int main(void)
+{
+	Ring ring;
+	ring.Init(1, 1, 4, 2, 2, 9);
+	ring.ShowRingInfor();
+	return 0;
+}
+//Ring Å¬·¡½º, Circle Å¬·¡½º , Point Å¬·¡½º ¸ðµÎ ÀÚ½ÅÀÇ Á¤º¸¸¦ Ãâ·ÂÇÏ±â À§ÇÑ ÇÔ¼ö¸¦ ¸â¹ö¿¡ Æ÷ÇÔ½ÃÄÑ¼­ Ä¸½¶È­¸¦ ¿Ï¼º!
+
+
+
+¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ   04-3  ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ
+
+
+//2¹ø
+
+#include <iostream>
+#include <cstring>
+using std::cout; using std::endl;
+
+namespace COMP_POS
+{
+	enum { CLERK, SENIOR, ASSIST, MANAGER };
+	void ShowPositionInfor(int pos)
+	{
+		switch (pos)
+		{
+		case CLERK:
+			cout << "»ç¿ø" << endl;
+			break;
+		case SENIOR:
+			cout << "ÁÖÀÓ" << endl;
+			break;
+		case ASSIST:
+			cout << "´ë¸®" << endl;
+			break;
+		case MANAGER:
+			cout << "°úÀå" << endl;
+			break;
+		}
+	}
+}
+
+class NameCard
+{
+private:
+	char *name;
+	char *company;
+	char *phone;
+	int position;
+public:
+	NameCard(char *myname, char *mycompany, char *myphone, int myposition)
+		:position(myposition)
+	{
+		name = new char[strlen(myname) + 1];
+		strcpy(name, myname);
+
+		company = new char[strlen(mycompany) + 1];
+		strcpy(company, mycompany);
+
+		phone = new char[strlen(myphone) + 1];
+		strcpy(phone, myphone);
+
+
+	}
+	void ShowNameCardInfor()
+	{
+		cout << "ÀÌ¸§:" << name << endl;
+		cout << "È¸»ç:" << company << endl;
+		cout << "ÀüÈ­¹øÈ£:" << phone << endl;
+		cout << "Á÷±Þ: "; COMP_POS::ShowPositionInfor(position);
+		cout << endl;
+	}
+	~NameCard()
+	{
+		delete[]name;
+		delete[]company;
+		delete[]phone;
+	}
+};
+
+int main(void)
+{
+	NameCard manClerk("Lee", "ABCENG", "010-1111-2222", COMP_POS::CLERK);
+	NameCard manSENIOR("HONG", "OrangeENG", "010-3333-4444", COMP_POS::SENIOR);
+	NameCard manAssist("Kim", "SoGoodComp", "010-5555-6666", COMP_POS::ASSIST);
+	
+	manClerk.ShowNameCardInfor();
+	manSENIOR.ShowNameCardInfor();
+	manAssist.ShowNameCardInfor();
+
+	return 0;
+}
+
+
+
+
+
+
+
+
+
+¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ   05-1  ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ
+#include <iostream>
+#include <cstring>
+using std::cout; using std::endl;
+
+namespace COMP_POS
+{
+	enum { CLERK, SENIOR, ASSIST, MANAGER };
+	void ShowPositionInfor(int pos)
+	{
+		switch (pos)
+		{
+		case CLERK:
+			cout << "»ç¿ø" << endl;
+			break;
+		case SENIOR:
+			cout << "ÁÖÀÓ" << endl;
+			break;
+		case ASSIST:
+			cout << "´ë¸®" << endl;
+			break;
+		case MANAGER:
+			cout << "°úÀå" << endl;
+			break;
+		}
+	}
+}
+
+class NameCard
+{
+private:
+	char *name;
+	char *company;
+	char *phone;
+	int position;
+public:
+	//µ¿Àû ÇÒ´çÀ» ÅëÇÑ »ý¼ºÀÚ
+	NameCard(char *myname, char *mycompany, char *myphone, int myposition)
+		:position(myposition)
+	{
+		name = new char[strlen(myname) + 1];
+		strcpy(name, myname);
+
+		company = new char[strlen(mycompany) + 1];
+		strcpy(company, mycompany);
+
+		phone = new char[strlen(myphone) + 1];
+		strcpy(phone, myphone);
+	}
+
+	//±íÀº º¹»ç¸¦ À§ÇÑ º¹»ç »ý¼ºÀÚ Á¤ÀÇ
+	NameCard(NameCard &c)
+		:position(c.position)
+	{
+		name = new char[strlen(c.name) + 1];
+		strcpy(name, c.name);
+
+		company = new char[strlen(c.company) + 1];
+		strcpy(company, c.company);
+
+		phone = new char[strlen(c.phone) + 1];
+		strcpy(phone, c.phone);
+		
+	}
+
+	void ShowNameCardInfor()
+	{
+		cout << "ÀÌ¸§:" << name << endl;
+		cout << "È¸»ç:" << company << endl;
+		cout << "ÀüÈ­¹øÈ£:" << phone << endl;
+		cout << "Á÷±Þ: "; COMP_POS::ShowPositionInfor(position);
+		cout << endl;
+	}
+	//»ý¼ºÀÚ¿¡¼­ µ¿ÀûÇÒ´ç -> ¼Ò¸êÀÚ µ¿ÀûÇÒ´ç ÇØÁ¦
+	~NameCard()
+	{
+		delete[]name;
+		delete[]company;
+		delete[]phone;
+	}
+};
+
+int main(void)
+{
+	NameCard manClerk("Lee", "ABCENG", "010-1111-2222", COMP_POS::CLERK);
+	NameCard copy1 = manClerk;
+
+	NameCard manSENIOR("HONG", "OrangeENG", "010-3333-4444", COMP_POS::SENIOR);
+	NameCard copy2 = manSENIOR;
+		
+	copy1.ShowNameCardInfor();
+	copy2.ShowNameCardInfor();
+	
+	return 0;
+}
+
+
+
+¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ   07-1  ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ
+
+//1¹ø
+
+#include <iostream>
+using std::endl; using std::cout;
+
+class Car	//±âº» ¿¬·á ÀÚµ¿Â÷
+{
+private:
+	int gasolineGauge;
+public:
+	Car(int _gasolineGauge = 0)
+		:gasolineGauge(_gasolineGauge)
+	{}
+	int GetGasGauge()
+	{
+		return gasolineGauge;
+	}
+};
+
+class HybridCar : public Car	//ÇÏÀÌºê¸®µå ÀÚµ¿Â÷
+{
+private:
+	int electricGauge;
+public:
+	HybridCar(int _gasolineGauge = 0, int _electricGauge = 0)
+		:Car(_gasolineGauge), electricGauge(_electricGauge)
+	{}
+	int GetElecGauge()
+	{
+		return electricGauge;
+	}
+};
+
+class HybridWaterCar : public HybridCar
+{
+private:
+	int waterGauge;
+public:
+	HybridWaterCar(int _gasolineGauge = 0, int _electricGauge = 0,int _waterGauge=0)
+		:HybridCar(_gasolineGauge,_electricGauge),waterGauge(_waterGauge)
+	{}
+	void ShowCurrentGauge()
+	{
+		cout << "ÀÜ¿© °¡¼Ö¸° :" << GetGasGauge() << endl;
+		cout << "ÀÜ¿© Àü±â·® :" << GetElecGauge() << endl;
+		cout << "ÀÜ¿© ¿öÅÍ·® :" << waterGauge << endl;
+	}
+};
+
+int main(void)
+{
+	HybridWaterCar wCar(10, 20, 30);
+	wCar.ShowCurrentGauge();
+
+	return 0;
+}
+
+
+
+//2¹ø
+
+
+
+
+
+
+
+¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ   07-2  ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ
+//1¹ø
+#include <iostream>
+using std::endl; using std::cout; using std::cin;
+
+class Rectangle
+{
+private:
+	int width;
+	int height;
+public:
+	Rectangle(int w=0,int h=0)
+		:width(w),height(h)
+	{}
+	void ShowAreaInfo() const
+	{
+		cout << "¸éÀû: " << width*height << endl;
+	}
+};
+
+class Square :public Rectangle
+{
+public:
+	Square(int length=0)
+		:Rectangle(length, length) {}
+};
+
+
+int main(void)
+{
+	Rectangle rec(4, 3);
+	rec.ShowAreaInfo();
+
+	Square sqr(7);
+	sqr.ShowAreaInfo();
+
+	return 0;
+}
+
+
+
+
+//2¹ø
+
+
+
+#include <iostream>
+#include <cstring>
+using std::endl; using std::cout;
+
+class Book
+{
+private:
+	char *title;	// Ã¥ÀÇ Á¦¸ñ
+	char *isbn;		// ±¹Á¦Ç¥ÁØµµ¼­¹øÈ£
+	int price;		// Ã¥ÀÇ Á¤°¡
+public:
+
+	Book(char *_title="noname", char *_isbn = "noname", int _price=0)
+		:price(_price)
+	{
+		title = new char[strlen(_title) + 1];
+		isbn = new char[strlen(_isbn) + 1];
+
+		strcpy(title, _title);
+		strcpy(isbn, _isbn);
+	}
+
+	void ShowBookInfo() const
+	{
+		cout << "Á¦¸ñ: " << title << endl;
+		cout << "ISBN: " << isbn << endl;
+		cout << "°¡°Ý: " << price << endl;
+	}
+	~Book()
+	{
+		delete []title;
+		delete []isbn;
+	}
+};
+
+
+class EBook : public Book
+{
+private:
+	char * DRMKey;	//º¸¾È°ü·Ã Å°
+public:
+	EBook(char *_title = "noname", char *_isbn = "noname", int _price = 0, char *_DRMKey = "nokey")
+		:Book(_title, _isbn, _price)
+	{
+		DRMKey = new char[strlen(_DRMKey) + 1];
+		strcpy(DRMKey, _DRMKey);
+	}
+	void ShowEBookInfor()
+	{
+		ShowBookInfo();
+		cout << "ÀÎÁõÅ°: " << DRMKey << endl;
+	}
+	~EBook()
+	{
+		delete[]DRMKey;
+	}
+
+};
+
+
+int main(void)
+{
+	Book book("ÁÁÀº C++", "555-12345-890-0", 20000);
+	book.ShowBookInfo();
+	cout << endl;
+
+	EBook ebook("ÁÁÀº C++ ebook", "555-12345-890-1", 10000, "fdx9w0i8kiw");
+	ebook.ShowEBookInfor();
+
+	return 0;
+
+}
+
+
+
+
+
+
+
+
+¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ   10-1,2,3  ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ
+#include <iostream>
+using std::endl; using std::cout;
+
+class Point
+{
+private:
+	int xpos, ypos;
+public:
+	Point()
+	{
+		cout << "Point() »ý¼ºÀÚ È£Ãâ" << endl;
+	}
+	Point(int x = 0, int y = 0) :xpos(x), ypos(y)
+	{
+		cout << "Point(int,int) »ý¼ºÀÚ È£Ãâ" << endl;
+	}
+	void ShowPosition()const
+	{
+		cout << '[' << xpos << ',' << ypos << ']' << endl;
+	}
+
+	Point& operator+=(const Point& ref)
+	{
+		xpos += ref.xpos;
+		ypos += ref.ypos;
+		return *this;
+	}
+
+	Point& operator-=(const Point& ref)
+	{
+		xpos -= ref.xpos;
+		ypos -= ref.ypos;
+		return *this;
+	}
+
+	friend Point operator+(const Point&, const Point&);
+	friend bool operator==(const Point&, const Point&);
+	friend bool operator!=(const Point&, const Point&);
+};
+
+Point operator-(const Point&ref1, const Point& ref2)
+{
+	Point pos(ref1.xpos - ref2.xpos, ref1.ypos - ref2.ypos);
+	return pos;
+}
+
+bool operator==(const Point&ref1, const Point&ref2)
+{
+	if (ref1.xpos == ref2.xpos&&ref1.ypos == ref2.ypos) {
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
+bool operator!=(const Point&ref1, const Point&ref2)
+{
+	return !(ref1 == ref2);
+}
+
+int main(void)
+{
+
+}
+
+
+¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ   10-2  ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ
+#include <iostream>
+using std::cout; using std::endl;
+
+class Point
+{
+private:
+	int xpos, ypos;
+public:
+	Point(int x = 0, int y = 0)
+		:xpos(x), ypos(y) {}
+	void ShowPosition()
+	{
+		cout << '[' << xpos << ',' << ypos << ']' << endl;
+	}
+
+	Point operator-()
+	{
+		Point pos = (-xpos, -ypos);
+		return pos;
+	}
+
+	friend Point operator~(Point &);
+
+};
+
+Point operator~(Point &ref)
+{
+	Point pos = (ref.ypos, ref.ypos);
+	return pos;
+}
+
+
+¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ   10-3  ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ
+
+#include <iostream>
+using namespace std;
+
+class Point
+{
+private:
+	int xpos, ypos;
+public:
+	Point(int x = 0, int y = 0) : xpos(x), ypos(y)
+	{  }
+	void ShowPosition() const
+	{
+		cout << '[' << xpos << ", " << ypos << ']' << endl;
+	}
+	friend ostream& operator<<(ostream&, const Point&);
+	friend istream& operator>>(istream&, Point&);
+};
+
+ostream& operator<<(ostream& os, const Point& pos)
+{
+	os << '[' << pos.xpos << ',' << pos.ypos << ']' << endl;
+	return os;
+}
+
+istream& operator>>(istream& is, Point& pos)
+{	
+	is >> pos.xpos >> pos.ypos;	
+	return is;
+}
+
+
+
+int main(void)
+{
+	Point pos1;
+	cout << "x,y ÁÂÇ¥ ¼øÀ¸·Î ÀÔ·Â : ";
+	cin >> pos1;
+	cout << pos1;
+
+	Point pos2;
+	cout << "x,y ÁÂÇ¥ ¼øÀ¸·Î ÀÔ·Â : ";
+	cin >> pos2;
+	cout << pos2;
+
+	return 0;
+
+}
+
+
+¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ   11-1  ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ
+
+//¹®Á¦ 1
+#include <iostream>
+#include <cstring>
+using namespace std;
+
+class Gun
+{
+private:
+	int bullet;    	// ÀåÀüµÈ ÃÑ¾ËÀÇ ¼ö
+public:
+	Gun(int bnum) : bullet(bnum)
+	{ }
+	void Shut()
+	{
+		cout << "BBANG!" << endl;
+		bullet--;
+	}
+	void ShowData()
+	{
+		cout << "bullet : " << bullet << endl;
+	}
+};
+
+class Police
+{
+private:
+	int handcuffs;    // ¼ÒÀ¯ÇÑ ¼ö°©ÀÇ ¼ö
+	Gun * pistol;     // ¼ÒÀ¯ÇÏ°í ÀÖ´Â ±ÇÃÑ
+public:
+	Police(int bnum, int bcuff)
+		: handcuffs(bcuff)
+	{
+		if (bnum>0)
+			pistol = new Gun(bnum);
+		else
+			pistol = NULL;
+	}
+	//1.º¹»ç »ý¼ºÀÚ
+	Police(const Police& ref)
+		:handcuffs(ref.handcuffs)
+	{
+		if (ref.pistol != NULL) {
+			pistol = new Gun(*(ref.pistol));
+		}
+		else {
+			pistol = NULL;
+		}
+	}
+	
+	void PutHandcuff()
+	{
+		cout << "SNAP!" << endl;
+		handcuffs--;
+	}
+	void Shut()
+	{
+		if (pistol == NULL)
+			cout << "Hut BBANG!" << endl;
+		else
+			pistol->Shut();
+	}
+	void ShowData()
+	{
+		cout << "handcuffs : " << handcuffs << endl;
+		pistol->ShowData();
+	}
+	~Police()
+	{
+		if (pistol != NULL)
+			delete pistol;
+	}
+	//2.´ëÀÔ¿¬»êÀÚ
+	Police& operator=(const Police& ref)
+	{
+		if (pistol != NULL) {
+			delete pistol;
+		}
+		if (ref.pistol != NULL)
+			pistol = new Gun(*(ref.pistol));
+		else
+			pistol = NULL;
+		handcuffs = ref.handcuffs;
+		return *this;
+	}
+};
+
+int main(void)
+{
+	Police p1(10, 20);	//¼ö°©10°³ , ÃÑ¾Ë 20°³ º¸À¯
+	cout << "---p1 ÃÊ±â »óÅÂ---" << endl;
+	p1.ShowData();
+	p1.Shut();			//¼ö°©10°³ , ÃÑ¾Ë 19°³ º¸À¯
+	cout << "--p1.Shut() ÈÄ p1 »óÅÂ--" << endl;
+	p1.ShowData();
+
+
+	Police p2(0, 0);	//¼ö°©0°³ , ÃÑ¾Ë 0°³
+	p2 = p1;
+	cout << "--p2 ÃÊ±â »óÅÂ --" << endl;	
+	p2.ShowData();
+	p2.PutHandcuff();
+	p2.Shut();
+	cout << "--- p2 ¼ö°©, ÃÑ¾Ë1 »ç¿ë ÈÄ ---" << endl;
+	cout << "--p1--" << endl;
+	p1.ShowData();
+	cout << "--p2--" << endl;
+	p2.ShowData();
+	return 0;
+}
+
+
+
+//¹®Á¦ 2¹ø
+#include <iostream>
+#include <cstring>
+#define DEBUG 0
+using std::endl; using std::cout;
+class Book
+{
+private:
+	char *title;	// Ã¥ÀÇ Á¦¸ñ
+	char *isbn;		// ±¹Á¦Ç¥ÁØµµ¼­¹øÈ£
+	int price;		// Ã¥ÀÇ Á¤°¡
+public:
+
+	Book(char *_title = "noname", char *_isbn = "noname", int _price = 0)
+		:price(_price)
+	{
+#if(DEBUG)
+		cout << "Book(char*,char*,int)" << endl;
+#endif
+		title = new char[strlen(_title) + 1];
+		isbn = new char[strlen(_isbn) + 1];
+
+		strcpy(title, _title);
+		strcpy(isbn, _isbn);
+	}
+	//±íÀº º¹»ç »ý¼ºÀÚ
+	Book(const Book& ref)
+		:price(ref.price)
+	{
+#if(DEBUG)
+		cout << "Book(const Book& ref)" << endl;
+#endif
+		title = new char[strlen(ref.title) + 1];
+		isbn = new char[strlen(ref.isbn) + 1];
+		strcpy(title, ref.title);
+		strcpy(isbn, ref.isbn);
+	}
+
+	//±íÀº º¹»ç¸¦ À§ÇÑ ´ëÀÔ ¿¬»êÀÚ
+	//b2=b1; == b2.operator(b1);
+	Book& operator=(const Book&ref)
+	{
+#if(DEBUG)
+		cout << title << "»èÁ¦" << endl;
+		cout << isbn << "»èÁ¦" << endl;
+#endif
+		delete[]title;
+		delete[]isbn;
+
+		title = new char[strlen(ref.title) + 1];
+		isbn = new char[strlen(ref.isbn) + 1];
+		strcpy(title, ref.title);
+		strcpy(isbn, ref.isbn);
+		price = ref.price;
+		return *this;
+	}
+	void SetBook(int money)
+	{
+		price = money;
+	}
+	void ShowBookInfo() const
+	{
+		cout << "Á¦¸ñ: " << title << endl;
+		cout << "ISBN: " << isbn << endl;
+		cout << "°¡°Ý: " << price << endl;
+	}
+	~Book()
+	{
+#if(DEBUG)
+		cout << "~Book()" << endl;
+		cout << title << "»èÁ¦" << endl;
+		cout << isbn << "»èÁ¦" << endl;
+#endif
+		delete[]title;
+		delete[]isbn;
+	}
+};
+
+
+class EBook : public Book
+{
+private:
+	char * DRMKey;	//º¸¾È°ü·Ã Å°
+public:
+	EBook(char *_title = "noname", char *_isbn = "noname", int _price = 0, char *_DRMKey = "nokey")
+		:Book(_title, _isbn, _price)
+	{
+#if(DEBUG)
+		cout << "EBook(char*,char*,int,char*)" << endl;
+#endif
+		DRMKey = new char[strlen(_DRMKey) + 1];
+		strcpy(DRMKey, _DRMKey);
+	}
+	//±íÀº º¹»ç¸¦ À§ÇÑ º¹»ç »ý¼ºÀÚ
+	EBook(const EBook& ref)
+		:Book(ref)
+	{
+#if(DEBUG)
+		cout << "EBook(const EBoo& ref)" << endl;
+#endif
+		DRMKey = new char[strlen(ref.DRMKey) + 1];
+		strcpy(DRMKey, ref.DRMKey);
+	}
+	//±íÀº º¹»ç¸¦ À§ÇÑ ´ëÀÔ ¿¬»êÀÚ
+	EBook& operator=(const EBook&ref)
+	{
+#if(DEBUG)
+		cout << DRMKey << "»èÁ¦" << endl;
+#endif
+		Book::operator=(ref);
+		delete[]DRMKey;		
+		DRMKey = new char[strlen(ref.DRMKey) + 1];
+		strcpy(DRMKey, ref.DRMKey);
+		return *this;
+	}	
+	void ShowEBookInfor()
+	{
+		ShowBookInfo();
+		cout << "ÀÎÁõÅ°: " << DRMKey << endl;
+	}
+	~EBook()
+	{
+#if(DEBUG)
+		cout << "~EBook()" << endl;
+		cout << DRMKey << "»èÁ¦" << endl;
+#endif
+		delete[]DRMKey;
+	}
+
+};
+
+
+int main(void)
+{
+	//1) Book(Base)Å¬·¡½º È®ÀÎ
+	//Book b1("¿­Ç÷C++", "123", 20000);
+	//Book b2(b1);
+	//Book b3;
+	//b3 = b1;
+	//b2.SetBook(15000);
+	//cout << "------º¹»ç»ý¼ºÀÚ¸¦ ÅëÇØ b2 »ý¼º & b2 °¡°ÝÁ¤º¸ º¯°æ" << endl;
+	//cout<<"--------b1 Á¤º¸-------" << endl;
+	//b1.ShowBookInfo();
+	//cout << "------b2 Á¤º¸-------" << endl;
+	//b2.ShowBookInfo();
+	//cout << "------b3 Á¤º¸------" << endl;
+	//b3.ShowBookInfo();
+
+	//2) EBook(derived)Å¬·¡½º º¹»ç »ý¼ºÀÚ È®ÀÎ
+	//cout << "------e1 »ý¼º------" << endl;
+	//EBook e1("¿­Ç÷C++", "123", 2000, "abcdef");
+	//cout << "------e1º¹»çº» e2 »ý¼º------" << endl;
+	//EBook e2(e1);
+	//cout << "------e1 Á¤º¸------" << endl;
+	//e1.ShowEBookInfor();
+	//cout << "------e1 Á¤º¸------" << endl;
+	//e2.ShowEBookInfor();
+
+	//3) EBook(derived)Å¬·¡½º ´ëÀÔ ¿¬»êÀÚ È®ÀÎ
+	cout << "------e1 »ý¼º------" << endl;
+	EBook e1("¿­Ç÷C++", "123", 2000, "abcdef");
+	cout << "------e2 »ý¼º------" << endl;
+	EBook e2("¿­Ç÷java", "456", 1500, "aaaaa");
+	cout << "------e1=e2  -----" << endl;
+	e1 = e2;
+	cout << "------e1 Á¤º¸------" << endl;
+	e1.ShowEBookInfor();
+	cout << "-------------------" << endl;
+
+
+	return 0;
+
+}
+
+¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ   11-2  ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ
+
+//1¹ø¹®Á¦
+
+#include <iostream>
+#include <cstdlib>
+using namespace std;
+
+class Point
+{
+private:
+	int xpos, ypos;
+public:
+	Point(int x = 0, int y = 0) : xpos(x), ypos(y) {  }
+	friend ostream& operator<<(ostream& os, const Point& pos);
+	friend ostream& operator<<(ostream& os, const Point* pos);
+};
+
+ostream& operator<<(ostream& os, const Point& pos)
+{
+	os << '[' << pos.xpos << ", " << pos.ypos << ']' << endl;
+	return os;
+}
+
+ostream& operator<<(ostream& os, const Point* pos)
+{
+	os << '[' << pos->xpos << ", " << pos->ypos << ']' << endl;
+	return os;
+}
+
+
+typedef Point * POINT_PTR;
+
+class BoundCheckPointPtrArray
+{
+private:
+	POINT_PTR * arr;
+	int arrlen;
+
+	BoundCheckPointPtrArray(const BoundCheckPointPtrArray& arr) { }
+	BoundCheckPointPtrArray& operator=(const BoundCheckPointPtrArray& arr) { }
+
+public:
+	BoundCheckPointPtrArray(int len) :arrlen(len)
+	{
+		arr = new POINT_PTR[len];
+	}
+	POINT_PTR& operator[] (int idx)
+	{
+		if (idx<0 || idx >= arrlen)
+		{
+			cout << "Array index out of bound exception" << endl;
+			exit(1);
+		}
+
+		return arr[idx];
+	}
+	POINT_PTR operator[] (int idx) const
+	{
+		if (idx<0 || idx >= arrlen)
+		{
+			cout << "Array index out of bound exception" << endl;
+			exit(1);
+		}
+
+		return arr[idx];
+	}
+	int GetArrLen() const
+	{
+		return arrlen;
+	}
+	~BoundCheckPointPtrArray()
+	{
+		delete[]arr;
+	}
+};
+
+int main(void)
+{
+	BoundCheckPointPtrArray arr(3);
+	arr[0] = new Point(3, 4);
+	arr[1] = new Point(5, 6);
+	arr[2] = new Point(7, 8);
+
+	for (int i = 0; i<arr.GetArrLen(); i++)
+		cout << *(arr[i]);
+
+	delete arr[0];
+	delete arr[1];
+	delete arr[2];
+	return 0;
+}
+
+
+//2¹ø¹®Á¦
+
+
+
+
+
+¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ   13-1  ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ
+
+//1¹ø¹®Á¦
+
+#include <iostream>
+using std::cout; using std::endl;
+
+class Point
+{
+private:
+	int xpos, ypos;
+public:
+	Point(int x = 0, int y = 0)
+		:xpos(x), ypos(y) {}
+	void ShowPosition() const
+	{
+		cout << '[' << xpos << ", " << ypos <<']'<< endl;
+	}
+	Point& operator=(const Point& ref)
+	{
+		xpos = ref.xpos;
+		ypos = ref.ypos;
+		return *this;
+	}
+};
+
+template <typename T>
+void SwapData(T& num1, T& num2)
+{
+	T temp;
+	temp=num1;	
+	num1 = num2;
+	num2 = temp;
+}
+
+
+int main(void)
+{
+	Point pos1(1, 5);
+	Point pos2(10, 50);
+	
+	cout << "--½º¿Ò Àü---" << endl;
+	cout << "Pos1 : "; pos1.ShowPosition();
+	cout << "Pos2 : "; pos2.ShowPosition();
+	SwapData(pos1, pos2);
+	//==SwapData<Point>(pos1, pos2);
+	cout << "--½º¿Ò ÈÄ---" << endl;
+	cout << "Pos1 : "; pos1.ShowPosition();
+	cout << "Pos2 : "; pos2.ShowPosition();
+
+	return 0;
+}
+
+
+
+//2¹ø¹®Á¦
+
+#include <iostream>
+using std::cout; using std::endl;
+
+template <typename T>
+T SumArray(T arr[], int len)
+{
+	T sum = (T)0;//T Å¸ÀÔÀ¸·Î Ä³½ºÆÃ(»ç½Ç»ó Çü½ÄÀû)
+	for (int i = 0; i < len; i++) {
+		sum += arr[i];
+	}
+	return sum;
+}
+
+
+
+
+int main(void)
+{
+	int arr[] = { 1,2,3,4,5 };
+	double arr2[] = { 1.2,3.8,4.5,3.2,1.8 };
+
+	cout << "int arr[5]ÀÇ ÇÕ : " << SumArray(arr,sizeof(arr)/sizeof(int)) << endl;
+	cout << "double arr2[5]ÀÇ ÇÕ : " << SumArray(arr2,sizeof(arr2)/sizeof(double)) << endl;
+	
+	return 0;
+}
+
+¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ   02-3  ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ
+¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ   02-3  ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ
+¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ   02-3  ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ
+¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ   02-3  ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ
+¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ   02-3  ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ
+
+
+
+
+
+
+
+
+
+

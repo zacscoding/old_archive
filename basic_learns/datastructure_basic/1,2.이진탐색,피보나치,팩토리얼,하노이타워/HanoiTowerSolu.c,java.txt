@@ -1,0 +1,89 @@
+---------------------------------------------------------------------------------
+/*c언어*/
+
+#include <stdio.h>
+#include <Windows.h>
+
+void hanoiTower(int num, char from,char by, char to);
+
+int main(void)
+{
+	int num;
+	while (1) {
+		printf("하노이타워의 원반수를 입력해주세요(종료 -1) : ");
+		scanf("%d", &num);
+		if (num == -1) break;
+		hanoiTower(num, 'A', 'B', 'C');
+		putchar('\n');
+		system("pause");
+		system("cls");
+	}
+	return 0;
+}
+
+void hanoiTower(int num, char from,char by,char to)	//4,A,B,C
+{
+	//기저사례
+	if (num == 1) {
+		printf("원반1을 %c에서 %c로 이동\n", from, to);
+		return;
+	}
+	//문제해결	
+	hanoiTower(num - 1, from, to, by);
+	printf("원반%d을(를) %c에서 %c로 이동\n", num, from, to);
+	hanoiTower(num - 1, by, from, to);
+	
+}
+
+
+---------------------------------------------------------------------------------
+
+/*자바 */
+
+import java.util.Scanner;
+public class HanoiTower {	
+	public static void main(String[] args) {
+		Scanner sc=new Scanner(System.in);
+		while(true){
+			System.out.print("하노이타워의 원반 수 입력  (종료 : -1) : ");
+			int num=sc.nextInt();
+			if(num==-1){
+				break;
+			} 
+			hanoiTower(num,'A','B','C');		
+			System.out.println("");
+			
+		}	
+	}
+	
+	public static void hanoiTower(int num,char from,char by,char to) {
+		if(num==1){
+			System.out.printf("원반1을 %c에서 %c로 이동\n",from,to);
+		} else {
+			hanoiTower(num-1,from,to,by);
+			System.out.printf("원반%d을(를) %c에서 %c로 이동\n",num,from,to);
+			hanoiTower(num-1,by,from,to);
+		}
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

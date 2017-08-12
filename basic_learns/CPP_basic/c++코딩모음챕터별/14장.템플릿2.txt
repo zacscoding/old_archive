@@ -1,0 +1,441 @@
+-------------------------ch14.템플릿(Template)2---------------------
+
+(Intro)
+class template - template class - 객체생성의 관계 
+=>다양하게 적용(내용의 확장)
+
+---------------------------------------------------------------------
+//14-1 ch.13에서 공부한 내용의 확장
+
+일반적인 배열 클래스 템플릿
+
+BouundCheckArray, Point 클래스가 존재할때
+
+-BoundCheckArray<int> iarr(50);		//int형 데이터 저장 배열
+-BoundCheckArray<Point<int>> oarr(50);	//Point<int> 객체 저장 배열
+-BoundCheckArray<Point<int>*> oparr(50);//Point<int>형 포인터 저장 배열
+==
+-typedef Point<int>* POINT_PTR;
+ BoundCheckArray<POINT_PTR> oparr(50);	//Point<int>형 포인터 저장 배열
+
+==>Point<int>*와 같은 껄끄러운 것을 typedef로 선언.
+결과적으로 똑같지만, typedef 문장이 더 세련되었다고 생각
+
+
+예제
+---Point.h------
+#ifndef __POINT_TEMPLATE_H__
+#define __POINT_TEMPLATE__H__
+
+#include <iostream>
+using std::cout; using std::endl;
+
+template <typename T>
+class Point
+{
+private:
+	T xpos, ypos;
+public:
+	Point(T x=0,T y=0)
+	{
+		xpos = x;
+		ypos = y;
+	}
+	void ShowPosition() const
+	{
+		cout << '[' << xpos << ", " << ypos <<']'<< endl;
+	}
+};
+#endif
+
+---BoundCheckArray.h------
+
+#ifndef __BOUND_CHECK_H__
+#define __BOUND_CHECK_H__
+
+#include <iostream>
+#include <cstdlib>
+
+template <typename T>
+class BoundCheckArray
+{
+private:
+	T* arr;
+	int arrlen;
+	BoundCheckArray& operator=(const BoundCheckArray& ref) {}
+	BoundCheckArray(const BoundCheckArray& ref) {}
+public:
+	BoundCheckArray(int len)
+		:arrlen(len)
+	{
+		arr = new T[arrlen];
+	}
+
+	T& operator[](int idx)
+	{
+		if (idx < 0 || idx >= arrlen) {
+			cout << "Index error" << endl;
+			exit(1);
+		}
+		return arr[idx];
+	}
+
+	T operator[](int idx) const
+	{
+		if (idx < 0 || idx >= arrlen) {
+			cout << "Index error" << endl;
+			exit(1);
+		}
+		return arr[idx];
+	}
+
+	int GetArrLen() const
+	{
+		return arrlen;
+	}
+	
+	~BoundCheckArray()
+	{
+		delete[] arr;
+	}
+};
+#endif
+
+
+--Main.cpp--
+#include "Point.h"
+#include "BoundCheckArray.h"
+
+int main(void)
+{
+	BoundCheckArray<int> iarr(3);
+	for (int i = 0; i < iarr.GetArrLen(); i++) {
+		iarr[i] = i + 10;
+	}
+	cout << "--BoundCheckArray<int>형 객체---" << endl;
+	for (int i = 0; i < iarr.GetArrLen(); i++) {
+		cout << iarr[i] << " ";
+	}
+	cout << endl<<endl;
+
+	
+	BoundCheckArray<Point<int>> parr(3);
+	for (int i = 0; i < parr.GetArrLen(); i++) {
+		parr[i] =Point<int>(i+1,i+2);
+	}
+	cout << "--BoundCheckArray<Point<int>>형 객체---" << endl;
+	for (int i = 0; i < parr.GetArrLen(); i++) {
+		parr[i].ShowPosition();
+	}
+	cout << endl;
+
+
+	typedef Point<int>* POINT_PTR;
+	BoundCheckArray<POINT_PTR> pparr(3);
+	for (int i = 0; i < pparr.GetArrLen(); i++) {
+		pparr[i] = new Point<int>(i + 10, i + 11);
+	}
+	cout << "--BoundCheckArray<Point<int*>>형 객체---" << endl;
+	for (int i = 0; i < pparr.GetArrLen(); i++) {
+		pparr[i]->ShowPosition();
+	}
+
+	for (int i = 0; i < pparr.GetArrLen(); i++) {
+		delete pparr[i];
+	}
+
+	return 0;
+
+
+}
+
+---------------------------------------------------------------------
+//템플릿 클래스 대상의 함수선언과 fried 선언
+
+Point 클래스에서
+{
+
+ friend Point<int> operator+(const Point<int>&);
+ friend ostream& operator<<(ostream& os,const Point<int>& pos);
+}
+
+==>정의된 두 함수에 대해 friend선언이 가능
+==>Point<int> operator+는 +연산자를 오버로딩 하는 일반 함수이다.
+==>즉, 템플릿 클래스인 Point<int>의 객체 둘을 인자로 전달받는 일반 함수이다.
+
+---------------------------------------------------------------------
+
+//14-2 클래스 템플릿의 특수화
+
+(intro)
+함수 템플릿의 특수화와 방법, 이유 같음
++부분 특수화 <<가 포커스
+
+template <typename T>
+class SoSimple
+{
+ public:
+  T SimpleFunc(T num){..}
+};
+
+==>SoSimple 클래스 템플릿에 대해서 int형에 대한 특수화
+template<>
+class SoSimple<int>
+{
+ public:
+  int SimpleFunc(int num){...}
+};
+
+-클래스 템플릿을 특수화하는 이유는 특정 자료형을 기반으로 생성된 객체에 대해,
+구분이 되는 다른 행동 양식을 적용하기 위함이다.
+( =>구분이 되는 다른행동?
+  :OOP 에서 클래스 정의 ==사물을 정의(데이터 + 기능) => 기능이 있어 자기만의 행동양식이 정해져있다. 
+  =>클래스가 정의되면 행동양식에는 변화가 없다. 
+)
+
+-함수 템플릿을 특수화하는 방법과 이유, 그리고 클래스 템플릿을 특수화하는 방법과
+이유는 동일하다.
+
+---------------------------------------------------------------------
+
+//클래스 템플릿의 부분 특수화(Class Template Specialization)
+
+기존 템플릿)
+template <typename T1,typename T2>
+class MySimple{..}			//MySimple 클래스 템플릿
+
+=>class template
+
+--추가로 적용되는 특수화
+1)
+template<>
+class MySimple<char,int>{....}		//MySimple 클래스 템플릿의 <char,int>에 대한 특수화
+
+=>template class
+
+2)
+template <typename T1>
+class MySimple<T1,int>{....}		//MySimple 클래스 템플릿의 <T1,int>에 대한 부분적 특수화
+					//class Template partial specialization
+=>T2가 int인 경우에는 MySimple<T1,int>를 대상으로 인스턴스가 생성된다.
+=>class template
+
+int main()
+{
+ MySimple<int,double> 	=>기존 템플릿을 찍어냄
+ MySimple<double,int> 	=>2)의 MySimple<T1,int>의 클래스를 찍어냄
+ MySimple<char,int>	=>1)의 MySimple<char,int>의 클래스를 찍어냄 (부분특수화보다 우선적용)
+ ..
+}
+
+---------------------------------------------------------------------
+
+//14-3 템플릿 인자
+
+==><typename T1>에서 T1은 템플릿 매개변수 & 템블릿 매게변수에 전달되는 자료형 정보를 가리켜
+   '템플릿 인자' 라고함
+==>템플릿 매개변수에는 변수의 선언이 올 수 있음
+
+
+template <typename T,int len>
+class SimpleArray
+{
+ private:
+  T arr[len];
+ public:
+  T& operator[] (int idx)
+  {
+	return arr[idx];
+  }
+};
+
+main()에서
+SimpleArray<int,5> i5arr; 선언하면
+---------
+class SimpleArray
+{
+ private:
+  int arr[5];
+ public:
+  int& operator[] (int idx)
+  {
+	return arr[idx];
+  }
+};
+----------
+의 클래스(len을 5로 치환한)를 찍어내고 객체 생성
+SimpleArray<int,7>;을 선언하면
+len이 7인 새로운 클래스 찍어내고 객체 생성
+
+==>
+SimpleArray<int,5> i5arr1;
+SimpleArray<int,7> i7arr1;
+i5arr1=i7arr1;		//컴파일 에러!
+ 
+
+==>
+템플릿 인자를 통해서 SimpleArray<int,5>와 SimpleArray<int,7>이 서로 다른 자료형으로
+인식되게 할 수 있다.
+==>길이가 다른 두 배열 객체간의 대입은 허용되지 않는다.
+이로써 SimpleArray<int,5>와 SimpleArray<int,7> 사이에서의 연계성을 완전히 제거할 수 있다.
+
+
+
+---------------------------------------------------------------------
+
+//템플릿 매개변수는 디폴트 값 지정
+
+template <typename T=int,int len=7>
+class SimpleArray
+{
+ private:
+  T arr[len];
+ public:
+  T& operator[] (int idx)
+  {
+	return arr[idx];
+  }
+};
+
+int main(void)
+{
+ SimpleArray<> arr;	//==SimpleArray<int,7>의 클래스 찍어내고 객체생성
+ ..
+}
+---------------------------------------------------------------------
+
+//14-4 템플릿과 static
+
+(Question)
+함수,클래스 => 템플릿으로 정의
+=>함수  -> 변수 static -> 함수<int>, 함수<double> 각각 static 변수가 만들어짐
+=>class -> 멤버 static -> class<int>, class<double>
+==>컴파일러가 함수,클래스를 찍어낼때 변수 만들어짐
+
+//함수 템플릿과 static 지역변수
+
+--함수 템플릿--
+template <typename T>
+void ShowStaticValue(void)
+{
+	static T num = 0;
+	num += 1;
+	cout << num << " ";
+}
+
+--ShowStaticValue<int>(); 선언
+void ShowStaticValue(void)
+{
+	static int num = 0;
+	num += 1;
+	cout << num << " ";
+}
+
+--ShowStaticValue<long>(); 선언
+void ShowStaticValue(void)
+{
+	static long num = 0;
+	num += 1;
+	cout << num << " ";
+}
+
+==>각각 선언
+
+---------------------------------------------------------------------
+//클래스 템플릿과 static멤버변수
+
+template <typename T>
+class SimpleStaticMem
+{
+private:
+	static T mem;
+public:
+	void AddMem(int num)
+	{
+		mem += num;
+	}
+	void ShowMem()
+	{
+		cout << mem << endl;
+	}
+}; //<<<여기까지가 위의 template <typename T>의 유효 범위
+
+template <typename T>	//그래서 T를 별도로 선언
+T SimpleStaticMem<T>::mem = 0;	//템플릿 기반의 static 멤버 초기화 문장
+
+---------
+
+class SimpleStaticMem<int>
+{
+private:
+	static int mem;
+public:
+	void AddMem(int num)
+	{
+		mem += num;
+	}
+	void ShowMem()
+	{
+		cout << mem << endl;
+	}
+};
+
+int SimpleStaticMem<int>::mem = 0;
+
+==>SimpleStaticMem<int>의 mem은 SimpleStaticMem<int>의 객체간 공유
+
+---------------------------------------------------------------------
+
+//template<typename T> vs template<>
+
+template <typename T>
+class SoSimple
+{
+public:
+	T SimpleFunc(T num){}
+};
+
+==>템플릿임을 알리며 T가 무엇인지에 대한 설명도 필요한 상황
+
+template <>
+class SoSimple<int>
+{
+public:
+	int SimpleFunc(int num){}
+};
+
+==>템플릿과 관련 있음을 알리기만 하면 되는 상황
+
+==>즉,
+템플릿의 일부 또는 전부를 정의하고 있다고 컴파일러에게 알리려면 template<>선언
+그다음 T가 쓰이고 있으면 typename T를 추가해줘야함.특수화 같은 경우는 template<>
+
+
+---------------------------------------------------------------------
+//static 멤버 초기화
+template <typename T>
+T SimpleStaticMem<T>::mem=0;
+==>T에 오는 자료형에 상관없이 mem을 0으로 초기화
+==>static 멤버 초기화의 특수화(즉, long형일때만 다르게 초기화 하고싶음)
+
+template<>
+long SimpleStaticMem<long>::mem=5;
+
+---------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,84 @@
+11장.메소드 오버로딩과 String 클래스
+
+--------------------------------------------------------------------------
+
+//this를 이용한 생성자 호출
+
+class Person
+{
+	private int perID;	//민번
+	private int milID;	//군번
+	private int birthYear;
+	private int birthMonth;
+	private int birthDay;
+	
+	public Person(int perID,int milID,int bYear,int bMonth,int bDay)
+	{
+		this.perID=perID;
+		this.milID=milID;
+		birthYear=bYear;
+		birthMonth=bMonth;
+		birthDay=bDay;
+	}
+	public Person(int pID,int bYear,int bMonth,int bDay)
+	{
+		this(pID,0,bYear,bMonth,bDay);
+	}
+	public void showInfo()
+	{
+		System.out.println("민번 : "+perID);
+		System.out.println("생년 월일 : "+birthYear+"/"+birthMonth+"/"+birthDay);
+		if(milID!=0){
+			System.out.println("군번 : "+milID+'\n');
+		}else{
+			System.out.println("군과 관계 없음 \n");
+		}
+	}
+}
+public class CstOverloading {
+	public static void main(String[] args)
+	{
+		Person man=new Person(951203,880102,1955,12,3);
+		Person woman=new Person(991107,1999,11,7);
+		
+		man.showInfo();
+		woman.showInfo();
+		
+	}	
+	
+}
+
+--------------------------------------------------------------------
+
+
+--------------------------------------------------------------------
+--------------------------------------------------------------------
+--------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

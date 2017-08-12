@@ -1,0 +1,494 @@
+
+
+//입력 순서 : 45,27,17,62,57,52,73,65,63,64,69,71,76
+#include <stdio.h>
+#include <stdlib.h>
+#include <Windows.h>
+
+typedef struct node {
+ struct node *Slink;
+ int data;
+ struct node *Llink;
+}NODE;
+
+void print_menu(void);  //메뉴 출력함수
+void show_tree(NODE *);     //void show_tree(NODE *);   //트리를 보여주는 함수
+void gotoxy(int x, int y);  //좌표 출력
+void add_init(NODE **);  //1-1.데이터 추가(데이터 검색해서 존재여부 확인)
+void add(NODE *, int );  //1-2 노트생성 + 연결
+void del(NODE **p);   //2.데이터 삭제
+void del_func(NODE *, int, int);  //2-1 데이터 삭제
+NODE* find_min(NODE *, NODE **);  //2-2 오른쪽 최소값 찾기
+void swap(NODE*);   //왼쪽 연결리스트랑 자료 바꾸기
+void preorder(NODE *);  //3.preoder
+void inorder(NODE *);  //4.inorder
+void postorder(NODE *p); //5.postorder
+void search_data(NODE *); //6.data 검색함수
+int result_of_search(NODE *, int);  //6.data 검색 함수
+void del_node(NODE *);  //8.종료 (동적 할당 해제)
+
+int main(void)
+{
+ A:
+ //45,62를 처음으로 할당해서 연결함.
+ NODE *list = (NODE *)malloc(sizeof(NODE));
+ NODE *p = (NODE *)malloc(sizeof(NODE));
+ int choice, result;
+ 
+ //초기 설정
+ list->Slink = NULL; list->Llink = p; list->data = 45;
+ p->Slink = NULL; p->Llink = NULL; p->data = 62;
+
+
+ while (1) {
+  show_tree(list);
+  print_menu();
+  scanf("%d", &choice);
+  if (choice < 1 || choice>8) {
+   system("pause");
+   system("cls");
+   continue;
+  }
+
+  else if (choice == 1) {
+   add_init(&list);
+   //system("pause");
+   system("cls");
+  }
+
+  else if (choice == 2) {
+   del(&list);
+   //system("pause");
+   system("cls");
+  }
+
+  else if (choice == 3) {
+   preorder(list);
+   system("pause");
+   system("cls");
+  }
+
+  else if (choice == 4) {
+   inorder(list);
+   system("pause");
+   system("cls");
+  }
+
+  else if (choice == 5) {
+   postorder(list);
+   system("pause");
+   system("cls");
+  }
+
+
+  else if (choice == 6) {
+   search_data(list);
+   system("cls");
+  }
+
+  else if (choice == 7) {
+   del_node(list);
+   system("cls");
+   goto A;
+  }
+
+  else if (choice == 8) {
+   del_node(list);
+   return 0;
+  }
+ }
+}
+
+//메뉴 출력함수
+void print_menu(void)
+{
+ gotoxy(0, 12);
+ puts("1.data 추가");
+ puts("2.data 삭제");
+ puts("3.preorder");
+ puts("4.inorder");
+ puts("5.postorder");
+ puts("6.data 검색");
+ puts("7.초기화");
+ puts("8.종료");
+ printf(">>>>> ");
+}
+
+
+//현재 트리 상태를 보여주는 함수
+//x는 열, y는행
+
+void gotoxy(int x, int y) {
+ COORD pos = { x,y };
+ SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), pos);
+}
+
+void show_tree(NODE *p)
+{
+ if (p == NULL) {
+  return;
+ }
+ else {
+  static int i = 0;
+  static int j = 50;
+  int k;
+  int count = 0;
+  gotoxy(j, i);
+  printf("%d", p->data);
+  if (p->Slink != NULL) {
+   i += 2;
+   j -= 4;
+   count++;
+   gotoxy(j, i);
+   show_tree(p->Slink);
+  }
+  for (k = 0; k < count; k++) {
+   i -= 2;
+   j += 4;
+  }
+
+  count = 0;
+  if (p->Llink != NULL) {
+   i += 2;
+   j += 4;
+   count++;
+   gotoxy(j, i);
+   show_tree(p->Llink);
+  }
+  for (k = 0; k < count; k++) {
+   i -= 2;
+   j -= 4;
+  }
+ }
+}
+
+//1.1데이터 추가
+void add_init(NODE **qlist)
+{
+ int data, result;
+ NODE *p;
+
+ printf("숫자 입력 : ");
+ scanf("%d", &data);
+
+
+ //초기 연결이 없는 경우
+ if (*qlist == NULL) {
+  *qlist = (NODE*)malloc(sizeof(NODE));
+  (*qlist)->data = data;
+  (*qlist)->Slink = NULL;
+  (*qlist)->Llink = NULL;
+ }
+
+ //기존 연결이 있는 경우
+ else {
+  result = result_of_search(*qlist, data); //데이터 존재 여부
+
+           //input데이터가 존재하는 경우
+  if (result == 1) {
+   printf("data 존재합니다");
+   system("pause");
+  }
+  //input데이터가 없는 경우
+  else {
+   add(*qlist, data);
+  }
+ }
+}
+
+//1.2노드 생성 + 기존 데이터 연결
+void add(NODE *p, int data)
+{
+ NODE *tmp;
+ //input데이터가 data보다 작은경우
+ if (data < p->data) {
+  //왼쪽 연결이 없는 경우
+  if (p->Slink == NULL) {
+   tmp = (NODE*)malloc(sizeof(NODE));
+   tmp->data = data;
+   p->Slink = tmp;
+   tmp->Slink = NULL; tmp->Llink = NULL;
+   return;
+  }
+  //왼쪽 연결이 있는 경우
+  else {
+   add(p->Slink, data);
+  }
+ }
+ //input데이터가 data보다 큰경우
+ else {
+  if (p->Llink == NULL) {
+   tmp = (NODE*)malloc(sizeof(NODE));
+   tmp->data = data;
+   p->Llink = tmp;
+   tmp->Slink = NULL; tmp->Llink = NULL;
+   return;
+  }
+  //왼쪽 연결이 있는 경우
+  else {
+   add(p->Llink, data);
+  }
+ }
+
+}
+
+
+//2.데이터 삭제 함수 (메뉴 출력 + 데이터 입력)
+void del(NODE **qlist)
+{
+ int data;
+ int result;
+ printf("삭제할 데이터 입력 : ");
+ scanf("%d", &data);
+ result = result_of_search(*qlist, data);
+ if (result == 0) {
+  printf("데이터가 없습니다.\n");
+  return;
+ }
+ else {
+  //연결이 없는 초기 노드를 삭제하는 경우
+  if (((*qlist)->data == data) && (*qlist)->Slink == NULL && (*qlist)->Llink == NULL) {
+   free(*qlist);
+   *qlist = NULL;
+  }
+  else {
+   del_func(*qlist, data, 0);
+  }
+ }
+}
+//2-1데이터 삭제
+void del_func(NODE *p, int data, int n)
+{
+
+ NODE *tmp;
+ static NODE *prev = NULL;
+ NODE *q = NULL;
+
+ //삭제 데이터랑 현재 데이터랑 같은경우
+ if (data == p->data) {
+  //삭제 데이터의 연결리스트가 없는 경우
+  if (p->Slink == NULL&&p->Llink == NULL) {
+   if (n == -1) {
+    prev->Slink = NULL;
+   }
+   else {
+    prev->Llink = NULL;
+   }
+   free(p);
+  }
+
+  //삭제 데이터의 연결리스트가 최소 1개는 존재
+  else {
+   //삭제 자료의 오른쪽 연결리스트가 존재하는 경우
+   if (p->Llink != NULL) {
+    //삭제데이터 오른쪽의 왼쪽이 있는 경우
+    if (p->Llink->Slink != NULL) {
+     prev = p;
+     tmp = find_min(p->Llink, &prev);
+     p->data = tmp->data;
+     if (tmp->Llink != NULL) {
+      prev->Slink = tmp->Llink;
+     }
+     else {
+      prev->Slink = NULL;
+     }
+    }
+    //삭제데이터 오른쪽의 왼쪽이 없는 경우
+    else {
+     prev = p;
+     tmp = find_min(p->Llink, &prev);
+     p->data = tmp->data;
+     //오른쪽의 오른쪽이 없는 경우
+     if (tmp->Llink == NULL) {
+      prev->Llink = NULL;
+
+     }
+     //오른쪽의 오른쪽이 있는 경우
+     else {
+      prev->Llink = tmp->Llink;
+
+     }
+    }
+    free(tmp);
+   }
+
+
+   //삭제 자료의 오른쪽 연결 리스트가 없는 경우(왼쪽은 있음)
+   else {
+
+    prev = p;
+    tmp = find_min(p->Slink, &prev);
+
+    swap(p);
+
+    if (tmp->Llink != NULL) {
+     prev->Slink = NULL;
+     prev->Llink = tmp->Llink;
+    }
+    else {
+     prev->Slink = NULL;
+    }
+    free(tmp);
+   }
+  }
+ }
+
+ //삭제 데이터가 현재 데이터보다 작은경우
+ else if (data < p->data) {
+  prev = p;
+  del_func(p->Slink, data, -1);
+ }
+
+ //삭제 데이터가 현재 데이터보다 큰 경우
+ //data>p->data
+ else {
+  prev = p;
+  del_func(p->Llink, data, 1);
+ }
+}
+
+//2-2 최소값 찾기
+NODE* find_min(NODE *p, NODE **pprev)
+{
+ if (p->Slink == NULL) {
+  return p;
+ }
+ else {
+  *pprev = p;
+  find_min(p->Slink, &(*pprev));
+ }
+}
+
+//왼쪽 연결리스트랑 자료 바꾸기
+void swap(NODE* p)
+{
+ int tmp;
+ NODE *q;
+ if (p->Slink != NULL) {
+  q = p->Slink;
+  tmp = p->data;
+  p->data = q->data;
+  q->data = tmp;
+ }
+
+ else return;
+
+ swap(p->Slink);
+}
+
+
+//3.preorder
+void preorder(NODE * p)
+{
+ if (p == NULL) {
+  return;
+ }
+ else {
+  printf("%d ", p->data);
+  if (p->Slink != NULL) {
+   preorder(p->Slink);
+  }
+  if (p->Llink != NULL) {
+   preorder(p->Llink);
+  }
+ }
+}
+
+
+//4.inorder
+
+void inorder(NODE *p)
+{
+ if (p == NULL) {
+  return;
+ }
+ else {
+  if (p->Slink != NULL) {
+   inorder(p->Slink);
+  }
+  printf("%d ", p->data);
+  if (p->Llink != NULL) {
+   inorder(p->Llink);
+  }
+ }
+}
+//5.postorder
+void postorder(NODE *p)
+{
+ if (p == NULL) {
+  return;
+ }
+ else {
+  if (p->Slink != NULL) {
+   postorder(p->Slink);
+  }
+  if (p->Llink != NULL) {
+   postorder(p->Llink);
+  }
+  printf("%d ", p->data);
+ }
+}
+
+
+//6.데이터 검색 함수
+void search_data(NODE *p)
+{
+ int result;
+ int data;
+ printf("input data : ");
+ scanf("%d", &data);
+
+ result = result_of_search(p, data);
+ //찾는 데이터가 있으면
+ if (result == 1) {
+  printf("%d 는 존재합니다\n", data);
+  system("pause");
+ }
+ //찾는 데이터가 없으면
+ else {
+  printf("%d 는 존재하지 않습니다.\n", data);
+  system("pause");
+  return;
+ }
+}
+//6-2데이터 검색 1,0반환 함수
+int result_of_search(NODE *p, int n)
+{
+ //검색이 끝나도 data가 없는 경우
+ if (p == NULL) {
+  return 0;
+ }
+ //n과 비교해서 같으면 1반환 , 크거나 작으면 다음 연결리스트를 재귀함수로 보냄
+ else {
+  if (n == p->data) {
+   return 1;
+  }
+  else if (n > p->data) {
+   result_of_search(p->Llink, n);
+  }
+  else if (n < p->data) {
+   result_of_search(p->Slink, n);
+  }
+ }
+}
+
+ 
+
+//8.종료 동적할당 삭제
+void del_node(NODE *p)
+{
+ if (p == NULL) {
+  return;
+ }
+ else {
+  if (p->Llink != NULL) {
+   del_node(p->Llink);
+  }
+  if (p->Slink != NULL) {
+   del_node(p->Slink);
+  }
+  free(p);
+ }
+}
+
+ 

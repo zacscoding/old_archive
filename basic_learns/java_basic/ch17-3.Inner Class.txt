@@ -1,0 +1,933 @@
+-------------------ch17-3.Inner Class-----------------------
+----------------------------------------------------------
+───────────────────────────────────────────────────────────────────────────────
+선언에 따른 분류				선언위치					설명
+───────────────────────────────────────────────────────────────────────────────
+			│인스턴스 		│class A{			│A 객체를 생성해야만 사용할 수 있는 B 중첩클래스	
+			│멤버 클래스	│ claseB{...}		│
+			│			│}					│
+			│─────────────────────────────────────────────────────────────────
+멤버 클래스	│정적			│class A{			│A클래스로 바로 접근할 수 있는 B 중첩 클래스
+			│멤버 클래스	│static class B{..}	│
+			│			│}					│
+───────────────────────────────────────────────────────────────────────────────
+로컬 클래스			   	│class A{			│	
+						│	void method(){	│ method()가 실행할 때만 사용할 수 있는 
+						│		class B{..}	│ B 중첩 클래스
+						│	}				│
+						│}					│	
+───────────────────────────────────────────────────────────────────────────────
+
+=>바이트 코드 파일(.class) 생성
+바깥 클래스$멤버클래스.class
+바깥 클래스$로컬클래스.class
+
+----------------------------------------------------------
+
+//17-3 Inner 클래스
+
+//Inner클래스와 Nested 클래스
+
+class OuterClass
+{
+	...
+	class InnerClass
+	{
+	....
+	}
+}
+
+=>클래스의 정의가 다른 클래스의 내부에 삽입 될 수 있다. 이 때 
+  외부의 클래스를 가리켜 "Outer 클래스" // 내부의 클래스를 "Inner클래스" 라고 한다.
+
+class OuterClass
+{
+	...
+	static class InnerClass
+	{
+	....
+	}
+}
+
+=>"static Inner클래스" or "Nested 클래스"
+
+----------------------------------------------------------
+
+//예제를 통한 Nested 클래스의 이해
+
+class OuterClassOne
+{
+	OuterClassOne()
+	{
+		NestedClass nst=new NestedClass();	//클래스 내부에서는 직접 생성 가능
+		nst.simpleMethod();
+	}
+	
+	static class NestedClass
+	{
+		public void simpleMethod()
+		{
+			System.out.println("Nested Instance Method One");
+		}
+	}
+}
+
+=>
+1)클래스 내부에서 직접 생성 가능
+2)클래스 외부에서는 OuterClassOne.NestedClass 를 통해 접근가능
+(cf : NestedClass가 private로 선언되면, 선언된 클래스 내부에서만 인스턴스 생성이 가능)
+
+cf :Nested 클래스는 Outer클래스의 static 멤버에 직접 접근이 가능하다는 특징이 있다.
+
+e.g) 연결리스트
+public class LinkedList<E> {
+	private static class Node<E>{...}	
+}
+
+
+----------------------------------------------------------
+
+//예제를 통한 Inner 클래스의 이해
+
+class OuterClass
+{
+	private String myName;
+	private int num;
+	
+	OuterClass(String name)
+	{
+		myName=name;
+		num=0;
+	}
+	
+	public void whoAreYou()
+	{
+		num++;
+		System.out.println(myName+ " OuterClass "+num);
+	}
+	
+	class InnerClass
+	{
+		int field1;	//가능
+		//static int filed2;	//불가능
+		InnerClass()
+		{
+			whoAreYou();
+		}
+		//static void method(){}	//불가능
+	}
+}
+
+/*
+=>InnerClass의 인스턴스를 생성해서 whoAreYou();를 호출하려면 OuterClass의 인스턴스가 존재해야됨
+  OuterClass에 의존적임
+=>Inner클래스의 성격
+-Outer클래스의 인스턴스 생성 후에야 Inner 클래스의 인스턴스 생성이 가능하다.
+-Inner클래스 내에서는 Outer클래스의 멤버에 직접 접근이 가능하다.
+-Inner 클래스의 인스턴스는 자신이 속할 Outer클래스의 인스턴스를 기반으로 생성된다.
+*/
+
+class InnerClassTest
+{	
+	public static void main(String[] args)
+	{
+		OuterClass out1=new OuterClass("First");
+		OuterClass out2=new OuterClass("Second");
+		out1.whoAreYou();
+		out2.whoAreYou();
+		
+		OuterClass.InnerClass inn1=out1.new InnerClass();
+		//out1에 종속적인 InnerClass inn1을 생성
+		OuterClass.InnerClass inn2=out2.new InnerClass();	
+		OuterClass.InnerClass inn3=out1.new InnerClass();
+		OuterClass.InnerClass inn4=out1.new InnerClass();
+		OuterClass.InnerClass inn5=out2.new InnerClass();
+	}
+}
+
++책의 그림
+out1인스턴스 안에 inn1,3,4 존재
+out2인스턴스 안에 inn2,5 존재
+
+cf)Inner 클래스는 Outer클래스의 내부에 정의되어 있기 때문에, private으로 선언된 Outer클래스의 멤버에도 접근이 가능
+
+----------------------------------------------------------
+
+//Inner클래스의 장점
+
+장점
+1)클래스들을 논리적으로 묶는 수단이 된다.
+2)클래스들을 논리적으로 묶다 보니, 캡슐화가 증가하는 효과가 있다.
+3)결과적으로 코드의 가독성이 향상되고, 유지보수성이 좋아진다.
+=>관계가 매우 긴밀한 두 클래스가 있을 때, 이중 하나는 다른 하나의 Inner클래스 or Nested클래스로 정의
+=>이둘은 논리적으로 묶임 
+=>캡슐화의 증가와 가독성 향상
+
+----------------------------------------------------------
+//17-4 Local 클래스와 Anonymous 클래스
+
+//Local(지역) 클래스
+
+-Outer클래스의 인스턴스 생성 후에야 Inner 클래스의 인스턴스 생성이 가능하다.
+-Inner클래스 내에서는 Outer클래스의 멤버에 직접 접근이 가능하다.
+-Inner 클래스의 인스턴스는 자신이 속할 Outer클래스의 인스턴스를 기반으로 생성된다.
+  (↑↑Inner 클래스의 성격을 그대로 유지한다.)
+
++Local 클래스는 메소드 내에서 정의가 되어서, 메소드 내에서만 인스턴스의 생성 및 참조변수의
+ 선언이 가능하다는 특징이 있다.
+
+class OuterClass
+{
+	...
+	public LocalClass createLocalClassInst()
+	{
+	  class LocalClass	//메소드 내부에서만 사용되므로 접근 제한할 필요X
+	  {
+	  ...
+	  }
+	
+      return new LocalClass();
+	}
+}
+
+=>위의 정의된 LocalClass 클래스는 로컬 클래스이다. 그러나 반환형의 선언이 문제가 된다.
+  반환하는 로컬 클래스를 외부에서 참조할 수 없기 때문이다. (참조변수의 선언은 클래스가 
+  정의된 메소드 내에서만 가능하므로)
+
+----------------------------------------------------------
+
+//Local 클래스의 적절한 사용 모델1)
+:인터페이스를 구현해서 외부에서 접근하기.
+
+interface Readable 
+{
+	public void read();
+}
+
+class OuterClass
+{
+	private String myName;
+	
+	OuterClass(String name)
+	{
+		myName=name;
+	}
+	
+	public Readable createLocalClassInst(final int instID)
+	{		
+		class LocalClass implements Readable	
+		{
+			public void read()
+			{
+				System.out.println("Outer inst name: "+myName);
+				System.out.println("Local inst ID: "+instID);
+			}
+		}
+		
+		return new LocalClass();
+	}
+}
+
+class LocalParamClassTest
+{	
+	public static void main(String[] args)
+	{
+		OuterClass out=new OuterClass("My Outer Class");
+		Readable localInst1=out.createLocalClassInst(111);
+		localInst1.read();
+		
+		Readable localInst2=out.createLocalClassInst(222);
+		localInst2.read();
+	}
+}
+
+=>순서의 차이
+보통 : interface 정의 & 클래스 설계
+local class : class 설계 & interface 정의
+
+=>i.e LocalClass의 read()라는 메소드를 호출하기 위해 interface 정의
+  & main함수에서 interface인 Readable 참조변수 선언 & read()호출.
+
+  
+//Local 클래스의 적절한 사용 모델2
+:쓰레드
+
+void method(){
+	class DownloadThread extends Thread{...}
+	DownloadThread thread=new DownloadThread();
+	thread.start();
+}
+  
+----------------------------------------------------------
+//Local 클래스의 지역변수, 매개변수 접근
+
+public Readable createLocalClassInst(final int instID){		
+	class LocalClass implements Readable{
+		public void read(){
+			System.out.println("Outer inst name: "+myName);
+			System.out.println("Local inst ID: "+instID);
+		}
+	}	
+	return new LocalClass();
+}
+
+-메소드가 반환하는 순간 매개변수와 지역변수는 소멸된다.
+-따라서 매개변수와 지역변수의 접근은 논리적으로 맞지 않는다!
+-단, final로 선언이 변수의 접근은 허용한다.(자바 7까지)
+ (final인 이유 : data의 일관성을 유지하기 위해. 어차피 바뀌지 않는 값을 접근 가능한 영역에 복사해 두도록. 
+  안그러면 사라지므로 또한, 만약 변경이 가능하다면 복사본인데 더 논리적으로 맞지 않음)
+-접근의 허용을 위해서 final 변수를 로컬 클래스의 인스턴스가 접근 가능한 영역에 복사한다.
+
+=> 자바8부터는 final 키워드를 안붙여도 가능(안붙이면 붙였다고 가정하고 변경X)
+
+void outMethod(final int arg1,int arg2){
+ final int var1=1;
+ int var2=2; 
+ class LocalClass{
+	void method(){
+		int result=arg1+arg2+var1+var2;
+	}
+ }
+}
+--->java8이후
+ class LocalClass{
+	//final 키워드가 없으면 필드로 복사
+	int arg2=매개 값;
+	int var2=2;
+	void method(){
+		//final 키워드가 있으면 로컬 변수로 복사
+		int arg1=매개값;
+		int var1=1;
+		int result=arg1+arg2+var1+var2;
+	}
+ }
+
+ 
+//로컬 클래스 사용제한 예제
+
+public class A {
+	//자바 7 이전
+	public void method1(final int arg){
+		final int localVariable=1;
+		//arg=100;	//변경 불가
+		//localVariable=100; //변경 불가
+		class Inner{
+			public void method(){
+				int result=arg+localVariable;
+			}
+		}		
+	}
+	
+	//자바8 이후
+	public void method2(int arg){
+		int localVariable=1;
+		//arg=100;	//변경 하면 Inner클래스에서 사용x
+		//localVariable=100; //변경하면 Inner 클래스에서 사용x
+		class Inner{
+			public void method(){
+				int result=arg+localVariable;
+			}
+		}
+	}	
+	
+ 
+
+
+----------------------------------------------------------
+
+//Inner Class, static Inner class(nested) , local class 선언 예제 
+
+/** 바깥 클래스 **/
+public class A {
+	A(){
+		System.out.println("A 객체가 생성됨");
+	}
+	
+	/** 인스턴스 멤버 클래스(Inner class) **/
+	class B{
+		B(){
+			System.out.println("B클래스가 생성됨");
+		}
+		int filed1;
+		//static int filed2;	//컴파일 에러
+		void method1(){}
+		//static void method2(){}	//컴파일 에러		
+	}
+	
+	/** 정적 멤버 클래스 (static inner, nested) **/
+	static class C{
+		C(){
+			System.out.println("C 객체가 생성됨");
+		}
+		int filed1;
+		static int field2;
+		void method1(){}
+		static void method2(){}
+	}
+	
+	
+	void method(){
+		/** 로컬 클래스 local class **/
+		class D{
+			D(){
+				System.out.println("D클래스가 생성됨.");
+			}
+			int field1;
+			//static int field2;	//컴파일 에러
+			void method1(){}
+			//static void method2(){} //컴파일 에러			
+		}
+		D d=new D();
+		d.field1=3;
+		d.method1();		
+	}	
+}
+
+public class Main {
+	public static void main(String[] args){
+		A a=new A();
+		
+		//인스턴스 멤버 객체 생성(inner)
+		A.B b=a.new B();
+		b.field1=3;
+		b.method1();
+		
+		
+		//정적 멤버 클래스 객체 생성(static inner)
+		A.C c=new A.C();
+		c.field1=3;
+		c.method1();
+		A.C.field2=3;
+		A.C.method2();
+		
+		//로컬 클래스 객체 생성을 위한 메소드 호출(local)
+		a.method();
+		
+	}
+}
+
+
+<< 실행 결과 >>
+A 객체가 생성됨
+B클래스가 생성됨
+C 객체가 생성됨
+D클래스가 생성됨.
+
+
+//Inner 클래스의 접근 제한
+
+public class A {
+	//inner class
+	class B {}
+	//static inner class(nested)
+	static class C{}
+		
+	//1.인스턴스 필드
+	B bInst=new B();	
+	C cInst=new C();
+	
+	//2.인스턴스 메소드
+	void method1(){
+		B bInst=new B();
+		C cInst=new C();
+	}
+	
+	//3.정적 필드 초기화
+	//static B bInst2=new B();	// 컴파일 에러
+	static C cInst2=new C();
+	
+	//4.정적 메소드
+	static void method2(){
+		//B bInst=new B();	//컴파일 에러
+		C cInst=new C();
+	}
+}
+
+//inner 클래스에서 사용 제한
+
+public class A {
+	int field1;
+	void method1(){}
+	
+	static int field2;
+	static void method2(){}
+	
+	//Inner class
+	class B{
+		void method(){
+			//Outerclass의 모두 접근 가능.
+			field1=10;
+			method1();
+			
+			field2=10;
+			method2();
+		}
+	}
+	
+	//static inner class
+	static class C{
+		void method(){
+			//Outerclass의 static만 접근 가능
+			//field1=10;	//컴파일 에러
+			//method1();	//컴파일 에러
+			
+			field2=20;
+			method2();
+			
+		}
+	}	
+}
+
+//중첩 클래스에서 바깥 클래스 참조 얻기
+class Outer{
+	class Inner{
+		int num1;
+		this.num1=10;	<<Inner클래스의 this
+	}
+}
+
+=>Outer 클래스를 얻으려면
+바깥클래스.this.필드
+바깥클래스.this.메소드();
+
+e.g)
+
+public class Outter {
+	String field="Outter-field";
+	void method(){
+		System.out.println("Outter-Method");
+	}	
+	
+	class Nested{
+		String field="Nested-field";
+		void method(){
+			System.out.println("Nested-Method");
+		}
+		void print(){
+			System.out.println("this.field : "+this.field);
+			this.method();
+			
+			System.out.println("Outter.this.field : "+Outter.this.field);
+			Outter.this.method();
+		}
+	}
+}
+
+public class Main {
+	public static void main(String[] args){
+		Outter outter=new Outter();
+		Outter.Nested nested=outter.new Nested();
+		
+		nested.print();
+		
+		
+	}
+}
+
+<< 실행 결과 >>
+this.field : Nested-field
+Nested-Method
+Outter.this.field : Outter-field
+Outter-Method
+
+
+----------------------------------------------------------
+
+//중첩 인터페이스
+;클래스의 맴버로 선언된 인터페이스(특히 UI)
+class A{
+	interface I{
+		void method();
+	}
+}
+
+----------------------------------------------------------
+
+//Anonymous(익명) 클래스
+;클래스의 이름이 정의되어 있지 않다는 사실에서만 Local 클래스와 차이를 보인다!
+
+=>LocalClass라는 이름을 이용해서 참조변수를 선언하지 않고 메소드의 반환형으로 선언되지도 않음
+=>쓰레드나 UI 이벤트 처리시 많이 사용!
+
+interface Readable{
+	public void read();
+}
+
+class OuterClass{
+	private String myName;
+	
+	OuterClass(String name){
+		myName=name;
+	}
+	
+	public Readable createLocalClassInst(final int instID){		
+		return new Readable(){	//Readable인터페이스의 read()메소드를 오버라이딩 한 객체 반환
+			public void read(){
+				System.out.println("Outer inst name: "+myName);
+				System.out.println("Local inst ID: "+instID);
+			}			
+		};
+	}
+}
+
+class LocalParamAnonymous{	
+	public static void main(String[] args)	{
+		OuterClass out=new OuterClass("My Outer Class");
+		Readable localInst1=out.createLocalClassInst(111);
+		localInst1.read();
+		
+		Readable localInst2=out.createLocalClassInst(222);
+		localInst2.read();
+	}
+}
+
+=>return Readable();	//interface는 메소드가 완전히 정의되지 않아서 인스턴스 생성 불가능.
+=>return Readable(){ public void read(){...}}; //interface의 read()메소드를 채워 넣어서 사용가능.
+
++항상 return문과 함께 등장하는 것은 아니다. 단순히 인스턴스만 생성하는 것도 가능하다.(+클래스내, 메소드내,메소드의 매개변수 모두 가능)
+Readable read=new Readable(){
+	public void read(){
+		..
+	}
+};
+
+
+cf)Anonymous클래스의 생성자
+;Anonymous클래스는 인터페이스의 메소드를 완성하는 방식으로 정의되기 때문에 생성자가 필요한 상황에서는 어울리지 않는다.
+ 그리고 실제로 이름이 없기 때문에 생성자를 정의하고 싶어도 정의할 수 없다.
+
+--------------------
+//익명 객체의 다양한 생성 예제
+
+1.클래스 내부에서
+
+class A{
+	Parent field=new Parent(){	//A클래스의 멤버 필드로 선언
+		//익명 클래스
+		int childField;
+		void childMethod(){}
+		@Override
+		void parentMethod(){}	//Parent클래스의 메소등 오버라이딩
+		
+	};
+}
+
+
+
+
+2.메소드 내에서
+class A{
+	void method(){
+		Parent lovalVar=new Parent(){	//로컬 변수로 선언
+			//익명 클래스
+			int childField;
+			void childMethod(){}
+			@Override
+			void parentMethod(){}	//Parent클래스의 메소등 오버라이딩		
+		};
+	}
+}
+
+
+3.메소드의 매개 변수
+class A{
+	void method1(Parent parent) {}
+	
+	void method2(){	//==void method2(){ method1(익명클래스); }
+		method1(
+			new Parent(){
+				int childField;
+				void chileMethod(){}
+				@Override
+				void parentMethod(){}
+			}
+		);
+	}
+}
+
+==>
+
+class Parent{
+	void parentMethod(){}
+}
+
+public class A {
+	Parent field=new Parent(){
+		//Anonymous Class
+		int childField;
+		void childMethod(){}
+		@Override
+		void parentMethod(){
+			childField=3;
+			childMethod();			
+		}
+	};
+	
+	void method(){
+		//field.childField=3;		//컴파일 에러
+		//field.childMethod();	//컴파일 에러
+		field.parentMethod();	//위의 오버라이딩 된 메소드 호출
+	}
+}
+
+------>
+위를 활용한 예제
+
+//Person.java
+public class Person {
+	void wake(){
+		System.out.println("7시에 일어납니다.");
+	}
+
+}
+
+
+//Anonymous.java
+public class Anonymous {
+	//필드 초기값으로 대입
+	Person field=new Person(){
+		//익명 객체 정의
+		void work(){
+			System.out.println("출근합니다.");
+		}
+		@Override
+		void wake(){
+			System.out.println("6시에 일어납니다.");
+		}	
+		
+	};
+	
+	void method1(){
+		//로컬 변수값으로 대입
+		Person localVar=new Person(){
+			void walk(){
+				System.out.println("산책합니다.");
+			}
+			@Override
+			void wake(){
+				System.out.println("7시에 일어납니다."); //==super.wake(); 내용같으므로
+				walk();
+			}
+		};	
+		//로컬 변수 사용
+		localVar.wake();		
+	}
+	
+	void method2(Person person){
+		person.wake();
+	}	
+}
+
+//AnonymousExample.java
+public class AnonymousExample {
+	public static void main(String[] args){
+		Anonymous anony=new Anonymous();
+		
+		//익명 객체 필드 사용
+		anony.field.wake();
+		
+		//익명 객체 로컬 변수 사용
+		anony.method1();
+		
+		//익명 객체 매개값 사용
+		anony.method2(
+			new Person(){
+				void study(){
+					System.out.println("공부합니다.");
+				}
+				
+				@Override
+				void wake(){
+					System.out.println("8시에 일어납니다.");
+					study();
+				}				
+			}	//; 없음
+		);	
+	}
+}
+
+=> 사람이라는 클래스로 wake();라는 공통 기능을 정의했지만, 각각의 사람마다 일어나는 시간이 다르므로 익명 객체를 이용해서
+   다르게 표현하고있음.
+
+
+--------------------
+//익명 구현 객체 생성
+
+1)클래스의 멤버 필드로
+
+class A{
+	RemoteControl field=new RemoteControl(){//클래스A의 필드선언
+		//RemoteControl 인터페이스의 추상 메소드에 대한 실체 메소드
+		@Override
+		void turnOn(){}
+		/////////////
+	};
+}
+
+2)메소드 내에서 로컬 변수를 선언
+void method(){
+	RemoteControl localVar=new RemoteControl(){	//로컬 변수 선언
+		//RemoteControl 인터페이스의 추상 메소드에 대한 실체 메소드
+		@Override
+		void turnOn(){}
+		/////////////
+	};
+}
+
+
+3)메소드의 매개변수
+class A{
+	void method1(RemoteControl rc){}
+	
+	void method2(){
+		method1(	//method1() 메소드 호출
+			//method1()의 매개값으로 익명 구현 객체 대입
+			new RemoteControl(){
+				@Override
+				void turnOn(){}
+			}
+			//////
+		);
+	}
+
+
+
+=>UI에서 흔히 사용되는 버튼의 클릭 이벤트 처리를 익명 구현 객체를 이용해서 처리하는 방법
+
+
+
+public class Button {
+	//인터페이스 타입 필드
+	OnClickListener listener;
+	
+	//매개변수의 다형성을 이용한 생성자
+	void setOnClickListener(OnClickListener listener){
+		this.listener=listener;
+	}
+	
+	//구현 객체의 onClick() 메소드 호출
+	void touch(){
+		listener.onClick();
+	}
+	
+	//중첩 인터페이스
+	interface OnClickListener{
+		void onClick();
+	}
+}
+
+//Window클래스는 두 개의 Button을 가지고 있는 윈도우 창을 만드는 클래스 라고 가정.
+public class Window {
+	Button button1=new Button();
+	Button button2=new Button();
+	
+	//필드 초기값으로 대입
+	Button.OnClickListener listener=new Button.OnClickListener() {		
+		@Override
+		public void onClick() {			 
+			System.out.println("전화를 겁니다.");
+		}
+	};
+	
+	Window(){
+		button1.setOnClickListener(listener); //매개값으로 위의 필드 listener 대입
+		//매개값으로 익명 구현 객체 대입
+		button2.setOnClickListener(
+				new Button.OnClickListener(){
+					@Override
+					public void onClick(){
+						System.out.println("메세지를 보냅니다.");
+					}
+				}
+		);
+		//button1에는 위에서 정의 listener로 , button2는 익명 구현 객체로 정의한 listener로 이벤트 핸들링!
+	}
+}
+
+//Main.java
+public class Main {
+	public static void main(String[] args){
+		Window w=new Window();
+		w.button1.touch();	
+		w.button2.touch();		
+	}
+}
+
+
+<< 실행 결과 >>
+전화를 겁니다.
+메세지를 보냅니다.
+
+=> Window 클래스의 button1과 button2에 리스너 장착
+=> main에서 touch();라는 이벤트 발생
+=> listener의 onClick();이라는 오버라이딩을 통한 핸들링
+
+
+
+--------------------
+//익명 객체의 로컬 변수 사용
+;local 클래스와 똑같음. 7이전에는 final 필수 8이후에는 final없으면 자체적으로 final로 저장.
+
+//Calculatable.java
+public interface Calculatable {
+	public int sum();
+}
+
+
+//Anonymous.java
+public class Anonymous {
+	private int field;
+	
+	public void method(final int arg1,int arg2){
+		final int var1=0;
+		int var2=0;
+		
+		field=10;
+		
+		//arg1=20;	//컴파일 에러
+		//arg2=20;
+		
+		//var1=30;	//컴파일 에러
+		//var2=30;
+		
+		Calculatable calc=new Calculatable(){
+			@Override
+			public int sum(){
+				int result=field+arg1+arg2+var1+var2;
+				return result;
+			}	
+			
+		};
+		
+		System.out.println(calc.sum());		
+	}
+}
+
+public class AnonymousExample {
+	public static void main(String[] args){
+		Anonymous anony=new Anonymous();
+		anony.method(0, 0);		
+	}
+}
+
+<<실행 결과>>
+10
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

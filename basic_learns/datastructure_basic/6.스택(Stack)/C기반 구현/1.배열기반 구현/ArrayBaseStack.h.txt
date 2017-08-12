@@ -1,0 +1,26 @@
+#ifndef __AB_STACK_H__
+#define __AB_STACK_H__
+
+#define STACK_LEN 100
+#define FALSE 0
+#define TRUE 1
+
+typedef int Data;
+
+typedef struct _arraystack {
+	Data stackArr[STACK_LEN];
+	int topIndex;	
+}ArrayStack;
+
+typedef ArrayStack Stack;
+
+void StackInit(Stack* pstack);	//스택 초기화
+int SIsEmpty(Stack* pstack);	//스택 비었는지 확인
+void SPush(Stack* pstack, Data data); //push연산
+Data SPop(Stack* pstack);		//pop 연산
+Data SPeek(Stack* pstack);		//peek 연산
+
+
+
+
+#endif

@@ -1,0 +1,269 @@
+--------ch16.클래스의 상속 3: 상속의 목적------------------------------
+--------------------------------------------------------------------------
+//16-1 개인정보 관리 프로그램
+
+(Intro)
+-프로그램은 Data + 처리(흐름) 
+
+친구들의 정보를 1)대학 2)고교 동창을 나누는 프로그램
+Friend 클래스
+UnivFriend -->Friend // HighFriend --> Friend
+-------------------------------------------- ------------------------------
+
+-Friend 클래스는 인스턴스화 되지 않는다.(즉 인스턴스화 하기 위해 설계 된 클래스가 아니다.)
+ 다만 HighFriend 클래스와 UnivFriend 클래스의 상위 클래스로만 의미를 지닌다.
+==>FriendInfoHandler에서 High와 Univ의 인스턴스를 동일하게 바라볼 수 있다.
+==>FriendInfoHandler에서 관리하는 클래스는 Friend 하나!
+
+-Friend 클래스의 showBasicInfo 메소드를 하위 클래스에서 각각 오버라이딩 하고 있다.
+-Friend 클래스의 showBasicInfo 메소드는 비어있다.
+--------------------------------------------------------------------------
+
+//FriendInfoHandler 클래스의 관찰
+
+class FriendInfoHandler
+{
+	private Friend[] myFriends;
+	private int numOfFriends;
+	
+	public FriendInfoHandler(int num)
+	{
+		myFriends=new Friend[num];
+		numOfFriends=0;
+	}
+	
+	private void addFriendInfo(Friend fren)	//외부에서 호출을 막고 클래스 내부에서만 호출할 수 있도록
+	{
+		myFriends[numOfFriends++]=fren;
+	}
+	
+	public void addFriend(int choice)
+	{..
+	}
+	
+	...................
+	
+	public void showAllSimpleData()
+	{
+		for(int i=0; i<numOfFriends; i++)
+		{
+			myFriends[i].showBasicInfo();
+			System.out.println("");
+		}
+	}
+}
+
+
+==>상속이 주는 매우 큰 이점 :
+-FriendInfoHandler 클래스는 Friend의 하위 클래스의 인스턴스를 저장 및 관리한다.
+-FriendInfoHandler 클래스 입장에서는 HighFriend 클래스의 인스턴스도, UnivFriend클래스의
+ 인스턴스도 모두 Friend 클래스의 인스턴스로 간주한다.
+ (High와 Univ는 Friend클래스의 규약을 적용)
+
+--------------------------------------------------------------------------
+//showBasicInfo 메소드의 오버라이딩 이유?
+
+==>만약 Friend 클래스에서 메소드를 정의하지 않았으면 아래와 같이 변경이 됨
+
+	public void showAllSimpleData()
+	{
+		for(int i=0; i<numOfFriends; i++)
+		{
+			if(myFriends[i] instanceof HighFriend)
+			 ((HighFriend)myFriends[i]).showBasicInfo();
+			else
+			 ((univFriend)myFriends[i]).showBasicInfo();
+			System.out.println("");
+		}
+
+	}
+
+==>Friend클래스를 상속하는 하위 클래스가 하나 더 등장할때마다 위의 메소드는 엄청 복잡해짐.
+--------------------------------------------------------------------------
+
+//상속과 오버라이딩이 가져다 주는 이점
+
+=>"상속을 통해 연관된 일련의 클래스에 대한 공통적인 규약을 정의할 수 있습니다."
+     (Univ , High)                          (Friend)
+=>FriendInfoHandler 클래스는, 상속을 통해 연관된 HighFriend,UnivFriend 클래스에 대해
+ (일련의 클레스에 대해) 동일한 방식으로 배열에 저장 및 메소드 호출을 할 수(공통적인 규약을 정의할 수)
+ 있습니다.
+
+--------------------------------------------------------------------------
+
+//16-2 모든 클래스가 상속하는 Object 클래스
+
+"Java의 모든 클래스는 Object 클래스를 상속한다."
+
+class MyClass{...}
+==> class MyClass extends Object{...}
+
+==> Object obj1=new MyClass();
+    Object obj2=new int[5];	//배열도 인스턴스이므로 작성 가능
+
+==>모든 클래스가 Object클래스를 직접 혹은 간적접으로 상속하므로, 다음 두 가지가 가능하다.
+1)자바의 모든 인스턴스는 Object클래스의 참조변수로 참조 가능
+2)자바의 모든 인스턴스를 대상으로 Object 클래스에 정의된 메소드 호출 가능
+
+*간접적으로 Object클래스 상속 
+:class Myclass extends YourClass{...}
+=>MyClass는 직접 Object를 상속하지는 않지만 YourClass 또는 YourClass의 상위 클래스가
+  Object클래스를 상속하므로 실질적으로 MyClass도 상속하는 꼴이 된다.
+
+//Object를 상속하는 이유?
+- 앞에서 상속은 공통적인 규약을 정의할 수 있다고 했음
+=>Object클래스의 규약이 있음(e.g toString();)
+
+--------------------------------------------------------------------------
+//String 클래스와 Object 클래스
+
+class Friend
+{
+	String myName;
+	public Friend(String name)
+	{
+		myName=name;
+	}
+	public String toString()
+	{
+		return "제 이름은 "+myName+"입니다.";
+	}
+}
+
+public class StringToString {
+	public static void main(String[] args)
+	{
+		Friend fnd1=new Friend("이종수");
+		Friend fnd2=new Friend("현주은");
+		
+		System.out.println(fnd1);	//제 이름은 이종수입니다.
+		System.out.println(fnd2);	//제 이름은 현주은입니다.
+		
+		//1) println이 어떻게 Friend클래스를 인스턴스로 받을 수 있을까??
+		//=>class Friend extends Object  ==>println(Object x)
+		//=>x.toString()호출 => Friend의 오버라이딩 메소드 호출		
+	}
+
+}
+
+
+모든 클래스가 Object클래스를 상속하는 것과 관련해서 기억할 것
+-Object클래스에는 toString메소드가 다음 형태로 정의되어 있다.
+ public String toString(){..}
+
+-그리고 우리가 흔히 호출하는 println 메소드는 다음과 같이 정의되어 있다.
+ public void println(Object x){..}
+ =>모든 인스턴스는 println 메소드의 인자로 전달될 수 있다.
+ =>인자로 전달되면, toString 메소드가 호출되고, 이 때 반환되는 문자열이 출력된다.
+ =>toString 메소드는 적절한 문자열 정보를 반환하도록 오버라이딩 하는 것이 좋다.
+ (APIs에 나와있음.)
+
+--------------------------------------------------------------------------
+
+//final 클래스와 final 메소드
+final : 시스템(sw 설계)에 있어서 안정성을 높이는데 의미를 가짐
+--------------
+-클래스의 final
+final class MyClass
+{
+	...
+}
+
+==>클래스 MyClass가 상속되는 것을 허용하지 않는다.
+==>String클래스는 final임. 그래서 나만의 문자열 클래스를 정의하는 것은 불가능
+==>나만의 문자열 처리를 위한 클래스를 만들려면 인스턴스 멤버의 형태로 포함해야 함.
+cf)생성자가 private이면 상속할 수 없음(자식 클래스의 인스턴스 생성시 부모의 생성자 호출해야 되므로)
+   그래서 final 키워드를 쓰는게 좋음
+
+--------------
+-final 메소드
+class YourClass
+{
+ final void yourFunc(int n){..}
+}
+
+==>클래스 YourClass가 상속되는 것을 허용은 하되, 메소드 yourFunc의 오버라이딩은 허용하지 않는다.
+
+==>대표적인 final 메소드로는 Object클래스의 wait,notify,notifyall 메소드 등이 있으며,
+   이들은 실제로 오버라이딩이 바람직하지 않은 메소드들이다.
+
+--------------
+-final 멤버필드
+class MyClass
+{
+	private final int num1=10;
+	private final int num2;
+	private final int num3;
+	{
+		num3=20;	//num3 20으로 초기화하면 생성자에서 초기화 안됨.
+	}
+	
+	MyClass(int n)
+	{
+		num2=n;	//생성자를 통해서 초기화 가능(인스턴스마다 다르게 가질 수 있음)
+	}
+}
+
+--------------------------------------------------------------------------
+//매개 변수의 다형성
+;매개 변수에서도 다형성이 그대로 적용 된다.
+
+class Vehicle{
+	public void run(){
+		System.out.println("Vehicle이 달립니다.");
+	}
+}
+
+class Bus extends Vehicle{
+	@Override
+	public void run(){
+		System.out.println("Bus가 달립니다.");
+	}
+}
+class Taxi extends Vehicle{
+	@Override
+	public void run(){
+		System.out.println("Taxi가 달립니다.");
+	}
+}
+
+class Driver{
+	public void drive(Vehicle vehicle){
+		vehicle.run();
+	}
+}
+
+
+public class DriveExample {
+	public static void main(String[] args){
+		Driver driver=new Driver();
+						
+		driver.drive(new Bus());
+		driver.drive(new Taxi());
+		
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

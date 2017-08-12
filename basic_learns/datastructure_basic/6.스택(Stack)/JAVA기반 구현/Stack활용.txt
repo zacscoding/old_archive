@@ -1,0 +1,68 @@
+import java.util.Stack;
+public class Main {
+	public static void main(String[] args){
+	
+		//java.util.Stack 활용하기
+		System.out.println("-----1)스택 기본 활용------");
+		Stack<String> stack=new Stack<String>();
+		stack.push("AAA");	stack.push("BBB");	stack.push("CCC");
+		stack.push("CCC");	stack.push("EEE");
+				
+		if(stack.search("AAA")<0)	//사용자 정의 클래스는 boolean equals(Object obj) Override 해야함
+			System.out.println("AAA없음");
+		else
+			System.out.println("AAA존재");
+		
+		System.out.println("top : "+stack.peek());
+		int j=1;
+		while(!stack.isEmpty()){
+			System.out.println((j++)+"`s pop : "+stack.pop());			
+		}
+		
+		
+		
+		//reverse 함수 활용하기
+		
+		System.out.println();
+		System.out.println("-----2)스택 reversing활용------");
+		Integer[] a={4,8,15,16,23,42};
+		System.out.println("- 원본 배열 - ");
+		for(int i=0;i<a.length;i++)
+			System.out.print(a[i]+" ");
+		System.out.println();
+		reverse(a);
+		System.out.println("- 리버싱 후 - ");
+		for(int i=0;i<a.length;i++)
+			System.out.print(a[i]+" ");
+		
+	}
+	
+	public static <E> void reverse(E[] a){
+		Stack<E> buffer=new Stack<E>();
+		for(int i=0;i<a.length;i++){
+			buffer.push(a[i]);			
+		}
+		
+		for(int i=0;i<a.length;i++){
+			a[i]=buffer.pop();
+		}
+	}
+}
+
+
+
+<< 실행 결과 >>
+-----1)스택 기본 활용------
+AAA존재
+top : EEE
+1`s pop : EEE
+2`s pop : CCC
+3`s pop : CCC
+4`s pop : BBB
+5`s pop : AAA
+
+-----2)스택 reversing활용------
+- 원본 배열 - 
+4 8 15 16 23 42 
+- 리버싱 후 - 
+42 23 16 15 8 4 

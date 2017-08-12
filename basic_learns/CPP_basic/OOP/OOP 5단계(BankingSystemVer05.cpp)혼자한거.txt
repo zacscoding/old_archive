@@ -1,0 +1,223 @@
+/*
+OOP 5단계 : BankingSystemVer05.cpp
+*/
+
+
+/*
+ *	Banking System Ver 0.5
+ *	작성자	: 김명수
+ *	내용		: AccountHandler라는 이름의 컨트롤 클래스 정의
+ */
+
+#include <iostream>
+#include <cstring>
+#include <Windows.h>
+
+#define MAXACC 100
+using std::cout; using std::endl; using std::cin;
+
+const int NAME_LEN = 20;
+
+/*
+*	클래스 이름: Account
+*	클래스 유형:	Entity 클래스
+*/
+class Account
+{
+private:
+	const int accID;
+	int balance;
+	char *cusName;
+public:
+	//생성자
+	Account(int ID, int money, char *name);
+
+	//깊은 복사 디폴트 생성자
+	Account::Account(const Account &copy);
+	const int ShowAccID()
+	{
+		return accID;
+	}
+	void DepositMoney(int money)
+	{
+		if (money < 0) {
+			cout << "0원보다 큰 금액을 입력해주세요." << endl;
+			return;
+		}
+		balance += money;
+		cout << "입금 완료" << endl;
+
+	}
+	void WithdrawMoney(int money)
+	{
+		if (money < 0) {
+			cout << "0원보다 큰 금액을 입력해주세요." << endl;
+			return;
+		}
+		else if (money > balance) {
+			cout << "잔액이 부족합니다." << endl;
+			return;
+		}
+		balance -= money;
+		cout << "출금 완료" << endl;
+	}
+
+
+	void ShowAccInfo()
+	{
+		cout << "계좌 ID : " << accID << endl;
+		cout << "이   름 : " << name << endl;
+		cout << "잔   액 : " << balance << endl;
+	}
+
+	~Account()
+	{		
+		delete[]name;
+	}
+};
+
+Account::Account(int ID, int money, char *name)
+	:accID(ID), balance(money)
+{
+	cusName = new char[strlen(name) + 1];
+	strcpy(cusName, name);
+}
+
+Account::Account(const Account &copy)
+	:accID(copy.accID), balance(copy.balance)
+{
+	cusName = new char[strlen(copy.cusName) + 1];
+	strcpy(cusName, copy.cusName);
+}
+
+
+
+
+
+
+
+
+
+
+class AccountHandler
+{
+private:
+	Account * acc[MAXACC] = { '\0', };
+	int accNum;
+public:
+	AccountHandler()
+		:accNum(0) {}
+	//void AddAccount(Account *p)
+	//{
+	//	acc[accNum++] = p;
+	//}
+	void AddAccount(int accID,char *name, int balance)
+	{
+		acc[accNum] = new Account(accID,name,balance);
+		accNum++;
+	}
+	void DepositMoney(int accID, int money)
+	{
+		for (int i = 0; i < accNum; i++) {
+			if (accID == acc[i]->ShowAccID()) {
+				acc[i]->DepositMoney(money);
+				return;
+			}
+		}
+		cout << "계좌 ID가 존재하지 않습니다." << endl;
+	}
+	void WithdrawMoney(int accID, int money)
+	{
+		for (int i = 0; i < accNum; i++) {
+			if (accID == acc[i]->ShowAccID()) {
+				acc[i]->WithdrawMoney(money);
+				return;
+			}
+		}
+		cout << "계좌 ID가 존재하지 않습니다." << endl;
+	}
+
+	void ShowAllAccountInfor()
+	{
+		for (int i = 0; i < accNum; i++) {
+			acc[i]->ShowAccInfo();
+		}
+	}
+
+	bool ConfirmAccountId(int accid)
+	{
+		for (int i = 0; i < accNum; i++) {
+			if (accid == acc[i]->ShowAccID()) {
+				cout << "계좌ID가 존재합니다." << endl;
+				return false;
+			}
+		}
+		return true;
+	}
+
+	~AccountHandler()
+	{
+		
+		for (int i = 0; i < accNum; i++) {
+			delete acc[i];
+		}
+	}
+
+};
+
+
+void PrintMenu();
+
+int main(void)
+{
+	AccountHandler handle;
+	int choice,accid,money;
+	char name[20];
+	while (1)
+	{
+		system("cls");
+		PrintMenu(); cin >> choice;
+		if (choice == 5) {
+			break;
+		}
+		else if (choice == 1) {
+			cout << "계좌ID : "; cin >> accid;
+			if (handle.ConfirmAccountId(accid)) {
+				cout << "이름 : "; cin >> name;
+				cout << "입금액 :"; cin >> money;
+				handle.AddAccount(accid, name, money);
+			}			
+		}
+		else if (choice == 2) {
+			cout << "계좌ID : "; cin >> accid;
+			cout << "입금액 : "; cin >> money;
+			handle.DepositMoney(accid, money);
+		}
+		else if (choice == 3) {
+			cout << "계좌ID : "; cin >> accid;
+			cout << "출금액 : "; cin >> money;
+			handle.WithdrawMoney(accid, money);
+		}
+		else if (choice == 4) {
+			handle.ShowAllAccountInfor();
+		}
+		else if (choice == 5) {
+			break;
+		}
+		system("pause");
+	}
+	return 0;
+}
+
+
+void PrintMenu()
+{
+	cout << "-----Menu------" << endl;
+	cout << "1. 계좌개설" << endl;
+	cout << "2. 입  금" << endl;
+	cout << "3  출  금" << endl;
+	cout << "4. 계좌정보 전체 출력" << endl;
+	cout << "5. 프로그램 종료" << endl;
+	cout << "선택: ";
+}
+

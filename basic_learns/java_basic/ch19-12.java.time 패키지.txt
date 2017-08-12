@@ -1,0 +1,571 @@
+-------------------ch19-12.java.time 패키지-----------------------
+;7이전까지는 Date,Calendar클래스로 날자와 시간을 얻음
+
+패키지					설명
+java.time				날짜와 시간을 나타내는 핵심 API인 LocalDate,LocalTime,LocalDateTime,ZonedDateTime
+						을 포함하고 있다. 이 클래스들은 ISO-8601에 정의된 달력 시스템에 기초한다.
+
+java.time.chrono		ISO-8601에 정의된 달력 시스템 이외에 다른 달력 시스템이 필요할 때 사용할 수 있는 API들이 포함
+
+java.time.format		날짜와 시간을 파싱하고 포켓팅하는 API들이 포함되어 있다.
+
+java.time.temporal		날짜와 시간을 연산하기 위한 보조 API들이 포함되어 있다.
+
+java.time.zone			타임존을 지원하는 API들이 포함되어 있다.
+
+
+-------------------------------------------------------------------------------------
+
+//1.날짜와 시간 객체 생성
+
+;java.time 패키지에 다음과 같은 5개의 클래스가 존재.
+LocalDate		로컬 날짜 클래스
+LocalTime		로컬 시간 클래스
+LocalDateTime	로컬 날짜 및 시간 클래스(LocalDate + LocalTime)
+ZonedDateTime	특정 타임존(TimeZone)의 날짜와 시간 클래스
+Instant			특정 시점의 Time-Stamp 클래스
+
+1)LocalDate
+;로컬 날짜 클래스로 날짜 정보만 얻을 수 있음
+LocalDate currDate=LocalDate.now();		//컴퓨터의 현재 날짜 정보를 저장한 LocalDate 객체 리턴
+LocalDate targetDate=LocalDate.of(int year,int month,int dayOfMonth);	//매개값으로 주어진 날짜 정보
+
+2)LocalTime
+;로컬 시간 클래스로 시간 정보만을 저장할 수 있음
+LocalTime currTime=LocalTime.now();		//컴퓨터의 현재 시간 정보를 저장한 LocalTime 객체 리턴
+LocalTime targetTime=LocalTime.of(int hour,int minute,int second,int nanoOfSecond);	//매개값으로 주어진 시간 정보
+
+3)LocalDateTime
+;날짜와 시간 정보를 모두 저장.
+
+LocalDateTime currDateTime=LocalDateTime.now();	//컴퓨터의 현재 날짜와 시간 정보를 저장한 LocalDateTime 객체 리턴
+LocalDateTime targetDateTime=LocalDateTime.of(int year,int month,int dayOfMonth,
+											int hour,int minute,int second,int nanoOfSecond);
+											
+4)ZonedDateTime
+;ISO-8601 달력 시스템에서 정의하고 있는 타임존의 날짜와 시간을 저장하는 클래스
+=>저장 형태 : 2014-04-21T07:50:24.017+09:00[Asia/Seoul]	
+=>+-존오프셋[존아이디] 가 추가적으로 붙음. 존오프셋은 협정시계시(UTC:Universal Time Coordinated)와 차이 나는 시간(시차)
+ZonedDateTime utcDateTime=ZonedDateTime.now(ZoneId.of("UTC"));
+ZonedDateTime londonDateTime=ZonedDateTime.now(ZoneId.of("Europe/London"));
+ZonedDateTime seoulDateTime=ZonedDateTime.now(ZoneId.of("Asia/Seoul"));
+
+
+5)Instant
+;특정 시점의 타임스탬스(Time-Stamp)로 사용된다.(주로 특정한 두 시점 간의 시간적 우선순위를 따질 때 사용)
+(java.util.Date(로컬 컴퓨터의 현재 날짜와 시간)과 비슷 java.time.Instant(협정세계시(UTC)를 기준)
+Instant instant1=Instant.now();
+Instant instant2=Instant.now();
+
+if(instant1.isBefore(instant2))
+	System.out.println("instant1이 빠릅니다.");
+else if(instant1.isAfter(instant2))
+	System.out.println("instant1이 늦습니다.");
+else	
+	System.out.println("동일한 시간입니다.");
+
+System.out.println("차이(nanos): "+instant1.until(instant2,ChronoUnit.NANOS));	
+	
+
+	
+	
+
+//java.time 클래스들 활용 예제 
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
+
+public class Main {
+	public static void main(String[] args) throws InterruptedException{
+		//날짜 얻기
+		LocalDate currDate=LocalDate.now();
+		System.out.println("현재 날짜 : "+currDate);
+		
+		LocalDate targetDate=LocalDate.of(2024,5,10);
+		System.out.println("목표 날짜 : "+targetDate);
+		
+		//시간 얻기
+		LocalTime currTime=LocalTime.now();
+		System.out.println("현재 시간 : "+currTime);
+		
+		LocalTime targetTime=LocalTime.of(6,30,0,0);
+		System.out.println("목표 시간 : "+targetTime);
+		
+		//날짜와 시간 얻기
+		LocalDateTime currDateTime=LocalDateTime.now();
+		System.out.println("현재 날짜와 시간 : "+currDateTime);
+		
+		LocalDateTime targetDateTime=LocalDateTime.of(2024, 5,10,6,30,0,0);
+		System.out.println("목표 날짜와 시간 : "+targetDateTime);
+		
+		
+		//협정 세계시와 시간존(TimeZone)
+		ZonedDateTime utcDateTime=ZonedDateTime.now(ZoneId.of("UTC"));
+		System.out.println("협정 세계시 : "+utcDateTime);
+		
+		ZonedDateTime newyorkDateTime=ZonedDateTime.now(ZoneId.of("America/New_York"));
+		System.out.println("뉴욕 시간존 : "+newyorkDateTime);
+		
+		ZonedDateTime seoulDateTime=ZonedDateTime.now(ZoneId.of("Asia/Seoul"));
+		System.out.println("서울 시간존 : "+seoulDateTime);
+		
+		//특정 시점의 타임 스탬프 얻기
+		Instant instant1=Instant.now();
+		Thread.sleep(10);
+		Instant instant2=Instant.now();
+		if(instant1.isBefore(instant2))
+			System.out.println("instant1이 빠릅니다.");
+		else if(instant1.isAfter(instant2))
+			System.out.println("instant1이 늦습니다.");
+		else
+			System.out.println("동일 시간대 입니다.");
+		
+		System.out.println("차이(nanos) : "+instant1.until(instant2, ChronoUnit.NANOS));		
+	}
+}
+
+
+<< 실행 결과 >>
+현재 날짜 : 2016-11-02
+목표 날짜 : 2024-05-10
+현재 시간 : 17:32:28.208
+목표 시간 : 06:30
+현재 날짜와 시간 : 2016-11-02T17:32:28.208
+목표 날짜와 시간 : 2024-05-10T06:30
+협정 세계시 : 2016-11-02T08:32:28.209Z[UTC]
+뉴욕 시간존 : 2016-11-02T04:32:28.210-04:00[America/New_York]
+서울 시간존 : 2016-11-02T17:32:28.217+09:00[Asia/Seoul]
+instant1이 빠릅니다.
+차이(nanos) : 10000000
+
+
+-------------------------------------------------------------------------------------
+
+//2.날짜와 시간에 대한 정보 얻기
+;LocalDate와 LocalTime의 제공 메소드
+
+1)LocalDate
+리턴타입		메소드(매개변수)			설명
+int			getYear()			년
+Month		getMonth()			Month 열거 값
+int			getMonthValue()		월
+int			getDayOfYear()		일년의 몇 번째 일
+int			getDayOfMonth()		월의 몇 번째 일
+DayOfWeek	getDayOfWeek()		요일
+boolean		isLeapYear()		윤년 여부
+
+2)LocalTime
+int			getHour()			시간
+int			getMinute()			분
+int			getSecond()			초
+int			getNano()			나노초 리턴
+
+
+=>LocalDateTime과 ZonedDateTime은 날짜와 시간 정보를 모두 갖고 있기 때문에 위 표에 나와있는 대부분의 메소드를 가지고 있음
+(단,isLeapYear()은 LocalDate에만 존재 => toLocalDate() 메소드로 LocalDate로 변환 후에 사용가능
++ZonedDateTime은 시간존에 대한 정보를 제공하는 다음 메소드들을 추가적으로 가지고 있음
+리턴타입			메소드(매개변수)				설명
+ZoneId			getZone()				존아이디를 리턴(예:Asia/Seoul)
+ZoneOffset		getOffset()				존오프셋(시차)을 리턴
+
+
+
+/*  활용 예제  */
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+
+public class Main {
+	public static void main(String[] args){
+		LocalDateTime now=LocalDateTime.now();
+		System.out.println(now);
+		
+		String strDateTime=now.getYear()+"년 ";
+		strDateTime+=now.getMonthValue()+"월 ";
+		strDateTime+=now.getDayOfMonth()+"일 ";
+		strDateTime+=now.getDayOfWeek()+" ";
+		strDateTime+=now.getHour()+"시 ";
+		strDateTime+=now.getMinute()+"분 ";
+		strDateTime+=now.getSecond()+"초 ";
+		strDateTime+=now.getNano()+"나노초 ";
+		System.out.println(strDateTime+"\n");
+		
+		LocalDate nowDate=now.toLocalDate();
+		if(nowDate.isLeapYear())
+			System.out.println("올해는 윤년:2월 29일까지 있습니다.\n");
+		else
+			System.out.println("올해는 평년:2월 28일까지 있습니다.\n");
+		
+		//협정 시계와 존오프셋
+		ZonedDateTime utcDateTime=ZonedDateTime.now(ZoneId.of("UTC"));
+		System.out.println("협정 세계시 : "+utcDateTime);
+		ZonedDateTime seoulDateTime=ZonedDateTime.now(ZoneId.of("Asia/Seoul"));
+		System.out.println("서울 타임존 : "+seoulDateTime);
+		ZoneId seoulZoneId=seoulDateTime.getZone();
+		System.out.println("서울 존아이디: "+seoulZoneId);
+		ZoneOffset seoulZoneOffset=seoulDateTime.getOffset();
+		System.out.println("서울 존오프셋 : "+seoulZoneOffset);		
+	}
+}
+
+
+<< 실행 결과 >>
+2016-11-02T17:47:57.738
+2016년 11월 2일 WEDNESDAY 17시 47분 57초 738000000나노초 
+
+올해는 윤년:2월 29일까지 있습니다.
+
+협정 세계시 : 2016-11-02T08:47:57.739Z[UTC]
+서울 타임존 : 2016-11-02T17:47:57.739+09:00[Asia/Seoul]
+서울 존아이디: Asia/Seoul
+서울 존오프셋 : +09:00
+
+
+-------------------------------------------------------------------------------------
+
+//3.날짜와 시간을 조작하기
+
+1)빼기와 더하기
+;LocalTime, LocalDate,LocalDateTime,ZonedDateTime 의 minus~~() plus~~() 메소드 존재.
+
+//1년더하고 2달빼고 3일 더하고 4시간 더하고 5시간 빼고 6초 더하는 예제
+import java.time.LocalDateTime;
+
+public class Main {
+	public static void main(String[] args){
+		LocalDateTime now=LocalDateTime.now();
+		System.out.println("현재 시 : "+now);
+		
+		LocalDateTime targetDateTime=now.plusYears(1).minusMonths(2).plusDays(3)
+										.plusHours(4).minusMinutes(5).plusSeconds(6);
+		
+		System.out.println("연산 후 : "+targetDateTime);		
+	}
+}
+
+<<실행 결과 >>
+현재 시 : 2016-11-02T17:53:57.230
+연산 후 : 2017-09-05T21:49:03.230
+
+
+2)변경하기
+;with~~() 메소드들
+(그중 with(TemporalAdjuster adjuster) 상대 변경 =>현재 날짜를 기준으로 해의 첫 번째 일 또는 마지막일 등등 )
+(java.time.temporal.TemporalAdjusters)
+
+
+/*  활용 예제   */
+
+import java.time.DayOfWeek;
+import java.time.LocalDateTime;
+import java.time.temporal.TemporalAdjusters;
+
+public class Main {
+	public static void main(String[] args){
+		LocalDateTime now=LocalDateTime.now();
+		System.out.println("현재 : "+now);
+		
+		LocalDateTime targetDateTime=null;
+		
+		//직접 변경
+		targetDateTime=now.withYear(2024).withMonth(10).withDayOfMonth(5)
+				.withHour(13).withMinute(30).withSecond(20);
+		System.out.println("직접 변경 : "+targetDateTime);
+		
+		//년도 상대 변경
+		targetDateTime=now.with(TemporalAdjusters.firstDayOfYear());
+		System.out.println("이번 해의 첫 일 : "+targetDateTime);
+		
+		targetDateTime=now.with(TemporalAdjusters.lastDayOfYear());
+		System.out.println("이번 해의 마지막 일 : "+targetDateTime);
+		
+		targetDateTime=now.with(TemporalAdjusters.firstDayOfNextYear());
+		System.out.println("다음 해의 첫 일 : "+targetDateTime);
+		
+		//월 상대 변경
+		targetDateTime=now.with(TemporalAdjusters.firstDayOfMonth());
+		System.out.println("이번달 첫 일 : "+targetDateTime);
+		
+		targetDateTime=now.with(TemporalAdjusters.lastDayOfMonth());
+		System.out.println("이번달 마지막 일 : "+targetDateTime);
+		
+		targetDateTime=now.with(TemporalAdjusters.firstDayOfNextMonth());
+		System.out.println("다음달 첫 일 : "+targetDateTime);
+		
+		//요일 상대 변경
+		targetDateTime=now.with(TemporalAdjusters.firstInMonth(DayOfWeek.MONDAY));
+		System.out.println("이번 달의 첫 월요일 : "+targetDateTime);
+		
+		targetDateTime=now.with(TemporalAdjusters.next(DayOfWeek.MONDAY));
+		System.out.println("돌아오는 월요일 : "+targetDateTime);
+		
+		targetDateTime=now.with(TemporalAdjusters.previous(DayOfWeek.MONDAY));
+		System.out.println("지난 월요일 : "+targetDateTime);
+		
+	}
+}
+
+
+
+
+<< 실행 결과 >>
+현재 : 2016-11-02T18:05:14.339
+직접 변경 : 2024-10-05T13:30:20.339
+이번 해의 첫 일 : 2016-01-01T18:05:14.339
+이번 해의 마지막 일 : 2016-12-31T18:05:14.339
+다음 해의 첫 일 : 2017-01-01T18:05:14.339
+이번달 첫 일 : 2016-11-01T18:05:14.339
+이번달 마지막 일 : 2016-11-30T18:05:14.339
+다음달 첫 일 : 2016-12-01T18:05:14.339
+이번 달의 첫 월요일 : 2016-11-07T18:05:14.339
+돌아오는 월요일 : 2016-11-07T18:05:14.339
+지난 월요일 : 2016-10-31T18:05:14.339
+
+
+
+-------------------------------------------------------------------------------------
+
+//4.날짜와 시간을 비교하기
+;Period(년,달,일 양) // Duration(시,분,초,나노초 양)
+
+
+/*  활용 예제   */
+
+package chap11;
+
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.Period;
+import java.time.temporal.ChronoUnit;
+
+public class Main {
+	public static void main(String[] args){
+		LocalDateTime startDateTime=LocalDateTime.of(2023,1,1,9,0,0);
+		System.out.println("시작 일 : "+startDateTime);
+		
+		LocalDateTime endDateTime=LocalDateTime.of(2024,3,31,18,0,0);
+		System.out.println("종료 일 : "+endDateTime+"\n");
+		
+		//isBefore()/isEqual()/isAfter() 메소드 
+		if(startDateTime.isBefore(endDateTime))
+			System.out.println("진행 중입니다."+"\n");
+		else if(startDateTime.isEqual(endDateTime))
+			System.out.println("종료합니다."+"\n");
+		else if(startDateTime.isAfter(endDateTime))
+			System.out.println("종료했습니다."+"\n");
+		
+		
+		//
+		System.out.println("[종료까지 남은 시간]");
+		long remainYear=startDateTime.until(endDateTime,ChronoUnit.YEARS);
+		long remainMonth=startDateTime.until(endDateTime,ChronoUnit.MONTHS);
+		long remainDay=startDateTime.until(endDateTime,ChronoUnit.DAYS);
+		long remainHour=startDateTime.until(endDateTime,ChronoUnit.HOURS);
+		long remainMinute=startDateTime.until(endDateTime,ChronoUnit.MINUTES);
+		long remainSecond=startDateTime.until(endDateTime,ChronoUnit.SECONDS);
+		
+		remainYear=ChronoUnit.YEARS.between(startDateTime,endDateTime);
+		remainMonth=ChronoUnit.MONTHS.between(startDateTime,endDateTime);
+		remainDay=ChronoUnit.DAYS.between(startDateTime,endDateTime);
+		remainHour=ChronoUnit.HOURS.between(startDateTime,endDateTime);
+		remainSecond=ChronoUnit.SECONDS.between(startDateTime,endDateTime);
+		
+		System.out.println("남은 해 :"+remainYear);
+		System.out.println("남은 달 :"+remainMonth);
+		System.out.println("남은 일 :"+remainDay);
+		System.out.println("남은 시간 : "+remainHour);
+		System.out.println("남은 분 : "+remainMinute);
+		System.out.println("남은 초 : "+remainSecond);
+		System.out.println();
+		
+		System.out.println("[종료까지 남은 기간]");
+		//Period 년,월,일 
+		Period period=Period.between(startDateTime.toLocalDate(), endDateTime.toLocalDate());
+		System.out.print("남은 기간 : "+period.getYears()+"년 ");
+		System.out.print(period.getMonths()+"달 ");
+		System.out.println(period.getDays()+"일\n");
+		
+		//Duration 시,분,초,나노초
+		Duration duration=Duration.between(startDateTime.toLocalTime(), endDateTime.toLocalTime());
+		System.out.println("남은 초 :"+duration.getSeconds());
+		
+	}
+}
+
+
+
+
+
+<< 실행 결과 >>
+시작 일 : 2023-01-01T09:00
+종료 일 : 2024-03-31T18:00
+
+진행 중입니다.
+
+[종료까지 남은 시간]
+남은 해 :1
+남은 달 :14
+남은 일 :455
+남은 시간 : 10929
+남은 분 : 655740
+남은 초 : 39344400
+
+[종료까지 남은 기간]
+남은 기간 : 1년 2달 30일
+
+남은 초 :32400
+
+
+-------------------------------------------------------------------------------------
+
+//5.파싱와 포맷팅
+;날짜와 시간 클래스는 문자열을 파싱(parsing)해서 날짜와 시간을 생성하는 메소드 +
+ 날짜와 시간을 포맷팅(Formatting)된 문자열로 변환하는 메소드를 제공
+
+
+//파싱(Parsing) 메소드
+;날짜와 시간 정보가 포함된 문자열을 파싱해서 날짜와 시간을 생성하는 두 개의 parse() 정적 메소드
+parse(CharSequence)
+parse(CharSequence,DateTimeFormmater)
+
+=>parse(CharSequence)메소드는 기본적으로 ISO_LOCAL_DATE 포멧터를 사용해서 문자열을 파싱
+(ISO_LOCAL_DATE는 DateTimeFormatter의 상수로 정의 "2024-05-03"형식의 포멧터)
+e.g)
+LocalDate localDate=LocalDate.parse("2024-05-24");
+
+=>다른 포멧터를 이용해 문자열을 파싱하고 싶으면 parse(CharSequence,DateTimeFormatter) 메소드를 사용
+(DateTimeFormatter는 ofPattern() 메소드로 정의할 수 있음 
+e.g)
+DateTimeFormatter formatter=DateTimeFormatter.ofPatten("yyyy.MM.dd");
+LocalDate localDate=LocalDate.parse("2024.05.21",formatter);
+
+=>java.time.format.DateTimeFormatter API 보기
+=>형식과 다른 문자열을 파싱하게 되면 DateTimeParseException 발생
+
+
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
+public class Main {
+	public static void main(String[] args){
+		DateTimeFormatter formatter;
+		LocalDate localDate;
+		
+		//parse(CharSequence) 메소드
+		localDate=LocalDate.parse("2024-05-21");
+		System.out.println(localDate);
+		
+		//parse(CharSequence,DateTimeFormatter)
+		formatter=DateTimeFormatter.ISO_LOCAL_DATE;
+		localDate=LocalDate.parse("2024-05-21",formatter);
+		System.out.println(localDate);
+		
+		formatter=DateTimeFormatter.ofPattern("yyyy/MM/dd");
+		localDate=LocalDate.parse("2024/05/21",formatter);
+		System.out.println(localDate);
+		
+		formatter=DateTimeFormatter.ofPattern("yyyy.MM.dd");
+		localDate=LocalDate.parse("2024.05.21",formatter);
+		System.out.println(localDate);		
+	}
+}
+
+
+
+<<실행 결과>>
+2024-05-21
+2024-05-21
+2024-05-21
+2024-05-21
+
+
+
+
+
+//포맷팅(Formatting)메소드
+;날짜와 시간을 포맷팅된 문자열로 변환시키는 format() 메소드
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
+public class Main {
+	public static void main(String[] args){
+		LocalDateTime now=LocalDateTime.now();
+		System.out.println("--기존--");
+		System.out.println(now);
+		System.out.println();
+		DateTimeFormatter dateTimeFormatter=DateTimeFormatter.ofPattern("yyyy년 M월 d일 a h시 m분");
+		String nowString=now.format(dateTimeFormatter);
+		System.out.println("--formatting--");
+		System.out.println(nowString);		
+	}
+}
+
+
+<< 실행 결과 >>
+--기존--
+2016-11-02T18:52:24.161
+
+--formatting--
+2016년 11월 2일 오후 6시 52분
+
+
+
+-------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

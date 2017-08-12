@@ -1,0 +1,184 @@
+----------------------- ch.08 클래스 패스와 패키지 ----------------------------------
+//클래스 패스 + 패키지
+=>기능보다는 환경적인 측면
+
+*클래스 패스(==기준)
+javac를 실행하면 java런처가 필요한 클래스들을 찾음. 그때 필요한 클래스들을 찾는 기준
+
+*패키지(이름 중복의 문제를 해결하기 위한 구분)
+
+
+
+//8.1 클래스 패스의 지정
+
+(Intro)
+//환경변수에 대한 이해(운영체제의 운영적인 측면)
+C:\myclass>calc.exe
+c:\myclass>explorer.exe
+하면 게산기 익스플로러 실행됨
+==>환경변수 path의 정보에 calc.exe와 expolorer.exe의 디렉터리 정보가 등록되어 있기 때문
+
+==>운영 - path - 사용자 간의 약속
+(cmd)
+C:\myclass> echo %path%
+디렉터리정보1;디렉터리정보2;디렉터리정보3
+
+==>;을 기준으로 여러가지 경로가 나옴
+==>등록된 경로(디렉터리정보1~3)에서 실행파일을 찾게 된다.
+
+
+Case1.
+폴더 : myclass
+파일1 : ClassPath.java
+파일2 : AAA.class
+파일3 : BBB.class
+파일4 : ClassPath.class
+
+==>정상적인 작동
+
+Case2.
+
+폴더 : myclass ( mysubclass(하위폴더존재) )
+파일1: ClassPath.class
+파일2: ClassPath.java
+
+폴더 : mysubclass(하위폴더)
+파일1: AAA.class
+파일2: BBB.class
+
+==>클래스를 찾지 못해서 에러 발생
+==>mysubclass에서 클래스 파일을 검색하라는 정보를 전달할 수 있어야 함
+
+
+//환경변수 classpath 추가하기
+C:\myclass> echo %classpath%	//classpath확인
+%classpath%	//classpath가 설정되지 않은 상태의 출력
+c:\myclass>set classpath=.;	//현재 디렉터리를 classpath에 등록
+c:\myclass>echo %classpath%
+.;
+
+
+------
+Case2해결하기
+c:\myclass>set classpath=.;c:\myclass\mysubclass;	//절대경로 지정방식
+c:\myclass>set classpath=.;.\mysubclass;		//상대경로 지정방식
+
+==>나중에 myclass디렉터리 바꿀 수 있으므로 상대경로로 지정
+==>Bat인 파일 경험해보기
+
+
+------------------------------------------------------------------------------------------------
+
+//8-2 패키지의 이해
+(intro)
+A,B,C회사 존재 & A회사 X.class ,B회사 X.class 같은 이름 BUT 다른기능
+WANT : C사가 두 클래스를 쓰고싶음
+
+DIR1 > X.class (A회사꺼)
+DIR2 > X.class (B회사꺼)
+& classpath 등록
+==>구별을 할 수 없음!!
+
+==>
+SOL)
+1.디렉터리를 구분한다 D1, D2
+2.D1의 X클래스 & D2의 X클래스 접근할 수 있도록
+
+e.g)
+
+A팀이 넓이를 구하는 area, B팀이 둘레는 구하는 perimeter 를 담당
+class Circle{...}같은 클래스 이름을 가져옴
+=>Orange.area에는 A팀의 Circle 클래스 // Orange.perimeter에는 B팀의 Circle클래스
+==>
+Orange.area.Circle c1=new Orange.area.Circle();		//A팀 클래스 인스턴스 생성
+Orange.perimeter.Circle c2=new Orange.perimeter.Circle();	//B팀 클래스 인스턴스 생성
+
+
+//패키지와 클래스패스의 관계
+C:\AAA안에 BBB,CCC패키지 존재 & 그 패키지 안에 Circle이라는 클래스 존재 한다고 가정
+
+BBB.Circle c=new BBB.Circle();
+Circle클래스 인스턴트 생성위해 BBB패캐지 탐색 => 클래스패스를 기준으로 검색
+CCC.Circle c=new CCC.Circle();
+==>
+1)BBB와 CCC는 패키지로 선언되어야함.
+2)c:\AAA 디렉터리가 클래스 패스에 등록되어 있어야 한다.
+
+
+//패키지의 선언
+
+package orange.area;	//패캐지 선언(대소문자 가능하지만 class와 비교를 위해 소문자로 선언해줌)
+public class Circle
+{
+	...
+}
+
+orange.area.Circle c1=new orange.area.Circle(1.5);
+
+
+==>myclass > orange > area
+==>myclass : classpath에 지정할 디렉터리
+==>orange,area는 패키지로 선언 & area 디렉터리에 Circle.class 있어야됨
+==>orange.area.Circle의 JVM 접근 순서 : 
+클래스패스에 등록된 myclass를 먼저 찾고 orange폴더의 area폴더의 Circle이라는 클래스를 찾겠다.
+
+
+-패키지를 선언하지 않으면 '이름없는 패키지(unnamed package)'에 속함
+
+-cmd에서 javac -d .PackageTest.java
+ =>현재폴더\PackageTest\java\~~.class (디렉터리가 없으면 새로 생성)
+
+ 
+==> 패키지는 보통 회사이름.projectname으로 많이 사용
+com.samsung.projectname
+com.lg.projectname
+org.appache.projectname
+
+------------------------------------------------------------------------------------------------
+
+//import 선언
+
+import orange.area.Circle;	//orange.area패키지의 Circle로 인스턴스 생성하겠다
+
+=>
+orange.area.Circle c1=new orange.area.Circle(1.5);
+Circle c2=new Circle(2.5);	//두개 같음
+
+
+*모호함이 발생하는 대표적인 사례
+import orange.area.Circle;
+import orange.perimeter.Circle;
+
+*import선언보다는 패키지를 분류하고 묶는게 훨씬 중요함!!
+
+
+//static import문
+;static import문을 사용하면 static멤버를 호출할 때 클래스 이름을 생략할 수 있다.
+
+import static java.lang.Integer.*;		//Integer클래스의 모든 static 메소드
+import static java.lang.Math.random;	//Math.random();만 (import 선언시 괄호 안붙임)
+import static java.lang.System.out;		//System.out을 out만으로 참조 가능
+
+
+public class StaticImportEx {
+	public static void main(String[] args)
+	{
+		//System.out.println(Math.random());
+		out.println(random());
+		
+		//System.out.println("Math.PI : "+Math.Pi);
+		out.println("Math.PI : "+Math.PI);	//위에 Math.*; 하면 PI가능		
+	}
+
+}
+
+
+
+
+
+
+
+
+
+
+

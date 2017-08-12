@@ -1,0 +1,203 @@
+
+
+#include <stdio.h>
+#include <Windows.h>
+#include <conio.h>
+#include <stdlib.h>
+#include <time.h>
+
+#define LEFT 75
+#define RIGHT 77
+#define UP 72
+#define DOWN 80
+#define DEBUG 1
+#define WIDTH 10
+#define HEIGHT 10
+
+typedef struct {
+ int x;
+ int y;
+}Move;
+
+void gotoxy(int x, int y); //좌표
+void printGuide(void);     //가이드라인 출력
+void printEndPoint(int, int); //엔딩포인트 출력
+void printHero(int x, int y); //캐릭터 출력
+void printBall(int x, int y); //공 출력
+void delPrevState(int x, int y); //이전상태 지우기
+void printEnding1(int, int); //엔딩 화면 출력
+
+int main(void)
+{
+ int s_time = time(NULL); //컴파일 시간
+ int e_time;              //스테이지 종료 시간
+
+        //맵
+ int map[HEIGHT][WIDTH] = {
+  { 1,1,1,1,1,1,1,1,1,1 },
+  { 1,0,0,0,0,0,0,0,0,1 },
+  { 1,0,0,0,0,0,0,0,0,1 },
+  { 1,0,0,0,0,0,0,0,0,1 },
+  { 1,0,0,0,0,0,0,0,0,1 },
+  { 1,0,0,0,0,0,0,0,0,1 },
+  { 1,0,0,0,0,0,0,0,0,1 },
+  { 1,0,0,0,0,0,0,0,0,1 },
+  { 1,0,0,0,0,0,0,0,0,1 },
+  { 1,1,1,1,1,1,1,1,0,1 }
+ };
+ int i, j, result;
+ int k;
+ Move hero = { 2,1 };//캐릭터 좌표표시(초기 2,1)
+ Move ball = { 4,6 };//공 좌표표시(초기 4,6)
+ Move endPoint = { 16,9 };//엔딩포인트(초기 16,9);
+        //맵 출력
+ for (i = 0; i < HEIGHT; i++) {
+  for (j = 0; j < WIDTH; j++) {
+   if (map[i][j] == 0) printf("  ");
+   else printf("▧");
+  }
+  printf("\n");
+ }
+ printHero(hero.x, hero.y);//초기 캐릭터 출력
+ printBall(ball.x, ball.y);//초기 공 출력
+ gotoxy(WIDTH * 3, 0); //스테이지 출력
+ printf("<<<   Stage 1   >>>");
+
+ while (1) {
+  printGuide();
+  printEndPoint(endPoint.x, endPoint.y); //엔딩 포인트 출력
+  if (getch() != '0') { //키보드 입력을 기다린다
+   gotoxy(hero.x, hero.y); //캐릭터의 움직이기 전 좌표
+   printf("  "); //움직이고 난 뒤 공백을 출력해준다.
+   switch (getch()) {
+   case LEFT:
+    if (map[hero.y][hero.x / 2 - 1] != 0) break; //캐릭터 옆에 벽이 있음
+    if (hero.x - 2 == ball.x&&hero.y == ball.y) { //캐릭터 왼쪽에 공이 있음
+     if (map[ball.y][ball.x / 2 - 1] != 0) { break; }//공 왼쪽에 벽이 있음
+     else {          //공 왼쪽에 벽이 빈공간
+      delPrevState(ball.x, ball.y);   //이동전 볼을 지운다
+      hero.x -= 2;
+      ball.x -= 2;
+      break;
+     }
+    }
+    hero.x -= 2;
+    break;
+   case RIGHT:
+    if (map[hero.y][hero.x / 2 + 1] != 0) break;
+    if (hero.x + 2 == ball.x&&hero.y == ball.y) {
+     if (map[ball.y][ball.x / 2 + 1] != 0) { break; }
+     else {
+      delPrevState(ball.x, ball.y);
+      hero.x += 2;
+      ball.x += 2;
+      break;
+     }
+    }
+    hero.x += 2;
+    break;
+   case UP:
+    if (map[hero.y - 1][hero.x / 2] != 0) break;
+    if (hero.x == ball.x&&hero.y - 1 == ball.y) {
+     if (map[ball.y - 1][ball.x / 2] != 0) break;
+     delPrevState(ball.x, ball.y);
+     hero.y -= 1;
+     ball.y -= 1;
+     break;
+    }
+    hero.y -= 1;
+    break;
+   case DOWN:
+    if (map[hero.y + 1][hero.x / 2] != 0) break;
+    if (hero.x == ball.x&&hero.y + 1 == ball.y) {
+     if (map[ball.y + 1][ball.x / 2] != 0) break;
+     else {
+      delPrevState(ball.x, ball.y);
+      hero.y += 1;
+      ball.y += 1;
+      break;
+     }
+    }
+    hero.y += 1;
+    break;
+   }
+   //캐릭터위치, 대응하는 맵인덱스 ,볼 좌표를 출력
+#if(DEBUG) 
+   gotoxy(0, HEIGHT + 1);
+   printf("<< Debug Mode >>");
+   gotoxy(0, HEIGHT + 2);
+   printf("Map : [%d][%d]", hero.y, hero.x / 2);
+   gotoxy(0, HEIGHT + 3);
+   printf("Hero : <%d,%d>", hero.x, hero.y);
+   gotoxy(0, HEIGHT + 4);
+   printf("Ball : <%d,%d>", ball.x, ball.y);
+#endif
+   printHero(hero.x, hero.y);
+   printBall(ball.x, ball.y);
+
+   if (ball.x == endPoint.x && ball.y == endPoint.y) {
+    e_time = time(NULL); //게임종료 시간
+    printEnding1(s_time, e_time);
+    return 0;
+   }
+  }
+  else {
+   gotoxy(0, HEIGHT + 6);
+   break;
+  }
+ }
+ return 0;
+}
+
+
+void gotoxy(int x, int y) {
+ COORD pos = { x,y };
+ SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), pos);
+}
+
+void printGuide(void)
+{
+ gotoxy(WIDTH * 3, 2);
+ printf("*****How to play*****");
+ gotoxy(WIDTH * 3, 3);
+ printf(" < ↑ > : go to upper  < ↓ > : go to below");
+ gotoxy(WIDTH * 3, 4);
+ printf(" < → > : go to right  < ← > : go to left");
+ gotoxy(WIDTH * 3, 6);
+ printf(" < 0 > : exit");
+}
+
+void printEndPoint(int x, int y)
+{
+ gotoxy(x, y);
+ printf("★");
+}
+
+void printHero(int x, int y)
+{
+ gotoxy(x, y);
+ printf("Ω");
+}
+
+void printBall(int x, int y)
+{
+ gotoxy(x, y);
+ printf("●");
+}
+
+void delPrevState(int x, int y)
+{
+ gotoxy(x, y);
+ printf("  ");
+}
+
+void printEnding1(int s_time, int e_time)
+{
+ gotoxy(WIDTH * 3, 8);
+ printf("*****Stage1 Clear*****");
+ gotoxy(WIDTH * 3, 9);
+ printf("Playing Time : %d\n\n\n", (e_time)-(s_time));
+ gotoxy(WIDTH * 3, 10);
+}
+
+ 

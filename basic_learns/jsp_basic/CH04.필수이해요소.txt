@@ -1,0 +1,113 @@
+-----------CH04.필수 이해 요소-----------------
+
+//01 JSP 처리 과정
+p99 그림
+JSP를 실행 == JSP페이지를 컴파일 한 서블릿 클래스 실행
+
+//02 출력 버퍼와 응답
+
+p.101 출력 버퍼의 장점
+
+//2.1 page 디렉티브에서 버퍼 설정하기 : buffer 속성과 autoFlush 속성
+
+<%@ page buffer="4kb" %>
+=>jsp가 사용할 버퍼 설정, 킬로바이트 단위로 버퍼의 크기를 지정
+(일반적으로 JSP 페이지 작성할 때에는 buffer속성을 지정하지 않음.Default 8KB이상의 크기)
+
+<%@ page buffer="none" %>
+=>버퍼를 사용하고 싶지 않을 때 명령어
+=>
+-<jsp:forward> 기능을 사용할 수 없음
+-곧바로 전송되기 때문에 출력한 내용을 취소할 수 없다.
+
+
+
+-page 디렉티브는 autoFlush 속성을 제공
+true : 버퍼가 다 차면 버퍼를 플러시하고 계쏙해서 작업을 진행한다.
+false : 버퍼가 다 차면 익셉션을 발생시키고 작업을 중지한다.
+
+/*예제 autoFlushFalse*/
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ page buffer="1kb" autoFlush="false" %>    
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>autoFlush 속성값 false 예제</title>
+</head>
+<body>
+
+<% for(int i=0;i<1000;i++){ %>
+1234
+<% } %>
+</body>
+</html>
+
+<<실행 결과 >>
+에러 메세지
+root cause
+java.io.IOException: Error: JSP Buffer overflow
+
+---------------------------------------------------------------------------------------------
+
+//03 웹 어플리케이션 폴더 구성과 URL 매핑
+
+//3.1 웹 어플리케이션 폴더와 URL의 관계
+
+-[톰캣]\webapps\[웹경로]
+ ->http://host:port[/웹경로]
+
+e.g)
+\webapps\chap03 -> http://localhost:8080/chap03
+\webapps\chap04 -> http://localhost:8080/chap04
+\webapps\ROOT -> http://localhost:8080
+
+"/chap04"를 컨텍스트 경로(context path) // 루트 웹 어플리케이션의 경우 컨텍스트 경로는 ""인 빈 문자열
+=>URL의 첫 번째 경로와 일치하는 context path를 가진 웹 어플리케이션이 존재하지 않으면 루트 웹 어플리케이션에 요청을 처리.
+
+/*context path 구하는 예제 : contextPath.jsp*/
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>웹 어플리케이션 경로 구하기</title>
+</head>
+<body>
+
+웹 어플리케이션 컨텍스트 경로(Context path) : <br>
+"<%= request.getContextPath() %>"
+
+</body>
+</html>
+
+<< 실행 결과 >>
+웹 어플리케이션 컨텍스트 경로(Context path) : 
+ "/chap04" 
+
+=>root 폴더에 contextPath.jsp 저장하고 실행하면
+<< 실행 결과>>
+웹 어플리케이션 컨텍스트 경로(Context path) : 
+ ""  
+
+
+//3.2 웹 어플리케이션 폴더 내에서의 하위 폴더 사용
+
+http://localhost:8080/chap04/board/boardFolder.jsp
+webapps\chap04\board 에 boardFolder.jsp 만들면 하위 폴더 사용 가능
+ 
+---------------------------------------------------------------------------------------------
+
+//04 웹 어플리케이션 배포
+
+//4.1 톰캣에 war(Web Application Archive) 파일 배포하기
+C:\apache-tomcat-8.5.6\webapps\chap04>jar cvf chap04.war *
+
+c : 새로운 파일 생성
+v : 세부 정보를 콘솔(명령 프롬프트)에 표시함
+f : 생성할 파일의 이름을 지정함
+
+
+

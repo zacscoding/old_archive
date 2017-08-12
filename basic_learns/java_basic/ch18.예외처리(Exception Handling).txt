@@ -1,0 +1,798 @@
+-------------------ch.18예외처리(Exception Handling)-----------------------
+
+==>예외를 자바에서 어떻게 처리하냐를 정리할 필요가 있음
+  (자바,C#,C++ 거의 똑같지만(논리적 오류 =>예외) 언어에 따라 아주 조금 다름)
+
+//18-1 예외처리에 대한 이해와 try~catch 문 기본
+
+-예외 vs 에러
+  예외 : 문법적으로 문제는 안되지만, 실행과정에서 문제(논리적 오류)
+  에러 : 컴파일 에러
+
+-예외상황의 예)
+ 1)나이를 입력하라고 했는데, 0보다 작은 값이 입력됨
+ 2)나눗셈을 위해서 두 개의 숫자를 입력 받았는데, 제수로 0이 입력됨.
+ 3)주민등록번호 13자리만 입력하라고 했는데 중간에 -가 삽입됨
+
+ 
+
+  System.out.print("피제수 입력 : ");
+  int num1=in.nextInt();
+  
+  System.out.print("제수 입력 : ");
+  int num2=in.nextInt();
+  
+  if(num2==0)	//예외상황의 발생여부 확인
+  {
+  //↓↓↓예외처리↓↓↓
+   System.out.println("제수는 0이 될 수없습니다.");
+   i-=1;
+   continue;
+  }
+  
+
+=>if문 기반의 예외처리는 프로그램 전체를 이해하는데 방해가됨
+=>if문과 자바의 예외처리 매커니즘을 주관적으로 혼용하기도 함
+  (기준을 잡는게 중요할 수 있다)
+------------------------------------------------------
+//예외와 예외 클래스
+일반 예외(Exception)
+실행 예외(Runtime Exception)
+
+==>Exception을 상속하는 대표적인 예외 클래스
+-ClassNotFoundException
+-InterruptedException
+....
+-RuntimeException
+
+==>RuntimeException을 상속하는 대표적인 예외 클래스
+-ArrayIndexOutOfBoundsException
+-ClassCastException
+-NegativeArraySizeException
+-NullPointerException
+-NumberFormatException
+
+  
+------------------------------------------------------
+
+//try~catch문
+
+-자바의 예외처리 기본 메커니즘
+try
+{
+ //try영역(예외발생 할 수 있는 지역)
+}
+catch(AAA e)
+{
+ //catch영역
+}
+
+=>try는 예외발생의 감지 대상을 감싸는 목적으로 사용된다(일부임)
+=>그리고 catch는 발생한 예외상황의 처리를 위한 목적으로 사용된다.
+=>try영역에서 발생하는 예외는 catch 영역에서 처리하겠다.
+
+-장점 중 하나
+try 영역을 보면서 예외발생 가능 지역 인지 //catch 영역을 보면서 예외처리 코드 인지
+
+
+  try
+  {
+   System.out.println("나눗셈 결과의 몫:"+(num1/num2));
+      //num2==0이면 1.예외 발생 (num2가 0이 입력된 순간보다 나누는 순간 예외발생)
+   System.out.println("나눗셈 결과의 나머지:"+(num1%num2));
+  }
+  catch(ArithmeticException e) //2.참조 값 전달하면서 catch영역 실행
+  {
+   System.out.println("나눗셈 불가능");
+   System.out.println(e.getMessage());
+  }
+  
+  System.out.println("프로그램을 종료합니다.");	//3.catch영역실행 후, try~catch 다음 문장을 실행
+
+=>JVM의 순서 이해
+1.num1/num2 에서 0으로 나누는 순간 예외 발생 인식 & 인스턴스 생성(정의된 예외 클래스(여기서 는 ArithmeticException))
+2.참조 값 catch영역에 인자로 전달하면서 catch 영역 실행
+
+=>만약 ArithmeticException말고 다른 예외클래스가 오면 실행X 
+=>적절한 형태의 catch블록 구성은 프로그래머의 몫
+
+------------------------------------------------------
+
+//적절한 try 블록의 구성
+
+try문 내에서 예외상황이 발생하고 처리된 다음에는,나머지 try문을 건너뛰고, try~catch의 이후를
+실행한다는 특징으로 인해서 트랜잭션(Transaction)의 구성이 용이하다.
+
+예제 1)
+try
+{
+ int num=num1/num2;
+}
+catch(ArithmeticException e)
+{
+ ...
+}
+System.out.println("정수형 나눗셈이 정상적으로 진행");
+System.out.println("나눗셈 결과 : "+num);
+
+=>예외가 발생하지 않으면 catch{}블록 건너띄고 실행
+=>예외가 발생하면 ArithmeticException 인스턴스 생성 및 참조값 전달해서 catch{}블록 실행 
+  +System.out~ 밑 부분은 예외의 발생과 상관없이 실행
+=>try{}블록과 catch{}밑에 System~는 하나의 일(Work)의 단위
+
+==>올바른 예제
+try
+{
+ int num=num1/num2;
+ System.out.println("정수형 나눗셈이 정상적으로 진행");
+ System.out.println("나눗셈 결과 : "+num);
+}
+catch(ArithmeticException e)
+{
+ ...
+}
+
+------------------------------------------------------
+
+//e.getMessage()
+
+-ArithmaticException 클래스와 같이 예외상황을 알리기 위해 정의된 클래스를 가리켜
+ 예외 클래스라 한다.
+-모든 예외 클래스는 Throwable 클래스를 상속하며, 이 클래스에는 getMessage메소드가 정의되어 있다.
+-getMessage 메소드는 예외가 발생한 원인정보를 문자열의 형태로 반환한다.
+
+try
+{
+ int num=num1/num2;
+ System.out.println("정수형 나눗셈이 정상적으로 진행");
+ System.out.println("나눗셈 결과 : "+num);
+}
+catch(ArithmeticException e)
+{
+ System.out.println(e.getMessage()); // /by zero출력
+}
+
+------------------------------------------------------
+
+//예외 클래스는 모두 정의가 되어 있는가?
+
+-대표적인 예외 클래스들(언어에 의존적인 예외)
+
+ *배열의 접근에 잘못된 인덱스 값을 사용하는 예외상황
+   =>예외 클래스 : ArrayIndexOutOfBoundsException
+
+ *허용할 수 없는 형변환 연산을 진행하는 예외상황
+   =>예외 클래스 : ClassCastException
+
+ *배열선언 과정에서 배열의 크기를 음수로 지정하는 예외상황
+   =>예외 클래스 : NegativeArraySizeException
+
+ *참조변수가 null로 초기화 된 상황에서 메소드를 호출하는 예외상황
+   =>예외 클래스 : NullPointerException
+
+예제)
+public static void main(String[] args) {
+		try {
+			int[] arr = new int[3];
+			arr[-1] = 20;
+		} catch (ArrayIndexOutOfBoundsException e) {
+			System.out.println(e.getMessage());	//-1
+		}
+		
+		try {
+			Object obj=new int[10];
+			String str=(String)obj;
+		} catch(ClassCastException e) {
+			System.out.println(e.getMessage());	//[] cannot be cast to java.lang.String
+		}
+		
+		try {
+			int[] arr=new int[-10];			
+		}catch(NegativeArraySizeException e) {
+			System.out.println(e.getMessage());	//null		
+		}
+		
+		try {
+			String str=null;
+			int len=str.length();			
+		} catch(NullPointerException e) {
+			System.out.println(e.getMessage());	//null
+		}
+
+}
+
+==>getMessage()가 null만 반환할 때도 있음 > 이 메소드에만 의지하는 것은 적절하지 못함.
+
+------------------------------------------------------
+
+//try ~ catch의 또다른 장점
+
+   try
+   {
+    System.out.print("피제수 입력: ");
+    int num1=keyboard.nextInt();
+    
+    System.out.print("제수 입력: ");
+    int num2=keyboard.nextInt();
+    
+    System.out.print("연산결과를 저장할 배열의 인덱스 입력: ");
+    int idx=keyboard.nextInt();
+    
+    arr[idx]=num1/num2;
+    System.out.println("나눗셈 결과는 "+arr[idx]);
+    System.out.println("저장된 위치의 인덱스는 "+idx); 
+   }
+   catch(ArithmeticException e)
+   {
+    System.out.println("제수는 0이 될 수 없습니다.");
+    i-=1;
+    continue;
+   }
+   catch(ArrayIndexOutOfBoundsException e)
+   {
+    System.out.println("유효하지 않은 인덱스 값입니다.");
+    i-=1;
+    continue;
+   }
+
+=>하나의 try 블록에 둘 이상의 catch 블록을 구성할 수 있기 때문에 예외처리와 
+  관련된 부분을 완전히 별도로 떼어 놓을 수 있다.
+(추가)
+arr[idx]=num1/num2;
+num1/num2 먼저 연산 & num2가 0이면 ArithmeticException 발생 & 순서대로 catch 블록에서 참조할 수 있는 부분을 실행
+
+------------------------------------------------------
+
+//catch가 결정되는 방법
+try
+{
+ ...
+}
+catch(Throwable e)
+{
+ ...
+}
+catch(ArithmeticException e)
+{
+ ...
+}
+
+
+=>try블록에서 A라는 예외 발생
+=>첫번째 catch 블록에서부터 순서대로 내려옴
+=>catch 블록의 매개변수가 해당 예외 인스턴스의 참조 값을 받을 수 있는지 확인해 내려온다.
+=>위의 catch문은 에러(모든 예외 클래스는 Throwable 상속 => 참조변수로 받을 수 있음)
+------------------------------------------------------
+
+//예외상황의 발생여부와 상관없이 항상 실행되는 영역 : finally
+
+  try
+  {
+   int result=num1/num2;
+   System.out.println("나눗셈 결과는 "+result);
+   return true;
+  }
+  catch(ArithmeticException e)
+  {
+   System.out.println(e.getMessage());
+   return false;
+  }
+  finally
+  {
+   System.out.println("finally 영역 실행");
+  }
+
+=>그냥 무조건, 항상 실행되는 것이 아니라, finally와 연결되어 있는 try 블록으로 일단 진입을하면,
+  무조건 실행되는 영역이 바로 finally 블록
+  즉, "try 영역으로 일단 들어가면 무조건 실행되는 영역"
+
+=>중간에 return 문을 실행하더라도 finally 블록이 실행된 다음에 메소드를 빠져 나간다.
+
+------------------------------------------------------
+//18-2 프로그래머가 직접 정의하는 예외의 상황
+
+
+//예외 클래스의 정의와 throw
+프로그램의 논리에만 어긋나는 상황들(프로그램의 성격에 따라 결정이 되는 예외상황)
+=>JAVA의 문법적인 오류는 아님
+=>JVM에게 알려야함( throw 키워드 )
+=>예외 클래스를 직접 정의하고 예외의 발생도 직접 명시해야 한다.
+
+
+class AgeInputException extends Exception 
+//예외 클래스는 Throwable의 하위 클래스인 Exception  클래스를 상속해서 정의
+{
+	public AgeInputException()
+	{
+		super("유효하지 않은 나이가 입력되었습니다.");	
+		//Exception 클래스의 생성자로 전달되는 문자열이 getMessage메소드 호출 시 반환되는 문자열이다.
+	}
+}
+
+
+------------------------------------------------------
+
+//프로그래머 정의 예외 클래스의 핸들링
+
+import java.util.Scanner;
+class AgeInputException extends Exception
+{
+	public AgeInputException()
+	{
+		super("유효하지 않은 나이가 입력 되었습니다.");
+	}	
+}
+
+public class ProgrammerDefineException {
+	public static void main(String[] args)
+	{
+		System.out.print("나이를 입력하세요 : ");
+		
+		try
+		{
+			int age=readAge();	//throws에 의해 이동된 예외처리 포인트!
+			System.out.println("입력한 나이는 "+age+"입니다.");
+		}
+		catch(AgeInputException e)
+		{
+			System.out.println(e.getMessage());
+		}		
+		
+	}
+	
+	public static int readAge() throws AgeInputException	//AgeInputException 예외는 던져버린다.
+//readAge메소드 내에서는 AgeInputException에 대한 예외상황을 처리하지 않으니, 이 메소드를 호출하는 영역에서는
+//AgeInputException에 대한 처리도 대비해야 한다. 
+//=> throw에 의해 생성된 예외상황은 반드시 1)try~catch문에 의해 처리 2)throws에 의해 넘기기
+
+	{
+		Scanner keyboard=new Scanner(System.in);
+		int age=keyboard.nextInt();
+		
+		if(age<0)
+		{
+			AgeInputException excpt=new AgeInputException();
+			throw excpt;	//예외상황의 발생지점, 예외처리 포인트! => 예외처리 메커니즘 가동
+			//참조값을 JVM이 받고 그 값을 catch블록의 AgeInputException e가 받음
+		}
+		return age;
+	}
+}
+
+//cf) throw 문의 표현방식
+//예외의 상황은 다른 영역에서 발생을 하고, 이 문장에서는 throw문을 통해서 예외가 처리가 발생했음을 알리기만 한다.
+//그럼에도 불구하고, 표현의 편의상 이 문장을 가리켜 "예외상황이 발생한 문장" 이라 표현.
+
+------------------------------------------------------
+
+//예외를 처리하지 않으면?
+
+	public static void main(String[] args) throws AgeInputException
+	{
+		System.out.print("나이를 입력하세요 : ");
+		
+		int age = readAge();
+		System.out.println("입력한 나이는 " + age + "입니다.");
+		
+	}
+
+==>readAge() 메소드에서 throws AgeInputException 으로 예외를 호출한 블록(main)으로 넘김
+==>main에서도 throws AgeInputException있음 BUT main은 JVM이 호출
+==>가상머신에게 전달이 된다.
+
+==>가상머신의 예외처리
+1.getMessage 메소드를 호출한다.
+2.예외상황이 발생해서 전달되는 과정을 출력해준다.
+3.프로그램을 종료한다.
+
+==>실제 콘솔창에 나온 메세지들
+나이를 입력하세요 : -20
+Exception in thread "main" AgeInputException: 유효하지 않은 나이가 입력 되었습니다. //1번
+	at ProgrammerDefineException.readAge(ProgrammerDefineException.java:27) //2번
+	at ProgrammerDefineException.main(ProgrammerDefineException.java:15)
+	//메소드의 호출관계(예외의 전달 흐름)을 보여주는 printStackTrace메소드의 호출결과
+
+=>"예외가 발생하였다." + "메소드를 호출한 영역으로 예외가 던져졌다."
+(예외상황 > 예외 // 넘겨졌다 or 전달되었다 > 던져졌다 라고 표현)
+
+------------------------------------------------------
+
+//printStackTrace
+
+import java.util.Scanner;
+
+/*
+ * 예외 클래스 : AgeInputException
+ * 예외발생 : 나이 입력이 0보다 작음
+*/
+
+class AgeInputException extends Exception 
+{
+	public AgeInputException() {
+		super("유효하지 않은 나이가 입력되었습니다.");
+	}
+}
+
+/*
+ * 예외클래스 : NameLengthException
+ * 예외발생 : 이름이 1자 이하
+*/
+
+class NameLengthException extends Exception
+{
+	String wrongName;	//예외상황과 관련해서 필요한 정보를 담을 수 있도록 정의할 수 있다.
+	
+	public NameLengthException(String name){
+		super("잘못된 이름이 삽입되었습니다.");
+		wrongName=name;
+	}
+	
+	public void showWrongName(){
+		System.out.println("잘못 입력된 이름 : "+wrongName);
+	}	
+}
+
+class PersonalInfo
+{
+	String name;
+	int age;
+	
+	public PersonalInfo(String name,int age){
+		this.name=name;
+		this.age=age;
+	}
+	
+	public void showPersonalInfo(){
+		System.out.println("이름 : "+name);
+		System.out.println("나이 : "+age);
+	}	
+}
+
+	
+public class Example {
+	public static Scanner keyboard=new Scanner(System.in);
+	
+	public static void main(String[] args) {
+		try{
+			PersonalInfo readInfo=readPersonalInfo();
+			readInfo.showPersonalInfo();
+		}catch(AgeInputException e){
+			e.printStackTrace();	//예외가 발생한 정확한 위치 확인 가능 + 예외가 전달되어 온 과정도 확인할 수 있다.
+		}catch(NameLengthException e){
+			e.showWrongName();
+			e.printStackTrace();
+		}		
+	}
+
+	public static PersonalInfo readPersonalInfo() throws AgeInputException, NameLengthException{
+												//throws는 ,를 사용해서 둘 이상의 예외클래스 선언 가능.
+												//위의 클래스와 관련 예외가 발생할 수 있으며 발생 시 처리하지 않고 메소드를 호출한 영역으로 던져버린다. 
+		String name=readName();
+		int age=readAge();
+		PersonalInfo pInfo=new PersonalInfo(name,age);
+		return pInfo;		
+	}
+	
+	public static String readName() throws NameLengthException{
+		System.out.print("이름 입력 : ");
+		String name=keyboard.nextLine();
+		
+		if(name.length()<2){
+			throw new NameLengthException(name);
+		}
+		return name;
+	}
+	
+	public static int readAge() throws AgeInputException{
+		System.out.print("나이 입력 : ");
+		int age=keyboard.nextInt();
+		
+		if(age<0){
+			throw new AgeInputException();
+		}
+		return age;		
+	}
+
+}
+
+
+이름 입력 : 박
+잘못 입력된 이름 : 박
+NameLengthException: 잘못된 이름이 삽입되었습니다.
+	at Example.readName(Example.java:80)
+	at Example.readPersonalInfo(Example.java:69)
+	at Example.main(Example.java:56)
+
+=>80행에서 예외가 발생 & 69 -> 56 순으로 전달되어 처리 되었다.
+
+이름 입력 : 박명수
+나이 입력 : -25
+AgeInputException: 유효하지 않은 나이가 입력되었습니다.
+	at Example.readAge(Example.java:90)
+	at Example.readPersonalInfo(Example.java:70)
+	at Example.main(Example.java:56)
+
+=>printStackTrace메소드가 호출되면 getMessage 메소드 호출 시 반환되는 문자열도 더불어 출력
+
+
+**예외 발생 => 1)try ~ catch로 예외를 처리 2)throws를 통해 호출한 영역으로 넘김
+------------------------------------------------------
+
+//멀티 catch
+;자바 8이후로 |를 이용해서 사용가능
+catch(Exception1 | Exception2 e) 가능
+
+=>e.g
+public class MultiCatchExample {
+	public static void main(String[] args){
+		try{
+			int[] num=new int[]{1,2,3};
+			System.out.println(num[5]);//ArrayIndexOutOfBoundsException 발생
+			String data="aa111";
+			int num2=Integer.parseInt(data);	//NumberFormatException
+			
+			String str=null;
+			str.toString();		//NullPointerException						
+		}catch(ArrayIndexOutOfBoundsException | NumberFormatException e){
+			System.out.println("둘중하나의 예외 발생 ");			
+		}		
+	}
+}
+
+=>catch에서 2가지 예외만 처리 
+
+------------------------------------------------------
+
+
+//18-3 예외 클래스의 계층도
+
+//예외 클래스의 계층도와 Error 클래스
+
+  Throwable
+	  ↑
+    ───────
+Exception	Error
+
+
+-Error클래스를 상속하는 예외클래스는 프로그램 네에서 해결이 불가능한 치명적인 예외 상황을
+알리는 예외 클래스의 정의에 사용된다.
+
+-VirtualMachineError 클래스가 대표적인 예! VME 클래스는 JVM에 문제가 생겨서 더 이상 프로그램의 
+ 흐름을 이어갈 수 없는 경우를 알림
+
+-Error 클래스는 try~catch로 처리가 불가능한 예외. JVM에 발생한 문제를 프로그램 네에서 해결할 수 있겠는가?
+ 따라서 이러한 유형의 예외는 JVM에게 전달되도록 두어야 한다.
+
+==>우리의 관심사는 Error클래스가 아닌 Exception 클래스에 두어야 한다.
+(Error를 상속하는 클래스를 보면 프로그램 내에서 해결이 불가능한 치명적인 예외상황이구나 정도)
+
+
+cf)VirtualMachineError의 하위 클래스
+Error를 상속하는 대표 클래스 <-- VirtualMachineError <-- OutOfMemoryError (메모리 공간이 부족한 상황을 표현)
+=>OutOfMemoryError가 발생하면 메모리가 효율적으로(또는 적절히) 사용되도록 소스코드 자체를 변경해야 한다.
+=>이렇듯 Error와 관련 있는 오류상황은 소스코드의 변경을 통해서 해결해야 하는 경우가 대부분.
+
+------------------------------------------------------
+
+//Exception과 API 문서
+
+		Throwable
+		Exception
+RuntimeException ......		IOException
+
+=>Error , Exception이 Throwable을 상속함 => (Error를 제외하고) 결과적으로 Exception은 모든 예외 클래스의 상위 클래스.
+
+
+//메소드를 볼 때에도 throws 절을 참조하기
+
+=>호출하고자 하는 메소드가 예외를 발생시킬 수 있다면, 다음 두 가지 중 한가지 조치를 반드시 취해야 하므로
+  API 문서의 참조가 필요하다.
+1)try~catch문을 통한 예외의 처리
+2)throws를 이용한 예외의 전달
+
+e.g)
+-Object 클래스의 clone()메소드 API
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+clone																│
+protected Object clone()											│
+                throws CloneNotSupportedException					│
+																	│
+Creates and returns a copy of this object. The precise meaning of 	│
+"copy" may depend on the class of the object. 						│
+The general intent is that, for any object x, the expression: 		│	
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+public void simpleMethod(int n)
+{
+	Myclass my=new Myclass();
+	my.clone();
+	..
+}
+
+=>컴파일 에러! CloneNotSupprotedException은 Exception을 상속
+=>1)try~catch문에 의해 처리 2)throws에 의해 던지기
+
+i.e
+public void simpleMethod(int n)
+{
+	try
+	{
+	 Myclass my=new Myclass();
+	 my.clone();
+	 ..
+	}
+	catch(CloneNotSupportedException e)
+	{...}
+}
+
+or
+
+public void simpleMethod(int n) throws CloneNotSupportedException
+{
+	Myclass my=new Myclass();
+	my.clone();
+	..
+}
+
+
+=>자바에서 제공하는 메소드 하나를 호출하더라도 API문서를 참조해야함
+
+------------------------------------------------------
+
+//처리하지 않아도 되는 RuntimeException의 하위 클래스
+
+-RuntimeException은 Exception 클래스의 하위 클래스이다.
+-RuntimeException을 상속하는 예외 클래스도 Error를 상속하는 예외 클래스와 마찬가지로 try~catch문 or thows절 사용 X
+ BUT Error의 하위 클래스들과 구분되는 특징이 있음. 
+ 1)Error를 상속하는 예외 클래스만큼 치명적인 예외상황의 표현에 사용되지 않는다.
+ 2)따라서 예외발생 이후에도 프로그램의 실행을 이어가기 위해서 try~catch문을 통해서 처리하기도 한다.
+
+-그러나 Error클래스를 상속하는 예외 클래스와 마찬가지로, try~catch문 또는 throws절을 명시하지 않아도 된다.
+-이들이 명시하는 예외의 상황은 프로그램의 종료로 이어지는 것이 자연스러운 경우가 대부분이기 때문이다.
+
+==>RuntimeException을 상속하는 대표적인 예외 클래스
+-ArrayIndexOutOfBoundsException
+-ClassCastException
+-NegativeArraySizeException
+-NullPointerException
+
+;이들은 try~catch문, 또는 throws절을 반드시 필요로 하지 않기 때문에 지금까지 예외처리 없이 예제를 작성할 수 있었다.
+
+
+//NullPointerException
+:null값을 갖는 참조 변수로 .연산을 실행했을 때 발생
+
+//ArrayIndexOutOfBoundsException
+;배열에서 인덱스 범위를 초과하여 사용할 경우
+
+
+//NumberFormatException
+;format 오류
+e.g)
+	String data="a100";
+	int num=Integer.parseInt(data);	//NumberFormatException 발생
+
+=>Integer 클래스의 parseInt() throws NumberFormatException 으로 정의
+=>별도로 try~ catch 나 throws를 안해도 사용가능.
+
+	
+//ClassCastException
+;타입변환(Casting)은 상위-하위 클래스 or 구현 클래스-인터페이스 간에 발생. 이외의 관계에서 Casting하면 예외 발생
+=> 인스턴스 instanceof 클래스 로 검사해주는 것이 좋음.
+e.g)
+	if(animal instanceof Dog)
+		Dog dog=(Dog)animal;
+
+		
+
+------------------------------------------------------
+
+//자동 리소스 닫기
+;try-with-resources를 사용하면 예외 발생 여부와 상관없이 사용했던 리소스 객체(각종 입출력 스트림, 서버 소켓, 소켓, 각종 채널)의
+ close() 메소드를 호출
+ 
+자바 7에서 추가됨.
+이전 파일 입출력 예외 처리:
+FileInputStream in=null;
+try{
+	in=new FileInputStream("file.txt");
+	...
+}catch(IOException e){
+	...
+}finally{
+	if(in!=null){
+		try{
+		in.close();
+		}catch(IOException){}		
+	}
+}
+
+
+==>
+try(FileInputStream in=new FileInputStream("file.txt")){
+	...
+}catch(IOException){
+	...
+}
+
+또는
+
+try(
+	FileInputStream in=new FileInputStream("file.txt");
+	FileOutputStream out=new FileOutputStream("file2.txt")
+){
+	...
+}catch(IOException){
+	...
+}
+
+
+
+=>try블록이 정상적으로 실행을 완료했거나 도중에 예외가 발생하게 되면, 자동으로 
+  리소스의 close() 메소드 호출 & catch 블럭 실행
+
+=>try-with-resources를 사용하기 위해서는 java.lang.AutoCloseable 인터페이스를 구현해야함.
+(API참고)
+
+
+/*   try-with-resource 예제   */
+
+//AutoCloseable을 구현하는 클래스
+public class MyFileInputStream implements AutoCloseable{
+	private String file;
+	
+	public MyFileInputStream(String file){
+		this.file=file;
+	}
+	
+	public void read(){
+		System.out.println(file+"을 읽습니다.");
+	}
+	
+	@Override
+	public void close() throws Exception{
+		System.out.println(file+"을 닫습니다.");
+	}	
+}
+
+//메인 클래스
+public class TryWithResourceExample {
+	public static void main(String[] args){
+		try(MyFileInputStream fis=new MyFileInputStream("file.txt")){
+			fis.read();
+			throw new Exception();	//강제적으로 예외 발생시킴
+		}catch(Exception e){
+			System.out.println("예외 처리 코드가 실행되었습니다.");
+		}		
+	}
+}
+
+
+
+<< 실행 결과 >>
+file.txt을 읽습니다.
+file.txt을 닫습니다.
+예외 처리 코드가 실행되었습니다.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

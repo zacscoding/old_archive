@@ -1,0 +1,52 @@
+import java.util.ArrayDeque;
+import java.util.Deque;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.Queue;
+
+public class Main {
+	public static void main(String[] args){
+		//1)Queue<E>를 구현하는 LinkedList<E>의 활용예제
+		System.out.println("--Queque--");
+		Queue<Integer> que=new LinkedList<Integer>();
+		que.add(1);
+		que.add(2);
+		que.add(3);
+		que.add(4);
+		que.add(5);
+		System.out.println("top : "+que.peek());
+		int i=1;
+		while(!que.isEmpty())
+			System.out.println((i++)+"`s pop : "+que.poll());
+		
+		
+		//2)LinkedList기반의 Deque 활용
+		System.out.println("--Deque--");
+		Deque<Integer> dQue=new LinkedList<Integer>();
+		dQue.addFirst(3);
+		dQue.addFirst(2);
+		dQue.addFirst(1);
+		dQue.addLast(4);
+		dQue.addLast(5);
+		System.out.println("Deque`s First : "+dQue.getFirst());
+		System.out.println("Deque`s last : "+dQue.getLast());
+		i=1;
+		while(!dQue.isEmpty()){
+			System.out.println((i++)+"`s pop : "+dQue.removeFirst());
+		}
+		
+		//3)ArrayDeque 활용
+		System.out.println("--ArrayDeque--");
+		ArrayDeque<Integer> arrDeque=new ArrayDeque<Integer>();
+		arrDeque.add(2);
+		arrDeque.addFirst(1);
+		arrDeque.addLast(3);
+		arrDeque.addLast(4);
+		arrDeque.addLast(5);
+		Iterator<Integer> itr=arrDeque.iterator();
+		while(itr.hasNext()){
+			System.out.print(itr.next()+" ");
+		}
+		
+	}
+}

@@ -1,0 +1,197 @@
+¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡
+//Çâ»ó µÈ for¹®
+
+public class ForTest {
+	public static void main(String[] args) {
+		// Çâ»óµÈ for¹®(enhanced for statement) //since JDK1.5~
+		// for(Å¸ÀÔ º¯¼ö¸í : ¹è¿­ ¶Ç´Â ÄÃ·º¼Ç){ ¹Ýº¹ÇÒ ¹®Àå }
+
+		int[] arr = new int[]{ 10, 20, 30, 40, 50 };
+
+//		for (int i = 0; i < arr.length; i++) {
+//			System.out.println(arr[i]);
+//		}
+
+		for (int tmp : arr) {
+			System.out.println(tmp);
+		}
+
+	}
+}
+
+
+¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡
+
+Á¢±ÙÁ¦ÇÑÀÚ ÁöÁ¤¿¹¾à¾î ¹ÝÈ¯Çü ¸Þ¼Òµå¸í(¸Å°³º¯¼ö) {
+	
+	return;
+}
+
+
+¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡
+
+//¸Þ¼Òµå¿¡¼­ °¡º¯ÀûÀÎ ¸Å°³º¯¼ö »ç¿ë¹æ¹ý
+
+public class VariableParameter {
+	public static void main(String[] args){
+		int result=getSum(1,2,3,4,5);
+		System.out.println("1~5±îÁö ÇÕ : "+result);
+			
+		result=getSum(1,2,3,4,5,6,7,8,9,10);
+		System.out.println("1~10±îÁö ÇÕ : "+result);
+		
+		
+		result=getSum2(new int[]{1,2,3,4,5,6,7,8,9,10,11,12,13,14,15});
+		System.out.println("1~15±îÁö ÇÕ : "+result);
+				
+	}
+	
+	public static int getSum(int ... values){	//¸Å°³º¯¼ö Å¸ÀÔÀÌ []ÀÓ
+		int sum=0;
+		for(int i=0;i<values.length;i++){
+			sum+=values[i];
+		}		
+		return sum;
+	}
+	
+	public static int getSum2(int[] values){
+		int sum=0;
+		for(int i=0;i<values.length;i++){
+			sum+=values[i];
+		}		
+		return sum;		
+	}
+}
+
+
+¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡
+
+//¾î³ëÅ×ÀÌ¼Ç
+@AnnotationName
+1)ÄÄÆÄÀÏ·¯¿¡°Ô ÄÚµå ¹®¹ý ¿¡·¯¸¦ Ã¼Å©ÇÏµµ·Ï Á¤º¸¸¦ Á¦°ø
+2)¼ÒÇÁÆ®¿þ¾î °³¹ß ÅøÀÌ ºôµå³ª ¹èÄ¡ ½Ã ÄÚµå¸¦ ÀÚµ¿À¸·Î »ý¼ºÇÒ ¼ö ÀÖµµ·Ï Á¤º¸¸¦ Á¦°ø
+3)½ÇÇà ½Ã(·±Å¸ÀÓ ½Ã) Æ¯Á¤ ±â´ÉÀ» ½ÇÇàÇÏµµ·Ï Á¤º¸¸¦ Á¦°ø
+
+
+--¿¹Á¦
+
+/*PrintAnnotation.java*/
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
+
+@Retention(RUNTIME)
+@Target(METHOD)
+public @interface PrintAnnotation {
+	String value() default "-";
+	int number() default 15;
+	
+
+}
+
+
+
+/*Service.java*/
+public class Service {
+	@PrintAnnotation
+	public void method1(){
+		System.out.println("½ÇÇà³»¿ë1");
+	}
+	
+	@PrintAnnotation("*")
+	public void method2(){
+		System.out.println("½ÇÇà³»¿ë2");
+	}
+	
+	@PrintAnnotation(value="#",number=20)
+	public void method3(){
+		System.out.println("½ÇÇà³»¿ë3");
+	}
+}
+
+
+
+/*PrintAnnotationExample.java*/
+import java.lang.reflect.Method;
+
+public class PrintAnnotationExample {
+	public static void main(String[] args){
+		//Service Å¬·¡½º·ÎºÎÅÍ ¸Þ¼Òµå Á¤º¸¸¦ ¾òÀ½
+		Method[] declaredMethods=Service.class.getDeclaredMethods();
+		
+		//Method °´Ã¼¸¦ ÇÏ³ª¾¿ Ã³¸®
+		for(Method method : declaredMethods){
+			//PrintAnnotationÀÌ Àû¿ëµÇ¾ú´ÂÁö È®ÀÎ
+			if(method.isAnnotationPresent(PrintAnnotation.class)){
+				//PrintAnnotation °´Ã¼ ¾ò±â
+				PrintAnnotation printAnnotation=method.getAnnotation(PrintAnnotation.class);
+				
+				//¸Þ¼Òµå ÀÌ¸§ Ãâ·Â				
+				System.out.println("["+method.getName()+"]");
+				
+				//±¸ºÐ¼® Ãâ·Â
+				for(int i=0;i<printAnnotation.number();i++){
+					System.out.print(printAnnotation.value());
+				}
+				System.out.println();
+				
+				try{
+					//¸Þ¼Òµå È£Ãâ
+					method.invoke(new Service());
+				}catch(Exception e){}
+				System.out.println();				
+			}
+		}		
+	}
+}
+
+
+<< ½ÇÇà °á°ú >>
+
+[method1]
+---------------
+½ÇÇà³»¿ë1
+
+[method3]
+####################
+½ÇÇà³»¿ë3
+
+[method2]
+***************
+½ÇÇà³»¿ë2
+
+
+
+
+
+
+
+
+
+
+
+¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡
+¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡
+¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡
+¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡
+¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡
+¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡
+¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,209 @@
+//9-3 public 클래스와 default 클래스
+
+//default 클래스 예제
+//소스파일은 다르게 해서
+package apple;
+
+class AAA	//default 클래스 선언 ==> apple 패키지에서만 인스턴스 생성 가능
+{
+	...
+}
+
+package pear;
+
+class BBB	//default 클래스 선언
+{
+	public void make()
+	{
+		apple.AAA inst=new apple.AAA(); //문법적 사용은 옳음
+						//BUT AAA클래스가 default(패키지 내에서만 접근)
+		...
+}
+
+--------------------------------------------------------------------
+//public 클래스 예제
+//소스파일은 다르게 해서
+package apple;
+
+public class AAA	//public 클래스 선언
+{
+	...
+}
+
+package pear;
+
+public class BBB	//public 클래스 선언
+{
+	public void make()
+	{
+		apple.AAA inst=new apple.AAA();
+						
+		...
+}
+
+
+==>public 제한조건
+1. 하나의 소스파일에는 하나의 클래스만 public으로 선언할 수 있다.
+2. public 클래스의 이름과 소스파일의 이름은 완전히 일치해야 한다.
+//프로그램의 기능(내용)을 이해하는데 중요한 역할을 하는 public클래스와 소스파일의 관계를 형성하기 위함
+
+--------------------------------------------------------------------
+//private 생성자
+e.g)
+public class AAA
+{
+ private AAA(){..}
+}
+
+class BBB
+{
+ public void make(){
+	AAA inst=new AAA();
+ }
+}
+
+==>인스턴스 생성과정에서 인자를 받지 않는 생성자의 호출을 요구 BUT 생성자 private => 불가능
+즉, 인스턴스 생성을 허용하지 않겠다는 뜻
+(뒤에서 유용하게 쓰는 예제 나옴)
+
+--------------------------------------------------------------------
+//디폴트 생성자
+public class AAA
+{
+ public AAA(){...} //자동 삽입되는 디폴트 생성자
+}
+
+class BBB
+{
+ BBB() {...}	//자동 삽입되는 디폴트 생성자
+}
+
+--------------------------------------------------------------------
+
+//9-4 어떤 클래스를 public 으로 선언할까?
+
+//Calculator.java
+package orange.cal;
+
+public class Calculator {
+	//라이브러리 형태로 노출시키기 위함 => public
+	private Adder adder;
+	private Subtractor subtractor;
+	//Calculator 클래스가 라이브러리로써 제공하는 기능들
+	//이 기능들이 Adder클래스와 Subtractor클래스의 도움으로 완성됨!
+	public int addTwoNumber(int num1,int num2)
+	{
+		return adder.addTwoNumber(num1,num2);
+	}
+	
+	public int subTwoNumber(int num1,int num2)
+	{
+		return subtractor.subTwoNumber(num1, num2);
+	}
+	
+	public void showOperatingTimes()
+	{
+		System.out.println("덧셈 횟수 : "+adder.getCntAdd());
+		System.out.println("뺄셈 횟수 : "+subtractor.getSub());
+	}
+}
+
+//Adder클래스는 Calculator클래스의 일부로 존재한다. 즉 Calculator 클래스를
+//완성하는 목적으로 정의된 클래스일 뿐, 라이브러리의 형태로 노출시키기 위해서 정의 된
+//클래스는 아니다.
+class Adder
+{
+	private int cntAdd;
+	
+	Adder() 
+	{ 
+		cntAdd=0;
+	}
+	int getCntAdd() 
+	{ 
+		return cntAdd;
+	}
+	int addTwoNumber(int num1,int num2)
+	{
+		cntAdd++;
+		return num1+num2;
+	}	
+}
+
+class Subtractor
+{
+	private int cntSub;
+	Subtractor()
+	{
+		cntSub=0;
+	}
+	int getSub()
+	{
+		return cntSub;
+	}
+	int subTwoNumber(int num1,int num2)
+	{
+		cntSub++;
+		return num1-num2;
+	}
+}
+
+
+//CalculatorMain.java
+import orange.cal.Calculator;
+public class CalculatorMain {
+	public static void main(String[] args)
+	{
+		Calculator cal=new Calculator();
+		
+		System.out.println("1+2= "+cal.addTwoNumber(1,2));
+		System.out.println("5-1= "+cal.subTwoNumber(5,1));
+	}
+
+}
+
+
+
+==>
+클래스를 하나의 클래스로 묶어도 가능 
+BUT 클래스를 작은 크기로 디자인하여 하나의 완성된 클래스로 묶는다면, 다음과 같은 이점이 생긴다.
+1)변경이 필요할 때, 변경되는 클래스의 범위를 최소화 할 수 있다.
+2)작은 크기의 클래스를 다른 클래스의 정의에도 활용할 수 있따.
+
+e.g)혁신적은 덧셈 이론(가정)이 나오면? Adder 만 변경가능
+e.g)클래스를 추가로 정의해서 orange.cal 에 저장하고 싶음 => Adder , Subtractor 클래스 재활용 가능!
+
+--------------------------------------------------------------------
+
+//9-5 캡슐화(Encapsulation)
+
+
+
+
+--------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

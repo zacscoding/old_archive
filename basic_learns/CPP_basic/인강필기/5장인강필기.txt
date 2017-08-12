@@ -1,0 +1,318 @@
+5장 복사 생성자 => (의미 // 필요성 // 정의)
+----5-1 복사 생성자의 의미----
+/*두가지 형태의 초기화*/
+
+int main(void)
+{
+//1번
+int val1=20;
+AAA a1=10;
+//=> 묵시적 변환 ( AAA a1(10); ) 
+//2번
+int val(20); //int 가 기본 자료형 => val1이라는 변수를 20으로 초기화
+AAA a1(10); //AAA라는 클래스의 객체 a1을 생성하면서, int 형 정수 10을 받을 수 있는 생성자를 호출 하겠다.
+
+//1,2번은 완전히 같음 1번 : c스타일 초기화 // 2번 : c++스타일 초기화
+}
+
+----5-2복사 생성자의 형태----
+#include <iostream>
+using std::cout; using std::endl;
+
+class AAA
+{
+public:
+	//오버로딩 관계로 구성 된 생성자들
+	AAA()
+	{
+		cout<<"AAA()호출"<<endl;
+	}
+	AAA(int i)
+	{
+		cout<<"AAA(int i)호출"<<endl;
+	}
+	AAA(const AAA &a)	//복사 생성자
+						//객체를 생성자의 인자로 받을 수 있는
+	{
+		cout<<"AAA(const AAA&a)호출"<<endl;
+	}
+}
+
+int main(void)
+{
+	AAA obj1;  //메모리 공간 할당 -> 생성자 호출(인자 받지 않는 void 생성자)
+	AAA obj2(10);//메모리 공간 할당 -> 생성자 호출(10이라는 인자를 받는 생성자)
+	AAA obj3(obj2);
+	//3개의 객체 생성 => 생성자 3번 호출
+	return 0;
+}
+
+/*복사 생성자 예제*/
+
+#include <iostream>
+using std::cout; using std::endl;
+
+class Point
+{
+	int x,y;
+public:
+	Point(int _x,int _y){
+		x=_x;
+		y=_y;
+	}
+	Point(const Point&p){//복사하는 용도로 사용 가능
+		x=p.x;
+		y=p.y;
+	}
+	void ShowData(){
+		cout<<x<<' '<<y<<endl;
+	}
+};
+
+int main(void)
+{
+	Point p1(10,20); // 10 , 20 으로 초기화 객체 생성
+	Point p2(p1); //
+				//p1의 값을 p2에 복사 하기 원한다.
+				//p1이라는 객체에 p라는 별칭을 부여해서 p1의 멤버 변수 접근
+				//
+	p1.ShowData();
+	p2.ShowData();
+
+	return 0;
+//	Point(const Point&p) 생성자 주석해도 컴파일 오류 X
+//	==>디폴트 복사 생성자
+//	Point(const Point&p){} 이렇게 정의하면 p2.x, p2.y 쓰레기값 
+//	==>디폴트 복사 생성자는 멤버변수의 개수,타입에 따라 달라진다.
+}
+
+
+
+----5-2 디폴트 복사 생성자----
+
+*디폴트 복사 생성자
+ -사용자 정의 복사 생성자가 없을 때 자동 삽입
+ -멤버 변수 대 멤버 변수의 복사를 수행
+ -CopyCon2.cpp , CopyCon3.cpp
+
+*디폴트 복사 생성자 복사 형태
+ -얕은 복사(Shallow Copy)!
+
+*디폴트 복사 생성자의 문제점
+ -얕은 복사에 의한 메모리 참조 오류!
+ -CopyCon4.cpp, CopyCon5.cpp
+
+/* 얕은 복사의 예제*/
+
+#include <iostream>
+#include <cstring>
+using namespace std;
+
+class Person
+{
+	char *name;
+	char *phone;
+	int age;
+public:
+	Person(char *_name, char *_phone, int _age);
+	//디폴트 복사 생성자
+	//Person(const Person& p){
+	//	name=p.name;
+	//	phone=p.phone;
+	//	age=p.age;
+	//}
+	~Person();
+	void ShowData();
+};
+
+Person::Person(char * _name,char *_phone,int _age)
+{
+	name=new char[strlen(_name)+1];
+	strcpy(name,_name);
+
+	phone=new char[strlen(_phone)+1];
+	strcpy(phone,_phone);
+
+	age=_age;
+}
+Person::~Person()
+{
+		delete []name;
+		delete []phone;
+}
+void Person::ShowData()
+{
+		cout<<"이름: "<<name<<endl;
+		cout<<"전화번호: "<<phone<<endl;
+		cout<<"나이: "<<age<<endl;
+}
+
+int main(void)
+{
+	Person p1("kim","013-333-5555",22);
+	Person p2=p1;
+	p2.ShowData();
+	//==Person p2(p1); (묵시적으로)
+	//디폴트 복사 생성자 : p2 객체는 p1의 name,phone 이라는 포인터와 같은 주소값
+	//==>문제 : 소멸자가 호출 될때 (cf : 객체가 생성되는 순서에 반대로 소멸 by stack)
+	//p2의 소멸에 의해 heap의 "kim" ,"013-333-5555" 소멸
+	//p1의 소멸에 의해 같은 곳 소멸
+	//얕은 복사(위의 코드, 디폴트 복사 생성자)
+	//vs 깊은 복사(p2도 heap에 "kim" ,"013-333-5555"(p1과 다른 주소를 가진) 동적 할당
+	//==>: 생성자내에서 동적 할당 시 소멸자 제공 + 깊은 복사를 제공하도록 복사 생성자 제공
+	//결론 : 생성자를 확인하고 동적 할당하면 ->소멸자(동적할당해제) + 복사생성자(깊은복사) 제공
+	return 0;
+}
+
+/*깊은 복사 생성자 예제*/
+
+	Person(const Person& p){
+		name=new char[strlen(p.name)+1];
+		strcpy(name,p.name);
+		phone=new char[strlen(p.phone)+1];
+		strcpy(phone,p.phone);
+		age=p.age;
+	}
+
+
+
+----5-3 복사 생성자 호출 형태----
+*복사 생성자 호출 형태 3가지
+(3가지 경우 몰라도 복사 생성자 잘 정의하면 문제x 그러나 클래스를 디자인 할때 시아가 넓어짐)
+ -case 1
+   : 기존에 생성된 객체로 새로운 객체 초기화
+
+ -case 2
+   : 함수 호출 시 객체를 값에 의해 전달
+
+ -case 3
+   : 함수 내에서 객체를 값에 의해 리턴
+
+*cf)
+process : 프로그램 -> 클래스 A -> 동적할당 -> 복사 생성자
+만약 위의 3가지 이외에 복사 생성자가 호출 될 일이 없으면, 복사 생성자 정의 vs 정의X??
+=>반드시 복사 생성자 정의(프로그램에 의해서가 아니라, 클래스에 의해서 구분)
+
+
+
+//case1
+//기존에 생성된 객체로 새로운 객체 초기화
+#include <iostream>
+using namespace std;
+
+class AAA
+{
+	int val;
+public:
+	//생성자 1
+	AAA(int i){
+		val=i;
+	}
+	//생성자 2
+	AAA(const AAA& a){
+		cout<<"AAA(const AAA& a)호출"<<endl;
+		val=a.val;
+	}
+	void ShowData(){
+		cout<<"val :"<<val<<endl;
+	}
+};
+
+int main(void)
+{
+	AAA obj1(10);
+	AAA obj2=obj1;
+	//AAA obj2(obj1);
+	//obj1 : 기존의 객체 obj2 : 새로운 객체
+	//->기존의 객체를 가지고 새로운 객체를 초기화
+	
+	return 0;
+}
+
+//case2
+//함수 호출 시 객체를 값에 의해 전달
+#include <iostream>
+using namespace std;
+
+class AAA
+{
+	int val;
+public:
+	//생성자 1
+	AAA(int i){
+		val=i;
+	}
+	//생성자 2
+	AAA(const AAA& a){
+		cout<<"AAA(const AAA& a)호출"<<endl;
+		val=a.val;
+	}
+	void ShowData(){
+		cout<<"val :"<<val<<endl;
+	}
+};
+
+void function(AAA a)	//참조가 아니라 값에 의해 전달 받겠다.
+//1.메모리 공간 할당
+//2.복사 생성자 호출(AAA a)가 전달
+//==>a는 객체 (단 함수 호출시 생성 -> }만나면 소멸)
+{
+	a.ShowData();
+}
+
+int main(void)
+{
+	AAA obj(30);
+	function(obj);
+	 
+	return 0;
+}
+
+
+
+
+//case 3
+//함수 내에서 객체를 값에 의해 리턴
+#include <iostream>
+using namespace std;
+
+class AAA
+{
+	int val;
+public:
+	//생성자 1
+	AAA(int i){
+		val=i;
+	}
+	//생성자 2
+	AAA(const AAA& a){
+		cout<<"AAA(const AAA& a)호출"<<endl;
+		val=a.val;
+	}
+	void ShowData(){
+		cout<<"val :"<<val<<endl;
+	}
+};
+
+AAA function(void)
+{
+	AAA a(10);
+	//a객체 생성 & val =10 으로 초기화
+	//값에 의해서 리턴
+	return a;
+}
+
+int main(void)
+{
+	function();
+	//a객체 복사본이 리턴됨
+	function().ShowData();
+	return 0;
+}
+
+
+
+
+
+
+

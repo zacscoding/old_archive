@@ -1,0 +1,198 @@
+1.4
+-----------------------------------------------------------------------------
+2.3
+-----------------------------------------------------------------------------
+3.4
+-----------------------------------------------------------------------------
+4.3
+-----------------------------------------------------------------------------
+5.
+List<Board> 변수 = new ArrayList<Board>();
+List<Board> 변수 = new LinkedList<Board>();
+
+-----------------------------------------------------------------------------
+6.
+Map<String,Integer> 변수 = 
+new HashMap<String,Integer>();
+new TreeMap<String,Integer>();
+
+-----------------------------------------------------------------------------
+7.
+public class Board {
+	private String title;
+	private String content;
+	
+	public Board(String title,String content){
+		this.title=title;
+		this.content=content;
+	}
+	
+	public String getTitle(){return title;}
+	public String getContent(){return content;}
+
+}
+
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class BoardDao {
+	List<Board> list;
+	
+	public BoardDao(){
+		list=new ArrayList<Board>();		
+	}
+	
+	public void setBoard(int idx){
+		for(int i=1;i<=idx;i++){
+			list.add(new Board("제목"+i,"내용"+i));
+		}
+	}
+	
+	public List<Board> getBoardList(){
+		setBoard(3);
+		return list;
+	}
+
+}
+
+import java.util.List;
+
+public class Main {
+	public static void main(String[] args) throws Exception {
+		BoardDao dao=new BoardDao();
+		List<Board> list=dao.getBoardList();		
+		for(Board board: list)
+			System.out.println(board.getTitle()+"-"+board.getContent());
+	}
+}
+
+
+-----------------------------------------------------------------------------
+8.
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
+
+class Student{
+	public int stuNum;
+	public String name;
+	
+	public Student(int num,String name){
+		stuNum=num;
+		this.name=name;
+	}
+	
+	@Override
+	public int hashCode(){
+		return stuNum;
+	}
+	
+	@Override
+	public boolean equals(Object obj){
+		if(obj instanceof Student){
+			Student inst=(Student)obj;			
+			return (stuNum==inst.stuNum);
+		}else{
+			return false;
+		}
+	}	
+}
+
+public class Main {
+	public static void main(String[] args) throws Exception {
+		Set<Student> set=new HashSet<Student>();
+		
+		set.add(new Student(1,"홍길동"));
+		set.add(new Student(2,"신용권"));
+		set.add(new Student(1,"조민우"));
+		
+		Iterator<Student> itr=set.iterator();
+		while(itr.hasNext()){
+			Student stu=itr.next();
+			System.out.println(stu.stuNum+":"+stu.name);
+		}
+		
+	}
+}
+
+-----------------------------------------------------------------------------
+9.
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.NavigableMap;
+import java.util.Set;
+
+public class Main {
+	public static void main(String[] args) throws Exception {
+		Map<String,Integer> map=new HashMap<String,Integer>();
+		map.put("blue",96);
+		map.put("hong",86);
+		map.put("white",92);
+		
+		String name=null;	//최고 점수를 받은 아이디 저장
+		int maxScore=0;		//최고 점수 저장
+		int totalScore=0;	//점수 합계 저장
+		
+		//1.Set이용
+		Set<String> keySet=map.keySet();		
+		for(String key : keySet){
+			totalScore+=map.get(key);
+			if(maxScore<map.get(key)){
+				maxScore=map.get(key);
+				name=key;
+			}			
+		}
+		
+		//2.EntrySet
+		totalScore=0;		
+		Set<Map.Entry<String,Integer>> set=map.entrySet();
+		for(Map.Entry<String,Integer> entry : set){
+			totalScore+=entry.getValue();
+			if(maxScore<entry.getValue()){
+				maxScore=entry.getValue();
+				name=entry.getKey();
+			}
+		}
+		
+		System.out.println("평균 점수 : "+(totalScore/map.size()));
+		System.out.println("최고 점수 : "+maxScore);
+		System.out.println("최고점수를 받은 아이디 : "+name);
+		
+	}
+}
+
+-----------------------------------------------------------------------------
+10.
+import java.util.TreeSet;
+
+class Student implements Comparable<Student>{
+	public String id;
+	public int score;
+	
+	public Student(String id,int score){
+		this.id=id;
+		this.score=score;
+	}
+	
+	@Override
+	public int compareTo(Student comp){
+		return score-comp.score;
+	}	
+}
+public class Main {
+	public static void main(String[] args) throws Exception {
+		TreeSet<Student> tSet=new TreeSet<>();
+		tSet.add(new Student("blue",96));
+		tSet.add(new Student("hong",86));
+		tSet.add(new Student("white",92));
+		
+		Student student=tSet.last();
+		System.out.println("최고 점수 : "+student.score);
+		System.out.println("최고 점수를 받은 아이디 : "+student.id);		
+	}
+}
+
+
+-----------------------------------------------------------------------------

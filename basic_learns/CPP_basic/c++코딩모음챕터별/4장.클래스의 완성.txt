@@ -1,0 +1,1070 @@
+//4장 클래스의 완성
+/*
+(3장은 c->c++ 넘어가는 과정에서의 클래스를 설명함)
+핵심내용
+
+*클래스 디자인 기본 원칙
+ -캡슐화, 정보 은닉 -->>★Why???가 중요
+ -캡슐화와 정보 은닉의 유용성
+
+*클래스 객체의 생성과 소멸 -->★과정이 중요
+ -생성자, 소멸자
+ -생성자, 소멸자의 유용성(★필요성이 중요)
+*/
+
+
+----04-1 정보은닉(Information Hiding)------
+
+
+
+/*정보 은닉의 필요성*/
+/*
+InfoHiding1.cpp
+*/
+#include<iostream>
+using std::cout;
+using std::endl;
+using std::cin;
+
+//Point라는 클래스에 가정 : 화이트보드의 좌표값(좌 상단 ->(0,0) / 우 하단 ->(100,100)
+//프로그래밍에 있어서 데이터의 제약이 필요할때가 존재
+//e.g)사람의 나이 : int age; ,where age>=1
+class Point
+{
+private:
+//public:
+	int x;   // x좌표의 범위 : 0 ~ 100
+	int y;   // y좌표의 범위 : 0 ~ 100
+public:
+	void SetX(int _x) { //SetX를 통해 간접 접근(x,y에 직접 접근할 수 는 없어도)
+		if (_x < 0 || _x>100)//데이터의 경계 검사와 그에 따른 적절한 처리
+		{
+			cout << "잘못된 데이터 입력" << endl;
+			return;
+		}
+		x = _x;
+	}
+};
+
+int main()
+{
+	int x, y;
+	cout << "좌표입력 : ";
+	cin >> x >> y;	//그림판의 클릭 좌표가 들어왔다고 가정
+					//-10 100이라는 데이터가 들어왔다고 가정.(사용자 실수 or 프로그래머의 모듈러 실수 등등)
+					//문제점 1.잘못된 값이 클래스에 초기됨.
+					//문제점 2.잘못된 값이 들어갔는데 , 잘못됬다고 알려주지 못하는 것
+					//public에 의해 직접 접근하는 것이 문제. ==> 직접 접근을 못하도록 막으면 됨 
+	Point p;
+	p.SetX(x);
+	//p.x = x;
+	//p.y = y;
+
+	cout << "입력 된 데이터를 이용해서 그림을 그림" << endl; //입력된 데이터를 기준으로 그림이 그려진다.라고 가정
+	return 0;
+}
+
+
+
+/*
+   InfoHiding2.cpp
+*/
+#include<iostream>
+using std::cout;
+using std::endl;
+using std::cin;
+
+class Point
+{
+	int x;   // x좌표의 범위 : 0 ~ 100
+	int y;   // y좌표의 점위 : 0 ~ 100
+public:
+	//Get,Set은 관례임 ==>Access Method
+	//x,y를 참조하기 위한 함수(간접 접근)
+	int GetX(){	return x; }
+	int GetY(){	return y; }
+
+	//x,y에 접근하기 위한 함수(직접 접근)
+	void SetX(int _x){ x=_x; }
+	void SetY(int _y){ y=_y; }
+	//==>>>무늬만 정보은닉이지 실제로는 은닉 안됨
+};
+
+int main()
+{
+	int x, y;
+	cout<<"좌표입력 : ";
+	cin>>x>>y;
+
+	Point p;
+	p.SetX(x);
+	p.SetY(y);
+
+	cout<<"입력 된 데이터를 이용해서 그림을 그림"<<endl;
+	return 0;
+}
+
+
+
+
+----04-2 캡슐화(Encapsulation)------
+
+
+
+/*캡슐화*/
+/*
+캡슐화(Encapsulation)의 기본 개념
+ -관련 있는 데이터와 함수를 하나로 묶는 것(e.g : Account(계좌))
+
+C언어에서 함수 : 1 function = 1 기능.
+이게 하나의 기능인지 두개인지 판별하기 힘듬. => 전체적인 프로그램을 놓고 보면 어느정도 판별이 됨
+BUT 캡슐화는 더 어려움. 이러한 데이터와 함수를 클래스에 넣어야 하나 말아야 하나..
+
+★==>프로그래밍 할 때 클래스를 정의함에 있어서 캡슐화를 잘 시켜야겠다는 생각을 항상 가지기.!★
+
+
+
+*/
+
+
+
+//캡슐화가 잘 진행되지 않은 예제
+//프로젝트가 어느정도 진행되면, 클래스를 바꾸면 어렵고 위험함.
+#include<iostream>
+using std::cout;
+using std::endl;
+using std::cin;
+
+class Point
+{
+	int x;   // x좌표의 범위 : 0 ~ 100
+	int y;   // y좌표의 범위 : 0 ~ 100
+public:
+	//Access Method
+	int GetX() { return x; }
+	int GetY() { return y; }
+
+	void SetX(int _x);
+	void SetY(int _y);
+};
+
+void Point::SetX(int _x)
+{
+	//경계검사
+	if (_x<0 || _x>100) {
+		cout << "X좌표 입력 오류, 확인 요망" << endl;
+		return;
+	}
+	x = _x;
+}
+void Point::SetY(int _y)
+{
+	if (_y<0 || _y>100)
+	{
+		cout << "Y좌표 입력 오류, 확인 요망" << endl;
+		return;
+	}
+	y = _y;
+}
+
+class PointShow
+{
+public:
+	void ShowData(Point p)
+	{
+		cout << "x좌표: " << p.GetX() << endl;
+		cout << "y좌표: " << p.GetY() << endl;
+	}
+};
+
+int main()
+{
+	int x, y;
+	cout << "좌표입력 : ";
+	cin >> x >> y;
+
+	Point p;
+	p.SetX(x);
+	p.SetY(y);
+
+	PointShow show;
+	show.ShowData(p);
+
+	return 0;
+}
+
+
+
+
+
+
+/*캡슐화가 된 예제*/
+
+/*
+Encapsulation2.cpp
+*/
+#include<iostream>
+using std::cout;
+using std::endl;
+using std::cin;
+
+class Point
+{
+	int x;   // x좌표의 범위 : 0~100
+	int y;   // y좌표의 범위 : 0~100
+public:
+	int GetX() { return x; }
+	int GetY() { return y; }
+
+	void SetX(int _x);
+	void SetY(int _y);
+
+	void ShowData();  //캡슐화를 위해 추가된 함수.
+};
+
+void Point::SetX(int _x)
+{
+	if (_x<0 || _x>100) {
+		cout << "X좌표 입력 오류, 확인 요망" << endl;
+		return;
+	}
+	x = _x;
+}
+void Point::SetY(int _y)
+{
+	if (_y<0 || _y>100)
+	{
+		cout << "Y좌표 입력 오류, 확인 요망" << endl;
+		return;
+	}
+	y = _y;
+}
+
+void Point::ShowData()
+{
+	cout << "x좌표: " << x << endl;
+	cout << "y좌표: " << y << endl;
+}
+
+int main()
+{
+	int x, y;
+	cout << "좌표입력 : ";
+	cin >> x >> y;
+
+	Point p;
+	p.SetX(x);
+	p.SetY(y);
+	p.ShowData();
+
+	return 0;
+}
+
+
+/*캡슐화를 왜 해야 하는가 ????
+e.g)
+y2k 문제 ( 연도수를 2자리로 표기하는데, 4자리로 표현해야함.
+(C 언어)
+time : 전역변수 => 이와 관련된 모든 함수(입금,출금,이체,....) 다 뒤져봐야됨
+(C++)
+time 에 대한 모든 데이터와 함수를 클래스화(캡슐화를 잘함) => TIME만 보면됨.
+
+===> 캡슐화 요령 : CLASS에 A,B,C라는 변수가 있다고 가정 => 이 멤버변수와 관련된 모든 함수는 클래스에 들어와야됨. 다른 클래스에서 조작하면 안됨
+*/
+
+
+
+----04-3 생성자(Constructor)와 소멸자(Destructor)------
+
+//생성자
+**객체의 생성 과정
+ -첫째. 메모리 할당
+ -둘째. 이니셜라이저를 이용한 멤버변수(객체)의 초기화 //선택사항
+ -셋째. 생성자의 호출
+==>객체를 위해서는 생성자의 호출까지 완료(e.g 클래스 100개 생성 -> 생성자 100번 호출)
+
+*public 생성자, private 생성자
+ - public 생성자 : 어디서든 객체 생성 가능
+ - private 생성자 : 클래스 내부에서만 가능
+
+*생성자의 특징
+ - 생성자도 함수다!
+ - 따라서 함수 오버로딩이 가능하다.
+ - 디폴트 매개 변수의 설정도 가능하다.
+
+*디폴트(default) 생성자
+ -생성자가 하나도 정의되어 있지 않은 경우
+ -자동으로 삽입이 되는 생성자(컴파일러가) 
+ -디폴트 생성자(void 생성자)가 하는 일? !!아무것도 없다!!
+ -Default1.cpp
+
+//소멸자
+
+*객체가 소멸되는 시점은?
+ -기본 자료형 변수, 구조체 변수가 소멸되는 시점과 동일하다
+
+*함수 내에 선언된 객체
+ -함수 호출이 끝나면 소멸된다.
+
+*전역적으로 선언된 객체
+ -프로그램이 종료될 때 소멸된다.
+ -이렇게 객체 생성할 일 (거의) 없다!
+  ==>객체 지향에는 전역이라는 개념이 존재 하지 않음.
+
+--Summary--
+*생성자
+ - 객체의 맴버 변수 초기화를 위해 객체 생성 시 자동 호출 되는 함수
+*소멸자
+ - 객체의 메모리 반환을 위해서 객체 소멸 시 자동 호출되는 함수
+ - 클래스의 이름 앞에 ~가 붙는 형태
+ - 리턴하지 않으며, 리턴 타입도 없다.
+ - 전달인자 항상 void!
+ - 따라서 오버로딩, 디폴트 매개 변수의 선언 불가능!
+
+*객체 소멸 순서
+ - 첫째 : 소멸자 호출
+ - 둘째 : 메모리 반환
+
+*디폴트(Default)소멸자
+ -객체의 소멸 순서를 만족시키기 위한 소멸자
+ -명시적으로 소멸자 제공되지 않을 경우 자동 삽입
+ -디폴트 생성자와 마찬가지로 하는 일 없다.
+e.g) Point(){} // ~Point(){} <<디폴트 생성자, 소멸자
+
+*소멸자의 명시적 제공
+ -생성자에서 메모리 동적 할당을 하는 경우
+ -Debugging 코드의 작성(객체가 소멸 되는 시점을 알고 싶을때)
+
+
+
+
+
+/*생성자 함수 오버로딩 예제*/
+
+#include <iostream>
+
+using std::cout; using std::endl;
+
+class SimpleClass {
+private:
+	int num1;
+	int num2;
+public:
+	SimpleClass()
+	{
+		num1 = 0;
+		num2 = 0;
+	}
+	SimpleClass(int n)
+	{
+		num1 = n;
+		num2 = 0;
+	}
+	SimpleClass(int n1, int n2)
+	{
+		num1 = n1;
+		num2 = n2;
+	}
+	//SimpleClass(int n1 = 0, int n2 = 0)//위의 생성자 다 주석하고 이거만 해제하면 동일함
+	//{
+	//	num1 = n1;
+	//	num2 = n2;
+	//}
+	void ShowData() const
+	{
+		cout << num1 << ' ' << num2 << endl;
+	}
+};
+
+int main(void)
+{
+	SimpleClass sc1;
+	//SimpleClass sc1();		//함수 원형 선언과 동일함!!!! ==> 함수의 원형 선언으로 사용하기로 약속!
+	//SimpleClass ptr1=new SimpleClass;	//동적할당 형태
+	//SimpleClass ptr1=new Simpleclass();//동적할당 형태2
+	sc1.ShowData();	//Simple() 호출 -> num1=0, num2=0
+
+	SimpleClass sc2(100);						//정적할당 형태
+	//SimpleClass *ptr2=new SimpleClass(100)	//동적할당 형태
+	sc2.ShowData();	//Simple(int) 호출 -> num1=100, num2=0
+
+	SimpleClass sc3(100,200);
+	//SimpleClass *ptr3=new SimpleClass(100,200);	//동적할당 형태
+	sc3.ShowData(); //Simple(int,int) 호출 -> num1=100, num2=200
+
+	return 0;
+}
+
+
+
+
+
+/*멤버 이니셜라이저(Member Initializer)를 이용한 멤버 초기화*/
+
+#include <iostream>
+using std::cout; using std::endl;
+
+class Point {
+private:
+	int x;
+	int y;
+public:
+	Point(const int &xpos,const int &ypos);
+	//bool InitMembers(int xpos, int ypos); //기존 초기화
+	//int GetX() const;
+	//int GetY() const;
+	//bool SetX(int xpos);
+	//bool SetY(int ypos);
+};
+
+Point::Point(const int &xpos, const int &ypos)
+{
+	x = xpos;
+	y = ypos;
+}
+
+class Rectangle {
+private:
+	Point upLeft;
+	Point lowRight;
+public:
+	Rectangle(const int &x1, const int &y1, const int &x2, const int &y2);
+};
+
+Rectangle::Rectangle(const int &x1, const int &y1, const int &x2, const int &y2)
+	:upLeft(x1,y1),lowRight(x2,y2)	//멤버 이니셜라이저
+	//객체 upLeft의 생성과정에서 x1과 y1을 인자로 전달받는 생성자를 호출하라
+	//객체 lowRight의 생성과정에서 x2와 y2을 인자로 전달받는 생성자를 호출하라.
+{
+//empty
+}
+
+
+
+/*멤버 이니셜라이저를 이용한 변수 및 const 상수(변수) 초기화 예제1*/
+//이점 : 1)초기화의 대상을 명확히 인식할 수 있다 2)성능에 약간의 이점이 있다
+
+#include <iostream>
+
+class SoSimple 
+{
+private:
+	int num1;
+	int num2;
+public:
+	SoSimple(int n1, int n2) :num1(n1) //num1을 n1 값으로 초기화해라
+										//like )int num1=n1; =>바이너리 코드 구성
+	{
+		num2 = n2;	//like ) int num2; num2=n2;
+	}
+};
+
+
+/*멤버 이니셜라이저를 이용한 변수 및 const 상수(변수) 초기화 예제2*/
+
+#include <iostream>
+using namespace std;
+
+class FruitSeller
+{
+	const int APPLE_PRICE;
+	int numOfApples;
+	int myMoney;
+public:
+	FruitSeller(int price, int num, int money)
+		: APPLE_PRICE(price), numOfApples(num), myMoney(money)
+	{
+	}
+
+//cf) const : 변수를 상수화시키는 키워드 => const 선언에 의해서 상수화 된 변수를 가리켜 
+// 'const 상수' or 'const 변수'
+
+
+/*이니셜라이저의 특징으로 멤버변수로 참조자를 선언*/
+//흔한 것음 아님. 그래도 이해를 위해
+#include <iostream>
+using std::cout; using std::endl;
+
+class AAA
+{
+public:
+	AAA()
+	{
+		cout << "empty object" << endl;	//객체 생성시 실제로 생성자가 호출되는지 확인하기 위해서 삽입한 출력문
+	}
+	void ShowYourName()
+	{
+		cout << "I`m class AAA" << endl;
+	}
+};
+
+class BBB
+{
+private :
+	AAA &ref;	//참조자가 멤버변수로 선언되었다. 따라서 이니셜라이저를 통해서 초기화를 해야한다.
+	const int &num;	//const 참조자가 선언되었다. 따라서 이니셜라이저를 통해서 정수형 상수로도 초기화가 가능하다.
+public:
+	BBB(AAA &r, const int &n)
+		:ref(r), num(n)
+	{//empty constructor body
+	}
+	void ShowYourName()
+	{
+		ref.ShowYourName();
+		cout << "and" << endl;
+		cout << "I ref num" << num << endl;
+	}
+};
+
+int main(void)
+{
+	AAA obj1;
+	BBB obj2(obj1, 20);
+	obj2.ShowYourName();
+
+
+	return 0;
+}
+
+
+
+
+/*디폴트 생성자(Default Constructor) 예제*/
+
+#include <iostream>
+
+class AAA
+{
+private:
+	int num;
+public:
+	//AAA(){} //디폴트 생성자(아무런 입력이 없으면 왼쪽과 같은 코드가 생성된것과 같이 호출된다)
+	int GetNum() { return num; }
+};
+
+int main(void)
+{
+	AAA a1;
+	AAA *ptr = new AAA; 
+	//위의 2개 모두 객체의 생성과정에서 생성자가 호출된다.
+	
+	//AAA *ptr = (AAA*)malloc(sizeof(AAA));
+	//생성자 호출되지 않음(malloc 함수호출 시, 실제로 AAA클래스의 크기정보만 바이트 단위로 전달되기 때문에 생성자가 호출 될 일 없음)
+}
+
+
+
+
+/*생성자의 불일치 예제*/
+
+#include <iostream>
+
+class SoSimple
+{
+private:
+	int num;
+public:
+	SoSimple(int n) : num(n) {};
+	//생성자를 선언했으므로, 디폴트 생성자가 생성되지 않는다.
+};
+
+int main(void)
+{
+	SoSimple simObj1(10);	//가능
+	//SomSimple simObj2;	// 불가능(디폴트 생성자가 생성되지도 않고, 생성자의 인수 불일치
+		
+	SoSimple *ptr = new SoSimple(5); //가능
+	//SoSimple *ptr2 = new SoSimple;
+	
+	delete ptr;
+}
+
+#include <iostream>
+using std::cout; using std::endl;
+
+class AAA
+{
+private:
+	int num;
+public:
+	AAA() : num(0) {} //public 생성자가 정의 -> 클래스 외부에서는 이 생성자를 기반으로 객체를 생성해야 한다.
+	AAA& CreateInitObj(int n) const	//함수 내에서, 밑의 private 생성자를 이용해서 AAA 객체를 생성 및 반환하고 있다.
+	{
+		AAA *ptr = new AAA(n);
+		return *ptr;
+	}
+	void ShowNum() const { cout << num << endl; }
+private:
+	AAA(int n) : num(n) {}
+};
+
+int main(void)
+{
+	AAA base;
+	base.ShowNum();
+	//AAA base(10);//컴파일 오류( 생성자 불일치, 외부 접근 )
+
+	AAA &obj1 = base.CreateInitObj(3); //힙에 할당된 메모리 공간은 변수로 간주하여, 참조자를 통한 참조가 가능
+	obj1.ShowNum();
+
+	AAA &obj2 = base.CreateInitObj(12);
+	obj2.ShowNum();
+
+	delete &obj1;
+	delete &obj2;
+	return 0;
+	//객체의 생성방법을 제한하고자 하는 경우에는 매우 유용하게 사용된다.
+}
+
+
+
+
+
+/*객체 동적할당과 소멸자의 예제*/
+
+#include <iostream>
+#include <cstring>
+using std::cout; using std::endl;
+
+class Person
+{
+private:
+	char *name;
+	int age;
+public:
+	Person(char * myname, int myage)
+	{
+		int len = strlen(myname) + 1;
+		name = new char[len];
+		strcpy(name, myname);
+		age = myage;
+	}
+	void ShowPersonInfor() const
+	{
+		cout << "이름 : " << name << endl;
+		cout << "나이 : " << age << endl;
+	}
+
+	void delMemory(void)
+	{
+		delete[]name;
+	}
+
+	~Person()
+	{
+		delete[]name;
+		cout << "called destructor!" << endl;
+	}
+};
+
+int main(void)
+{
+	Person man1("Lee dong woo", 29);
+	Person man2("Jang dong gun", 41);
+
+	man1.ShowPersonInfor();
+	man2.ShowPersonInfor();
+
+	//만약 소멸자가 없다면?
+	//man1.delMemory();
+	//man2.delMemory();
+	//객체 생성하고 기억하고 소멸하기 직전에 무조건 heap 영역 해제 해야됨 -> 부담스러움!
+	return 0;
+}
+
+----04-4 클래스와 배열 그리고 this 포인터------
+*객체 배열과 생성자
+ -객체 배열은 객체를 맴버로 지니는 배열이다.
+ -객체 배열은 기본적으로  void 생성자의 호출을 요구한다.
+ -PointArr1.cpp
+ 
+*객체 포인터 배열
+ -객체를 가리킬 수 있는 포인터를 멤버로 지니는 배열
+ -객체의 동적 생성 방법(PointArr2.cpp) <<중요!!!
+
+
+
+/*객체 배열과 생성자 예제*/
+
+#include <iostream>
+#include <cstring>
+using std::cout; using std::endl; using std::cin;
+
+class Person {
+private:
+	char *name;
+	int age;
+public:
+	Person(char *myname, int myage) 
+	{
+		int len = strlen(myname) + 1;
+		name = new char[len];
+		strcpy(name, myname);
+		age = myage;
+	}
+	Person()	//배열 생성시 필요한 생성자를 추가
+	{
+		name = NULL;
+		age = 0;
+		cout << "called Person()" << endl;
+	}
+	void SetPersonInfo(char *myname, int myage)	//원하는 데이터로 초기화를 목적으로 정의된 함수이다.
+	{	//myname은 동적할당해서 heap영역에 생성된 char[]형을 가리키는 포인터와 같은 값(주소값)을 가지게 됨
+		name = myname;	//main()에서 각 입력 받는 이름 마다 동적 할당하므로 얕은복사와 같이 하나의 메모리를 가리키지 않음
+		age = myage;
+	}
+	void ShowPersonInfor() const
+	{
+		cout << "이름:" << name << ',';
+		cout << "나이:" << age << endl;
+	}
+	~Person()
+	{
+		delete[]name;
+		cout << "called destructor!" << endl;
+	}
+};
+
+
+int main(void)
+{
+	Person parr[3];
+	char namestr[100];
+	char *strptr;
+	int age;
+	int len;
+	for (int i = 0; i < 3; i++)	//반복문 안에서 이름과 나이 정보를 입력 받아서 객체를 초기화 하고 있음
+	{
+		cout << "이름:";
+		cin >> namestr;
+		cout << "나이:";
+		cin >> age;
+		len = strlen(namestr) + 1;
+		strptr = new char[len];
+		strcpy(strptr, namestr);
+		parr[i].SetPersonInfo(strptr, age);
+	}
+	parr[0].ShowPersonInfor();
+	parr[1].ShowPersonInfor();
+	parr[2].ShowPersonInfor();
+	return 0;
+}
+
+
+
+/*객체 포인터 배열 예제*/
+
+#include <iostream>
+#include <cstring>
+using std::cout; using std::endl; using std::cin;
+
+class Person
+{
+private:
+	char *name;
+	int age;
+public:
+	Person(char *myname, int myage)
+	{
+		int len = strlen(myname) + 1;
+		name = new char[len];
+		strcpy(name, myname);
+		age = myage;
+	}
+	Person()
+	{
+		name = NULL;
+		age = 0;
+		cout << "called Person()" << endl;
+	}
+	void SetPersonInfo(char *myname, int myage)	
+	{	
+		name = myname;	
+		age = myage;
+	}
+	void ShowPersonInfor() const
+	{
+		cout << "이름:" << name << ',';
+		cout << "나이:" << age << endl;
+	}
+	~Person()
+	{
+		delete[]name;
+		cout << "called destructor!" << endl;
+	}
+};
+
+int main(void)
+{
+	Person * parr[3];	//포인터 배열이 선언되었다. 이는 객체의 주소 값 3개를 저장할 수 있는 배열이다.
+	char namestr[100];
+	int age;
+
+	for (int i = 0; i < 3; i++) {
+		cout << "이름:";
+		cin >> namestr;
+		cout << "나이:";
+		cin >> age;
+		parr[i] = new Person(namestr, age);	//객체를 생성해서, 이 객체의 주소 값을 배열에 저장하고 있다.
+	}
+	parr[0]->ShowPersonInfor();
+	parr[1]->ShowPersonInfor();
+	parr[2]->ShowPersonInfor();
+	delete parr[0];	//총 3회에 걸쳐서 new 연산을 진행했으니, 총 3회에 걸쳐서 delete를 진행.
+	delete parr[1];
+	delete parr[2];
+
+	return 0;
+}
+
+
+
+//4-5 this 포인터
+(연산자 오버로딩때 많이 쓰임 =>이번 쳅터에서는 어디에 쓰이냐 보다는 무엇이냐 가 중요)
+this : 자기 참조 포인터
+
+/*this 포인터 예제*/
+
+#include <iostream>
+#include <cstring>
+using std::cout; using std::endl;
+
+class SoSimple
+{
+private:
+	int num;
+public:
+	SoSimple(int n) : num(n)
+	{
+		cout << "num=" << num << ',';
+		cout << "address=" << this << endl;
+	}
+	void ShowSimpleData()
+	{
+		cout << num << endl;
+	}
+	SoSimple* GetThisPointer()
+	{
+		return this;	//this를 반환. 이는 이 문장을 실행하는 객체의 포인터를 반환하라는 의미. 그래서 반환형도 SoSimple* 형으로 선언
+	}
+};
+
+int main(void)
+{
+	SoSimple sim1(100);
+	SoSimple * ptr1 = sim1.GetThisPointer();//sim1 객체의 주소 값 저장
+	//객체 sim1에 의해 반환된 this를 ptr1에 저장하고 있다. 이 때 this는 SoSimple의 포인터이므로
+	//SoSimple형 포인터 변수에 저장해야 한다.
+	cout << ptr1 << ", ";//ptr1에 저장된 주소 값을 출력하고 있다.
+	ptr1->ShowSimpleData();//ptr1이 가리키는 객체의 ShowSimpleData 함수를 호출하고 있다.
+
+	SoSimple sim2(200);
+	SoSimple * ptr2 = sim2.GetThisPointer();
+	cout << ptr2 << ", ";
+	ptr2->ShowSimpleData();
+
+	return 0;
+}
+
+
+
+/*this 포인터의 활용*/
+
+
+
+#include <iostream>
+using std::cout; using std::endl;
+
+class TwoNumber
+{
+private:
+	int num1;
+	int num2;
+public:
+	TwoNumber(int num1, int num2)
+	{
+		this->num1 = num1;	//this->num1 은 멤버변수, num1은 매개 변수 => 매개변수 num1,num2를 통해서 전달된 값이 멤버변수 num1,num2에 저장
+		this->num2 = num2;
+	}
+	//TwoNumber(int num1, int num2)
+	//	:num1(num1), num2(num2)	//멤버 이니셜라이저에서는 this포인터를 사용할 수 X.BUT 저장하는 변수는 멤버변수로, 저장되는 값은(소괄호 안의 변수 및 상수는) 매개변수
+	//{//empty					//로 인식하기 때문에 여기서 보이는 형태의 문장 구성이 가능. i.e 위의 생성자를 대신할 수 있음
+	//}
+	void ShowTwoNumber()
+	{	//this 포인터를 사용함으로써, 멤버변수에 접근함을 명확히 하였다. 그러나 일반적으로 이러한 경우에는 this 포인터를 생략해서 표현한다.
+		cout << this->num1 << endl;
+		cout << this->num2 << endl;
+	}
+};
+
+
+
+/*Self-Reference 의 반환 예제*/
+
+int main(void)
+{
+	TwoNumber two(2, 4);
+	two.ShowTwoNumber();
+	return 0;
+}
+//변수 짓기는 의외로 신경쓰임 -> 특히 유사한 성격을 지니는 두 변수의 이름을 구별되게 짓는 것은 고민 스러움 -> 위 예제처럼 멤버변수와 매개변수의 이름을 동일 & this 포인터를
+//이용해서 이둘을 구분하는 것을 좋아하는 프로그래머들도 있음.
+
+
+#include <iostream>
+using std::cout; using std::endl; using std::cin;
+
+class SelfRef
+{
+private:
+	int num;
+public:
+	SelfRef(int n) : num(n)
+	{
+		cout << "객체생성" << endl;
+	}
+	SelfRef& Adder(int n)	//함수 Adder에서는 선언된 반환형과 반환의 내용을 함께 살펴야 한다. 반환의 내용은 *this인데, 이는 이 문장을 실행하는 객체 자신의 포인터가 아닌
+	{						//객체 자신을 반환하겠다는 의미가 됨. 그런데 반환형이 참조형 SelfRef&으로 선언되었다. 따라서 객체 자신을 참조 할 수 있는
+		num += n;			//'참조의 정보(이하 참조 값)가 반환된다.
+		return *this;
+	}
+	SelfRef& ShowTwoNumber()	//위와 마찬가지로 객체 자신을 참조할 수 있는 참조 값을 반환하도록 정의되었다.
+	{
+		cout << num << endl;
+		return *this;
+	}
+};
+
+int main(void)
+{
+	SelfRef obj(3);
+	SelfRef &ref = obj.Adder(2);	//객체 obj의 Adder함수를 호출 -> 객체 자신의 참조 값 반환(즉, 객체 obj의 참조 값을 반환) 따라서 참조자 ref는 객체 obj를 참조
+
+	obj.ShowTwoNumber();	//28행에서 일어나는 일의 확인을 위해서 저장되어 있는 값을 출력
+	ref.ShowTwoNumber();	
+
+	ref.Adder(1).ShowTwoNumber().Adder(2).ShowTwoNumber();	//ref.Adder(1) 호출(num=6) -> ref.ShowTwoNumer() 호출 (6출력)-> ref.Adder(2) 호출 (num=8)
+															//-> ref.ShowTwoNumber() 호출 (8출력)
+	//위의 예제에서는 하나의 객체만을 생성. 다만 그 객체가 반환하는 참조 값을 대상으로 다양한 바업ㅂ으로 
+        //멤버 함수를 호출															//이는 Adder와 ShowTwoNumber가 객체의 참조 값을 반환하기 때문에 구성이 가능한 문장.
+	return 0;
+}
+
+
+
+/*참조의 정보(참조 값)에 대한 이해*/
+
+#include <iostream>
+
+int main(void)
+{
+	int num = 7;
+	int &ref = num; //변수 num을 참조할 수 있는 참조의 정보가 전달된다.
+					//변수 num을 참조할 수 있는 참조 값이 참조자 ref에 전달되어, ref가 변수 num을 참조하게 된다.
+	//대입 연산자의 왼편에 '참조자의 선언'이 오거나, 반환형으로 '참조형'이 선언되면, 그 때 전달되는 정보를 표현하기 위해서
+	//'참조의 정보' 또는 '참조 값'이라는 표현을 사용한 것.
+	return 0;
+}
+
+
+
+
+
+//4-6 Friend 선언
+(스토리 보다는 그냥 문법적인 키워드로 따로 생각)
+
+*전역 함수에 대한 friend 선언
+-friend1.cpp
+-전역 함수에게 private 영역 접근 허용
+
+*class에 대한 friend 선언
+-friend2.cpp
+
+-->friend는 단방향성임
+
+*friend 선언의 유용성
+ -유용하지 않다!
+ -정보 은닉에 위배되는 개념
+ -연산자 오버로딩에서 유용하게 사용
+ -그 전에는 사용하지 말자!
+
+*friend 선언으로만 해결 가능한 문제
+ -그런 것은 존재하지 않는다.
+ -연산자 오버로딩에서는 예외!
+
+
+/*friend 예제 1*/
+
+#include <iostream>
+using std::cout;
+using std::endl;
+
+class Counter
+{
+private:
+	int val;
+public:
+	Counter() { 
+		val=0;
+	}
+	void Print() const {
+		cout<<val<<endl;
+	}
+		
+	friend void SetX(Counter& c, int val);  //friend 선언.
+};
+
+//만약 count의 멤버 함수면 void count::SetX(~~)
+void SetX(Counter& c, int val) // 전역함수.
+{
+	c.val=val;
+}
+
+int main()
+{
+	Counter cnt;
+	cnt.Print();
+
+	SetX(cnt, 2002);
+	cnt.Print();
+
+	return 0;
+}
+
+
+
+
+/*friend 선언 예제2*/
+
+#include <iostream>
+using std::cout;
+using std::endl;
+
+class AAA
+{
+private:
+	int data;
+	friend class BBB;  // class BBB를 friend로 선언함!
+};
+
+class BBB
+{
+public:
+	void SetData(AAA& aaa, int val){
+		aaa.data=val; //class AAA의 private 영역 접근!
+	}
+};
+
+int main()
+{
+	AAA aaa;
+	BBB bbb;
+
+	bbb.SetData(aaa, 10);
+
+	return 0;
+}
+
+
+
+

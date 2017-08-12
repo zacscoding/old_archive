@@ -1,0 +1,1658 @@
+-------------------ch24.스트림과 병렬 처리-----------------------
+;스트림(Stream)은 자바 8부터 추가된 컬렉션(배열포함)의 저장 요소를 하나씩 참조해서 람다식(함수적-스타일)으로 처리할 수 있도록 해주는 반복자
+
+-------------------------------------------------------------------------------------
+
+//1.스트림 소개
+
+/1.1반복자 스트림
+
+-자바 7 이전까지 List<String> 컬렉션에서 요소를 순차적으로 처리하기 위한 Iterator 반복자 사용 예
+List<String> list=Array.asList("AAA","BBB","CCC");
+Iterator<String> itr=list.iterator();
+while(itr.hasNext()){
+	String name=itr.next();
+	System.out.println(name);
+}
+
+-Stream 를 사용하는 예
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Stream;
+
+public class Main {
+	public static void main(String[] args){
+		List<String> list=Arrays.asList("AAA","BBB","CCC");
+		Stream<String> stream=list.stream();
+		
+		stream.forEach(name->System.out.println(name));			
+	}
+}
+
+<< 실행 결과 >>
+AAA
+BBB
+CCC
+
+
+=>컬렉션(java.util.Collection)의 stream()메소드 -> 스트림 객체 생성
+  ->stream.forEach(Consumer 함수적 인터페이스 타입의 매개값);
+=> void forEach(Consumer<T> action);
+
+------
+
+/1.2 스트림의 특징
+;Stream은 Iterator와 비슷한 역할을 하는 반복자. 중간 처리와 최종 처리 작업을 수행하는 점에서 많은 차이가 있음
+(람다식으로 요소 처리 코드를 제공 ,내부 반복자를 사용하므로 병렬 처리가 쉬움 ..)
+
+1)람다식으로 요소 처리 코드를 제공.
+;Stream이 제공하는 대부분의 요소 처리 메소드는 함수적 인터페이스 매개 타입을 가짐 -> 람다식 또는 메소드 참조를 이용해서 처리 내용을 
+매개값으로 전달할 수 있음
+
+e.g)요소 처리를 위한 람다식
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Stream;
+
+class Student{
+	private String name;
+	private int score;
+	
+	public Student(String name,int score){
+		this.name=name;
+		this.score=score;
+	}
+	
+	public String getName(){return name;}
+	public int getScore(){return score;}	
+}
+
+public class Main {
+	public static void main(String[] args){
+		List<Student> list=Arrays.asList(
+				new Student("Zac",100),
+				new Student("Evan",50)
+		);
+				
+		Stream<Student> stream=list.stream();
+		stream.forEach(s->{
+			String name=s.getName();
+			int score=s.getScore();
+			System.out.println(name+"-"+score);
+		});		
+	}
+}
+
+<< 실행 결과 >>
+Zac-100
+Evan-50
+
+
+2)내부 반복자를 사용하므로 병렬 처리가 쉽다.
+외부 반복자(external iterator) : 개발자가 코드로 직접 컬렉션의 요소를 반복해서 가져오는 코드 패턴(index-for문 // Iterator-while문)
+내부 반복자(internal iterator) : 컬렉션 내부에서 요소들을 반복시키고, 개발자는 요소당 처리해야 할 코드만 제공하는 코드 패턴
+
++내,외부 반복자.jpg 보기
+
+=>컬렉션 내붕에서 어떻게 요소를 반복시킬 것인가는 컬렉션에게 맡겨두고, 개발자는 요소 처리 코드에만 집중할 수 있음
+=>내부 반복자는 요소들의 반복 순서를 변경하거나, 멀티 코어 CPU를 최대한 활용하기 위해 요소들을 분배시켜 병렬 작업을 할 
+  수 있게 도와줌 -> 하나씩 처리하는 순차적 외부 반복자보다는 효율적으로 요소를 반복시킬 수 있음
+  
+=>요소의 병렬 처리가 컬렉션 내부에서 처리됨
+=>병렬(parallel)처리 : 한 가지 작업을 서브 작업으로 나누고, 서브 작업들을 분리된 스레드에서 병렬적으로 처리하는 것
+
+
+e.g)순차처리 스트림 // 병렬 처리 스트림을 이용.
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Stream;
+
+public class Main {
+	public static void main(String[] args) {
+		List<String> list=Arrays.asList("AAA","BBB","CCC","DDD","EEE");		
+		
+		//순차 처리
+		Stream<String> stream=list.stream();
+		stream.forEach(Main :: print);	//메소드 참조(s->Main.print(s)와 동일)
+		System.out.println();
+		
+		//병렬 처리
+		Stream<String> parellelStream=list.parallelStream();
+		parellelStream.forEach(Main :: print);	
+	}
+	public static void print(String str){
+		System.out.println(str+" : "+Thread.currentThread().getName());
+	}
+}
+
+<< 실행 결과 >>
+AAA : main
+BBB : main
+CCC : main
+DDD : main
+EEE : main
+
+CCC : main
+EEE : main
+DDD : main
+BBB : ForkJoinPool.commonPool-worker-1
+AAA : ForkJoinPool.commonPool-worker-2
+
+
+=>병렬 처리 스트림은 main 스레드 + ForkJoinPool(스레드풀)의 작업 스레드들이 병렬적으로 요소를 처리
+
+
+
+3)스트림은 중간 처리와 최종 처리를 할 수 있다.
+;스트림은 컬렉션의 요소에 대해 중간 처리와 최종 처리를 수행할 수 있음.
+(중간 처리 : 매핑, 필터링, 정렬 등 수행 // 최종 처리 : 반복, 카운팅, 평균, 총합 등의 집계 처리 )
+
+
+						   ㅡ               중간 처리                ㅡ        ㅡ 최종 처리  ㅡ    
+컬렉션,배열 --[오리지날 스트림]	-- [필터링 처리 중간 스트림]	-- [매핑 처리 중간 스트림]	-- [집계처리 결과물]	 -->결과
+
+e.g)
+중간 처리 : 학생 점수를 뽑아내고
+최종 처리 : 점수의 평균을 산출한다(집계)
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Stream;
+
+class Student{
+	private String name;
+	private int score;
+	
+	public Student(String name,int score){
+		this.name=name;
+		this.score=score;
+	}
+	
+	public String getName(){return name;}
+	public int getScore(){return score;}	
+}
+
+public class Main {
+	public static void main(String[] args){
+		List<Student> studentList=Arrays.asList(
+				new Student("Zacc",100),
+				new Student("Evan",90),
+				new Student("Amanda",80)
+		);
+		
+		double avg=studentList.stream()
+				//중간처리(학생 객체를 점수로 매핑)
+				.mapToInt(Student :: getScore)
+				//최종 처리(평균 점수)
+				.average()
+				.getAsDouble();
+		
+		/*==위의 코드와 같음
+		Stream stream=studentList.stream();
+		IntStream intStream=stream.mapToInt(Student::getScore);		
+		OptionalDouble od=intStream.average();
+		double avg=od.getAsDouble();
+		*/
+		
+		System.out.println("평균 점수 : "+avg);
+	}
+	
+}
+
+<< 실행 결과 >>
+평균 점수 : 90.0
+
+-IntStream mapToInt(ToIntFunction<? super T> mapper) // int stream으로 매핑(즉,List의 Student 인스턴스.getScore() 값들)
+IntStream.average(); =>OptionalDouble 타입으로 평균 리턴
+OptionalDouble.getAsDouble();
+
+-------------------------------------------------------------------------------------
+
+//2.스트림의 종류
+					BaseStream
+    ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+   |		    |		        |                |					
+Stream		IntStream		LongStream		DoubleStream
+
+;Stream은 객체 요소를 처리하는 스트림 // 나머지는 기본 타입 요소를 처리하는 스트림
+=>위의 스트림 인터페이스의 구현 객체는 다양한 소스로 얻을 수 있음(주로 컬렉션과 배열에서 얻음)
+
+아래와 같은 소스로부터 스트림 구현 객체를 얻을 수 있음
+
+------
+
+/2.1 컬렉션으로부터 스트림 얻기
+
+public class Student {
+	private String name;
+	private int score;
+	
+	public Student(String name,int score){
+		this.name=name;
+		this.score=score;
+	}
+	
+	public String getName(){return name;}
+	public int getScore(){return score;}
+}
+
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Stream;
+
+public class Main {
+	public static void main(String[] args){
+		List<Student> studentList=Arrays.asList(
+				new Student("Zacc",100),
+				new Student("Evan",80),
+				new Student("Amanda",90)
+		);
+		
+		Stream<Student> stream=studentList.stream();
+		stream.forEach(s->System.out.println(s.getName()));		
+	}	
+}
+
+<< 실행 결과 >>
+Zacc
+Evan
+Amanda
+
+------
+
+/2.2 배열로부터 스트림 얻기
+
+import java.util.Arrays;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
+
+public class Main {
+	public static void main(String[] args){
+		String[] strArray={"Zacc","Evan","Amanda"};
+		
+		Stream<String> strStream=Arrays.stream(strArray);
+		strStream.forEach(s->System.out.print(s+","));
+		System.out.println();
+		
+		int[] intArray={1,2,3,4,5};
+		IntStream intStream=Arrays.stream(intArray);
+		intStream.forEach(s->System.out.print(s+","));		
+	}	
+}
+
+------
+
+/2.3 숫자 범위로부터 스트림 얻기
+
+import java.util.stream.IntStream;
+public class Main {
+	public static int sum;
+	
+	public static void main(String[] args){
+		IntStream stream=IntStream.rangeClosed(1,100);
+		stream.forEach(a->sum+=a);
+		System.out.println("1-100까지 합 : "+sum);		
+	}	
+}
+
+=>IntStream.range(int startInclusive,int endExclusive) 와 rangeClosed(int startInclusive,int endInclusive)
+
+------
+
+/2.4 파일로부터 스트림 얻기
+
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.stream.Stream;
+
+
+public class Main {
+		
+	public static void main(String[] args) throws IOException {
+		//파일 정보를 가지고 있는 Path 인스턴스 생성
+		Path path=Paths.get("src/linedata.txt");
+		Stream<String> stream;
+		
+		//Files.lines() 메소드 이용
+		stream=Files.lines(path,Charset.defaultCharset());	//운영체제의 기본 문자셋
+		stream.forEach(System.out :: println);	//메소드참조(s->System.out.println(a))와 같음		
+		System.out.println();
+		
+		//BufferedReader의 lines() 메소드 이용
+		File file=path.toFile();
+		FileReader fileReader=new FileReader(file);
+		BufferedReader br=new BufferedReader(fileReader);
+		stream=br.lines();
+		stream.forEach(System.out::println);
+	}	
+}
+
+<< 실행 결과 >>
+Java8에서 추가된 새로운 기능
+1.람다식
+2.메소드 참조
+3.디폴트 메소드와 정적 메소드
+4.새로운 API 패키지
+
+Java8에서 추가된 새로운 기능
+1.람다식
+2.메소드 참조
+3.디폴트 메소드와 정적 메소드
+4.새로운 API 패키지
+
+
+------
+
+/2.5 디렉토리로부터 스트림 얻기
+;Files의 static method 인 list()를 이용해서 디렉토리 내용(서브 디렉토리 or 파일 목록)을 스트림을 읽고 출력
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.stream.Stream;
+
+public class Main {		
+	public static void main(String[] args) throws IOException {
+		Path path=Paths.get("C:\\Users\\명수\\workspace");
+		Stream<Path> stream=Files.list(path);
+		stream.forEach(p->System.out.println(p.getFileName()));		
+	}	
+}
+
+-------------------------------------------------------------------------------------
+
+//3.스트림 파이프라인
+;대량의 데이터를 가공해서 축소하는 것을 일반적으로 리덕션(Reduction)이라고 함
+=>합계,평균값,카운팅,최대값,최소값 등이 대표적인 리덕션
+=>컬렉션의 요소를 리덕션의 결과물로 바로 집계할 수 없을 경우에는 집계하기 좋도록 필터링,매핑,정렬,그룹핑 등의 중간 처리가 필요
+
+------
+
+/3.1 중간 처리와 최종 처리
+;파이프라인(pipeline) : 여러 개의 스트림이 연결되어 있는 구조
+
+
+e.g)회원 컬렉션에서 남자의 나이 평균
+----------                ----    중간 처리            ----  --최종처리--
+회원컬렉션		------------------------------------------------------
+Member(남)	Member(남/녀)  | Member(남)	 |  	age		 |   ->			->평균 나이
+Member(여)	오리지날Stream)  (남자 요소Stream)  (나이요소 stream)  집계처리(OptionalDouble)
+			------------------------------------------------------
+----------             filter()       mapToInt()      average()
+
+
+e.g : Member컬렉션에서 남자 평균 나이 구하기
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.OptionalDouble;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
+
+class Member{
+	public static int MALE=0;
+	public static int FEMALE=1;
+	
+	private String name;
+	private int sex;
+	private int age;
+	
+	public Member(String name,int sex,int age){
+		this.name=name; this.sex=sex; this.age=age;		
+	}
+	
+	public int getSex(){return sex;}
+	public int getAge(){return age;}	
+}
+
+public class Main {		
+	public static void main(String[] args){
+		List<Member> list=Arrays.asList(
+				new Member("홍길동",Member.MALE,30),
+				new Member("김나리",Member.FEMALE,20),
+				new Member("신용권",Member.MALE,45),
+				new Member("박수미",Member.FEMALE,27)
+		);
+				
+		//1.파이프라인 해석 과정
+		Stream<Member> maleFemaleStream=list.stream();
+		Stream<Member> maleStream=maleFemaleStream.filter(s->s.getSex()==Member.MALE);
+		IntStream ageStream=maleStream.mapToInt(Member::getAge);
+		OptionalDouble optionalDouble=ageStream.average();
+		double average=optionalDouble.getAsDouble();
+		System.out.println("남자 평균 나이 : "+average);
+		
+		//2.파이프라인 사용
+		double ageAvg=list.stream()	//오리지널 스트림
+				.filter(s->s.getSex()==Member.MALE)	//중간 처리 스트림
+				.mapToInt(Member::getAge)	//중간 처리 스트림
+				.average()	//최종 처리
+				.getAsDouble();
+		System.out.println("남자 평균 나이 : "+ageAvg);
+	}	
+}
+
+
+
+<< 실행 결과 >>
+남자 평균 나이 : 37.5
+남자 평균 나이 : 37.5
+
+------
+
+/3.2 중간 처리 메소드와 최종 처리 메소드
+;중간처리(반환 타입이 스트림) // 최종 처리(반환 타입이 기본타입 or OptiolnalXXX)
+
+-------------------------------------------------------------------------------------
+
+//4.필터링 ( distinct(), filter() )
+;중간 처리 기능으로서 요소를 걸러내는 역할
+
+
+리턴타입			메소드(매개변수)				 	설명
+Stream			distinct()					중복 제거
+IntStream		filter(Predicate)			조건 필터링
+LongStream		filter(IntPredicate)
+DoubleStream	fitler(LongPredicate)
+				filter(DoublePredicate)
+				
+				
+=>distinct()는 Object.equals(Object)가 true이면 동일한 객체로 판단 & 중복 제거
+	
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Stream;
+
+public class Main {		
+	public static void main(String[] args){
+		List<String> names=Arrays.asList("홍길동","신용권","감자바","신용권","신민철");		
+		
+		//전체 이름 출력
+		System.out.println("[저장된 전체 이름]");
+		Stream<String> stream=names.stream();
+		stream.forEach(s->System.out.print(s+" "));
+		System.out.println("\n");
+		
+		//중복 제거
+		System.out.println("[중복 제거]");
+		stream=names.stream()
+				.distinct();
+		stream.forEach(s->System.out.print(s+" "));
+		System.out.println("\n");
+		
+		//필터링
+		System.out.println("[필터링]");
+		stream=names.stream()
+				.filter(s->s.startsWith("신"));
+		stream.forEach(s->System.out.print(s+" "));
+		System.out.println("\n");
+		
+		//중복 제거 후 필터링
+		System.out.println("[중복 제거 후 필터링]");		
+		stream=names.stream()
+				.distinct()
+				.filter(s->s.startsWith("신"));		
+		stream.forEach(s->System.out.print(s+" "));		
+	}	
+}
+
+
+
+<< 실행 결과 >>
+[저장된 전체 이름]
+홍길동 신용권 감자바 신용권 신민철 
+
+[중복 제거]
+홍길동 신용권 감자바 신민철 
+
+[필터링]
+신용권 신용권 신민철 
+
+[중복 제거 후 필터링]
+신용권 신민철 
+
+
+-------------------------------------------------------------------------------------
+
+//5.매핑( flatMapXXX(),mapXXX(),asXXXStream(),boxed() )
+;매핑(mapping)은 중간 처리 기능으로 스트림의 요소를 다른 요소로 대체하는 작업
+
+------
+
+/5.1 flatMapXXX() 메소드
+;요소를 대체하는 복수 개의 요소들로 구성된 새로운 스트림
+
+			  (flatMapXXX)
+(기존스트림)       A->A1,A2     (새로 생성된 스트림)
+  B  A    -->             -->B2,B1,A2,A2            
+                B->B1,B2
+
+
+리턴 타입			메소드(매개변수)									요소->대체요소
+ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+Stream<R>		flatMap(Function<T,Stream<R>>)				T->Stream<R>
+DoubleStream	flatMap(DoubleFunction<DoubleStream>)		double -> DoubleStream
+IntStream		flatMap(IntFunction<IntStream>)				int -> IntStream
+LongStream		flatMap(LongFunction<LongStream>)			long -> LongStream
+DoubleStream	flatMapToDouble(Function<T,DoubleStream>)	T -> DoubleStream	
+IntStream		flatMapToInt(Function<T,IntStream>)			T -> IntStream
+LongStream		flatMapToLong(Function<T,LongStream>)		T -> LongStream
+
+
+
+import java.util.Arrays;
+import java.util.List;
+
+public class Main {		
+	public static void main(String[] args){
+		//"ja~"와 "st~" 두 String을 가진 List
+		List<String> inputList1=Arrays.asList("java8 lambda","stream mapping");
+		
+		
+		inputList1.stream()	//Stream<String>인스턴스 생성
+			.flatMap(data->Arrays.stream(data.split(" "))) //새로운 Stream<String> 생성(공백제거된)
+			.forEach(word->System.out.print(word+" / "));	//요소들 출력
+		System.out.println();
+		
+		//"10, 20, 30"과 "40, 50, 60" 문자열을 가진 리스트
+		List<String> inputList2=Arrays.asList("10, 20, 30","40, 50, 60");	
+		inputList2.stream()	//위의 두 문자열을 가진 Stream<String> 인스턴스 생성
+			.flatMapToInt(data->{	//위의 Stream<String> 요소들을 ,과 공백을 제거한 후 IntStream으로 반환
+				String[] strArr=data.split(",");
+				int[] intArr=new int[strArr.length];
+				
+				for(int i=0;i<strArr.length;i++){
+					intArr[i]=Integer.parseInt(strArr[i].trim());
+				}
+				return Arrays.stream(intArr);				
+			})
+			.forEach(number->System.out.print(number+" / ")); //반환된 IntStream의 모든 요소 출력	
+	}	
+}
+
+<< 실행 결과 >>
+java8 / lambda / stream / mapping / 
+10 / 20 / 30 / 40 / 50 / 60 / 
+
+
+------
+
+/5.2 mapXXX() 메소드
+;mapXXX() 메소드는 요소를 대체하는 요소로 구성된 새로운 스트림을 리턴함.
+
+
+
+
+		    (mapXXX)
+(기존 스트림)   A -> C    (새로운 스트림)
+  B   A   --        --     D C
+			 B -> D
+			 
+
+리턴타입			메소드(매개변수)							요소 -> 대체요소
+Stream<R>		map(Function<T,R>)					T-> R
+DoubleStream	mapToDouble(ToDoubleFunctionT>)		T -> double
+IntStream		mapToInt(ToIntFunction<T>)			T -> int
+LongStream		mapToLong(ToLongFunction<T>)		T -> long
+DoubleStream	map(DoubleUnaryOperator)			double -> double
+IntStream		mapToInt(DoubleToIntFunction)		double -> int
+LongStream		mapToLong(DoubleToLongFunction)     double -> long
+Stream<U>		mapToObj(DoubleFunction<U>)			double -> U
+IntStream		map(IntUnaryOperator)				int -> int
+DoubleStream	mapToDouble(IntToDoubleFunction)	int -> double
+LongStream		mapToLong(IntToLongFunction)		int -> long
+Stream<U>		mapToObj(IntFunction<U>)			int -> U
+LongStream		map(LongUnaryOperator)				long -> long
+DoubleStream	mapToDouble(LongToDoubleFunction)	long -> double
+IntStream		mapToInt(LongToIntFunction)			long -> int
+Stream<U>		mapToObj(LongFunction<U>)			long -> U
+	
+
+e.g) 학생 List에서 학생의 점수를 요소로 하는 새로운 스트림 생성 & 점수를 순차적으로 콘솔에 출력
+
+public class Student {
+	private String name;
+	private int score;
+	
+	public Student(String name,int score){
+		this.name=name;
+		this.score=score;
+	}
+	
+	public String getName(){return name;}
+	public int getScore(){return score;}
+}
+
+
+
+import java.util.Arrays;
+import java.util.List;
+
+public class Main {		
+	public static void main(String[] args){
+		List<Student> studentList=Arrays.asList(
+				new Student("Zacc",100),
+				new Student("Evan",80),
+				new Student("Amanda",90)
+		);
+		
+		studentList.stream()
+			.mapToInt(Student :: getScore)
+			.forEach(score->System.out.println(score));				
+	}	
+}
+	
+	
+<< 실행 결과 >>
+100
+80
+90
+
+			 
+------
+
+/5.3 asDoubleStream(), asLongStream(), boxed() 메소드
+;asXXXStream()은 XXX가 아닌 다른 타입의 요소를 XXX 타입 변환해서 XXXStream을 생성
+ boxed() 메소드는 기본 타입(int,long,double) 요소를 Integer,Long,Double 요소로 박싱해서 스트림 생성
+ 
+
+e.g)int[] 배열 -> IntStream 생성 & int 요소를 double로 타입 변환 DoubleStream 생성
+                               & int 요소를 Integer 객체로 박싱해서 Stream<Integer>를 생성
+ 
+import java.util.Arrays;
+import java.util.stream.IntStream;
+
+public class Main {		
+	public static void main(String[] args){
+		int[] intArray={1,2,3,4,5};
+		
+		IntStream intStream=Arrays.stream(intArray);	
+		intStream
+			.asDoubleStream()
+			.forEach(d->System.out.print(d+" / "));
+		System.out.println();
+		
+		intStream=Arrays.stream(intArray);
+		
+		intStream
+			.boxed()	//Stream<Integer> 스트림 생성
+			.forEach(obj -> System.out.print(obj.intValue()+" / "));				
+	}	
+} 
+
+-------------------------------------------------------------------------------------
+
+//6.정렬( sorted() )
+;스트림은 요소가 최종 처리되기 전에 중간 단계에서 요소를 정렬해서 최종 처리 순서를 변경할 수 있음
+
+리턴타입			메소드(매개변수)				설명
+Stream<T>		sorted()				객체를 Comparable 구현 방법에 따라 정렬
+Stream<T>		sorted(Comparator<T>)	객체를 주어진 Comparator에 따라 정렬
+DoubleStream	sorted()				double 요소를 오름차순으로 정렬
+IntStream		sorted()				int 요소를 오름차순으로 정렬
+LongStream		sorted()				long 요소를 오름차순으로 정렬
+
+=>클래스가 Comparable을 구현하지 않고 sorted()메소드 호출하면 ClassCastException 발생
+
+
+1)객체 요소가 Comparable을 구현한 상태 & 기본 비교(Comparable) 방법으로 정렬
+sorted()
+sorted( (a,b) -> a.compareTo(b) );
+sorted( Comparator.naturalOrder() );
+
+2)객체 요소가 Comparable을 구현한 상태 & 기본 비교(Comparable) 방법과 반대로 정렬
+sorted( (a,b) -> b.compareTo(a) );
+sorted( Comparator.reverseOrder() );
+
+3)객체 요소가 Comparable를 구현하지 않은 상태
+sorted( (a,b) -> {...} );
+=>Comparator(함수적 인터페이스)를 매개값으로 sorted()메소드 호출
+
+
+
+
+
+public class Student implements Comparable<Student>{
+	private String name;
+	private int score;
+	
+	public Student(String name,int score){
+		this.name=name;
+		this.score=score;
+	}
+	
+	public String getName(){return name;}
+	public int getScore(){return score;}
+	
+	@Override
+	public int compareTo(Student stu){
+		return score-stu.score;	//점수가 낮으면 앞서고 높으면 뒤섬
+	}
+	
+}
+
+
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.IntStream;
+
+public class Main {		
+	public static void main(String[] args){
+		//숫자 요소일 경우
+		IntStream intStream=Arrays.stream(new int[]{5,3,2,1,4});
+		intStream
+			.sorted()
+			.forEach(n->System.out.print(n+" / "));
+		System.out.println();
+		
+		//객체 요소일 경우
+		List<Student> studentList=Arrays.asList(
+				new Student("Zac",30),
+				new Student("Evan",10),
+				new Student("Amanda",20)
+		);
+		
+		//1)기본 메소드
+		studentList.stream()
+			.sorted()	//정수를 기준으로 오름차순으로 Student 정렬
+			.forEach(s->System.out.print(s.getName()+"-"+s.getScore()+" / "));	
+		System.out.println();
+		
+		//2)compareTo와 반대
+		studentList.stream()
+			.sorted(Comparator.reverseOrder())	//정수를 기준으로 내림차순으로 Student 정렬
+			.forEach(s->System.out.print(s.getName()+"-"+s.getScore()+" / "));
+			
+		//3)Comparable 인터페이스를 구현하지 않은 경우
+		/*
+		studentList.stream()
+			.sorted((a,b) -> a.getScore()-b.getScore())	
+			.forEach(s->System.out.print(s.getName()+"-"+s.getScore()+" / "));	
+		System.out.println();
+		*/
+		
+						
+	}	
+}
+
+
+
+<< 실행 결과 >>
+1 / 2 / 3 / 4 / 5 / 
+Evan-10 / Amanda-20 / Zac-30 / 
+Zac-30 / Amanda-20 / Evan-10 / 
+
+-------------------------------------------------------------------------------------
+
+//7. 루핑( peek(), forEach() )
+;루핑(looping) : 요소 전체를 반복하는 것 ( peek(),forEach() 메소드)
+-peek() : 중간 처리 메소드 => 마지막에 호출할 경우 스트림 작동 X => sum() 같은 최종 처리 메소드 필요
+-forEach() : 최종 처리 메소드 => 요소를 소비하는 최종 처리 메소드 이므로 이후에 sum()과 같은 다른 최종 메소드를 호출하면 X
+
+
+import java.util.Arrays;
+
+public class Main {		
+	public static void main(String[] args){
+		int[] intArr={1,2,3,4,5,6,7,8,9,10};
+			
+		System.out.println("[peek()을 마지막에 호출한 경우]");
+		Arrays.stream(intArr)
+			.filter(a->a%2==0)
+			.peek(a->System.out.println(a));
+		System.out.println();
+		
+		System.out.println("[최종 처리 메소드를 마지막에 호출한 경우]");
+		int total=Arrays.stream(intArr)
+				.filter(a->a%2==0)
+				.peek(n->System.out.print(n+" / "))
+				.sum();
+		System.out.println("총합 : "+total);
+		System.out.println();
+		
+		System.out.println("[forEach()를 마지막에 호출한 경우]");
+		Arrays.stream(intArr)
+			.filter(a->a%2!=0)
+			.forEach(n->System.out.print(n+" / "));				
+	}	
+}
+
+
+<< 실행 결과 >>
+[peek()을 마지막에 호출한 경우]
+
+[최종 처리 메소드를 마지막에 호출한 경우]
+2 / 4 / 6 / 8 / 10 / 총합 : 30
+
+[forEach()를 마지막에 호출한 경우]
+1 / 3 / 5 / 7 / 9 / 
+
+-------------------------------------------------------------------------------------
+
+//8.매칭 ( allMatch(),anyMatch(),noneMath() )
+;스트림 클래스는 최종 처리 단계에서 요소들이 특정 조건을 만족하는지 조사할 수 있도록 세가지 매칭 메소드 제공
+-allMatch() : 모든 요소들이 매개값으로 주어진 Predicate의 조건을 만족하는지 조사
+-anyMatch() : 최소 하나의 요소가매개값으로 주어진 Predicate의 조건을 만족하는지 조사
+-allMatch() : 모든 요소들이 매개값으로 주어진 Predicate의 조건을 만족하지 않는지 조사
+
+
+import java.util.Arrays;
+
+public class Main {		
+	public static void main(String[] args){
+		int[] intArr={2,4,6};
+		
+		System.out.println("[원본 배열]");
+		System.out.println(Arrays.toString(intArr));
+		System.out.println();
+		
+		boolean result=Arrays.stream(intArr)
+				.allMatch(a->a%2==0);
+		System.out.println("모두 2의 배수인가?(allMatch())\n : "+result);
+		
+		result=Arrays.stream(intArr)
+				.anyMatch(a->a%3==0);
+		System.out.println("3의 배수가 존재하는가?(anyMatch())\n : "+result);
+		
+		result=Arrays.stream(intArr)
+				.noneMatch(a->a%3==0);
+		System.out.println("3의 배수가 없는가 ?(noneMatch())\n : "+result);				
+	}	
+}
+
+<< 실행 결과 >>
+[원본 배열]
+[2, 4, 6]
+
+모두 2의 배수인가?(allMatch())
+ : true
+3의 배수가 존재하는가?(anyMatch())
+ : true
+3의 배수가 없는가 ?(noneMatch())
+ : false
+
+-------------------------------------------------------------------------------------
+
+//9.기본 집계 ( sum(),count(),average(),max(),min() )
+;집계(Aggregate)는 최종 처리 기능으로 요소들을 처리해서 카운팅,합계,평균값,최대값,최속값 등과 같이 하나의 값으로 산출하는 것
+(대량의 데이터를 가공해서 축소하는 리덕션(Reduction)이라고 할 수 O)
+
+------
+
+/9.1 스트림이 제공하는 기본 집계
+
+리턴타입				메소드					설명
+long				count()					요소 개수
+OptionalXXX			findFirst()				첫 번째 요소
+Optional<T>			max(Comparator<T>)		최대 요소
+OptionalXXX			max()					최대 요소
+Optional<T>			min(Comparator<T>)		최소 요소
+OptionalXXX			min()					최소 요소
+OptionalDouble		average()				요소 평균	
+int,long,double		sum()					요소 총합
+
+
+=>OptionalXXX는 자바8에서 추가한 java.util.Optional,OptionalDouble,OptionalInt,OptioanlLong 클래스
+  ( 값을 저장하는 값 기반 클래스(value-based class) )
+=>get(),getAsDouble(),getAsInt(),getAsLong() 을 호출해서 값 얻으면 됨
+  
+import java.util.Arrays;
+
+public class Main {		
+	public static void main(String[] args){
+		int[] intArray=new int[]{1,2,3,4,5};
+		
+		long count=Arrays.stream(intArray)
+				.filter(a -> a%2==0)
+				.count();
+		System.out.println("2의 배수 개수 : "+count);
+		
+		int sum=Arrays.stream(intArray)
+				.filter(a -> a%2==0)
+				.sum();
+		System.out.println("2의 배수 합 : "+sum);
+		
+		double avg=Arrays.stream(intArray)
+				.filter(a->a%2==0)
+				.average()
+				.getAsDouble();
+		System.out.println("2의 배수 평균 : "+avg);
+		
+		int max=Arrays.stream(intArray)
+				.max()
+				.getAsInt();
+		System.out.println("최대 값 : "+max);
+		
+		int min=Arrays.stream(intArray)
+				.min()
+				.getAsInt();
+		System.out.println("최대 값 : "+min);
+		
+		int num=Arrays.stream(intArray)
+				.filter(a -> a%3==0)
+				.findFirst()
+				.getAsInt();
+		System.out.println("첫번째 3의 배수 : "+num);
+						
+	}	
+}
+
+
+
+<< 실행 결과 >>
+2의 배수 개수 : 2
+2의 배수 합 : 6
+2의 배수 평균 : 3.0
+최대 값 : 5
+최대 값 : 1
+첫번째 3의 배수 : 3
+
+------
+
+/9.2 Optional 클래스
+;단순히 집계 값만 저장하는 것이 아니라, 집계 값이 존재하지 않으면 디폴트 값, 집계 값을 처리하는 Consumer도 등록할 수 있음
+
+=>Optional 클래스가 제공하는 메소드
+
+리턴타입		메소드(매개변수)					설명
+ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+boolean		isPresent()					값이 저장되어 있는지 여부
+T			orElse(T)					값이 저장되어 있지 않을 경우 디폴트 값 지정
+double		orElse(double)				값이 저장되어 있지 않을 경우 디폴트 값 지정
+int			orElse(int)					값이 저장되어 있지 않을 경우 디폴트 값 지정
+long		orElse(long)				값이 저장되어 있지 않을 경우 디폴트 값 지정
+void		ifPresent(Consumer)			값이 저장되어 있을 경우 Consumer에서 처리
+void		ifPresent(DoubleConsumer)	값이 저장되어 있을 경우 Consumer에서 처리
+void		ifPresent(IntConsumer)		값이 저장되어 있을 경우 Consumer에서 처리
+void		ifPresent(LongConsumer)		값이 저장되어 있을 경우 Consumer에서 처리
+
+
+=>컬렉션의 요소는 동적으로 추가되는 경우가 많음. 만약 저장된 요소가 없는 컬렉션의 Stream 생성 및 메소드 사용(getAsDouble()같은) 하면
+=>NoSuchElementException 예외 발생
+=>예외를 피하는 방법
+
+1)isPresent() 메소드 
+2)orElse() 메소드
+3)ifPresent() 메소드로 평균값이 있을 경우에만 값을 이용하는 람다식 작성
+
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.OptionalDouble;
+
+public class Main {		
+	public static void main(String[] args){
+		List<Integer> list=new ArrayList<>();
+		
+		/*
+		double avg=list.stream()
+				.mapToInt(Integer :: intValue)
+				.average()
+				.getAsDouble();	//throws NoSuchElementException
+		System.out.println("평균 : "+avg);
+		*/
+		
+		//방법1 : isPresent() 메소드
+		OptionalDouble optional=list.stream()
+				.mapToInt(Integer::intValue)
+				.average();
+		if(optional.isPresent())
+			System.out.println("방법1_평균 : "+optional.getAsDouble());
+		else
+			System.out.println("방법1_평균 : 0.0");
+		
+		//방법2 : orElse() 메소드
+		double avg=list.stream()
+				.mapToInt(Integer::intValue)
+				.average()
+				.orElse(0.0);
+		System.out.println("방법2_평균 : "+avg);
+		
+		//방법3 : ifPresent
+		list.stream()
+			.mapToInt(Integer :: intValue)
+			.average()
+			.ifPresent(a -> System.out.println("방법3_평균 : "+a));						
+	}	
+}
+
+<< 실행 결과 >>
+방법1_평균 : 0.0
+방법2_평균 : 0.0
+
+-------------------------------------------------------------------------------------
+
+//10.커스텀 집계( reduce() )
+;스트림은 기본 집계 메소드인 sum,average,count,max,min을 제공하지만 프로그램화해서 다양한 집계 결과물을 만들 수 있도록
+reduce() 메소드 제공
+
+인터페이스			리턴타입				메소드(매개변수)	
+Stream			Optional<T>			reduce(BinaryOperator<T> accumulator)
+				T					reduce(T identity,BinaryOperator<T> accumulator)
+				
+IntStream		OptionalInt			reduce(IntBinaryOperator<T> op)
+				int					reduce(int identity,IntBinaryOperator<T> op)
+				
+LongStream		OptionalLong		reduce(LongBinaryOperator<T> op)
+				long				reduce(long identity,LongBinaryOperator<T> op)
+				
+DoubleStream	OptionalDouble		reduce(DoubleBinaryOperator<T> op)
+				double				reduce(double identity,DoubleBinaryOperator<T> op)
+
+=>스트림에 요소가 없으면 identity 매개값이 리턴
+
+
+e.g)
+import java.util.Arrays;
+import java.util.List;
+
+
+public class Main {		
+	public static void main(String[] args){
+		List<Student> list=Arrays.asList(
+				new Student("Zac",100),
+				new Student("Amanda",95),
+				new Student("Evan",88)				
+		);
+		
+		//1)sum() 이용
+		int sum1=list.stream()
+				.mapToInt(Student :: getScore)
+				.sum();
+		
+		//2)reduce(BinaryOperator<Integer> op) 이용
+		//=>list에 요소 없으면 NoSuchElementException 예외 발생
+		//Stream : 100, 95, 88 => 1번째 (100,95)->195 // 2번? (195,88) -> 283
+		int sum2=list.stream()
+				.map(Student :: getScore)
+				.reduce((a,b)->a+b)	//Stream 인스턴스 반환
+				.get();
+		
+		//3)reduce(int identity,IntBinaryOperator op) 이용
+		int sum3=list.stream()
+				.map(Student::getScore)
+				.reduce(0,(a,b)->a+b);
+		
+		System.out.println("sum1 : "+sum1);
+		System.out.println("sum2 : "+sum2);
+		System.out.println("sum3 : "+sum3);
+						
+	}	
+}
+
+<< 실행 결과 >>
+sum1 : 283
+sum2 : 283
+sum3 : 283
+
+-------------------------------------------------------------------------------------
+
+//11.수집 ( collect() )
+;스트림은 요소들을 필터링or 매핑한 후 요소들을 수집하는 최종 처리 메소드 collect() 제공
+
+------
+
+/11.1 필터링한 요소 수집
+R collect(Collector<T,A,R> collecter)	//Stream 인터페이스의 메소드
+
+=>Collectors 클래스의 다양한 정적 메소드
+
+리턴타입							Collectors의 정적 메소드			설명
+Collector<T,?,List<T>>			toList()						T를 List에 저장
+
+Collector<T,?,Set<T>>			toSet()							T를 Set에 저장
+
+Collector<T,?,Collection<T>>	toCollection(					T를 Supplier가 제공한
+								 Supplier<Collection<T>>)		Collection에 저장
+							
+Collector<T,?,Map<K,U>>			toMap(							T를 K와U로 매핑해서 K를 키로
+								 Function<T,K> keyMapper,		,U를 값으로 Map에 저장
+								 Function<T,U> valueMappger)
+								 
+Collector<T,?,					toConcurrentMap(				T를 K와U로 매핑해서 K를 키로
+ConcurrentMap<K,U>>				 Function<T,K> keyMapper,		U를 값으로 ConcurrentMap에 저장
+								 Function<T,U> valueMapper)
+
+
+=>A(누적기)가 ?로 되어있음 -> Collector가 R(컬렉션)에 T(요소)를 저장하는 방법을 알고 있어 A가 필요X
+=>Map은 스레드에 안전하지 않고, ConcurrentMap은 스레드에 안전
+								 
+public class Student {	
+	public enum Sex {MALE,FEMALE}
+	public enum City {Seoul,Pusan}
+	
+	private String name;
+	private int score;
+	private Sex sex;
+	private City city;
+	
+	public Student(String name,int score,Sex sex){
+		this.name=name;
+		this.score=score;
+		this.sex=sex;
+	}
+	
+	public Student(String name,int score,Sex sex,City city){
+		this(name,score,sex);
+		this.city=city;
+	}
+		
+	public String getName(){return name;}
+	public int getScore(){return score;}
+	public Sex getSex() {return sex;}
+	public City getCity() {return city;}	
+	public void showInfo(){
+		System.out.print("Name : "+name+" / Score : "+score);
+		if(sex!=null){
+			String sex=this.sex.toString();
+			System.out.print(" / Sex : "+sex);
+		}
+		if(city!=null){
+			String city=this.city.toString();
+			System.out.print(" / city : "+city);
+		}
+		System.out.println("");
+	}
+}
+	
+
+
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+public class Main {		
+	public static void main(String[] args){
+		List<Student> totalList=Arrays.asList(
+				new Student("홍길동",8,Student.Sex.MALE),
+				new Student("김수애",9,Student.Sex.FEMALE),
+				new Student("신용권",10,Student.Sex.MALE),
+				new Student("박수미",6,Student.Sex.FEMALE)
+		);
+		
+		//남학생들만 묶어서 List 생성
+		System.out.println("[남학생List]");
+		List<Student> maleList=totalList.stream()
+				.filter(s->s.getSex()==Student.Sex.MALE)
+				.collect(Collectors.toList());
+		/*==
+		 //1)전체 학생 List에서 Stream 얻기
+		 Stream<Student> totalStream=totalList.stream();
+		 
+		 //2)남학생만 필터링해서 Stream 얻기
+		 Stream<Student> maleStream=totalStream.filter(s->s.getSex()==Student.Sex.MALE);
+		
+		 //3)List에 Student를 수집하는 Collector 얻기
+		 Collector<Studetn,?,List<Student>> collector=Collectors.toList();
+		 
+		 //4)Stream에서 collect() 메소드로 Student를 수집해서 새로운 List를 얻는다.
+		 List<Student>maleList=maleStream.collect(collector);
+		 */		
+		maleList.stream()
+				.forEach(s->s.showInfo());
+		
+		
+		//여학생들만 묶어 HashSet 생성
+		System.out.println("[여학생 Set]");
+		Set<Student> femaleSet=totalList.stream()
+				.filter(s->s.getSex()==Student.Sex.FEMALE)
+				.collect(Collectors.toCollection(HashSet :: new));
+		/*
+		//1)전체 학생 List에서 Stream 얻기
+		Stream<Student> totalStream=totalList.stream();
+		
+		//2)여학생만 필터링 해서 Stream 얻기
+		Stream<Student> femaleStream=totalStream.filter(s->s.getSex()==Student.Sex.FEMALE);
+		
+		//3)새로운 HashSet을 공급하는 Supplier를 얻는다.
+		Supplier<HashSet<Student>> supplier=HashSet::new;
+		
+		//4)Supplier가 공급하는 HashSet에 Student를 수집하는 Collector를 얻는다.
+		Collector<Student,?,HashSet<Student>> collector=Collections.toCollection(supplier);
+		
+		//5)Stream에서 collect() 메소드로 Student를 수집해서 새로운 HashSet을 얻는다
+		Set<Student> femaleSet=femaleStream.collect(collector);			
+		 */
+			
+		femaleSet.stream()
+		.forEach(s->s.showInfo());
+		
+	}	
+}
+
+
+
+<< 실행 결과 >>
+[남학생List]
+Name : 홍길동 / Score : 8 / Sex : MALE
+Name : 신용권 / Score : 10 / Sex : MALE
+[여학생 Set]
+Name : 김수애 / Score : 9 / Sex : FEMALE
+Name : 박수미 / Score : 6 / Sex : FEMALE
+								 
+------
+
+/11.2 사용자 정의 컨테이너 수집하기
+;List,Set,Map이 아닌 사용자 정의 컨테이너 객체에 수집하는 방법
+=>스트림은 필터링,매핑해서 사용자 정의 컨테이너 객체ㅐ에 수집할 수 있도록 collect() 메소드 추가 제공
+
+인터페이스			리턴타입	메소드(매개변수)
+Stream			R		collect(Supplier<R>,BiConsumer<R,?,super T>,BiConsumer<R,R>)
+IntStream		R		collect(Supplier<R>,ObjIntConsumer<R>,BiConsumer<R,R>)
+LongStream		R		collect(Supplier<R>,ObjLongConsumer<R>,BiConsumer<R,R>)
+DoubleStream	R		collect(Supplier<R>,ObjDoubleConsumer<R>,BiConsumer<R,R>)
+
+=>매개변수 설명
+1)Supplier : 요소들이 수집될 컨테이너 객체(R)를 생성하는 역할. -> 병렬 처리 시 하나의 컨테이너 객체로 결합
+			(순차처리 : Supplier 한번 // 병렬 처리 : Supplier 여러개의 컨테이너 객체 생성)
+			
+2)XXXConsumer : 객체(R)에 요소(T)를 수집하는 역할 ( 스트림에서 요소를 컨테이너에 수집할 때 마다 XXXConsumer가 실행)
+
+3)BiConsumer : 컨테이너 객체(R)를 결합하는 역할(순차 처리시 호출 X // 병렬 처리 스트림에서만 호출 & 스레드별 생성된 컨테이너 객체를 결합)
+
+
+/*	순차처리를 이용해서 남학생만 수집하는 MaleStudent 컨테이너	*/
+
+public class Student {	
+	public enum Sex {MALE,FEMALE}
+	public enum City {Seoul,Pusan}
+	
+	private String name;
+	private int score;
+	private Sex sex;
+	private City city;
+	
+	public Student(String name,int score,Sex sex){
+		this.name=name;
+		this.score=score;
+		this.sex=sex;
+	}
+	
+	public Student(String name,int score,Sex sex,City city){
+		this(name,score,sex);
+		this.city=city;
+	}
+		
+	public String getName(){return name;}
+	public int getScore(){return score;}
+	public Sex getSex() {return sex;}
+	public City getCity() {return city;}
+	public void showInfo(){
+		System.out.print("Name : "+name+" / Score : "+score);
+		if(sex!=null){
+			String sex=this.sex.toString();
+			System.out.print(" / Sex : "+sex);
+		}
+		if(city!=null){
+			String city=this.city.toString();
+			System.out.print(" / city : "+city);
+		}
+		System.out.println("");
+	}
+}
+
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class MaleStudent {
+	private List<Student> list;	//요소를 저장할 컬렉션
+	
+	public MaleStudent(){
+		list=new ArrayList<Student>();
+		System.out.println("["+Thread.currentThread().getName()+"] MaleStudent()");		
+	}
+	
+	public void accumulate(Student student){	//요소를 수집하는 메소드
+		list.add(student);
+		System.out.println("["+Thread.currentThread().getName()+"] accumulate()");		
+	}
+	
+	public void combine(MaleStudent other){	//두 MaleStudent를 결합하는 메소드(병렬 처리시에만 호출)
+		list.addAll(other.getList());
+		System.out.println("["+Thread.currentThread().getName()+"] combine()");		
+	}
+	
+	public List<Student> getList(){
+		return list;
+	}
+
+}
+
+
+import java.util.Arrays;
+import java.util.List;
+
+public class Main {		
+	public static void main(String[] args){
+		List<Student> totalList=Arrays.asList(
+				new Student("Male1",8,Student.Sex.MALE),
+				new Student("Female1",9,Student.Sex.FEMALE),
+				new Student("Male2",8,Student.Sex.MALE),
+				new Student("Female2",9,Student.Sex.FEMALE),
+				new Student("Male3",7,Student.Sex.MALE),
+				new Student("Female3",2,Student.Sex.FEMALE),
+				new Student("Male4",3,Student.Sex.MALE),
+				new Student("Female4",10,Student.Sex.FEMALE),
+				new Student("Male5",6,Student.Sex.MALE),
+				new Student("Female5",5,Student.Sex.FEMALE)
+		);
+		
+		MaleStudent maleStudent=totalList.stream()
+				.filter(s->s.getSex()==Student.Sex.MALE)
+				.collect(MaleStudent::new,MaleStudent::accumulate,MaleStudent::combine);
+		
+		/*==
+		  MaleStudent maleStudent=totalList.stream()
+				.filter(s->s.getSex()==Student.Sex.MALE)
+				.collect(
+					()->new MaleStudent(),
+					(r,t)->r.accumulate(t),
+					(r1,r2)->r1.combine(r2)
+				);
+		 */
+		
+		maleStudent.getList().stream()
+				.forEach(s->s.showInfo());
+		
+		/*
+		1)전체 학생 List에서 Stream 얻기
+		Stream<Student> totalStream=totalList.stream();
+		
+		2)남학생만 필터링한 Stream 얻기
+		Stream<Student> maleStream=totalStream.filter(s->s.getSex()==Student.Sex.MALE);
+		
+		3)MaleStudent를 공급하는 Supplier를 얻는다.
+		Supplier<MaleStudent> supplier=()->new MaleStudent();
+		
+		4)MaleStudent와 Student를 매개값으로 받아서 Student를 수집하는 BiConsumer를 만듬
+		BiConsumer<MaleStudent,Student> accumulator=(ms,s)->ms.accumulate(s);
+		
+		5)두 개의 MaleStudent를 매개값으로 받아 결합하는 BiConsumer를 만듬
+		BiConsumer<MaleStudent,MaleStudent> combiner=(ms1,ms2)->ms1.combine(ms2);
+		
+		6)supplier가 제공하는 MaleStudent에 accumulator가 Student를 수집해서 최종 처리 된 
+		  MaleStudent를 얻음.
+		MaleStudent maleStudent=maleStream.collect(supplier,accumulator,combiner);
+		 */
+		
+		
+		
+	}	
+}
+
+
+
+<< 실행 결과 >>
+[main] MaleStudent()
+[main] accumulate()
+[main] accumulate()
+[main] accumulate()
+[main] accumulate()
+[main] accumulate()
+Name : Male1 / Score : 8 / Sex : MALE
+Name : Male2 / Score : 8 / Sex : MALE
+Name : Male3 / Score : 7 / Sex : MALE
+Name : Male4 / Score : 3 / Sex : MALE
+Name : Male5 / Score : 6 / Sex : MALE
+
+
+=>
+-순차 처리를 담당하는 main 스레드
+-MaleStudent() 생성자 딱 한 번 호출
+-accumulate() 메소드 5번 호출 -> 5번 수집
+->collect()가 리턴한 최종 MaleStudent에는 남학생 5명 저장.
+
+------
+
+/11.3 요소를 그룹핑해서 수집
+;collect() 메소드는 단순히 요소를 수집하는 기능 이외에 요소들을 그룹핑해서 Map 객체를 생성하는 기능도 제공
+=>collect() 를 호출할 때, Collectors의 groupingBy() 또는 groupingByConcurrent()가 리턴하는 Collector를 매개값으로 넣으면됨
+=>groupingBy()는 스레드에 안전하지 않은 Map // groupingByConcurrent()는 스레드에 안전한 ConcurrentMap 생성
+
+
+
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+public class Main {		
+	public static void main(String[] args){
+		List<Student> totalList=Arrays.asList(
+				new Student("Male1",8,Student.Sex.MALE,Student.City.Seoul),
+				new Student("Female1",9,Student.Sex.FEMALE,Student.City.Seoul),
+				new Student("Male2",8,Student.Sex.MALE,Student.City.Pusan),
+				new Student("Female2",9,Student.Sex.FEMALE,Student.City.Pusan),
+				new Student("Male3",7,Student.Sex.MALE,Student.City.Seoul),
+				new Student("Female3",2,Student.Sex.FEMALE,Student.City.Pusan),
+				new Student("Male4",3,Student.Sex.MALE,Student.City.Seoul),
+				new Student("Female4",10,Student.Sex.FEMALE,Student.City.Seoul),
+				new Student("Male5",6,Student.Sex.MALE,Student.City.Seoul),
+				new Student("Female5",5,Student.Sex.FEMALE,Student.City.Pusan)
+		);
+		
+		
+		//1.성별을 Key로 Student 인스턴스를 Value로 갖는 Map얻기
+		Map<Student.Sex,List<Student>> mapBySex=totalList.stream()
+				.collect(Collectors.groupingBy(Student::getSex));
+		
+		System.out.println("[남학생]");
+		mapBySex.get(Student.Sex.MALE).stream()
+			.forEach(s->s.showInfo());
+		System.out.println("[여학생]");
+		mapBySex.get(Student.Sex.FEMALE).stream()
+			.forEach(s->s.showInfo());
+		System.out.println();
+		/*
+		 1)전체 학생 List에서 Stream얻기
+		 Stream<Student> totalStream=totalList.stream();
+		 
+		 2)Student를 Student.Sex로 매핑하는 Function을 얻음
+		 Function<Student,Student.Sex> classifier=Student::getSex;
+		 
+		 3)Student.Sex가 키가 되고, 그룹핑된 List<Student>가 값인 Map을 생성하는 Collector를 얻음
+		 Collector<Student,?,Map<Student.Sex,List<Student>>)) collector=
+		  Collectors.groupingBy(classifier);
+		  
+		 4)collect() 메소드로 Student를 Student.Sex별로 그룹핑해서 Map을 얻음.
+		 Map<Student.Sex,List<Student>> mapBySex=totalStream.collect(collector);
+		 */
+		
+		
+		//2.거주 도시를 Key로 이름 리스트를 Value로 갖는 Map을 생성
+						
+		Map<Student.City,List<String>> mapByCity=totalList.stream()
+				.collect(
+					Collectors.groupingBy(
+						Student::getCity,
+						Collectors.mapping(Student::getName,Collectors.toList())
+					)
+				);
+		System.out.println("[서울]");
+		mapByCity.get(Student.City.Seoul).stream()
+				.forEach(s->System.out.print(s+" "));
+		System.out.println();
+		System.out.println("[부산]");
+		mapByCity.get(Student.City.Pusan).stream()
+			.forEach(s->System.out.print(s+" "));	
+		
+		/*
+		 1)전체 학생 List에서 Stream을 얻음
+		 Stream<Student> totalStream=totalist.stream();
+		 
+		 2)Student -> Student.city로 매핑하는 Function을 얻음
+		 Function<Student,Student.City> classifier=Student::getCity;
+		 
+		 3),4),5) Student의 이름을 List에 수집하는 Collector를 얻음
+		 3)Student를 이름으로 매핑하는 Function을 얻음
+		 Function<Student,String> mapper=Student::getName;
+		 
+		 4)이름을 List에 수집하는 Collector를 얻음	
+		 Collector<String,?,List<String>> collector1=Collectors.toList();
+		 
+		 5)Collectors의 mapping()메소드로 Student를 이름으로 매핑하고, 이름을 List에 수집하는 Collector를 얻음
+		 Collector<Student,?,List<String>> collector2=Collectors.mapping(mapper,collector1);
+		 
+		 6)Student.City가 Key, 그룹핑된 이름 List가 Value 값인 Map을 생성하는 Collecotr를 얻음
+		 Collector<Student,?,Map<Student.City,List<String>> collector3=
+		 				Collectors.groupingBy(classifier,collector2);
+		 				
+		 7)Stream의 collect() 메소드로 Student를 Student.City별로 그룹핑해서 Map을 얻음.
+		 Map<Student.City,List<String>> mapByCity=totalStream.collect(collector3);		 
+		 */		
+	}	
+}
+
+------
+
+/11.4 그룹핑 후 매핑 및 집계
+;Collectors.groupingBy() 메소드는 그룹핑 후 매핑이나 집계(평균,카운팅,연결,최대,최소,합계)를 할 수 있도록
+두 번째 매개값으로 Collector를 가질 수 있음.
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+public class Main {		
+	public static void main(String[] args){
+		List<Student> totalList=Arrays.asList(
+				new Student("Male1",8,Student.Sex.MALE,Student.City.Seoul),
+				new Student("Female1",9,Student.Sex.FEMALE,Student.City.Seoul),
+				new Student("Male2",8,Student.Sex.MALE,Student.City.Pusan),
+				new Student("Female2",9,Student.Sex.FEMALE,Student.City.Pusan),
+				new Student("Male3",7,Student.Sex.MALE,Student.City.Seoul),
+				new Student("Female3",2,Student.Sex.FEMALE,Student.City.Pusan),
+				new Student("Male4",3,Student.Sex.MALE,Student.City.Seoul),
+				new Student("Female4",10,Student.Sex.FEMALE,Student.City.Seoul),
+				new Student("Male5",6,Student.Sex.MALE,Student.City.Seoul),
+				new Student("Female5",5,Student.Sex.FEMALE,Student.City.Pusan)
+		);
+		
+		//성별로 평균 점수를 저장하는 Map얻기
+		Map<Student.Sex,Double> mapBySex=totalList.stream()
+				.collect(
+					Collectors.groupingBy(
+					 Student::getSex,
+					 Collectors.averagingDouble(Student :: getScore)
+					)		
+				);
+		System.out.println("남학생 평균 점수 : "+mapBySex.get(Student.Sex.MALE));
+		System.out.println("여학생 평균 점수 : "+mapBySex.get(Student.Sex.FEMALE));
+		
+		/*
+		 1)전체 학생 List에서 Stream을 얻음
+		 Stream<Student> totalStream=totalList.stream();
+		 
+		 2)Student를 Student.Sex로 매핑하는  Function을 얻음
+		 Function<Student,Student.Sex> classifier=Student::getSex;
+		 
+		 3)Student를 점수로 매핑하는 ToDoubleFunction을 얻음
+		 ToDoubleFunction<Student> mapper=Student::getScore;
+		 
+		 4)학생 점수의 평균을 산출하는 Collector를 얻음
+		 Collector<Student,?,Double> collector1=Collectors.averagingDouble(mapper);
+		 
+		 5)Student.Sex가 Key, 평균 점수 Double이 Value인 Map을 생성하는 Collector얻음
+		 Collector<Student,?,Map<Student.Sex,Double>> collector2=
+		 				Collectors.groupingBy(classifier,collector1);
+		 				
+		 6)Stream의 collect() 메소드로 Student를 Student.Sex별로 그룹핑해서 Map을 얻는다.
+		 Map<Student.Sex,Double> mapBySex=totalStream.collect(collector2);
+		 */
+		
+		//성별을 쉼표로 구분한 이름을 저장하는 Map 얻기
+		Map<Student.Sex,String> mapByName=totalList.stream()
+				.collect(
+					Collectors.groupingBy(
+						Student::getSex,
+						Collectors.mapping(
+							Student::getName,
+							Collectors.joining(",") //CharSequence를 구분자(delimiter)로 연결한 String 산출
+						)
+					)
+				);
+		
+		System.out.println("남학생 전체 이름 : "+mapByName.get(Student.Sex.MALE));
+		System.out.println("여학생 전체 이름 : "+mapByName.get(Student.Sex.FEMALE));			
+	}	
+}
+
+
+<< 실행 결과 >>
+남학생 평균 점수 : 6.4
+여학생 평균 점수 : 7.0
+남학생 전체 이름 : Male1,Male2,Male3,Male4,Male5
+여학생 전체 이름 : Female1,Female2,Female3,Female4,Female5
+
+-------------------------------------------------------------------------------------
+
+//12 병렬처리
+
+
+------
+------
+------
+------
+------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,454 @@
+
+☆
+
+
+(참고 5장 P13)
+/*거리, 속력, 시간을 구하는 프로그램*/
+
+#include <stdio.h>
+
+int main(void)
+{
+	int s;				//구하고자하는 거리(1),속도(2),시간(3)를 선택
+	double d;			//거리
+	double v;			//속력
+	double time;		//시간
+
+	printf("구하고자 하는 것을 고르세요.\n 1.거리 2.속력 3시간 : ");
+	scanf("%d", &s);
+
+	if (s == 1);
+	{
+		printf("속력를 입력하세요 : ");
+		scanf("%.2lf", &v);
+
+		printf("시간을 입력하세요 : ");
+		scanf("%.2lf", &time);
+
+		d = time*v;
+
+		printf("%.2lf의 속력으로 %.2lf시간동안 가는 거리는 : %.2lf 입니다.\n", v, time, d);
+	}
+
+	else if (s==2);
+	{
+		printf("거리를 입력하세요 : ");
+		scanf("%.2lf", &d);
+
+		printf("시간을 입력하세요 : ");
+		scanf("%.2lf", time);
+		
+		v = d/time;
+
+		printf("%.2lf의 거리를 이동하는데 %.2lf의 시간이 걸린다면 속력은 %.2lf입니다.", d, time, v);	
+	}
+	
+	else
+	{
+		printf("거리를 입력하세요 : ");
+		scanf("%.2lf", &d);
+
+		printf("속력을 입력하세요 : ");
+		scanf("%.2lf", &v);
+
+		time = d / v;
+
+		printf("%.2lf의 거리를 %.2lf의 속력으로 이동하는데 걸리는 시간은 %.2lf입니다.", d, v, time);
+	}
+	
+	return 0;
+}
+
+
+
+
+
+
+#include <stdio.h>
+
+int main(void)
+{
+	int x;
+	int y;
+
+	printf("dd:");
+	scanf("%d%d", &x, &y);
+
+	printf("%d %d", x, y);
+
+	return 0;
+}
+
+
+
+
+
+
+
+#include <stdio.h>
+
+int main(void)
+{
+	int x;
+
+	printf("x=%d", x);
+
+	x = x + 1;
+	printf("x=%d", x);
+
+	return 0;
+}
+
+
+
+#include <stdio.h>
+
+int main(void)
+{
+	int arr[9][9];
+	int i, j;
+
+	for (i = 0; i <= 9; i++);			//행
+	{
+		for(j=0;j<=9;j++)					//열
+		{
+			printf("%d*%d=%d\n", i, j, i*j);
+		}
+		j= 1;
+	}
+	return 0;
+}
+
+
+#include <stdio.h>
+#include <conio.h>
+
+int main(void)
+{
+	int arr[2][1];
+	int i, j;
+
+	for (i = 2; i<3; i++);			//행
+	{
+		for(j=1;j<=9;j++)			//열
+		{
+				arr[i][j] = i*j;
+
+				printf("%d*%d=%d", i, j,arr[i][j]);
+		}
+	}
+
+	return 0;
+}
+
+http://blog.naver.com/skout123?Redirect=Log&logNo=50129333791
+
+
+/*월을 단어로 표현하는 프로그램*/
+
+/*
+
+#include <stdio.h>
+
+int main(void)
+{
+	int m;
+	char name[5];
+
+	printf("월번호를 입력하시오(1-12):");
+	scanf("%d", &m);
+
+	if (m == 1)		char name[5] = 'Jan'; 	
+	else if (m == 2) char name = 'Feb';
+	else if (m == 3) char name = 'Mar';	
+	else if (m == 4) char name = 'Apr';
+	else if (m == 5) char name = 'May';
+	else if (m == 6) char name = 'Jun';
+	else if (m == 7) char name = 'Jul';
+	else if (m == 8) char name = 'Aug';	
+	else if (m == 9) char name = 'Sep';	
+	else if (m == 10) char name = 'Oct';
+	else if (m == 11) char name = 'Nov';
+	else if (m == 12) char name = 'Dec';
+	else printf("1-12를 입력하시오\n");
+
+	printf("%s\n", name);
+
+	return 0;
+}
+*/
+
+
+
+/*최대값 최소값을 구하는 프로그램*/
+/*
+#include <stdio.h>
+#include <limits.h>
+
+int main(void)
+{
+	int number, min_value = INT_MAX;	//입력 받는 정수 , 일단 정수의 최대갑을 대입해 둔다.
+
+	printf("정수를 입력하시오.\n종료는 Ctrl+z\n");
+	
+	while (scanf("%d", &number) != EOF)
+	{
+		if (number < min_value)
+				min_value = number;
+	}
+
+	printf("최소값은 %d\n", min_value);
+	return 0;
+}
+*/
+
+
+
+
+/*2번*/
+/*
+#include <stdio.h>
+
+int main(void)
+{
+	int i,n;
+
+	n = 1;
+	while (n <= 7)
+	{
+		for (i = 1; i <= 7; i++)
+		{
+			if (n + i >= 8)
+			{
+				printf("*");
+			}
+			else
+			{
+				printf(" ");
+			}
+		}
+		printf("\n");
+		n++;
+	}
+
+	return 0;
+
+}
+*/
+
+
+#include <stdio.h>
+
+void main()
+{
+	FILE *fp;
+	char str[80]; int line = 1;
+
+	if ((fp = fopen("E:\\text.txt", "w")) == NULL) {
+		printf("File Open 에러\n");
+		return;
+	}
+
+	while (1)
+	{
+		printf("문자열 입력:");
+		gets(str);			//gets안먹힘
+		if (str[0] == 0\) break;
+		fprintf(fp, "%3d:%s\n", line, str);
+		line++;
+	}
+
+	fclose(fp);
+}
+
+
+
+
+
+
+
+main.c
+
+//변수 저장 유형 예제
+
+#include <stdio.h>
+
+unsigned random_i(void);
+unsigned random_f(void);
+
+extern unsigned call_count;
+
+int main(void)
+{
+	register int i;
+
+	for (i = 0; i < 10; i++) {
+		printf("%d ", random_i());
+	}
+
+	printf("\n");
+
+	for (i = 0; i < 10; i++) {
+		printf("%f ", random_f());
+	}
+
+	printf("\n함수가 호출된 횟수=%d\n", call_count);
+
+	return 0;
+}
+
+
+random.c
+
+//난수 발생 함수
+#define SEED 17
+#define MULT 25173
+#define INC 13849
+#define MOD 65536
+
+unsigned int call_count = 0;
+static unsigned seed = SEED;
+
+//정수 난수 생성 함수
+unsigned random_i(void)
+{
+	seed = (MULT*seed + INC) % MOD;	//난수의 시드값 설정
+	call_count++;					//호출 횟수 증가
+
+	return seed;
+}
+
+//실수 난수 생성 함수
+double random_f(void)
+{
+	seed = (MULT*seed+INC) % MOD;	//난수의 시드값 설정
+	call_count++;					//호출 횟수 증가
+
+	return seed / (double)MOD;		//0.0에서 1.0사이로 제한
+
+}
+
+
+
+/*극장 예약 시스템 */
+#include <stdio.h>
+
+#define SIZE 11
+
+char is_reservation(int seat[]);
+void show(int seat[]);
+
+
+int main(void)
+{
+	int sel;		//예약 y,n
+	int seat[SIZE] = { 0 };	//현재 예약 자리
+	int select_seat[SIZE];			//예약 자래 선택
+	int i, n;			//반복문 , 사람수
+	char ans;			//예약 yes_no
+
+	while (1) {
+		ans = is_reservation(seat);
+		if (ans == 'y') {
+			show(seat);
+
+			printf("예약 사람수를 입력해주세요:");
+			scanf("%d", &n);
+
+			for (i = 1; i <= n; i++) {
+				OUT :
+				printf("몇번째 좌석을 예약하시겠습니다?");
+				scanf("%d", select_seat[i]);
+
+				if (seat[select_seat[i]] == 0) {
+					printf("예약되었습니다.\n");
+					seat[select_seat[i]] = 1;
+				}
+				else {
+					printf("이미 예약된 자리입니다. 다른 좌석을 선택하세요");
+					goto OUT;
+				}
+			}
+
+		}
+		else if (ans == 'n') break;
+		else printf("y또는 n을 입력해주세요.\n");
+	}
+
+	return 0;
+}
+
+char is_reservation(int seat[])
+{
+	char ans;
+	printf("좌석을 예약하시겠습니까?(y또는n):");
+	scanf(" %c", &ans);
+
+	return ans;	
+}
+
+void show(int seat[])
+{
+	int i;
+
+	printf("--------------------\n");
+	printf(" 1 2 3 4 5 6 7 8 9 10\n");
+	printf("--------------------\n");
+	for (i = 1; i < SIZE; i++) {
+		printf(" %d", seat[i]);
+	}
+	printf("\n");
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*포인터를 이용한 다차원 배열 운행*/
+
+//특정한 행의 원소들의 평균을 구하는 프로그램
+
+#include <stdio.h>
+#define ROWS 4
+#define COLS 3
+
+double get_row_avg(int m[][COLS], int r);
+
+void main()
+{
+	int m[ROWS][COLS] = {
+		{ 10,20,30 },
+		{ 10,20,30 },
+		{ 10,20,30 },
+		{ 10,20,30 }
+	};
+
+	double avg;
+	avg = get_row_avg(m,0);
+	printf("%d\n", avg);
+
+}
+double get_row_avg(int m[][COLS], int r)
+{
+	int *p, *endp;
+	double sum = 0.0;
+	p = &m[r][0];
+	endp = &m[r][COLS-1];
+	
+	while (p <= endp) {
+		sum += *p++;
+	}
+	sum /= COLS;
+	return sum;
+}
+

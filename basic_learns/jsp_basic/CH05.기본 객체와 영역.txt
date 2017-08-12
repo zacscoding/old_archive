@@ -1,0 +1,786 @@
+-----------CH05.기본 객체와 영역-----------------
+
+이장에서 다룰 내용 : (이전 chapter에서 request,response 객체를 다룸)
+-JSP 기본 객체
+-out 기본 객체
+-pageContext 기본 객체
+-application 기본 객체
+-기본 객체와 속성
+
+---------------------------------------------------------------------------------------------
+//01 기본 객체 
+
+workspace2\.metadata\.plugins\org.eclipse.wst.server.core\tmp0\work\Catalina\localhost\web-study-04\org\apache\jsp
+
+....
+public void _jspService(final javax.servlet.http.HttpServletRequest request,  //1)request
+						final javax.servlet.http.HttpServletResponse response) //2)response
+							throws java.io.IOException, javax.servlet.ServletException {
+
+    final java.lang.String _jspx_method = request.getMethod();
+    if (!"GET".equals(_jspx_method) && !"POST".equals(_jspx_method) && !"HEAD".equals(_jspx_method) && !javax.servlet.DispatcherType.ERROR.equals(request.getDispatcherType())) {
+      response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED, "JSPs only permit GET POST or HEAD");
+      return;
+    }
+
+    final javax.servlet.jsp.PageContext pageContext; //3)pageContext
+    javax.servlet.http.HttpSession session = null; //4)session
+    final javax.servlet.ServletContext application; //5)application
+    final javax.servlet.ServletConfig config;	//6)config
+    javax.servlet.jsp.JspWriter out = null;	//7)out
+    final java.lang.Object page = this;		//8)page
+    javax.servlet.jsp.JspWriter _jspx_out = null;
+    javax.servlet.jsp.PageContext _jspx_page_context = null;
+
+
+    try {
+      response.setContentType("text/html; charset=UTF-8");
+      pageContext = _jspxFactory.getPageContext(this, request, response, //3)pageContext
+      			null, true, 8192, true);
+      _jspx_page_context = pageContext;
+      application = pageContext.getServletContext(); //5)application
+      config = pageContext.getServletConfig(); //6)config
+      session = pageContext.getSession();	//4)session
+      out = pageContext.getOut();			//7)out
+      _jspx_out = out;
+....
+
+===>
+내장 객체 분류			내장객체			설명							~_jsp.java파일
+입출력 관련 객체		1)request		클라이언트 요청 정보를 저장			javax.servlet.http.HttpServletRequest
+						2)response		응답정보를 저장						javax.servlet.http.HttpServletResponse
+						3)out			JSP페이지가 생성하는 결과 출력할때	javax.servlet.jsp.JspWriter
+										사용하는 출력 스트림
+				
+서블릿 관련 객체		8)page			JSP페이지에서 구현한 자바 클래스 	java.lang.Object
+										인스턴스
+						6)config		JSP페이지에 대한 설정정보 저장		javax.servlet.ServletConfig
+				
+외부 환경 정보를		4)session		HTTP 세션 정보를 저장				javax.servlet.http.HttpSession
+제공					5)application	웹 어플리케이션에 대한 정보를 저장	javax.servlet.ServletContext
+						6)pageContext	JSP페이지에 대한 정보 저장			javax.servlet.jsp.PageContext
+
+에외 관련 객체			9)exception		익셉션 객체(에러페이지에만 사용) 	java.lang.Throwable 
+
+---------------------------------------------------------------------------------------------
+//02 out 기본 객체
+
+out 기본 객체는 웹 브라우저에 데이터를 전송하는 출력 스트림.
+i.e
+out.println("<html>");
+out.println("<head>");
+...
+
+out.println(someValue);
+...
+
+
+
+/*out 객체를 JSP페이지의 스크립트릿에서 직접 사용하는 예제 : useOutObject.jsp*/
+
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>out 기본 객체 사용</title>
+</head>
+<body>
+<%
+	out.println("안녕하세요");
+%>
+<br>
+<%
+	out.println("출력한 결과입니다.");
+%>
+
+</body>
+</html>
+
+<< 출력 결과 >>
+안녕하세요 
+출력한 결과입니다. 
+
+
+
+-out 기본 객체는 언제 사용?
+;out 기본 객체를 직접 사용해서 응답 결과를 생성하는 경우는 많지 않음. 스크립트릿 코드 블록을 사용하면 입력할 코드 많아짐
+
+<% if(grade>10){ %>
+<%=gradeStringA %>
+<% } else if(grade>5){ %>
+<%=gradeStringB %>
+<% } %>
+
+==>
+<%
+	if(grade>10){
+		out.println(gradeStringA);
+	} else if(grade > 5) {
+		out.println(gradeStringB);
+	}
+%>
+
+
+//2.1 out 기본 객체의 출력 메소드
+
+print() 	: 데이터를 출력한다.
+println() 	: 데이터를 출력하고, 줄바꿈 문자(\r\n 또는 \n)를 출력한다.
+newLine()	: 줄바꿈 문자(\r\n 또는 \n)를 출력한다.	
+
+
+//2.2 out 기본 객체와 버퍼의 관계
+
+out 기본 객체가 버퍼와 관련해서 제공하는 메소드
+
+int getBufferSize();		//버퍼의 크기를 구함
+int getRemaiining();		//현재 버퍼의 남은 크기를 구함
+void clear();				//버퍼의 내용을 비운다. 만약 버퍼를 이미 플러시 했다면 IOException 발생
+void clearBuffer();			//버퍼의 내용을 비운다. clear()메소드와 달리 플러시한 경우에도 IOException 발생X
+void flush();				//버퍼를 플러시 한다. (즉 버퍼의 냉용르 클라이언트에 전송)
+boolean isAutoFlush();		//버퍼가 다 찼을 때 자동으로 플러시할 경우 true를 리턴
+
+
+
+/* 버퍼관련 메소드 사용 예제 : bufferInfo.jsp */
+
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ page buffer="8kb" autoFlush="false" %>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>버퍼 정보</title>
+</head>
+<body>
+
+버퍼 크기 : <%= out.getBufferSize() %> <br>
+남은 크기 : <%= out.getRemaining() %> <br>
+auto flush : <%= out.isAutoFlush() %> <br>
+
+</body>
+</html>
+
+<< 실행 결과 >>
+버퍼 크기 : 8192 
+남은 크기 : 7931 
+auto flush : false 
+
+---------------------------------------------------------------------------------------------
+//03 response 기본 객체
+
+1)response.sendRedirect
+response.sendRedirect("main.jsp?name = "+URLEncoder.encode(name);
+=>이동 페이지에서 request, response 객체가 유지되지않음
+
+2)forward()메소드
+RequestDispatcher dispatcher = request.getRequestDispatcher("success.jsp");
+dispatcher.forward(request, response);
+
+
+e.g)
+
+/*	forwardFrom.jsp		*/
+
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>JSP</title>
+</head>
+<body>
+
+<form action="forwardTest.jsp" method="POST">
+	<label for="checkAge">입장하려면 나이를 입력하세요.</label><br>
+	<input type="text" id="checkAge" name="age">
+	<input type="submit" value="입장">
+</form>
+
+</body>
+</html>
+
+
+
+/*	forwardTest.jsp		*/
+
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%
+	String successView = "forwardResult.jsp";
+	String ageVal = request.getParameter("age");
+	try{
+		int age = Integer.parseInt(ageVal);
+	
+	if (age <= 19) {
+%>
+	<script type="text/javascript">
+		alert("19세 미만이므로 입장 불가능")
+		history.go(-1)
+	</script>
+<%
+		} else {
+			request.setAttribute("name","Zac");
+			RequestDispatcher dispatcher = request.getRequestDispatcher(successView);
+			dispatcher.forward(request, response);
+		}
+	}catch(Exception e){
+%>
+	<script type="text/javascript">
+		alert("숫자만 입력하세요.")
+		history.go(-1)
+	</script>
+<%		
+	}
+%>
+
+
+
+
+/*		forwardResult.jsp		*/
+
+
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%
+	String name =(String)request.getAttribute("name");
+	String age = request.getParameter("age");
+%>    
+<!DOCTYPE>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+
+<%=name %>(<%=age %>)님 반갑습니다~!
+
+</body>
+</html>
+
+
+
+---------------------------------------------------------------------------------------------
+
+//03 pageContext 기본 객체
+;pageContext 기본 객체는 JSP 페이지와 일대일로 연결된 객체로 밑의 기능을 제공
+-기본 객체 구하기
+-속성 처리하기(이장에서 설명)
+-페이지의 흐름 제어하기(7장)
+-에러 데이터 구하기(6장)
+
+=>pageContext 기본 객체를 직접 사용하는 경우는 드물다. 하지만, 커스텀 태그를 구현할때 사용되므로
+jsp프로그래밍을 더 잘하려면 pageContext 기본 객체가 제공하는 기능을 익혀주는 것이 좋음.
+
+
+//3.1 기본 객체 접근 메서드
+;제공 메소드
+ServletRequest	getRequest()		//request 기본 객체를 구한다
+ServletResponse getResponse()		//response 기본 객체를 구함
+HttpSession		getSession()		//session기본 객체 구함
+ServletContext 	getSevletContext() 	// application 기본 객체 구함
+ServletConfig	getServletConfig()	//config 기본 객체를 구함
+JspWriter		getOut()			//out 기본 객체를 구함
+Exception 		getException()		//exception 기본 객체 구함
+getPage()		getPage()			//page 기본 객체 구함
+
+/*request 기본 객체와 out 기본객체를 사용하는 예 : usePageContext.jsp*/ <<실제로 기본 객체를 이렇게 구하지는 않음.
+
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>PageContext 기본 객체</title>
+</head>
+<body>
+<%
+	HttpServletRequest httpRequest=(HttpServletRequest)pageContext.getRequest();
+	//pageContext.getRequest()의 리턴 타입은 SeveletRequest인데, HTTP 요청을 처리하므로 HttpServletRequest 타입으로 변환 
+%>
+
+request 기본 객체와 pageContext.getRequest()의 동일 여부 : 
+<%= request==httpRequest%>	<!-- request와 반환된 객체가 같은지 여부 검사 -->
+<br>
+
+pageContext.getOut() 메소드를 사용한 데이터 출력 : 
+<%pageContext.getOut().println("안녕하세요"); %>	<!-- ==out.println()과 동일 -->
+
+</body>
+</html>
+
+
+<< 출력 결과 >>
+request 기본 객체와 pageContext.getRequest()의 동일 여부 : true 
+pageContext.getOut() 메소드를 사용한 데이터 출력 : 안녕하세요
+
+
+---------------------------------------------------------------------------------------------
+
+//04 application 기본 객체
+;하나의 웹 애플리케이션을 관리하고 웹 애플리케이션 안에서의 자원을 공유(웹 어플리케이션 == 하나의 웹 프로젝트)
+
+//4.1 웹 어플리케이션 초기화 파라미터 읽어오기
+<context-param>
+	<description>파라미터 설명(필수X) </description>
+	<param-name>파라미터이름</param-name>
+	<param-value>파라미터값</param-value>
+</context-param>
+
+(서블릿 2.5/JSP 2.1 버전까지는 web.xml 파일이 필수 but 서블릿 3.0/JSP 2.2부터는 선택사항
+ & 자바 코드를 이용해서 설정할 수 있는 기능이 추가)
+ 
+-application 기본 객체의 웹 어플리케이션 초기화 파라미터 관련 메소드
+String getInitParameter(String name)	//이름이 name인 웹 애플리케이션 초기화 파라미터 값을 읽어옴. 존재하지 않으면 null 리턴
+Enumeration<String> getInitParameterNames() //웹 애플리케이션 초기화 파라미터의 이름 목록을 리턴
+
+
+/*web.xml을 이용해서 초기화 파라미터 읽어오기 예제 */ 
+
+
+1)chat05\WEB-INF\web.xml	<<이클립스는 JAVA EE Tools ->Generate Deployment Description Stub
+  <context-param>
+  	<description>로깅여부</description>
+  	<param-name>logEnabled</param-name>
+  	<param-value>true</param-value>
+  </context-param>
+
+  <context-param>
+  	<description>디버깅 레벨</description>
+  	<param-name>debugLevel</param-name>
+  	<param-value>5</param-value>
+  </context-param>
+
+  ↑추가
+
+2)chap05\readInitParameter.jsp
+
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ page import="java.util.Enumeration" %>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>초기화 파라미터 읽어오기</title>
+</head>
+<body>
+
+초기화 파라미터 목록 : 
+<ul>
+<%
+	Enumeration<String> initParamEnum=application.getInitParameterNames();
+	while(initParamEnum.hasMoreElements()){
+		String initParamName=initParamEnum.nextElement();
+%>
+<li><%=initParamName %> =
+	<%=application.getInitParameter(initParamName) %></li>
+<%
+	}
+%>
+
+</ul>	
+</body>
+</html>
+
+<< 실행 결과  >>
+초기화 파라미터 목록 : 
+	●logEnabled = true
+	●debugLevel = 5
+	
+
+=>웹 어플리케이션을 초기화하는 데 필요한 설정 정보를 지정하기 위해 사용됨.
+e.g : 데이터 베이스 연결과 관련된 설정 파일의 경로, 로깅 설정 파일, 웹 어플리케이션의 주요
+	  속성 정보를 담고 있는 파일의 경로 등을 지정할 때 초기화 파라미터를 사용!
+	  
+
+-----------
+//4.2 서버 정보 읽어오기 	
+
+application 기본 객체가 제공하는 서버 정보 관련 메소드
+String 	getServerInfo()		//서버 정보를 구한다.
+String	getMajorVersion()	//서버가 지원하는 서블릿 규약의 메이저 버전을 리턴. 버전의 정수 부분을 리턴
+String	getMinorVersion()	//서버가 지원하는 서블릿 규약의 마이너 버전을 리턴. 버전의 소수 부분을 리턴
+
+
+
+/*application의 서버 관련 메소드 사용 예제 : viewServerInfo.jsp*/
+
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>서버 정보 출력</title>
+</head>
+<body>
+서버 정보 : <%=application.getServerInfo() %> <br>
+서블릿 규약 메이저 버전 : <%=application.getMajorVersion() %> <br>
+서블릿 규약 마이너 버전 : <%=application.getMinorVersion() %> 
+
+</body>
+</html>
+
+
+<< 실행 결과 >>
+서버 정보 : Apache Tomcat/8.5.6 
+서블릿 규약 메이저 버전 : 3 
+서블릿 규약 마이너 버전 : 1 
+
+=>톰캣 8.5.6 버전이 서블릿 3.1 규약을 지원한다는 것을 확인할 수 있음.
+
+-----------
+
+//4.3 로그 메세지 기록하기
+
+application의 로그 메세지를 기록할 수 있도록 메소드 제공
+void	log(String msg)		//msg를 로그로 남긴다.
+void	log(String msg,Throwable throwable) //msg를 로그로 남긴다. 익셉션 정보도 함께 로그에 기록
+
+
+/*로그 메세지를 기록하는 예제 : useApplicationLog.jsp*/
+
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>로그 메세지 기록</title>
+</head>
+<body>
+
+<%
+	application.log("로그 메세지 기록");
+%>
+로그 메세지를 기록합니다.
+
+</body>
+</html>
+
+==>[톰캣설치폴더]\log 폴더에 localhost.yyyy-mm-dd.log 형식의 파일에 로그 기록
+22-Oct-2016 15:42:32.296 정보 [http-nio-8080-exec-3] org.apache.catalina.core.ApplicationContext.log 로그 메세지 기록
+
+
+/*JSP 페이지가 제공하는 log()메소드 이용 예제 : useJspLog.jsp*/
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>로그 메세지 기록</title>
+</head>
+<body>
+
+<%
+	log("로그 메세지 기록2");
+%>
+로그 메세지를 기록합니다.
+
+</body>
+</html>
+
+==>
+22-Oct-2016 15:43:50.050 정보 [http-nio-8080-exec-8] org.apache.catalina.core.ApplicationContext.log jsp: 로그 메세지 기록2
+//JSP 제공하는 log를 사용하면 뒤에 jsp: 가 추가 됨
+
+-----------
+
+//4.4 웹 어플리케이션의 자원 구하기
+;jsp페이지는 웹 어플리케이션 폴더에 위치한 파일을 사용해야 할 때가 있다.
+
+1)절대 경로를 이용한 파일 접근
+/*message\notice.txt 파일을 출력하는 예제 : readFileDirectly.jsp*/
+
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ page import="java.io.*" %>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>절대 경로 사용하여 자원 읽기</title>
+</head>
+<body>
+<%
+	char[] buff=new char[28];
+	int len=-1;
+	
+	String filePath="C:\\Users\\명수\\workspace2\\chap05\\WebContent"+"\\message\\notice.txt";
+	try(InputStreamReader fr=new InputStreamReader(new FileInputStream(filePath),"UTF-8")){
+		while((len=fr.read(buff))!=-1){
+			out.print(new String(buff,0,len));
+		}
+	}catch(IOException ex){
+		out.println("익셉션 발생 : "+ex.getMessage());
+	}
+	
+	%>
+
+</body>
+</html>
+
+/*notice.txt*/
+본 사이트는 예제 사이트 입니다.<br>
+이 내용은 <b>notice.txt</b>에 있습니다.
+
+
+<< 출력 결과 >>
+본 사이트는 예제 사이트 입니다.
+이 내용은 notice.txt에 있습니다. 
+
+=>톰캣의 버전이 바뀌거나 그러면 절대 경로는 유지보수 측면에서 좋지 못함.
+
+
+2)상대 경로를 이용한 파일 접근
+;application 객체가 제공하는 메소드
+String	getRealPath(String path) //웹 어플리케이션 내에서 지정한 경로에 해당하는 자원의 시스템상에서의 경로를 리턴
+java.net.URL	getResource(String path) //웹 어플리케이션 내에서 지정한 경로에 해당하는 자원에 접근할 수 있는 URL 객체 리턴
+java.io.InputStream getResourceAsStream(String path) //웹 어플리케이션 내에서 지정한 경로에 해당하는 자원으로부터 데이터를 읽어
+													올 수 있는 inputStream을 리턴
+
+
+/*Application 을 사용하는 예제 : readFileUsingApplication.jsp*/
+
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ page import="java.io.*" %>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>application 기본 객체 사용하여 자원 읽기</title>
+</head>
+<body>
+<%
+	String resourcePath="\\message\\notice.txt";	
+%>
+자원의 실제 경로 : <br>
+<%=application.getRealPath(resourcePath)%>
+<br>
+---------------<br>
+<%=resourcePath %>의 내용<br>
+---------------<br>
+<%
+	char[] buff=new char[128];
+	int len=-1;
+	
+	try(InputStreamReader br=new InputStreamReader(application.getResourceAsStream(resourcePath),"UTF-8")){
+		while((len=br.read(buff))!=-1){
+			out.print(new String(buff,0,len));
+		}
+	} catch(IOException ex){
+		out.println("익셉션 발생 : "+ex.getMessage());
+	} 
+%>
+
+</body>
+</html>
+
+<< 출력 결과 >> //위의 코드는 이클립스에서 getResourceAsStream이 null을 반환,
+자원의 실제 경로 : 
+C:\Users\명수\workspace2\.metadata\.plugins\org.eclipse.wst.server.core\tmp0\wtpwebapps\chap05\message\notice.txt 
+ ---------------
+ \message\notice.txt의 내용
+---------------
+?본 사이트는 예제 사이트 입니다.
+이 내용은 notice.txt에 있습니다. 
+
+
+
+/*URL 객체를 리턴하는 예제 : readFileUsingURL.jsp*/
+
+<%@ page contentType="text/html; charset=utf-8" %>
+<%@ page import="java.io.*"%>
+<%@ page import="java.net.URL"%>
+<html>
+<head>
+<title>application 기본 객체 사용하여 자원 읽기2</title>
+</head>
+<body>
+<%
+	String resourcePath="/message/notice.txt";	
+ 	char[] buff=new char[128];
+	int len=-1;
+	URL url=application.getResource(resourcePath);
+	out.println("application.getResource(resourcePath) = "+url);
+	%><br>
+<%
+	try(InputStreamReader br=new InputStreamReader(url.openStream(),"UTF-8")){
+		while((len=br.read(buff))!=-1){
+			out.println(new String(buff,0,len));
+		}
+	} catch(IOException ex){
+		out.println("익셉션 발생 : "+ex.getMessage());
+	}  
+%>
+
+</body>
+</html>
+
+<<실행 결과 >>
+application.getResource(resourcePath) = file:/C:/apache-tomcat-8.5.6/webapps/chap05/message/notice.txt 
+?본 사이트는 예제 사이트 입니다.
+이 내용은 notice.txt에 있습니다. 
+
+URL url=application.getResource(resourcePath);
+InputStream is=url.openStream();
+=>
+InputStream is=application.getResourceAsStream(resource);
+
+=>C:\apache-tomcat-8.5.6\webapps\chap05 를
+C:\apache-tomcat-8.5.6\webapps\chap05_1 로 변경해도 결과는 같다.
+---------------------------------------------------------------------------------------------
+
+//05 JSP 기본 객체와 영역
+;웹 어플리케이션은 다음의 네 가지 영역(scope)으로 구성된다.
+-PAGE 영역 			: 하나의 jsp 페이지를 처리할 때 사용되는 영역 	> pageContext 기본 객체
+-REQUEST 영역		: 하나의 HTTP 요청을 처리할 때 사용되는 영역 	> request 기본 객체
+-SESSION 영역		: 하나의 웹 브라우저와 관련된 영역			> session 기본 객체
+-APPLICATION 영역	: 하나의 웹 어플리케이션과 관련된 영역		> application 기본 객체
+
+p.133 그림 및 설명 보기
+
+---------------------------------------------------------------------------------------------
+
+//06 JSP 기본 객체의 속성(Attribute) 사용하기
+;네개의 기본 객체 pageContext, request, session, application은 속성(<속성이름, 값>)을 갖음
+
+속성 처리 메소드(p.135)
+setAttribute(String name,Object value)
+getAttribute(String name)
+removeAttribute(String name)
+getAttributeNames()
+
+
+/*application 기본 객체 속성 추가하고 속성값을 보여주는 예제 : setApplicationAttribute.jsp*/
+http://localhost:8080/chap05/SetApplicationAttribute.jsp?name=속성이름&value=속성값
+
+
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<%
+	String name=request.getParameter("name");
+	String value=request.getParameter("value");
+	if(name!=null&&value!=null)
+		application.setAttribute(name,value);
+%>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>application 속성 지정</title>
+</head>
+<body>
+<%
+	if(name!=null&&value!=null){
+%>
+application 기본 객체의 속성 설정 : 
+ <%=name %>=<%=value %>
+<%
+	} else {
+%>
+application 기본 객체의 속성 설정 안함
+<%
+	}
+%>
+
+</body>
+</html>
+
+=>
+http://localhost:8080/chap05/SetApplicationAttribute.jsp?name=attr1&value=val1
+<< 실행 결과 >>
+application 기본 객체의 속성 설정 : attr1=val1 
+
+
+/*속성의 이름과 값 구하기 예제 : viewApplicationAttribute.jsp*/
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ page import="java.util.Enumeration" %>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title> 기본 객체 속성 보기 </title>
+</head>
+<body>
+<%
+	Enumeration<String> attrEnum=application.getAttributeNames();
+	while(attrEnum.hasMoreElements()){
+		String name=attrEnum.nextElement();
+		Object value=application.getAttribute(name);
+%>
+applicatoin 속성 : <b><%=name %></b>=<b><%=value %></b><br>
+<%	
+	}
+%>
+</body>
+</html>
+
+<< 출력 결과 >>
+applicatoin 속성 : javax.servlet.context.tempdir=C:\Users\명수\workspace2\.metadata\.plugins\org.eclipse.wst.server.core\tmp0\work\Catalina\localhost\chap05
+.....
+applicatoin 속성 : attr1=val1
+....
+
+
+=>SetApplicationAttribute.jsp 에서 설정했던 attr1,val1이 유효함
+ (웹 어플리케이션 내에 있는 모든 JSP가 한 개의 application 기본 객체를 공유하기 때문)]
+cf)위에서 나오는 기본 속성과 값은 톰캣 서버가 제공하는 것으로 톰캣에서만 유효 -> 특정 컨테이너에서만 제공하는 속성은
+   사용하지 않는 것이 좋음.
+   
+-----------
+
+//6.1 속성의 값 타입
+public void setAttribute(String name, Object value)
+public Object getAttribute(String name)
+=>속성의 이름은 String이지만, 값은 모든 클래스의 객체 가능.
+=>아래와 같이 다양한 타입의 객체를 속성 값으로 설정 가능
+session.setAttribute("session_start",new java.util.Data());
+session.setAttribute("memberid","madvirus");
+session.setAttribute("application_temp",new File("c:\\temp"));
+
+=>속성을 읽을 때에는 위의 타입과 같이 읽어야 함.
+Data data=(Data)session.getAttribute("session_start");
+String memberID=(String)session.getAttribute("memberid");
+File tempDir=(File)session.getAttribute("application_temp");
+
+=>기본 데이터 타입의 값은 레퍼 타입을 대신 사용
+//int의 레퍼 타입인 Integer를 이용해서 값을 설정
+request.setAttribute("age",new Integer(20));
+Integer ageAttr=(Integer)request.getAttribute("age");
+int ageValue=ageAttr.intValue();
+
+=>auto boxing / auto unboxing 사용
+request.setAttribute("age",20);
+int age=(Integer)request.getAttribute("age");
+
+-----------
+
+//6.2 속성의 활용
+;
+기본객체			영역				쓰임새
+pageContext		PAGE			(한 번의 요청을 처리하는)하나의 JSP페이지 내에서 공유할 값을 저장한다. 주로 커스텀 태그에서 새로운
+								변수를 추가할 때 사용
+		
+request			REQUEST			한 번의 요청을 처리하는 데 사용되는 모든 JSP 페이지에서 공유할 값을 저장한다. 주로 하나의 요청을
+								처리하는 데 사용하는 JSP 페이지 사이에서 정보를 전달하기 위해 사용
+
+session			SESSION			한 사용자와 관련된 정보를 JSP 사이에 공유하기 위해 사용. 사용자의 로그인 정보와 같은 것들을 저장
+
+application		APPLICATION		모든 사용자를 위해 공유할 정보를 저장한다. 임시 폴더 경로와 같이 웹 어플리케이션의 설정 정보를 주로 저장
+
+
+	
+
+
+
+

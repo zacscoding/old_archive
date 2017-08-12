@@ -1,0 +1,105 @@
+-------------------ch29.Networking-----------------------
+
+package book;
+
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+
+public class InetAddressTest {
+	public static void main(String[] args){
+		//1.InetAddress
+		System.out.println("1.");
+		try{
+			InetAddress addr = InetAddress.getByName("www.daum.net");
+			System.out.println(addr.getCanonicalHostName());
+			System.out.println(addr);
+			InetAddress[] addresses = InetAddress.getAllByName("www.naver.com");
+			for(InetAddress address : addresses)
+				System.out.println(address);
+		}catch(UnknownHostException ex){
+			System.out.println("Could not find www.naver.com");
+		}
+		System.out.println("-------------------------------------------");
+		
+		
+		//2.
+		System.out.println("2.");
+		try{
+			InetAddress address = InetAddress.getLocalHost();			
+			System.out.println(address);
+		}catch(UnknownHostException ex){
+			
+		}
+		
+		System.out.println("-------------------------------------------");
+		//3.
+		System.out.println("3.");
+		try{
+			InetAddress me = InetAddress.getLocalHost();
+			String dottedQuad = me.getHostAddress();
+			System.out.println("My address is : "+dottedQuad);			
+		}catch(UnknownHostException ex){
+			System.out.println("error");
+		}		
+	}
+}
+
+
+-------------------------------------------------------------------------------------
+
+
+
+-------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

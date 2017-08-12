@@ -1,0 +1,8728 @@
+/*저축액을 계산하는 프로그램*/
+/*
+#include <stdio.h>
+
+int main(void)
+{
+	int salary;
+	int deposit;
+
+	printf("월급을 입력하시오:");
+	scanf("%d", &salary);
+
+	deposit = 10 * 12 * salary;
+
+	printf("10년간 저축금액 : %d\n", deposit);
+
+	return 0;
+}
+*/
+
+
+
+
+/*원의 면적을 계산하는 프로그램*/
+/*
+#include <stdio.h>
+
+int main(void)
+{
+	float radius;
+	float area;
+//	const int pi=3.14;	//pi를 3.14로 고정
+//	float pi=3.14;
+
+
+	printf("원의 반지름을 입력하시오:");
+	scanf("%f", &radius);
+
+	area = 3.14*radius*radius;
+
+	printf("원의 넓이 : %f\n", area);
+
+	return 0;
+}
+*/
+
+
+/*원의 면적을 계산하는 프로그램*/
+/*
+#include <stdio.h>
+
+int main(void)
+{
+	double radius;
+	double area;
+
+	printf("원의 반지름을 입력하시오:");
+	scanf("%lf", &radius);
+
+	area = 3.14*radius*radius;
+	printf("원의 넓이 : %lf\n", area);
+
+	return 0;
+}
+*/
+
+/*원의 면접을 계산하는 프로그램(소수점 둘째자리까지)*/
+/*
+#include <stdio.h>
+
+int main(void)
+{
+	double radius;
+	double area;
+
+	printf("원의 반지름을 입력하시오:");
+	scanf("%lf", &radius);
+
+	area = 3.14*radius*radius;
+	printf("원의 넓이 : %.2lf\n", area);
+
+	return 0;
+}
+*/
+
+
+/*환율 구하는 프로그램*/
+/*
+#include <stdio.h>
+
+int main(void)
+{
+	double rate;	//원/달러 환율
+	double usd;		//달러화
+	int krw;		//원화
+
+	printf("달러에 대한 원화 환율을 입력하시오 : ");
+	scanf("%lf", &rate);
+
+	printf("원화 금액을 입력하시오 : ");
+	scanf("%d", &krw);
+
+	usd = krw / rate;
+
+	printf("원화 %d원은 %lf달러입니다.\n", krw, usd);
+
+	return 0;
+}
+*/
+
+
+
+
+/*사각형 넓이 구하기*/
+/*
+#include <stdio.h>
+
+int main(void)
+{
+	double w;
+	double h;
+	double area;
+
+	printf("가로의 길이를 입력하시오 : ");
+	scanf("%lf", &w);
+
+
+	printf("세로의 길이를 입력하시오 : ");
+	scanf("%lf", &h);
+
+	area = w*h;
+	printf("사각형의 넓이는 =%lf\n", area);
+
+	return 0;
+}
+*/
+
+
+
+
+/*사각형 넓이 둘레 동시에 구하기*/
+
+/*
+#include <stdio.h>
+
+int main(void)
+{
+	double w;			//가로길이
+	double h;			//세로길이
+	double area;		//넓이
+	double perimeter;	//둘레
+
+	printf("가로 길이를 입력하시오 : ");
+	scanf("%lf", &w);
+
+	printf("세로 길이를 입력하시오 : ");
+	scanf("%lf", &h);
+
+	area = w*h;
+	perimeter = 2 * (w + h);
+
+	printf("사각형의 넓이=%.2lf \n사각형의 둘레=%.2lf\n", area, perimeter);
+
+	return 0;
+}
+*/
+
+
+
+
+
+/*출력 형식 지정 제어 문자의 확장 기호*/
+
+/*
+#include <stdio.h>
+
+int main(void)
+{
+	int x=1234;
+	double y=100.0,z=3.0;
+
+	printf("**********\n");	//10개
+	printf("%10d\n",x);		//필드 폭 10개>우측 정렬
+	printf("%-10d",x);		//필드 폭 10개> 좌측 정렬
+	printf("kk\n");
+
+	printf("%10.3f\n",y/z);	//필드폭 10개
+	printf("%-10.5f\n",y/z);
+
+	return 0;
+}
+*/
+
+
+
+
+-------------------------------실습 ----------------------------------
+
+/*Q.변수를 출력하는 프로그램을 완성해보시오.*/
+
+/*
+#include <stdio.h>
+
+int main(void)
+{
+	int x = 5;
+	float y = 12.345;
+	double z = 54.321;
+	char c = 'a';
+
+	printf("%d\n", x);
+	printf("%.3f\n", y);
+	printf("%.3lf\n", z);
+	printf("%c\n", c);
+		
+	return 0;
+}
+*/
+
+
+
+/*Q.화씨 값을 섭씨 값으로 변환하는 프로그램을 만들어 보시오.*/
+
+/*
+#include <stdio.h>
+
+int main(void)
+{
+	double c;
+	double f;
+
+	printf("화씨값을 입력하세오:");
+	scanf("%lf", &f);
+
+	c = 5 *(f - 32)/9;
+	
+	printf("섭씨 값은 %.2lf 입니다\n", c);
+
+	return 0;
+}
+*/
+
+
+
+/*Q.세개의 수를 입력 받아서 계산하는 프로그램 작성하시오.*/
+
+
+/*
+#include <stdio.h>
+
+int main(void)
+{
+	float num1;
+	float num2;
+	float num3;
+	float sum;
+	float avg;
+	
+	printf("수를 입력하시오 : ");
+	scanf("%f", &num1);
+
+	printf("수를 입력하시오 : ");
+	scanf("%f", &num2);
+
+	printf("수를 입력하시오 : ");
+	scanf("%f", &num3);
+
+	sum = num1 + num2 + num3;
+	avg = sum / 3;
+
+	printf("합계 %.2f, 평균 %.2f\n\n", sum, avg);
+
+	return 0;
+}
+
+
+/*Q.scanf로 반지름의 길이를 입력 받아서 원의 둘레와 원의 넓이를 소수점 둘째자리까지 출력하는 프로그램을 작성하시오.*/
+
+/*
+#include <stdio.h>
+
+int main(void)
+{
+	double r;				//r=반지름
+	double pi = 3.14;		//pi=파이
+	double peri;			//peri=둘레
+	double area;			//area=넓이
+
+	printf("반지름을 입력하시오 : ");
+	scanf("%lf", &r);
+
+	peri = 2 * pi*r;
+	area = pi*r*r;
+
+	printf("원의 둘레 : %.2lf \n원의 넓이 : %.2lf\n", peri, area);
+
+	return 0;
+}
+*/
+
+
+---------------------------4장--------------------------------------------------------------
+
+
+/*기호상수를만드는프로그램*/
+
+#include <stdio.h>
+
+int main(void)
+{
+double x;
+double EXCHANGE_RATE;
+const int EXCHANGE_RATE2=1100;//기호상수1100을고정
+double w;
+double h;
+
+#define EXCHANGE_RATE 1120;//기호상수1120 < 나중에변경하면됨
+
+printf("x값을입력: ");
+scanf("%lf", &x);
+
+w = x*EXCHANGE_RATE
+h = x*EXCHANGE_RATE2;
+
+printf("w값은%lf\n", w);
+printf("h값은%lf\n", h);
+
+return 0;
+}
+
+
+
+/*Q.예제)변수의 선언(달러 원화 환율로 구하기)*/
+
+/*
+#include <stdio.h>
+
+int main(void)
+{
+	int usd;		//달러화
+	int krw;		//원화
+
+	printf("달러화 금액을 입력하시오 : ");
+	scanf("%d", &usd);
+
+	krw = 1120 * usd;		//환율(달러당 원화)=1120원
+	printf("달러화 %d달러는 %d원입니다.\n", usd, krw);
+
+	return 0;
+}
+*/
+
+
+/*Q.정수형 자료형의 크기를 계산하는 프로그램*/
+
+/*
+#include <stdio.h>
+
+int main(void)
+{
+	short year = 0;			//0으로 초기화한다.
+	int sale = 0;			//0으로 초기화한다.
+	long total_sale = 0;	//0으로 초기화한다.
+
+	year = 10;				//약 3만 2천을 넘지 않도록 주의
+	sale = 2200000000;		//약 21억을 넘지 않도록 주의
+	total_sale = year*sale;	//약 21억을 넘지 않도록 주의
+
+	printf("total_sale=%d\n", total_sale);
+
+	return 0;
+}
+*/
+
+
+/*Q.기호상수*/
+/*
+#include <stdio.h>
+#define TAX_RATE 0.2
+
+int main(void)
+{
+	const int MONTHS = 12;
+	int m_salary, y_salary;			//변수 선언
+
+	printf("월급을 입력하시오 : ");
+	scanf("%d", &m_salary);
+	y_salary = MONTHS*m_salary;		//순수입 계산
+	printf("연봉은 %d 입니다.\n", y_salary);
+	printf("세금은 %.2f입니다.\n", y_salary*TAX_RATE);
+
+	return 0;
+}
+*/
+
+
+/*아스키코드표 출력하는 프로그램*/
+/*
+#include <stdio.h>
+
+int main(void)
+{
+	int x;				//dec
+	char code;			//문자
+
+//dec > 문자 구하는 코드
+	printf("아스키코드표의 Dec을 입력하시오 : ");
+	scanf("%d", &x);
+
+	printf("Dec=%d는 Char=%c입니다.\n", x, x);
+
+
+//문자 > Dec 구하는 코드
+	printf("아스키코드표의 문자를 입력하시오 :");
+	scanf("%c", &code);
+
+	printf("Char=%c는 Dec=%d입니다.", code, code;
+
+	return 0;
+}
+*/
+
+/*아스키코드표 변경 프로그램*/
+
+#include <stdio.h>
+
+int main(void)
+{
+	int s;
+	int x;
+	char code;
+
+	while (1) {
+
+		printf("변환 프로그램을 선택하세요.\n1.Dec>>Char\t2.Char>>Dec(0:종료)\n:");
+		scanf("%d", &s);
+
+		if (s == 0) break;
+
+		switch (s)				//s를 case문에 사용
+		{
+		case 1:					//s==1일때
+			printf("Dec을 입력하세요.\n\n:");
+			scanf("%d", &x);
+
+			printf("Dec : %d는 Char : %c 입니다.\n\n\n", x, x);
+			break;				//break문 없으면 케이스 다 반복 실행함.
+
+
+		case 2:					//s==2일때
+			printf("Char를 입력하세요.\n\n:");
+			scanf("%s", &code);
+
+			printf("Char : %c 는 Dec : %d 입니다.\n\n\n", code, code);
+			break;
+
+		default:			//s가 1도 2도 아닐때
+			printf("1or2를 선택하세요.\n\n");
+			break;
+		}
+	}
+	return 0;
+}
+*/
+
+/*아스키코드표 변경 프로그램2*/
+/*
+
+#include <stdio.h>
+
+int main(void)
+{
+	int s;
+	int x;
+	char code;
+
+	while (1) {
+
+		printf("변환 프로그램을 선택하세요.\n1.Dec>>Char\t2.Char>>Dec(0:종료)\n:");
+		scanf(" %d", &s);
+
+		if (s == 0) break;
+
+		else if (s == 1) {
+			printf("Dec을 입력하세요.\n\n:");
+			scanf("%d", &x);
+
+			printf("Dec : %d는 Char : %c 입니다.\n\n\n", x, x);
+
+		}
+
+		else if (s == 2) {
+			printf("Char를 입력하세요.\n\n:");
+			scanf(" %c", &code);
+
+			printf("Char : %c 는 Dec : %d 입니다.\n\n\n", code, code);
+		}
+		else {
+			printf("0,1,2의 값만 입력해주세요\n");
+			continue;
+		}
+
+
+	}
+	return 0;
+}
+*/
+
+
+/*Q.태양빛 도달 시간*/
+
+#include <stdio.h>
+
+int main(void)
+{
+	double light_speed = 300000;			//빛의 속도 저장하는 변수
+	double distance = 149600000;			//태앙과 지구 사이 거리 저장하는 변수
+											//149600000km로 초기화한다.
+	double time;							//시간을 나타내는 변수
+
+	time = distance / light_speed;			//거리를 빛의 속도로 나눈다.
+	time = time / 60.0;						//초를 분으로 변환한다.
+
+	printf("빛의 속도는 %fkm/s\n", light_speed);
+	printf("태양과 지구와의 거리 %fkm\n", distance);
+	printf("도달 시간은 %f초\n", time);
+
+	return 0;
+}
+
+
+/*Q.태양빛 도달 시간(초를 분 몇초로)*/
+
+#include <stdio.h>
+
+int main(void)
+{
+	double light_speed = 300000;			//빛의 속도 저장하는 변수
+	double distance = 149600000;			//태앙과 지구 사이 거리 저장하는 변수
+											//149600000km로 초기화한다.
+	double time;							//시간을 나타내는 변수(전체 걸리는 초)
+
+
+	time = distance / light_speed;			//거리를 빛의 속도로 나눈다.
+//	time = time / 60.0;						//초를 분으로 변환한다.
+
+
+
+	printf("빛의 속도는 %fkm/s\n", light_speed);
+	printf("태양과 지구와의 거리 %fkm\n", distance);
+	printf("도달 시간은 %d분 %d초\n", (int)time / 60, (int)time%60);	//시간을 출력한다.
+
+	return 0;
+}
+
+
+-----------------자기주도학습2----------------------
+//8,10,16진수 입력 방법 및 제어문자에 따른 출력
+/*
+
+#include <stdio.h>
+
+int main(void)
+{
+	printf("Decimal:%d\n",173);
+	printf("Decimal:%d\n",0255);
+	printf("Decimal:%d\n",0xAD);
+		
+	printf("Octal:%o\n",173);
+	printf("Octal:%o\n",0255);
+	printf("Octal:%o\n",0xAD);
+
+	printf("Hexadeciaml:%x\n",173);
+	printf("Hexadeciaml:%x\n",0255);
+	printf("Hexadeciaml:%x\n",0xAD);
+
+	return 0;
+}
+*/
+
+
+
+/*8진수, 10진수, 16진수를 표현하는 프로그램1*/
+/*
+
+#include <stdio.h>
+
+int main(void)
+{
+	int x;			//프로그램 선택 변수
+	int x1;			//10진수 입력 변수
+	int x2;			//8진수 입력 변수
+	int x3;			//16진수 입력 변수
+
+	printf("입력 변수를 선택하세요.\n1.10진수 2.8진수 3.16진수\n:");
+	scanf("%d", &x);
+
+	if (x == 1)				//입력변수 : 10진수
+	{
+		printf("변수를 입력하세요 :");
+		scanf("%d", &x1);
+
+		printf("10진수 : %d는\n8진수 : %o  //  16진수 : %x  입니다.\n", x1, x1, x1);
+	}
+
+	else if (x == 2)		//입력변수 : 8진수
+	{
+		printf("변수를 입력하세요 :");
+		scanf("%o", &x2);
+
+		printf("8진수 : %o는\n10진수 : %d  //  16진수 : %x  입니다.\n", x2, x2, x2);
+	}
+
+	else if(x==3) 			//입력 변수 : 16진수
+	{
+		printf("변수를 입력하세요 :");
+		scanf("%x", &x3);
+
+		printf("16진수 : %x 는\n10진수 : %d  //  8진수 : %o 입니다.\n", x3, x3, x3);
+	}
+
+	else				//1-3이외 다른 것을 입력했을 경우.
+	{
+		printf("1-3중 하나를 입력해주세요.\n");
+	}
+	return 0;
+}
+*/
+
+/*8진수, 10진수, 16진수를 표현하는 프로그램1*/
+/*케이스문 연습*/
+/*
+#include <stdio.h>
+
+int main(void)
+{
+	int s;		//프로그램 설정
+	int x;		//입력 변수
+
+	printf("입력 번수를 선택하세요.\n1.10진수\t2.8진수\t3.16진수\n:");
+	scanf("%d", &s);
+
+	switch (s)
+	{
+	case 1:
+		printf("변수를 입력하세요 : ");
+		scanf("%d", &x);
+
+		printf("10진수 :%d >> 8진수:%o, 16진수 %x 입니다.\n", x, x, x);
+
+		break;
+	case 2:
+		printf("변수를 입력하세요 : ");
+		scanf("%o", &x);
+
+		printf("8진수 %o >> 10진수 : %d, 16진수 : %x 입니다.\n", x, x, x);
+
+		break;
+	case 3:
+		printf("변수를 입력하세요 : ");
+		scanf("%x", &x);
+
+		printf("16진수 %x>> 10진수 : %d, 8진수 : %o 입니다.\n", x, x, x);
+
+		break;
+	default:
+		printf("1-3을 입력하세요.\n");
+	}
+	return 0;
+}
+*/
+
+
+
+
+
+/*제어문자 사용 방법*/
+
+/*
+#include <stdio.h>
+
+int main(void)
+{
+
+//	printf("아아\0아아ㅇㅇ");			//아스키코드 0번
+//	printf("경고음이 울림\a");			//경고음이 울림
+//	printf("입력하세요 : \b");			//커서를 한 문자 뒤로 이동
+//	printf("새 페이즈 \f");				//새 페이지의 처음으로 이동
+
+//	printf("\"큰따옴표\"");				//큰 따옴표 사용방법
+	
+//	printf("\'작은`따옴표\'");			//작은 따옴표 사용방법
+
+	printf("역슬래쉬\\");				//역슬래쉬 사용방법
+
+}
+*/
+
+
+
+
+
+
+
+/*문자 변수의 출력*/
+
+/*
+#include <stdio.h>
+
+int main(void)
+{
+	char ch1;
+	char ch2;
+
+	ch1 = 'a';
+	ch2 = '0';
+
+	printf("%c와 %c는 문자입니다.\n", ch1, ch2);
+
+	return 0;
+}
+*/
+
+/*문자를 출력*/
+/*
+
+#include <stdio.h>
+
+int main(void)
+{
+	char sq = '\`';
+
+	printf("BCPL\tB\tC\tJava\n");
+	printf("%c\7\n", '\a');
+	printf("%c자바 언어'\n", sq);
+	printf("\"C언어\" 정말 재미있다!\n");
+
+	return 0;
+}
+*/
+
+/*if문 만들기해보기*/
+
+#include <stdio.h>
+
+int main(void)
+{
+	int i;
+
+	printf("1-9중의 숫자를 입력하세요 :");
+	scanf("%d", &i);
+
+	if (i == 7)				//7을 입력할 경우
+	{
+		printf("행운의 숫자 7을 입력하였습니다!\n");
+	}
+
+	else if (i >= 3 && i <= 6)		//3~6을 입력할 경우
+	{
+		printf("행운의 숫자와 근접합니다!\n");
+	}
+
+	else							//위의 2조건 이외를 입력할 경우
+	{
+		printf("꽝!\n");
+	}
+	return 0;
+}
+
+
+/*문자 입력하기*/
+
+/*
+
+#include <stdio.h>
+
+int main(void)
+{
+	char code[10];		//문자 변수(10)
+
+	printf("입력하시오 :\n");
+	scanf("%s", &code);
+
+	printf("입력하신 문장은 %s입니다.\n", code);
+
+	return 0;
+}
+*/
+
+
+/*제어 문자 출력 예제*/
+
+/*
+#include <stdio.h>
+
+int main(void)
+{
+	printf("우리나라의 화폐 기호는 \\이다.\n\"오백만원\"은 \\5,000,000으로 표현할 수 있다.\n");
+
+	return 0;
+}
+*/
+
+/*제어문 출력 예제2*/
+/*
+#include <stdio.h>
+
+int main(void)
+{
+	printf("기초프로그래밍\t웹프로그래밍\n");
+	printf("94/100(94%)\t\a88/100(88%)\n");
+
+	return 0;
+}
+*/
+
+
+
+
+
+
+----실습=---
+
+/*3개의 식을 계산하는 프로그램*/
+/*
+#include <stdio.h>
+
+int main(void)
+{
+	double a;		//변수1
+	double b;		//변수2
+	double x1;		//첫번째 식을 계산한 값을 나타내는 변수
+	double x2;		//두번째 식을 계산한 값을 나타내는 변수
+	double x3;		//세번째 식을 계산한 값을 나타내는 변수
+
+	printf("a값을 입력하세요 :");
+	scanf("%lf", &a);
+
+	printf("b값을 입력하세요 :");
+	scanf("%lf", &b);
+
+	x1 = a*b - 5;
+	x2 = (a / 2) + b;
+	x3 = 2 * a + 4 * b;
+
+	printf("ab-5=%.1lf\na/2+b=%.1lf\n2a+4b=%.1lf\n", x1, x2, x3);
+
+	return 0;
+}
+*/
+
+
+/*질량과 속도, 두수를 키보드로 받아서 운동에너지를 계산하는 프로그램*/
+
+/*
+#include <stdio.h>
+
+int main(void)
+{
+	double m;		//질량 변수
+	double v;		//속도 변수
+	double k;		//운동에너지 변수
+
+	printf("질량을 입력하시오 :");
+	scanf("%lf", &m);
+
+	printf("속도를 입력하시오 :");
+	scanf("%lf", &v);
+
+	k = m*v*v/2;
+
+	printf("운동에너지 : %.2lf\n", k);
+
+	return 0;
+}
+*/
+
+/*문자를 출력*/
+
+/*
+#include <stdio.h>
+
+int main(void)
+{
+
+	printf("\"ACSII code\", 'A', 'B', 'C',");
+	printf("\\t \\a \\n\n");
+
+	
+	return 0;
+}
+*/
+
+
+
+
+-------5/13일 수업-----
+
+/*증감 연산자*/
+/*
+#include <stdio.h>
+
+int main(void)
+{
+	int a=5,b=6,c=10,d;
+	d=++a*b--;
+	printf("a=%d,b=%d,d=%d\n",a,b,d);
+
+	d=a++ + ++c-b--;
+	printf("a=%d,b=%d,c=%d,d=%d\n",a,b,c,d);
+	
+	a=1;
+	b=0;
+	d=a++||++b*d--/++c;
+	printf("a=%d,b=%d,c=%d,d=%d\n",a,b,c,d);
+	d=b++&&++a/++c*d++;
+	printf("a=%d,b=%d,c=%d,d=%d\n",a,b,c,d);
+	
+	return 0;
+
+}
+*/
+
+
+/*
+
+#include <stdio.h>
+
+int main(void)
+{
+	int x = 10, y = 10;
+
+	printf("x=%d\n", x);
+	printf("++x의 값=%d\n", ++x);
+	printf("x=%d\n\n", x);
+
+	printf("y=%d\n", y);
+	printf("y++의 값=%d\n", y++);
+	printf("y=%d\n", y);
+
+	return 0;
+}
+*/
+/*
+#include <stdio.h>
+
+int main(void)
+{
+	int num1=10;
+	int num2=(num1--)+2;		//num1+2=10을 num2에 대입 & num1-- > 9됨
+
+	printf("num1=%d\n",num1);
+	printf("num2=%d\n",num2);
+
+	return 0;
+}
+*/
+
+/*논리연산자*/
+/*
+
+#include <stdio.h>
+
+int main(void)
+{
+	int x, y;
+
+	printf("x와 y가 참이면 1, 거짓이면 0을 입력하시오.\n:");
+	scanf("%d%d", &x, &y);
+
+	printf("%d&&%d의 결과값 : %d\n", x, y, x&&y);
+	printf("%d||%d의 결과값 : %d\n", x, y, x||y);
+	printf("!%d의 결과값:%d\n", x, !x);
+
+	return 0;
+}
+*/
+
+
+/*윤년을 구하는 프로그램*/
+/*
+#include <stdio.h>
+
+int main(void)
+{
+	int year, result;
+
+	printf("연도를 입력하시오 : ");
+	scanf("%d", &year);
+
+	result = ((year % 4 == 0) && (year % 100 != 0) || (year % 400 == 0));
+//조건1:연도가 4로 나누어 떨어진다
+//조건2:100으로 나누어 떨어지는 연도는 제외한다.
+//조건3:400으로 나누어 떨어지는 연도는 윤년이다.
+
+	printf("result=%d\n", result);
+
+	return 0;
+}
+*/
+
+
+/*절대값, 최대값, 최소값 구하는 프로그램*/
+/*
+#include <stdio.h>
+
+int main(void)
+{
+	int x, y, z;
+
+	printf("절대값을 알고 싶은 수 : ");
+	scanf("%d", &z);
+
+	printf("첫번째 수 :");
+	scanf("%d", &x);
+
+	printf("두번째 수 :");
+	scanf("%d", &y);
+
+
+	printf("absolute_value=%d\n", (x > 0) ? z : -z);
+	printf("max_value=%d\n", (x > y) ? x : y);		//(x>y)가 참이면 앞의 x가 수식의 값이 된다. (x>y)가 거짓이면 뒤의 y가 수식의 값이 된다.
+	printf("min_value=%d\n", (x < y) ? x : y);
+
+	return 0;
+}
+*/
+
+
+/*조건에 따라 바로 출력하는 프로그램*/
+
+/*
+#include <stdio.h>
+
+int main(void)
+{
+	int age;
+
+	printf("나이를 입력하시오 :");
+	scanf("%d", &age);
+
+	(age > 20) ? printf("성인\n") : printf("청소년\n");		//(age>20)이 참이면 앞의 값을 출력 , 거짓이면 뒤의 값을 출력
+
+	return 0;
+}
+*/
+
+
+/*화씨를 섭씨로 바꾸는 프로그램*/
+
+
+/*
+#include <stdio.h>
+
+int main(void)
+{
+	double f_temp;
+	double c_temp;
+
+	printf("화씨온도를 입력하시오 : ");
+	scanf("%lf", &f_temp);
+
+// 공식 : c=5/9*(f_temp-32)
+
+//  	c_temp=5/9*(f_temp-32);									//안됨
+//	c_temp = 5*(f_temp - 32)/9;								//됨
+//	c_temp = ((double)5 / (double)9)*(f_temp - 32);			//됨
+//	c_temp = ((double)5 / 9)*(f_temp - 32);					//됨
+//	c_temp = 5.0 / 9.0*(f_temp - 32);						//됨
+
+	printf("섭씨온도는 %lf입니다.\n", c_temp);
+
+	return 0;
+}
+*/
+
+
+---------------실습-------------------------------------------
+
+
+/*키보드로 3개의 정수를 입력 받아 최대값을 구하는 프로그램*/
+/*정수 3개를 받아 최대값 구하는 프로그램1*/
+/*
+#include <stdio.h>
+
+int main(void)
+{
+	int x, y, z;
+	int max1;
+
+	printf("첫번째 정수를 입력하세요 :");
+	scanf("%d", &x);
+
+	printf("두번째 정수를 입력하세요 :");
+	scanf("%d", &y);
+
+	printf("세번째 정수를 입력하세요 :");
+	scanf("%d", &z);
+
+	max1 = (x >= y) ? x : y;
+
+	printf("%d,%d,%d의 최대값은 : %d\n",x,y,z, (max1 > z ) ? max1 : z);
+
+	return 0;
+}
+*/
+
+
+/*정수 3개를 받아 최대값 구하는 프로그램2*/
+//if문
+/*
+#include <stdio.h>
+
+int main(void)
+{
+	int x, y, z;
+
+	printf("3개의 정수를 입력하시오\n:");
+	scanf("%d %d %d", &x, &y, &z);
+
+	if (x >= y)
+	{
+		printf("%d, %d, %d의 최대값은 %d입니다.\n", x, y, z, (x > z) ? x : z);
+	}
+	else
+	{
+		printf("%d, %d, %d의 최대값은 %d입니다.\n", x, y, z, (y > z) ? x : z);
+	}
+	
+	return 0;
+}
+*/
+
+
+/*정수 3개를 받아 최대값 구하는 프로그램3*/
+//switch문
+/*
+#include <stdio.h>
+
+int main(void)
+{
+	int x, y, z;		//정수 3개
+	int s;				//스위치문
+
+	printf("정수 3개를 입력하시오:\n");
+	scanf("%d %d %d", &x, &y, &z);
+
+	s = (x >= y) ? 1 : 0;
+
+	switch (s)
+	{
+	case 1:
+		printf("%d, %d, %d의 최대값은 %d입니다.\n", x, y, z, (x > z) ? x : z);
+		break;
+	case 0:
+		printf("%d, %d, %d의 최대값은 %d입니다.\n", x, y, z, (y > z) ? y : z);
+		break;
+	}
+
+	return 0;
+}
+*/
+
+
+
+/*키보드로 정수를 입력 받아서 출력하는 프로그램*/
+/*정수에 비트 연산자 <<를 한번적용하면 2를 곱한 값을 얻을 수 있다.*/
+/*
+#include <stdio.h>
+
+int main(void)
+{
+	int value, count;
+
+	printf("정수를 입력하시오:");
+	scanf("%d", &value);
+
+	printf("2를 곱하고 싶은 횟수:");
+	scanf("%d", &count);
+
+	printf("%d<<%d의 값 : %d\n", value, count, value << count);
+
+	return 0;
+}
+*/
+
+
+
+/*좌표를 입력받아 사분면을 출력하는 프로그램1*/
+/*
+#include <stdio.h>
+
+int main(void)
+{
+	int x, y;
+
+	printf("x좌표를 입력하시오 :");
+	scanf("%d", &x);
+
+	printf("y좌표를 입력하시오 :");
+	scanf("%d", &y);
+
+	//(x > 0) && (y > 0) ? printf("1사분면\n") : printf("3사분면\n");
+	//(x > 0) && (y < 0) ? printf("4사분면\n") : printf("2사분면\n");
+	
+	//(x > 0) && (y > 0) ? printf("1사분면\n") : printf("");
+	//(x < 0) && (y > 0) ? printf("2사분면\n") : NULL;
+	//(x < 0) && (y < 0) ? printf("3사분면\n") : NULL;
+	//(x > 0) && (y < 0) ? printf("4사분면\n") : NULL;
+
+	(x > 0) && (y > 0) ? printf("1사분면\n") : ( (x < 0) && (y > 0) ? printf("2사분면\n") : ( (x < 0) && (y < 0) ? printf("3사분면\n") : ( (x > 0) && (y < 0) ? printf("4사분면\n") : printf("축위에존재함\n") ) ) );
+	
+	return 0;
+}
+*/
+
+/*좌표를 입력받아 사분면을 출력하는 프로그램2*/
+//if문
+/*
+#include <stdio.h>
+
+int main(void)
+{
+	double x, y;
+
+	printf("X 좌표를 입력하시오:");			
+	scanf("%lf", &x);
+
+	printf("Y 좌표를 입력하시오:");
+	scanf("%lf", &y);
+
+	if ((x == 0) || (y == 0))
+	{
+		printf("축위의 점\n");
+	}
+	else if (x > 0)
+	{
+		(y > 0) ? printf("1사분면\n") : printf("4사분면");
+	}
+	else
+	{
+		(y > 0) ? printf("2사분면\n") : printf("3사분면");
+	}
+
+	return 0;
+}
+*/
+
+
+
+/*키보드로 정수를 입력 받아서 출력하는 프로그램*/
+/*정수에 비트 연산자 <<를 한번적용하면 2를 곱한 값을 얻을 수 있다.*/
+/*
+#include <stdio.h>
+
+int main(void)
+{
+	int value, count;
+
+	printf("정수를 입력하시오:");
+	scanf("%d", &value);
+
+	printf("2를 곱하고 싶은 횟수:");
+	scanf("%d", &count);
+
+	printf("%d<<%d의 값 : %d\n", value, count, value << count);
+
+	return 0;
+}
+*/
+
+
+
+/*if문을 사용하여 절대값을 구하는 프로그램*/
+/*
+#include <stdio.h>
+
+int main(void)
+{
+	int number;
+
+	printf("정수를 입력하시오:");
+	scanf("%d", &number);
+
+	if (number < 0)
+	
+		number = -number;
+
+	printf("절대값은 %d입니다.\n", number);
+
+	return 0;
+	
+}
+*/
+
+
+
+
+/*if-else문을 이용하여 홀수와 짝수를 구분하는 프로그램*/
+/*
+#include <stdio.h>
+
+int main(void)
+{
+	int number;
+
+	printf("정수를 입력하시오:");
+	scanf("%d", &number);
+
+	if (number % 2 == 0)
+	{
+		printf("짝수입니다.\n");
+	}
+	else
+	{
+		printf("홀수입니다.\n");
+	}
+	
+	return 0;
+}
+*/
+
+
+/*윤년 판단 프로그램*/
+/*
+#include <stdio.h>
+
+int main(void)
+{
+	int year;
+
+	printf("연도를 입력하시오 :");
+	scanf("%d", &year);
+
+	if ((year % 4 == 0 && year % 100 != 0) || year % 400 == 0)
+		printf("%d는 윤년입니다.\n", year);
+	else
+		printf("%d는 윤년이 아닙니다.\n", year);
+
+	return 0;
+}
+*/
+
+
+/*학습 결정 예제*/
+/*
+#include <stdio.h>
+
+int main(void)
+{
+	int score;
+
+	printf("성적을 입력하시요:");
+	scanf("%d", &score);
+
+	if (score >= 90)
+	{
+		printf("합격:학점A\n");
+	}
+	else if (score >= 80)
+		printf("합격:학점B\n");
+	else if (score >= 70)
+		printf("합격:학점C\n");
+	else if (score >= 60)
+		printf("합격:학점D\n");
+	else
+		printf("불합격:학점F\n");
+	
+	return 0;
+}
+*/
+
+
+
+
+/*2차방정식의 계수를 알때 근을 구하는 프로그램*/
+/*
+#include <stdio.h>
+#include <math.h>			//루트 :sqrt()함수 사용하기 위해 추가.
+
+int main(void)
+{
+	double a, b, c;
+	double k1, k2, root;
+
+	printf("ax^2+bx+c의 계수 a를 입력하시오:");
+	scanf("%lf", &a);
+
+	printf("ax^2+bx+c의 계수 a를 입력하시오:");
+	scanf("%lf", &b);
+
+	printf("ax^2+bx+c의 계수 c를 입력하시오:");
+	scanf("%lf", &c);
+
+	if (a == 0)
+	{
+		printf("2차 방정식의 근은 : %lf입니다.", -c / b);
+	}
+	else
+	{
+		if (b*b - (4 * a*c) < 0)
+		{
+			printf("실근은 존재하지 않습니다.\n");
+		}
+		else
+		{
+			root = sqrt(b*b - 4 * a*c);
+			k1 = (-b + root) / (2 * a);
+			k2 = (-b - root) / (2 * a);
+			printf("방정식의 근은 %lf입니다\n방정식의 근은 %lf 입니다.\n", k1, k2);
+		}
+	}
+
+	return 0;
+}
+*/
+
+/*산술 계산기1*/
+#include <stdio.h>
+
+int main(void)
+{
+	double x, y;
+	char code;
+	double result;
+
+	printf("수식을 입력하시오.(+,-,*,/,%%)\n(예:2+5)\n:");
+	scanf("%lf %c %lf", &x, &code, &y);
+
+	if (code == '+')
+	{
+		printf("%lf%c%lf=%lf\n", x, code, y, x + y);
+	}
+	else if (code == '-')
+	{
+		printf("%lf%c%lf=%lf\n", x, code, y, x - y);
+	}
+	else if (code == '*')
+	{
+		printf("%lf%c%lf=%lf\n", x, code, y, x * y);
+	}
+	else if (code == '/')
+	{
+		printf("%lf%c%lf=%lf\n", x, code, y, x / y);
+	}
+	else if (code == '%')
+	{
+		printf("%lf%c%lf=%d\n", x, code, y, (int)x%(int)y);
+	}
+	else
+	{
+		printf("지원되지 않는 연산자 입니다.\n");
+	}
+	return 0;
+}
+
+
+/*산술 계산기2*/
+/*
+#include <stdio.h>
+
+int main(void)
+{
+	double x, y;
+	char code;
+	double result;
+
+	printf("수식을 입력하시오.(+,-,*,/,%%)\n(예:2+5)\n:");
+	scanf("%lf %c %lf", &x, &code, &y);
+
+	switch (code)
+	{
+	case '+':
+		printf("%lf%c%lf=%lf\n", x, code, y, x + y);
+		break;
+	case '-':
+		printf("%lf%c%lf=%lf\n", x, code, y, x - y);
+		break;
+	case'*':
+		printf("%lf%c%lf=%lf\n", x, code, y, x * y);
+		break;
+	case'/':
+		printf("%lf%c%lf=%lf\n", x, code, y, x / y);
+		break;
+	case'%':
+		printf("%lf%c%lf=%d\n", x, code, y, (int)x % (int)y);
+		break;
+	default:
+		printf("지원되지않는 연산자입니다.\n");
+		break;
+	}
+	return 0;
+}
+*/
+
+
+/*산술계산기3*/
+//if문+while문
+/*
+
+#include <stdio.h>
+
+int main(void)
+{
+int x, y,z;
+char c;
+
+while (1)
+{
+printf("수식을입력하시오(종료:0#0)\n(예:2+5)\n>>");
+scanf("%d %c %d", &x, &c, &y);
+if (x==0&&y==0&&c == '#')
+{
+break
+}
+else if (c == '+')
+{
+printf("%d %c %d = %d\n", x, c, y, x + y);
+}
+else if (c == '-')
+{
+printf("%d %c %d = %d\n", x, c, y, x - y);
+}
+else if (c == '*')
+{
+printf("%d %c %d = %d\n", x, c, y, x*y);
+}
+else if (c == '/')
+{
+printf("%d %c %d = %d\n", x, c, y, (double)x / (double)y);
+}
+else if (c == '%')
+{
+printf("%d %c %d = %d\n", x, c, y, x / y);
+}
+else
+{
+printf("지원하지않는연산자입니다.\n");
+break
+}
+
+}
+return 0;
+}
+*/
+
+/*달의 일수를 계산하는 프로그램*/
+/*
+
+#include <stdio.h>
+
+int main(void)
+{
+	int month, days;
+
+	printf("달을 입력하시오:");
+	scanf("%d", &month);
+	if (month <= 12)
+	{
+		switch (month)
+		{
+		case 2:
+			days = 28;
+			break;
+		case 4:
+		case 6:
+		case 9:
+		case 11:
+			days = 30;
+			break;
+		default:
+			days = 31;
+			break;
+		}
+		printf("%d월의 일수는 %d입니다.\n", month, days);
+	}
+	else
+	{
+		printf("1-12까지 입력하세요.\n");
+	}
+
+	return 0;
+}
+*/
+
+/*while 문을 이용한 구구단 출력 프로그램1*/
+//9x9행렬
+/*
+#include <stdio.h>
+
+int main(void)
+{
+	int x2 = 2, x3 = 3, x4 = 4, x5 = 5, x6 = 6, x7 = 7, x8 = 8, x9 = 9;
+	int i=1;
+
+	printf("#2단#\t#3단#\t#4단#\t#5단#\t#6단#\t#7단#\t#8단#\t#9단#\n");
+
+		while (i <= 9)
+	{
+		printf("%dx%d=%d\t%dx%d=%d\t%dx%d=%d\t%dx%d=%d\t%dx%d=%d\t%dx%d=%d\t%dx%d=%d\t%dx%d=%d\t\n", x2, i, x2*i, x3, i, x3*i, x4, i, x4*i, x5, i, x5*i, x6, i, x6*i, x7, i, x7*i, x8, i, x8*i, x9, i, x9*i);
+		i++;
+	}
+	return 0;
+}
+*/
+
+/*while 문을 이용한 구구단 출력 프로그램2*/
+//9x9행렬
+/*
+#include <stdio.h>
+
+int main(void)
+{
+	int i = 1;
+
+	printf("#2단#\t#3단#\t#4단#\t#5단#\t#6단#\t#7단#\t#8단#\t#9단#\n");
+
+	while (i <= 9)
+	{
+		printf("2x%d=%d\t3x%d=%d\t4x%d=%d\t5x%d=%d\t6x%d=%d\t7x%d=%d\t8x%d=%d\t9x%d=%d\t\n",i, 2*i,i, 3*i, i, 4*i, i, 5*i,i, 6*i, i, 7*i,  i,8*i, i, 9*i);
+		i++;
+	}
+	return 0;
+}
+*/
+
+
+
+
+/*while 문을 이용한 구구단 출력 프로그램2*/
+/*
+
+#include <stdio.h>
+
+int main(void)
+{
+	int n=2;
+	int i=1;
+
+	while (n <= 9)
+	{
+		while (i <= 9)
+		{
+			printf("%d*%d=%d\n", n,i,n*i);
+			i++;
+		}
+		i = 1;
+		n++;
+	}
+	return 0;
+}
+*/
+
+
+/*for,while 문을 이용한 구구단 출력 프로그램*/
+/*
+#include <stdio.h>
+
+int main(void)
+{
+	int n;
+	int i=1;
+
+	for(int n=2;n<=9;n++)
+	{
+		while (i <= 9)
+		{
+			printf("%d*%d=%d\n", n,i,n*i);
+			i++;
+		}
+		i = 1;
+	}
+	return 0;
+}
+*/
+
+
+/*자음,모음을 가리는 프로그램*/
+/*
+#include <stdio.h>
+
+int main(void)
+{
+	char c;
+
+	printf("문자를 입력하시오:");
+	scanf("%c", &c);
+
+	switch (c)	//모음:a,e,i,o,u,y
+	{
+	case 'a':
+		printf("모음입니다.\n");
+		break;
+	case 'e':
+		printf("모음입니다.\n");
+		break;
+	case 'i':
+		printf("모음입니다.\n");
+		break;
+	case 'o':
+		printf("모음입니다.\n");
+		break;
+	case 'u':
+		printf("모음입니다.\n");
+		break;
+	case 'y':
+		printf("모음입니다.\n");
+		break;
+	default :
+		printf("자음입니다.\n");
+		break;
+	}
+	return 0;
+}
+*/
+
+
+/*약수를 검증하는 프로그램*/
+/*
+#include <stdio.h>
+
+int main(void)
+{
+	int x, y, d;	//두개의 정수 x,y , 나머지 d
+
+	printf("정수를 입력하시오:");
+	scanf("%d", &x);
+
+	printf("정수를 입력하시오:");
+	scanf("%d", &y);
+
+	d = x % y;		//x/y의 나머지
+
+	if (d == 0)
+	{
+		printf("약수 입니다.\n");
+	}
+	else
+	{
+		printf("약수가 아닙니다.\n");
+	}
+
+	return 0;
+}
+*/
+
+/*최소값을 구하는 프로그램 (3개의 정수)*/
+/*
+#include <stdio.h>
+
+int main(void)
+{
+	int x, y, z;
+
+	printf("3개의 정수를 입력하시오:");
+	scanf("%d %d %d", &x, &y, &z);
+
+	if (x > y)
+	{
+		(y > z) ? printf("제일 작은 정수는 %d\n", z) : printf("제일 작은 정수는 %d\n", y);
+	}
+	else
+	{
+		(x > z) ? printf("제일 작은 정수는 %d\n", z) : printf("제일 작은 정수는 %d\n", x);
+	}
+	return 0;
+}
+*/
+
+/*while문을 이용한 합계를 구하는 프로그램*/
+/*
+#include <stdio.h>
+
+int main(void)
+{
+	int n;
+	int i = 0, sum = 0;
+
+
+	while (i < 5)
+	{
+		printf("값을 입력하시오 :");
+		scanf("%d", &n);
+		sum = sum + n;
+		i++;
+	}
+
+	printf("합계는 %d입니다.\n", sum);
+	return 0;
+}
+*/
+
+/*do while문을 이용한 합계를 구하는 프로그램*/
+/*
+#include <stdio.h>
+
+int main(void)
+{
+	int i, n, sum;
+	sum = 0;
+	i = 0;
+	do {
+		printf("값을 입력하시오:");
+		scanf("%d", &n);
+
+		sum += n;
+		i++;
+	} while (i < 5);
+	printf("합계는 %d입니다.\n", sum);
+
+	return 0;
+}
+*/
+
+/*
+/*do..while문을 이용한 메뉴*/
+
+#include <stdio.h>
+
+int main(void)
+{
+	int i = 0;
+	do
+	{
+		printf("1---새로만들기\n");
+		printf("2---파일열기\n");
+		printf("3---파일닫기\n");
+		printf("하나를 선택하시오.\n");
+		scanf("%d", &i);
+	} while (i < 1 || i>3);
+	printf("선택된 메뉴=%d\n", i);
+	return 0;
+}
+*/
+
+
+/*업&다운 게임을 출력하는 프로그램*/
+/*
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>	
+int main(void)
+{
+	int i,answer, guess;
+
+	srand(time(NULL));
+	answer = rand() % 100; // 0부터 99사이의 랜덤한 수
+	i = 0;		//정답 횟수를 알려주는 변수
+	do
+	{
+		printf("정답을 추측하여 보시오:");
+		scanf("%d", &guess);
+		i++;
+		if (answer < guess)
+			printf("제시한 정수가 높습니다.\n");
+		else if (answer > guess)
+			printf("제시한 정수가 낮습니다.\n");
+		
+	} while (guess != answer);
+	printf("축하합니다.시도한 횟수=%d\n", i);
+
+	return 0;
+}
+*/
+
+
+/*업&다운 게임을 출력하는 프로그램2(범위설정)*/
+/*
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+int main(void)
+{
+	int i, answer, guess,x;	//시도 횟수, 정답, 추측, 범위 설정
+
+	srand(time(NULL));		//매프로그램이 실행될때 마다 난수가 변경
+	
+	printf("0~x까지의 범위를 설정해주세요:");
+	scanf("%d", &x);
+
+	answer = rand() % (x+1); // 0부터 x까지의 랜덤한 수
+	i = 0;		//정답 횟수를 알려주는 변수
+
+	do
+	{
+		printf("정답을 추측하여 보시오:");
+		scanf("%d", &guess);
+		i++;
+		if (answer < guess)
+			printf("제시한 정수가 높습니다.\n");
+		else if (answer > guess)
+			printf("제시한 정수가 낮습니다.\n");
+
+	} while (guess != answer);
+	printf("축하합니다.시도한 횟수=%d\n", i);
+
+	return 0;
+}
+*/
+
+
+
+/*컴퓨터와 가위,바위,보하는 프로그램*/
+/*
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+int main(void)
+{
+	int x, y;
+
+	srand(time(NULL));
+	x = rand() % 2;		//컴퓨터 0.가위 1.바위 2.보
+
+	printf("선택하시오(1:가위 2:바위 3:보\n:");
+	scanf("%d", &y);
+
+	if (x == 0)
+	{
+		if (y == 1) printf("비겼음\n");
+		else if (y == 2) printf("이겼음\n");
+		else printf("졌음\n");
+	}
+	else if (x == 1)
+	{
+		if (y == 1) printf("졌음\n");
+		else if (y == 2) printf("비겼음\n");
+		else printf("이겼음\n");
+	}
+	else
+	{
+		if (y == 2) printf("이겼음\n");
+		else if (y == 2) printf("졌음\n");
+		else printf("비겼음\n");
+	}
+	printf("컴퓨터는 %d, 당신은 %d입니다.\n", x, y);
+
+	return 0;
+}
+*/
+
+
+
+/*while 문을 이용한 성적의 평균 구하기 프로그램*/
+/*
+#include <stdio.h>
+
+int main(void)
+{
+	int grade,n;
+	float sum, average;
+
+	n = 0;
+	sum = 0;
+	grade = 0;
+
+	printf("종료하려면 음수를 입력하시오.\n");
+
+	while (grade >= 0)
+	{
+		printf("성적을 입력하시오 : ");
+		scanf("%d", &grade);
+
+		sum += grade;
+		n++;
+	}
+
+	sum = sum - grade;
+	n--;
+
+	average = sum / n;
+	printf("성적의 평균은 %f입니다.\n", average);
+
+	return 0;
+
+}
+*/
+
+
+
+/*최대 공약수를 구하는 프로그램*/
+/*알고리즘
+1.두 수 가운데 큰수를 x, 작은 수를 y라한다.
+2.y가 0이면 최대 공약수는 x와 같고 알고리즘을 종료한다.
+3.r<-x%y
+4.x<-y
+5.y<-r
+6.단계2로 돌아간다.
+*/
+/*
+#include <stdio.h>
+
+int main(void)
+{
+	int x, y;		//2개의 정수
+	int r;			//나머지
+
+	printf("최대 공약수를 구할 2개의 정수를 입력해주세요.\n:");
+	scanf("%d %d", &x, &y);
+
+	if (x > y)
+	{
+		while (y != 0)
+		{
+			r = x%y;
+			x = y;
+			y = r;
+		}
+		printf("최대 공약수는 %d입니다.\n", x);
+	}
+	else if (x < y)
+	{
+		while (x != 0)
+		{
+			r = y%x;
+			y = x;
+			x = r;
+		}
+		printf("최대 공약수는 %d입니다.\n", y);
+	}
+	else
+	{
+		printf("최대 공약수는 %d입니다.\n", x);
+	}
+	return 0;
+}
+*/
+
+
+/*반복을 이용한 팩토리얼 구하는 프로그램*/
+/*
+#include <stdio.h>
+
+int main(void)
+{
+	int i, n;	//for문 변수, 입력 정수
+	long f;		//팩토리얼 값(클 수 있으므로 롱)
+
+	printf("정수를 입력하시오 : ");
+	scanf("%d", &n);
+
+	f = 1;
+
+	for (i = 1; i <= n; i++)
+	{
+		f *= i;
+	}
+	printf("%d!은 %d입니다.\n", n, f);
+
+	return 0;
+}
+*/
+
+
+/*중첩 for문을 이용하여 *기호를 사각형 모양으로 출력하는 프로그램*/
+/*
+#include <stdio.h>
+
+int main(void)
+{
+	int x, y;
+
+	for (y = 0; y < 5; y++)
+	{
+		for (x = 0; x < 10; x++)
+		{
+			printf("*");
+		}
+		printf("\n");
+	}
+
+	return 0;
+}
+*/
+
+/*각변의 길이가 100이하이고 정수인 직각 삼각형 찾기*/
+/*
+#include <stdio.h>
+
+int main(void)
+{
+	int x, y, z;
+
+	for (z = 1; z <= 100; z++)
+	{
+		for (y = 1; y <= 100; y++)
+		{
+			for (x = 1; x <= 100&&x<y; x++)
+			{
+				if (z*z == y*y + x*x)
+					printf("%d %d %d\n", x, y, z);
+			}
+		}
+	}
+
+	return 0;
+}
+*/
+
+
+/*소수를 구하는 프로그램*/
+/*
+#include <stdio.h>
+
+int main(void)
+{
+	int n;	//원하는 범위
+	int i, j, c;		//검정하는 변수, 약수 , 약수 개수
+	printf("원하는 정수를 입력해주세요:");
+	scanf("%d", &n);
+
+	i = 2;
+	printf("1-%d의 소수 \n:", n);
+
+	while (i <= n)
+	{
+		c = 0;
+
+		for (j = 1; j <= i; j++)
+		{
+			if (i%j == 0)
+			{
+				c += 1;
+			}
+		}
+		if(c==2)
+		printf("%d ", i);
+
+		i++;
+	}
+
+	printf("\n");
+
+	return 0;
+}
+*/
+
+/*소수를 구하는 프로그램*/
+//범위 내의 2의배수,3의배수,5의배수...싹다 지우기
+/*
+#include <stdio.h>
+#define SIZE 101
+
+
+int main(void)
+{
+	int sieve[SIZE] = { 0 };
+	int i,j;
+	for (i = 2; i < SIZE; i++) {
+		if (sieve[i] == 0) {
+			for (j =i; j*i < SIZE; j++) {
+				sieve[i*j] = 1;
+			}
+		}
+	}
+
+	printf("2-%d의 소수:\n", SIZE-1);
+
+	for (i = 2; i < SIZE; i++) {
+		if (sieve[i] == 0) printf("%d ", i);
+	}
+	printf("\n");
+
+	return 0;
+}
+*/
+
+
+
+
+
+/*정수를 입력받아 거꾸로 나열하는 프로그램1*/
+//for문
+
+/*
+#include <stdio.h>
+
+int main(void)
+{
+	int n,d, i;		//정수, 나머지, 반복문
+
+	printf("정수를 입력하시오:");
+	scanf("%d", &n);
+
+	for (i = 1; i<=n; i*=10)
+	{
+		d = (n/i)%10;
+		printf("%d", d);		
+    }
+	
+	printf("\n");
+
+	return 0;
+}
+*/
+
+/*정수를 입력받아 거꾸로 나열하는 프로그램2*/
+//do..while 문
+/*
+#include <stdio.h>
+
+int main(void)
+{
+	int n, x, i;	//입력,출력 정수, 반복문
+
+	printf("정수를 입력하시오:");
+	scanf("%d", &n);
+
+	i = 1;
+
+	do
+	{
+		x = (n / i) % 10;
+		printf("%d", x);
+
+		i *= 10;
+		
+	} while (i <= n);
+
+	printf("\n");
+
+	return 0;
+
+
+}
+*/
+
+
+/*1~n까지 각 정수의 제곱의 합을 구하는 프록램*/
+/*
+#include <stdio.h>
+
+int main(void)
+{
+	int i, n;		//반복문,정수
+	int sum = 0;	//합 0으로 초기화
+
+	printf("n의 값을 입력하시오: ");
+	scanf("%d", &n);
+
+
+	for (i = 1; i <= n; i++)
+	{
+//1^2+3^2+5^2..구하는 코딩
+//		if (i % 2 == 0) continue;
+//		else {
+//			sum += i*i;
+//		}
+
+//2^2+4^2+6^2..구하는 코딩
+		if (i % 2 != 0) continue;
+		else
+		{
+			sum += i*i;
+		}
+
+	}
+
+	printf("계산값은 %d입니다.\n", sum);
+
+	return 0;
+}
+*/
+
+
+//while(1)빠져 나가는 방법
+/*
+
+#include <stdio.h>
+
+int main(void)
+{
+	int kor, eng, mat;	//국어,영어,수학 점수
+	char name[20];
+	int sum;
+	double avg;
+	int n;
+
+	while (1)
+	{
+		printf("====================\n");
+		printf("     Menu\n");
+		printf("====================\n");
+		printf("1.학생 이름 입력\n");
+		printf("2.성적 3과목 입력\n");
+		printf("3.학생 이름 출력\n");
+		printf("4.합계 출력\n");
+		printf("5.평균 출력\n");
+		printf("6.종료");
+
+		printf("메뉴를 선택하세요:");
+		scanf("%d", &n);
+
+
+		switch (n)
+		{
+		case 1: printf("학생 이름 입력:"); scanf("%s", name); break;
+		case 2:
+			printf("국어 영어 수학 점수 입력:");
+			scanf("%d %d %d", &kor, &eng, &mat);
+			sum = kor + eng + mat;
+			avg = sum / 3.0;
+			break;
+		case 3:
+			printf("\n->%s\n", name);
+			break;
+		case 4:
+			printf("\n->%d\n", sum);
+			break;
+		case 5:
+			printf("\n->%lf\n", avg);
+			break;
+		case 6:
+			printf("\n잘못입력되었습니다.\n");
+			return 0;
+		default:
+			printf("\n올바른 값을 입력하시오.\n");
+		}
+		printf("\n\n\n");
+	}
+}
+*/
+
+
+
+//for 문
+1-10까지 홀수의 합
+/*
+#include <stdio.h>
+
+void main()
+{
+	int su, sum = 0;
+	for (su = 1; su <= 10; su += 2)
+	{
+		sum += su;
+	}
+	printf("%d", sum);
+}
+*/
+
+//for문 초기식과 증감식의 외부 표기
+/*
+#include <stdio.h>
+
+void main()
+{
+	int su=1, sum = 0;
+	for (;su<=10;)
+	{
+		sum += su++;
+	}
+
+	printf("%d", sum);
+}
+*/
+
+
+//for문 무한루프
+/*
+#include <stdio.h>
+
+void main()
+{
+	int su=1, sum = 0;
+	for (;;){
+
+		sum += su++;
+		printf("for문 진행 중인 sum=%d\n", sum);
+	}
+
+	printf("for문 완료 후의 sum : %d\n", sum);
+}
+*/
+
+/////////////////////for문 실습
+//Q.다음과 같이 출력하시오
+//1.Hello
+//2.Hello
+//3.Hello
+//4.Hello
+
+/*
+#include <stdio.h>
+
+void main(){
+
+	int i;
+
+	for (i = 1; i <= 4; i++) {
+		printf("%d.Hellow\n", i);
+	}
+
+}
+*/
+
+
+
+//Q.다음과 같이 출력하시오
+// A B C D.....Z
+
+
+#include <stdio.h>
+/*
+void main()
+{
+	int i;
+
+	for (i = 65; i <= 90; i++) {
+		printf("%c ", i);
+	}
+
+	printf("\n");
+
+}
+*/
+
+/*
+#include <stdio.h>
+
+void main() {
+	char c;
+
+	for (c = 'A'; c <= 'Z'; c++) {
+		printf("%c ", c);
+	}
+
+	printf("\n");
+}
+*/
+
+
+//Q.다음과 같이 출력하시오
+// 3+6+9=18
+/*
+#include <stdio.h>
+
+void main() {
+	int i, sum = 0;
+
+	for (i = 1; i <= 10;i++) {
+		if (i % 3 == 0) {
+			printf("%d+", i);
+			sum += i;
+		}
+	}
+
+	printf("\b\b=%d\n", sum);
+}
+*/
+
+
+//Q.첫날에 10원을 저축하고, 다음날에는 전날의 2배를 예금하는 방식으로
+//  한 달 동안 저축한 금액은?
+
+/*
+#include <stdio.h>
+
+void main() {
+	long long money = 10;	//long long 자료형 : 8바이트,정수형 데이터(%lld)
+	long long sum = 0;
+	int day;
+
+	for (day = 1; day <= 31; day++) {
+		sum += money;
+
+		printf("저축금액 : %lld, 누적금액 : %lld, 일차 : %d\n", money, sum, day);
+
+		money *= 2;
+	}
+
+	printf("총 저축 금액 : %lld\n",sum);
+
+
+}
+*/
+
+//Q.1-1000까지의 합을 구하되
+//3의 배수는 제외하고
+//3의 배수이면서 5의 배수는 제외하지 않는 프로그램
+
+/*
+#include <stdio.h>
+
+void main() {
+	int i;
+	int sum = 0;
+
+	for (i = 1; i <= 1000; i++) {
+		if (i % 3 == 0 && i % 5 != 0) {
+			continue;
+		}
+		sum += i;
+		printf("n=%d, sum=%d\n", i, sum);
+	}
+}
+*/
+
+
+/*
+1부터 시작하여 홀수들의 합을 구하면서,
+그합이 10000을 넘지 않는 마지막 수를 구하는 프로그램
+*/
+
+/*
+#include <stdio.h>
+
+void main() {
+	int n;
+	int sum = 0;
+	int last;
+
+	for (n = 1; 1; n++) {
+		if (n % 2 == 1) {
+			sum += n;
+			last = n;
+			printf("last=%d,sum=%d\n", last, sum);
+			if (sum >= 10000) {
+				break;
+			}
+		}
+	}
+	printf("last=%d,sum=%d \n", last, sum);
+}
+*/
+
+
+
+
+
+/*함수 - 정의 및 호출*/
+/*
+#include <stdio.h>
+
+void SumFunc()
+{
+	int i,n,sum=0;
+
+	printf("정수 입력 : ");
+	scanf("%d",&n);
+
+	for(i=0;i<=n;i++){
+		sum+=i;
+	}
+
+	printf("sum=%d\n",sum);
+}
+
+void main()
+{
+	SumFunc();
+}
+*/
+
+
+/*함수 - 매개변수를 이용한 값 전달*/
+/*
+#include <stdio.h>
+
+void SumFunc(int n)
+{
+	int i,sum=0;
+
+	for(i=0;i<=n;i++)
+		sum+=i;
+
+	printf("sum=%d\n",sum);
+}
+
+void main()
+{
+	int n;
+	printf("정수 입력 : ");
+	scanf("%d",&n);
+	SumFunc(n);
+}
+*/
+
+
+/*함수 - 리턴을 이용한 값 전달*/
+/*
+#include <stdio.h>
+
+int SumFunc(int n)
+{
+	int i,sum=0;
+
+	for(i=0;i<=n;i++)
+		sum+=i;
+
+	return sum;
+}
+
+void main()
+{
+	int n,ret;
+	printf("정수 입력 : ");
+	scanf("%d",&n);
+
+	ret=SumFunc(n);
+
+	printf("리턴된 값 : %d\n",ret);
+}
+*/
+
+
+/*함수 - 평균 산출 및 출력 함수*/
+/*
+#include <stdio.h>
+
+double avg(int i,int j)
+{
+	int total; double f;
+	total=i+j;
+	f=total/2.0;
+
+	return f;
+}
+
+void show_avg(int a, int b, double c)
+{
+	printf("%d와 %d의 평균 :",a,b);
+	printf("%.1f\n",c);
+}
+
+void main()
+{
+	int i,j;
+	double f;
+
+	i=2;
+	j=3;
+
+	f=avg(i,j);
+
+	show_avg(i,j,f);
+}
+*/
+
+
+/*함수 - 값의 크기 판별 함수*/
+/*
+#include <stdio.h>
+
+char big(int x,int y)
+{
+	if(x>y)
+		return 'Y';
+	else if(x<y)
+		return 'N';
+	else
+		return '=';
+}
+
+void main()
+{
+	int a=100,b=200;
+	char size=big(a,b);
+
+	if(size=='Y')
+		printf("%d>%d\n",a,b);
+	
+	else if(size=='n')
+		printf("%d<%d\n",a,b);
+
+	
+	else if(size=='=')
+		printf("%d=%d\n",a,b);
+}
+*/
+
+/*함수 - x^y를 구하는 함수*/
+/*
+#include <stdio.h>
+
+int power(int x, int y)
+{
+	int i;		//반복문
+	long result = 1;	
+
+	for (i = 1; i <= y; i++) {
+		result *= x;
+	}
+
+	return (result);
+}
+
+int main(void)
+{
+	int x, y;
+
+	printf("x를 입력 :");
+	scanf("%d", &x);
+
+	printf("y를 입력 :");
+	scanf("%d", &y);
+
+	printf("%d^%d=%d\n", x, y, power(x, y));
+
+	return 0;
+}
+*/
+
+/*
+#include <stdio.h>
+
+int get_integer(void);
+int power(int  x, int y);
+
+int main(void)
+{
+	int a, b;
+
+	a = get_integer();
+	b = get_integer();
+
+	printf("%d의 %d승은 %d입니다.\n",a,b, power(a, b));
+
+	return 0;
+}
+
+
+//사용자로부터 값을 입력받아서 반환
+int get_integer(void)
+{
+	int n;
+	printf("정수를 입력하시오.");
+	scanf("%d", n);
+
+	return n;
+}
+
+int power(int x, int y)
+{
+	int i;
+	long result = 1;
+	for (i = 1; i <= y; i++)
+		result *= x;
+
+	return result;
+}
+*/
+
+
+
+/*소수를 구하는 프로그램*/
+/*
+#include <stdio.h>
+
+int is_prime(int);
+int get_integer(void);
+
+int main(void)
+{
+	int n, result;
+
+	n = get_integer();
+	result = is_prime(n);
+
+	if (result == 1)
+		printf("%d는 소수입니다.\n", n);
+	else
+		printf("%d은 소수가 아닙니다.\n", n);
+	return 0;
+}
+
+int get_integer(void)
+{
+	int x;
+
+	printf("정수를 입력하시오:");
+	scanf("%d", &x);
+
+	return x;
+}
+
+int is_prime(int n)
+{
+	int divisors = 0, i;
+	for (i = 1; i <= n; i++)
+	{
+		if (n%i == 0)
+			divisors++;
+	}
+	return (divisors == 2);		//약수가 2개면 1을 아니면 0을 반환
+}
+
+//goto 문 사용해서 효율 적으로.
+int is_prime(int n)
+{
+	int divisors = 0, i;
+	for (i = 2; i < n; i++)
+	{
+		if (n%i == 0) {
+			goto OUT;
+		}
+	}
+	return 1;
+	OUT :
+	return 0;
+}
+
+*/
+
+
+
+
+/*함수 - 팩토리얼을 구하는 함수*/
+/*
+#include <stdio.h>
+
+int fact(int n)
+{
+	int i;
+	int result = 1;
+
+	for (i = 1; i <= n; i++) {
+		result *= i;
+	}
+	return result;
+}
+
+int main(void)
+{
+	int n;
+
+	printf("구하고자하는 팩토리얼 입력 :");
+	scanf("%d", &n);
+
+	printf("%d!=%d\n", n, fact(n));
+
+	return 0;
+}
+*/
+
+/*함수 - 기타 형식*/
+/*
+#include <stdio.h>
+
+void show(int a){
+	printf("show함수\n");
+	printf("%d\n",a);
+}
+
+void main()
+{
+	show(10);
+}
+*/
+
+
+
+/*
+#include <stdio.h>
+
+void show(int a);		//함수의 선언
+
+void main()
+{
+	show(10);
+}
+
+void show(int a)
+{
+	printf("show함수\n");
+	printf("%d\n",a);
+}
+*/
+
+
+/*재귀함수*/
+/*
+#include <stdio.h>
+
+void main()
+{
+	printf("재귀함수 호출\n");
+	main();
+}
+//무한루프 생김
+*/
+
+
+
+/*재귀함수 - 2번 반복*/
+/*
+#include <stdio.h>
+
+void main()
+{
+	static int a=0;			//정적 변수
+					//static은 프로그램 실행시 생성 BUT 초기화는 함수 부분에서 이루어짐
+
+	if(a>=2) return;
+	else a+=1;
+
+	printf("%d:재귀함수 출력\n",a);
+
+	main();
+}
+*/
+
+
+
+/*재귀함수 - 팩토리얼 결과 산출*/
+/*
+#include <stdio.h>
+
+int fact(int n)
+{
+	if(n==1) return 1;
+	else return (n*fact(n-1));
+}
+
+void main()
+{
+	int x;
+	
+	printf("입력 : ");
+	scanf("%d",&x);
+
+	printf("%d!의 값 : %d\n",x,fact(x));
+
+}
+*/
+
+
+
+
+/*재귀함수 - 10진수로 이진수 구하기*/
+#include <stdio.h>
+
+void get_binary(int);
+void main()
+{
+	int n;
+
+	printf("2진수 구하고 싶은 수 입력 :");
+	scanf("%d", &n);
+
+	get_binary(n);
+
+}
+
+void get_binary(int a)
+{
+	if (a == 1 || a == 0) {
+		printf("%d", a);
+		return;
+	}
+	else {
+		get_binary(a / 2);
+		printf("%d", a % 2);
+	}
+}
+
+
+
+
+
+/*난수 생성 프로그램*/
+/*
+#include <stdio.h>
+#include <stdlib.h>		//rand()가 들어있는 헤더파일
+
+
+int main(void)
+{
+	int i;
+
+	for (i = 0; i < 6; i++) {
+		printf("%d\n", rand()%44);	//rand()%44 는 44로 나눈 나머지 i.e 0~43
+	}
+	return 0;
+}
+*/
+/*
+#include <stdio.h>
+#include <stdlib.h>	//rand()의 원형 정의
+#include <time.h>	//time()의 원형 정의
+
+int main(void)
+{
+	int i;
+
+	srand((unsigned)time(NULL)); //srand()는 난수 발생기의 시드(seed)를 설정한다.
+
+	for (i = 0; i < 6; i++) {
+		printf("%d\n", rand()%44);	//rand()%44 는 44로 나눈 나머지 i.e 0~43
+						//구간 [a,b]는 a+rand()%(b-a+1) 로 설정
+	}
+	return 0;
+}
+*/
+
+
+
+/*자동차 경주 게임*/
+/*
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+void disp_car(int car_number,int distance);
+
+int main(void)
+{
+	int i;
+	int car1_dist = 0, car2_dist = 0;
+
+	srand((unsigned)time(NULL));
+
+	for (i = 0; i < 6; i++) {
+		car1_dist += rand() % 100;
+		car2_dist += rand() % 100;
+		disp_car(1, car1_dist);
+		disp_car(2, car2_dist);
+		printf("--------------------\n");
+		getch();			//사용자가 아무 키나 누르기를 기다린다.
+	}
+	return 0;
+}
+
+void disp_car(int car_number, int distance)
+{
+	int i;
+
+	printf("Car %d:", car_number);
+	for (i = 0; i < distance / 10; i++) {
+		printf("*");
+	}
+	printf("\n");
+
+}
+*/
+
+
+
+
+/*야구게임*/
+//정답을 입력 말고 i번째 정답 입력 해보기.
+
+/*
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+int get_guess();						//정답 입력 함수
+int make_answer();						//정답 난수 생성 함수
+int decide(int a, int b, int c, int d, int e, int f);		//게임의 결과를 판정하는 함수
+
+int main(void)
+{
+	int guess1, guess2, guess3;							//추측 3개
+	int answer1, answer2, answer3;							//정답 3개
+	int i, result;									//반복문, 게임 결과
+
+	srand((unsigned)time(NULL));
+
+	//서로다른 난수 생성
+	while (1) {
+		answer1 = make_answer();
+		answer2 = make_answer();
+		answer3 = make_answer();
+
+		if (answer1 != answer2&&answer2 != answer3&&answer3 != answer1) break;
+	}
+
+	printf("%d %d %d\n", answer1, answer2, answer3);
+
+	//게임 반복
+	i = 1;
+	while (1) {
+		printf("0-9중 3가지를 골라 순서대로 입력해주세요.\n");
+		guess1 = get_guess();
+		guess2 = get_guess();
+		guess3 = get_guess();
+
+		result = decide(answer1, answer2, answer3, guess1, guess2, guess3);
+
+		if (result == 1) break;
+		if (i == 9) break;
+		i++;
+	}
+	if (i == 9) printf("실패! 정답은 %d %d %d\n", answer1, answer2, answer3);
+	printf("게임종료! <총시도횟수: %d>\n\n", i);
+}
+
+int get_guess(void)
+{
+	int n;
+	printf("정답을 입력(0-9) : ");
+	scanf("%d", &n);
+
+	return n;
+}
+
+int make_answer(void)
+{
+	int a;
+
+	a = rand() % 10;
+
+	return a;
+}
+
+
+
+int decide(int a, int b, int c, int d, int e, int f)
+{
+	//	int a, b, c, d, e, f;		//a,b,c정답 , d,e,f 추측
+	int st = 0, ba = 0;					//스트라이크 , 볼 갯수
+
+	if (a == d&&b == e&&c == f) {
+		printf("\n\"축하합니다\" 3스트라이크입니다!!!! \n\n");
+		return 1;
+	}
+	else {
+		if (a == d) st++;
+		if (b == e) st++;
+		if (c == f) st++;
+
+		if (a == e || a == f) ba++;
+		if (b == d || b == f) ba++;
+		if (c == d || c == e) ba++;
+
+		printf("%d스트라이크 %d볼!\n\n", st, ba);
+		return 0;
+	}
+
+
+}
+*/
+
+
+/*system.c*/
+/*
+#include <stdio.h>
+#include <stdlib.h>
+
+int main(void)
+{
+	system("dir");			//dir명령어를 실행
+	printf("아무 키나 치세요\n");
+	getchar();				//하나의 문자를 받는 함수
+	system("cls");
+
+	return 0;
+}
+*/
+
+/*수학 함수*/
+/*
+삼각함수
+double sin(double x)			//사인값 계산
+double cos(double x)			//코사인값 계산
+double tan(double x)			//탄젠트값 계산
+
+역삼각함수
+double acos(double x)			//역코사인값 계산 결과값 범위[0,pi]
+double asin(double x)			//역사인값 계산 결과값 범위[-pi/2,pi]
+double atan(double x)			//역탄젠트값 계산 결과값 범위[-pi/2,pi]
+
+쌍곡선함수
+double cosh(double x)			//쌍곡선 코사인
+double sinh(double x)			//쌍곡선 사인
+double tanh(double x)			//쌍곡선 탄젠트
+
+지수함수
+double exp(double x)			//e^x
+double log(double x)			//log_e_x
+double log10(double x)			//log_10_x
+
+기타함수
+double ceil(double x)			//x보다 작지 않은 가장 작은 정수
+double floor(double x)			//x보다 크지 않은 가장 큰 정수
+double fabs(double x)			//실수 x의 절대값
+int abs(int x)					//정수 x의 절대값
+double pow(double x,double y)	//x^y
+double sqrt(double x)			//루트 x
+*/
+
+
+
+/*0.0~1.0 난수 생성*/
+/*
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+double f_rand();
+
+int main(void)
+{
+	int i;
+	srand(time(NULL));
+	for (i = 1; i <= 5; i++) {
+		printf("%lf\n", f_rand());
+	}
+
+	return 0;
+}
+
+double f_rand()
+{
+	return rand() / (double)RAND_MAX; 			//의미??
+}
+*/
+
+
+/*정적(static),자동 지역 변수*/
+/*
+#include <stdio.h>
+
+void sub(void);
+
+int main(void)
+{
+	int i;
+	for (i = 0; i < 4; i++)
+		sub();
+
+	return 0;
+}
+
+void sub(void)
+{
+	int auto_count = 0;					//auto_count라는 변수가 생성되고 함수가 한번 끝나면 삭제됨.->호출 때마다 0으로 초기화됨.
+	static int static_count = 0;		//static_count라는 변수가 생성되고 끝나면 소멸x ->이전 값을 유지.
+
+	auto_count++;
+	static_count++;
+
+	printf("auto_count=%d\n", auto_count);
+	printf("static_count=%d\n", static_count);
+}
+*/
+
+
+/*레지스터 register지정자*/
+/*
+#include <stdio.h>
+
+int main(void)
+{
+	register int i;		//변수 i는 레지스터(CPU)에 저장됨(속도빠름, cpu별 저장 개수 제한 //요즘 컴파일 성능 향상되서 크게 고민 x
+	int sum = 0;
+
+//	p=&i;				//컴파일 오류 왜냐하면, 레지스터는 주소가 없기 때문.
+	for (i = 0; i < 100; i++)
+	{
+		sum += i;
+	}
+
+	printf("%d\n", sum);
+
+	return 0;
+}
+*/
+
+
+/*로그인 횟수 3회 까지 제한*/
+/*
+#include <stdio.h>
+#include <stdlib.h>
+
+#define SUCCESS 1
+#define FAIL 2
+#define LIMIT 3
+int check(int, int);
+
+int main(void)
+{
+	int id, password, result;
+	
+	while (1) {
+		printf("id:____\b\b\b\b");
+		scanf("%d", &id);
+
+		printf("pass:____\b\b\b\b");
+		scanf("%d", &password);
+
+		result = check(id, password);
+		if (result == SUCCESS) break;
+	}
+	printf("로그인성공\n");
+	return 0;
+}
+
+int check(int id, int password)
+{
+	static int super_id = 1234;
+	static int super_pass = 5678;
+	static int try_count = 0;
+
+	try_count++;
+	if (try_count > LIMIT) {
+		printf("횟수초과\n");
+		exit(1);
+	}
+
+	if (id == super_id&&password == super_pass) {
+		return SUCCESS;
+	}
+	else return FAIL;
+}
+*/
+
+
+/*가변 매개 변수 함수*/
+/*
+#include <stdio.h>
+#include <stdarg.h>
+
+int sum(int, ...);
+int main(void)
+{
+	int answer = sum(4, 4, 3, 2, 1);	//맨앞 4는 인수의 개수
+	printf("합은 %d입니다.\n", answer);
+
+	return 0;
+}
+
+int sum(int num, ...)					//가변 매개 변수 표시
+{
+	int answer = 0;
+	va_list argptr;
+
+	va_start(argptr, num);
+	for (; num > 0; num--)
+		answer += va_arg(argptr, int);		//인수 추출(인수들이 하나씩 반환 됨)
+
+	va_end(argptr);
+	return (answer);
+}
+*/
+
+
+/*피보나치 수열 구하는 프로그램*/
+/*
+#include <stdio.h>
+
+int fib_iter(int n);
+
+int main(void)
+{
+	int n;
+
+	printf("몇번째 항까지 구할까요?");
+	scanf("%d", &n);
+
+	printf("%d항은 : %d\n ",n,fib_iter(n));
+	return 0;
+}
+
+int fib_iter(int n)
+{
+	if (n < 2) return n;
+	else
+	{
+		int i, tmp, f1 = 1, f0 = 0;
+		for (i = 2; i <= n; i++) {
+			tmp = f1;
+			f1 += f0;
+			f0 = tmp;
+		}
+		return f1;
+	}
+}
+*/
+
+
+/*2진수 형식으로 출력하는 프로그램*/
+/*
+#include <stdio.h>
+void print_binary(int x);
+
+int main(void)
+{
+	int n;
+
+	printf("10진수 입력:");
+	scanf("%d", &n);
+
+	print_binary(n);
+
+	return 0;
+}
+
+void print_binary(int x)
+{
+	if (x > 0)
+	{
+		print_binary(x / 2);
+		printf("%d", x % 2);
+	}
+}
+*/
+
+
+/*최대 공약수를 구하는 프로그램*/
+/*
+
+#include <stdio.h>
+
+int max(int, int);
+int min(int, int);
+int gcd(int, int);
+
+int main(void)
+{
+	int n1, n2;		//입력 받는 두 수
+	int x1, x2;		//두 수중 큰수, 작은수
+	printf("두 수를 입력해주세요:");
+	scanf("%d %d", &n1, &n2);
+
+	if (n1 == n2) printf("%d와 %d의 최대 공약수는 %d입니다.\n", n1, n2, n1);
+	else {
+
+		x1 = max(n1, n2);
+		x2 = min(n1, n2);
+
+		printf("%d와 %d의 최대 공약수는 %d입니다.\n", n1, n2, gcd(x1, x2));
+	}
+
+	return 0;
+
+}
+
+int max(int n1, int n2)
+{
+	if (n1 > n2) return n1;
+	else return n2;
+}
+
+int min(int n1, int n2)
+{
+	if (n1 < n2) return n1;
+	else return n2;
+}
+
+int gcd(int x1, int x2)
+{
+	if (x2 == 0) return x1;
+	else return gcd(x2, x1%x2);
+}
+*/
+
+/*1차원 배열-for문의 활용*/
+
+/*
+#include <stdio.h>
+
+int main(void)
+{
+	int n[5]; int i;
+//	int a[5]={0}; //a[0]에는 0값, 나머지는 초기값 0
+// 	int a[5]={1,2};	//a[0]=1,a[1]=2 나머지는 0
+//	배열은 초기화 할때 제외하고 {} 불가능!
+	for (i = 0; i < 5; i++) {
+		n[i] = i + 1;
+	}
+
+	for (i = 0; i < 5; i++) {
+		printf("%d\n", n[i]);
+	}
+
+	return 0;
+}
+*/
+
+
+
+/*1차원 배열-문자열과 for 문(+scanf)*/
+/*
+#include <stdio.h>
+//define SIZE 10;
+
+int main(void)
+{
+//	char b[SIZE];
+	char a[10];
+	int i;
+	printf("문자열 입력:");
+	scanf("%s", a);						//abc입력 ->abc\w------(마지막 NULL자동 저장, 나머지는 쓰레기 값
+	
+	printf("한글자씩 출력\n");
+	for (i = 0; i < 10; i++) {
+		printf("%c\n", a[i]);
+	}
+
+	printf("\n\n전체 문자열 : %s\n", a);	//출력시 NULL 전까지 출력
+
+	return 0;
+}
+*/
+
+/*배열 갯수 구하는 프로그램*/
+/*
+#include <stdio.h>
+
+int main(void)
+{
+	int grade[] = { 1,2,3,4,5,6,7,8,9 };
+	int i, size;
+	size = sizeof(grade) / sizeof(grade[0]);		//grade[]의 원소 개수
+
+	printf("sizeof(grade)=%d\nsizeof(grade[0])=%d\n", sizeof(grade), sizeof(grade[0]));
+	printf("sizeof(grade)/sizeof(grade[0])=%d\n", sizeof(grade) / sizeof(grade[0]));
+
+	for (i = 0; i < size; i++) {
+		printf("grade[%d]=%d\n", i, grade[i]);
+	}
+	return 0;
+}
+*/
+
+/*
+#include <stdio.h>
+
+int main(void)
+{
+	int index[11];
+	int a[11] = { 0,1,2,3,4,5,6,7,8,9,10 };
+
+	int i;
+
+	for (i = 0; i < 11; i++) {
+		index[i] = i;
+	}
+
+	for (i = 0; i < 11; i++) {
+		printf("index[%d]=%d\n", i, index[i]);
+	}
+	for (i = 0; i < 11; i++) {
+		printf("a[index%d]=%d\n", index[i], a[i]);
+	}
+
+	return 0;
+}
+*/
+/*오름차순 프로그램*/
+/*
+#include <stdio.h>
+
+int main(void)
+{
+	int n[5] = { 4,8,2,7,6 };
+	int i, j;
+	int tmp;
+
+	for (i = 0; i < 5; i++) {
+		printf("%d,", n[i]);
+	}
+	printf(" 를 오름차순으로 정리하면\n:");
+
+	for (i = 0; i < 4; i++) {
+		for (j = 1; j < 5; j++) {
+			if (n[i] > n[j]) {
+				tmp = n[i];
+				n[i] = n[j];
+				n[j] = tmp;
+			}
+		}
+	}
+
+	for (i = 0; i < 5; i++) {
+		printf("%d,", n[i]);
+	}
+	printf("\n");
+
+	return 0;
+}
+*/
+
+/*배열의 복사*/
+/*
+#include <stdio.h>
+#define SIZE 5
+
+int main(void)
+{
+	int i;
+	int a[SIZE] = { 1,2,3,4,5 };
+	int b[SIZE];
+
+	for (i = 0; i < SIZE; i++) {
+		b[i] = a[i];
+	}
+	printf("a[i]=");
+	for (i = 0; i < SIZE; i++) {
+		printf("%d ", a[i]);
+		
+	}
+	printf("\nb[i]=");
+	for (i = 0; i < SIZE; i++) {
+		printf("%d ", b[i]);
+
+	}
+
+	printf("\n");
+	return 0;
+}
+*/
+
+
+/*배열의 비교*/
+/*
+#include <stdio.h>
+
+#define SIZE 5
+
+int main(void)
+{
+	int a[SIZE] = { 1,2,3,4,5 };
+	int b[SIZE] = { 1,2,3,4,5 };
+	int i,same;
+
+	for (i = 0; i < SIZE; i++) {
+		if (a[i] != b[i]) {
+			printf("두 배열은 다릅니다.\n"); 
+			goto OUT;
+		}
+	}
+	printf("두배열은 같습니다.\n");
+
+	OUT:
+	return 0;
+
+}
+*/
+
+
+/*좌석 예약 프로그램*/
+/*
+#include <stdio.h>
+
+#define SIZE 10
+
+int main(void)
+{
+	char ans1;
+	int ans2, i;
+	int seats[SIZE] = { 0 };
+
+	while (1) {
+		printf("좌석을 예약하시겠습니까?(y또는n):");
+		scanf(" %c", &ans1);		//공백문자는 제외하고 일반 문자만을 입력받는다.
+
+		if (ans1 == 'y')
+		{
+			printf("--------------------\n");
+			printf(" 1 2 3 4 5 6 7 8 9 10\n");
+			printf("--------------------\n");
+
+			for (i = 0; i < SIZE; i++) {
+				printf(" %d", seats[i]);
+			}
+			printf("\n");
+
+			printf("몇번째 좌석을 예약하시겠습니까?");
+			scanf("%d", ans2);
+
+			if (ans2 <= 0 || ans2 > SIZE) {
+				printf("1부터 10사이의 숫자를 입력하세요.\n");
+				continue;
+			}
+			if (seats[ans2 - 1] == 0) {
+				seats[ans2 - 1] = 1;
+				printf("예약 되었습니다.\n");
+			}
+			else
+				printf("이미 예약된 자리입니다.\n");
+		}
+		else if (ans1 == 'n')
+			break;
+	}
+	return 0;
+}
+*/
+
+
+/*난수 생성 후 최소,최대값 찾기*/
+/*
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#define SIZE 10
+
+int f_rand();
+int f_minimum(int [SIZE]);
+int f_maximum(int [SIZE]);
+
+int main(void)
+{
+	srand((unsigned)time(NULL));
+	int rand[SIZE];
+	int i, minimum,maximum;
+
+	for (i = 0; i < SIZE; i++) {
+		rand[i] = f_rand();
+	}
+	
+	minimum = f_minimum(rand);
+	maximum = f_maximum(rand);
+	
+	printf("----------------------------\n");
+	printf("1  2  3  4  5  6  7  8  9  10\n");
+	printf("----------------------------\n");
+
+	for (i = 0; i < SIZE; i++) {
+		printf("%-3d", rand[i]);
+	}
+	printf("\n\n");
+
+	printf("최소값 : %d, 최대값 : %d 입니다.\n", minimum,maximum);
+
+	return 0;
+}
+
+
+int f_rand()
+{
+	return (rand() % 100) + 1;
+}
+
+int f_minimum(int rand[SIZE])
+{
+	int i, minimum;
+
+	minimum = rand[0];
+
+	for (i = 1; i < SIZE; i++) {
+		if (minimum >= rand[i]) {
+			minimum = rand[i];
+		}
+	}
+
+	return minimum;
+}
+
+int f_maximum(int rand[SIZE])
+{
+	int i, maximum;
+
+	maximum = rand[0];
+
+	for (i = 1; i < SIZE; i++) {
+		if (maximum <= rand[i]) {
+			maximum = rand[i];
+		}
+	}
+
+	return maximum;
+}
+*/
+
+
+/*투표 집계하기*/
+/*
+#include <stdio.h>
+#define SIZE 11
+
+int main(void)
+{
+	int vote[SIZE] = { 0 };
+	int i, ans;
+
+	while (1) {
+		printf("몇번 후보자를 선택하시겠습니까?(종료:-1)");
+		scanf("%d",&ans);
+
+		if (ans == -1) break;
+		else if (ans <= 0 || ans > 10) {
+			printf("1-10사이의 숫자를 선택해주세요.");
+		}
+		else {
+			vote[ans]++;
+		}
+	}
+
+	printf("값   특표결과\n");
+	for (i = 1; i < SIZE; i++) {
+		printf("%2d%8d\n", i,vote[i]);
+	}
+
+	return 0;
+}
+*/
+
+
+/*주사위눈 빈도(1000)구하는 프로그램*/
+/*
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+#define SIZE 6
+
+int main(void)
+{
+	srand((unsigned)time(NULL));
+	int freq[SIZE] = { 0 };
+	int i;
+
+	for (i = 0; i < 1000; i++) {
+		freq[rand()%6]++;
+	}
+
+	for (i = 0; i < SIZE; i++) {
+		printf("%d의 빈도 : %d\n", i + 1, freq[i]);
+	}
+
+	return 0;
+
+}
+*/
+
+
+
+/*배열과 함수*/
+/*
+#include <stdio.h>
+#define STUDENTS 5
+
+int get_average(int socre[], int n);	//배열을 받는 매개 변수는 크기 적을 필요 x
+
+int main(void)
+{
+	int grade[STUDENTS] = { 1,2,3,4,5 };
+	int avg;
+
+	avg = get_average(grade, STUDENTS);
+	printf("평균은 %d입니다.\n", avg);
+
+	return 0;
+
+}
+
+int get_average(int score[], int n)
+{
+	int i;
+	int sum = 0;
+
+	for (i = 0; i < n; i++) {
+		sum += score[i];
+	}
+
+	return sum / n;
+}
+*/
+
+
+/*
+#include <stdio.h>
+#define SIZE 7
+
+void square_array(int a[], int size);
+void print_array(int a[], int size);
+
+int main(void)
+{
+	int list[SIZE] = { 1,2,3,4,5,6,7 };
+
+	print_array(list, SIZE);
+	square_array(list, SIZE);
+	print_array(list, SIZE);
+
+	return 0;
+
+}
+
+//배열을 인수로 받아서 배열 내의 모든 원소를 제곱한다. 배열은 원본이 전달되므로, 호출된 함수가 배열의 원소를 수정하면 원본 배열의 내용도 동시에 수정된다.
+//배열의 변경을 금지하고 싶으면 void square_array(const int a[],size)
+void square_array(int a[], int size)
+{
+	int i;
+	for (i = 0; i < size; i++)
+	{
+		a[i] = a[i] * a[i];
+	}
+
+}
+void print_array(int a[], int size)
+{
+	int i;
+	for (i = 0; i < size; i++) {
+		printf("%3d ", a[i]);
+	}
+	printf("\n");
+}
+*/
+
+
+/*배열의 정렬*/
+/*
+#include <stdio.h>
+#define SIZE 10
+
+int main(void)
+{
+	int list[SIZE]={ 3,2,9,7,1,4,8,0,6,5 };
+	int i, j, temp, least;
+
+	for (i = 0; i < SIZE - 1; i++) {
+		least = i;						//i가 최소값이라고 가정
+		for (j = i + 1; j < SIZE; j++) {	//최소값을 구하는 과정
+			if (list[j] < list[least]) {
+				least = j;
+			}
+		}
+		temp = list[i];
+		list[i] = list[least];
+		list[least] = temp;
+	}
+
+	for (i = 0; i < SIZE; i++) {
+		printf("%d ", list[i]);
+	}
+
+	return 0;
+}
+*/
+
+
+/*배열의 정렬 + 오름차순,내림차순 함수*/
+/*
+#include <stdio.h>
+#define SIZE 500
+void show_asc(int list[],int size);
+void show_desc(int list[],int size);
+
+int main(void)
+{
+	int size,i;
+	int list[SIZE];
+
+	printf("숫자의 개수 입력:");
+	scanf("%d", &size);
+	
+	for (i = 0; i < size; i++) {
+		printf("%d번째 수:", i);
+		scanf("%d", &list[i]);
+	}
+
+	show_asc(list, size);
+	show_desc(list, size);
+
+}
+
+void show_asc(int list[], int size)
+{
+	int i, j, temp, least;
+	for (i = 0; i < size - 1; i++) {
+		least = i;
+		for (j = i + 1; j < size; j++) {
+			if (list[j] < list[least]) least = j;
+		}
+		temp = list[i];
+		list[i] = list[least];
+		list[least] = temp;
+	}
+
+	printf("오름차순(ASC)\n:");
+
+	for (i = 0; i < size; i++) {
+		printf("%d ", list[i]);
+	}
+	printf("\n");
+
+	printf("내림차순(DESC)\n:");
+	for (i = size - 1; i >= 0; i--) {
+		printf("%d ", list[i]);
+	}
+
+	printf("\n");
+
+}
+void show_desc(int list[], int size)
+{
+	int i, j, temp, max;
+	for (i = 0; i < size - 1; i++) {
+		max = i;
+		for (j = i + 1; j < size; j++) {
+			if (list[j] > list[max]) {
+				max = j;
+			}
+		}
+		temp = list[i];
+		list[i] = list[max];
+		list[max] = temp;
+	}
+
+	printf("내림차순(ASC)\n:");
+
+	for (i = 0; i < size; i++) {
+		printf("%d ", list[i]);
+	}
+	printf("\n");
+
+	printf("오름차순(DESC)\n:");
+	for (i = size - 1; i >= 0; i--) {
+		printf("%d ", list[i]);
+	}
+
+	printf("\n");
+
+}
+*/
+
+
+
+
+/*탐색*/
+/*
+#include <stdio.h>
+#define SIZE 16
+
+int binary_search(int[], int, int);
+
+int main(void)
+{
+	int key;
+	int grade[SIZE] = { 2,6,11,13,18,20,22,27,29,30,34,38,41,42,45,47 };
+
+	printf("탐색할 값을 입력하시오:");
+	scanf("%d", &key);
+
+	printf("탐색결과(인덱스)=%d\n", binary_search(grade, SIZE, key));
+
+	return 0;
+}
+
+int binary_search(int list[],int n, int key)
+{
+	int low, high, middle;
+
+	low = 0;
+	high = n - 1;
+
+	while (low <= high) {
+		printf("[%d %d]\n", low, high);
+		middle = (low + high) / 2;
+		if (key == list[middle]) {
+			return middle;
+		}
+		else if (key > list[middle]) {
+			low = middle + 1;
+		}
+		else {
+			high = middle - 1;
+		}
+	}
+	return -1;
+}
+*/
+
+/*2차원 배열의 초기화*/
+/*
+#include <stdio.h>
+
+int main(void)
+{
+	int s[3][5] = {
+				{0,1,2,3,4},
+				{10,11,12,13,14},
+				{20,21,22,23,24}
+	};
+
+	int i, j;
+
+	for (i = 0; i < 3; i++) {
+		for (j = 0; j < 5; j++)
+			printf("%d ", s[i][j]);
+		printf("\n");
+	}
+	
+	return 0;
+}
+*/
+
+
+
+/*10진수를 2진수로 표현하는 프로그램*/
+/*
+#include <stdio.h>
+#define SIZE 32
+
+void f_change_de_bi(int[],int);
+void print(int[]);
+
+int main(void)
+{
+	int n;			//10진수
+	int binary[SIZE] = { 0 };		//2진수 저장 데이터(0초기화)
+
+	printf("10진수 숫자를 입력해주세요:");
+	scanf("%d", &n);
+
+	f_change_de_bi(binary,n);
+
+	print(binary);
+
+	return 0;
+
+}
+
+
+void f_change_de_bi(int list[], int n)
+{
+	int i;
+	for (i = 0; i < SIZE&&n>0; i++) {
+		list[i] = n % 2;
+		n = n / 2;
+	}
+}
+void print(int list[])
+{
+	int i;
+	for (i = SIZE-1; i >=0; i--) {
+		printf("%d",list[i]);
+	}
+	printf("\n");
+}
+*/
+
+
+/*포인터 변수의 이용*/
+/*
+#include <stdio.h>
+
+void main()
+{
+	int n1 = 10, n2;
+	int *ptr1, *ptr2;
+	ptr1 = &n1; ptr2 = &n2;
+
+	(*ptr1)++;		//*ptr1=*ptr1+1 //(n1)++;
+	*ptr2 = 5;		
+	*ptr1 = *ptr1 + *ptr2;	//(우변;값)11+5를 (좌변;공간)ptr1포인터 공간에 저장하라
+
+	printf("n1=%d,n2=%d\n", *ptr1, *ptr2);
+}
+*/
+
+
+/*포인터 변수의 연산*/
+/*
+/*포인터 변수의 연산*/
+#include <stdio.h>
+
+void main()
+{
+	int n = 123;
+	int *pn;
+	char c = 'A';
+	char *pc;
+
+	pn = &n;
+	pc = &c;
+
+	printf("--int형 포인터 변수의 연산--\n");
+	printf("pn=%d\n", pn);
+	printf("pn+1=%d\n", pn + 1);	//(int 자료형 1개 =4)
+	printf("pn+2=%d\n", pn + 2);	//(int 자료형 2개 =8)
+	printf("pn+3=%d\n", pn + 3);	//(int 자료형 3개 =12)
+
+	printf("--char형 포인터 변수의 연산--\n");
+	printf("pc=%d\n", pc);
+	printf("pc+1=%d\n", pc + 1);	//(Char 자료형 1개=1)
+	printf("pc+2=%d\n", pc + 2);	//(Char 자료형 2개=2)
+	printf("pc+3=%d\n", pc + 3);	//(Char 자료형 3개=3)
+
+}
+*/
+
+/*포인터의 증감 연산*/
+/*
+#include <stdio.h>
+
+int main(void)
+{
+	int i = 10;
+	int *pi = &i;
+	
+	printf("i=%d,pi=%d\n", i, pi);
+	(*pi)++;	//pi가 가리키는 대상을 증가
+	printf("i=%d,pi=%d\n", i, pi);
+
+	printf("i=%d,pi=%d\n", i, pi);
+	*pi++;		//pi를 증가(int형이니까 +4)
+	printf("i=%d,pi=%d\n", i, pi);
+
+	return 0;
+	
+//	v = *pa++;		//pa가 가리키는 값을 v에 대입한 후에 p를 증가한다.
+//	v = (*pa)++;		//pa가 가리키는 값을 v에 대입한 후에 pa가 가리키는 값을 증가한다.
+//	v = *++pa;		//pa를 증가시킨 후에 pa가 가리키는 값을 v에 대입한다.
+//	v = ++*pa;		//pa가 가리키는 값을 가져온 후에 그 값을 증가하여 v에 대입한다.
+
+
+}
+*/
+
+/*포인터 변수의 크기*/
+/*
+#include <stdio.h>
+
+void main()
+{
+	char a = 'A'; float b = 12.34;
+	char *pa;		float *pb;
+	pa = &a;		pb = &b;
+
+	printf("문자형 변수의 크기 =%d\n", sizeof(a));
+	printf("포인터 문자형 변수의 크기 =%d\n", sizeof(pa));
+	printf("실수형 변수의 크기 =%d\n", sizeof(b));
+	printf("포인터 실수형 변수의 크기 =%d\n", sizeof(pb));
+	//포인터 변수는 주소(정수)를 표시하므로 int형과 같은 4byte.
+}
+*/
+
+
+/*포인터의 형변환*/
+//다른 메모리 주소 건들수 있으므로 조심
+/*
+#include <stdio.h>
+
+int main(void)
+{
+	int i;
+	char buffer[8];
+	double *pd;
+	int *pi;
+
+	pd = (double *)buffer;	//char형 포인터를 double형 포인터로 변환. 배열의 이름은 char형 포인터이다.
+	*pd = 3.14;
+	printf("%f\n", *pd);
+
+	pi = (int *)buffer;		//char형 포인터를 int형 포인터로 변환
+	*pi = 123;
+	*(pi + 1) = 456;
+	printf("%d %d\n", *pi, *(pi + 1));
+	return 0;
+}
+*/
+
+/*배열의 각 인덱스(첨자) 주소 확인*/
+/*
+#include <stdio.h>
+
+int main(void)
+{
+	int a[5];
+	int i;
+	int *pa;
+
+	pa = a;		//a는 배열이므로 &연산자X
+
+	for (i = 0; i < 5; i++) {
+		printf("a[%d]=%d\tpa+%d=%d\n", i, &a[i],i,(pa+i));
+	}
+//원래 주소 출력하는 형식 지정자는 %p(16진수),%u(10진수)
+	return 0;
+}
+*/
+
+/*문자열과 포인터*/
+/*
+#include <stdio.h>
+
+void main()
+{
+	char s[10] = "Seoul";
+	int i;
+
+	for (i = 0;s[i]!=NULL; i++) {
+		printf("%c\n", *(s + i));
+	}
+}
+*/
+
+/*포인터를 배열 이름처럼 사용*/
+/*
+#include <stdio.h>
+
+int main(void)
+{
+	int a[5] = { 10,20,30,40,50 };
+	int *p;
+
+	p = a;
+	printf("a[0]=%d a[1]=%d a[2]=%d\n", a[0], a[1], a[2]);
+	printf("p[0]=%d p[1]=%d p[2]=%d\n", p[0], p[1], p[2]);
+
+	p[0] = 60;
+	p[1] = 70;
+	p[2] = 80;
+
+	printf("a[0]=%d a[1]=%d a[2]=%d\n", a[0], a[1], a[2]);
+	printf("p[0]=%d p[1]=%d p[2]=%d\n", p[0], p[1], p[2]);
+
+	return 0;
+}
+*/
+
+/*포인터와 함수-Call by Value*/
+/*
+#include <stdio.h>
+
+void ex_func(int, int);
+
+void main()
+{
+	int ma = 100, mb = 200;
+	ex_func(ma, mb);
+	printf("값2:%d,%d\n", ma, mb);
+
+}
+
+void ex_func(int sa, int sb)
+{
+	sa += 5;	sb += 5;
+	printf("값1:%d,%d\n", sa, sb);
+}
+*/
+
+
+/*포인터와 함수-Call by Reference*/
+//예제1
+/*
+#include <stdio.h>
+
+void ex_func(int *, int *);
+
+void main()
+{
+	int ma = 100, mb = 200;
+	ex_func(&ma, &mb);
+	printf("값2:%d,%d\n", ma, mb);
+}
+
+void ex_func(int *sa, int *sb)
+{
+	*sa += 5;	*sb += 5;
+	printf("값1:%d,%d\n", *sa, *sb);
+}
+*/
+
+//예제2
+/*
+#include <stdio.h>
+void swap(int *, int *);
+
+int main(void)
+{
+	int a = 100, b = 200;
+
+	printf("a=%d,b=%d\n", a, b);
+	swap(&a, &b);
+	printf("a=%d,b=%d\n", a, b);
+
+	return 0;
+}
+
+void swap(int *px, int *py)
+{
+	int temp;
+
+	temp = *px;
+	*px = *py;
+	*py = temp;
+}
+*/
+
+
+/*포인터 인수를 통하여 결과를 반환하는 함수*/
+//직선의 절편과 기울기 구하기
+/*
+#include <stdio.h>
+
+int get_line_parameter(int x1, int y1, int x2, int y2, float *slope, float *yintercept);
+
+int main(void)
+{
+	int x1, x2, y1, y2;
+	float s, y;			//기울기, y절편
+
+	printf("x1,y1을 입력:");
+	scanf("%d %d", &x1, &y1);
+
+	printf("x2,y2을 입력:");
+	scanf("%d %d", &x2, &y2);
+
+	if (get_line_parameter(x1, y1, x2, y2, &s, &y) == -1) {
+		printf("기울기는 무한대, y절편은 존재하지 않음.\n");
+	}
+	else {
+		printf("기울기는 %.2f, y절편은 %.2f\n", s, y);
+	}
+
+	return 0;
+}
+
+int get_line_parameter(int x1, int y1, int x2, int y2, float *slope, float *yintercept)
+{
+	if (x1 == x2) {
+		return -1;
+	}
+	else {
+		*slope = (float)(y2 - y1) / (float)(x2 - x1);
+		*yintercept = y1 - (*slope)*x1;
+		return 0;
+	}
+}
+*/
+
+
+
+
+/*포인터를 이용한 배열의 값 변경*/
+/*
+#include <stdio.h>
+#define SIZE 5
+void print_image(int[][SIZE]);
+void brighten_image(int[][SIZE]);
+int main(void)
+{
+	int image[5][5] = {
+		{10,20,30,40,50},
+		{ 10,20,30,40,50 },
+		{ 10,20,30,40,50 },
+		{ 10,20,30,40,50 },
+		{ 10,20,30,40,50 }
+	};
+
+	print_image(image);
+	brighten_image(image);
+	print_image(image);
+	
+	return 0;
+}
+
+void print_image(int image[][SIZE])
+{
+	int i,j;
+	for (i = 0; i < SIZE; i++) {
+		for (j = 0; j < SIZE; j++) {
+			printf("%03d ", image[i][j]);
+		}
+		printf("\n");
+	}
+	printf("\n");
+}
+void brighten_image(int image[][SIZE])
+{
+	int i,j;
+	int *p;
+	p = &image[0][0];			//첫번째 픽셀
+	for (i = 0; i < SIZE; i++) {
+		for (j = 0; j < SIZE; j++) {
+			*p += 10;			//픽셀의 값을 증가
+			p++;				//포인터를 하나 증가시켜서 다음 픽셀을 가리키게 한다.
+		}
+	}
+}
+*/
+
+/*배열 내의 값 찾기*/
+/*
+#include <stdio.h>
+int search_num(int *A, int size, int search_value);
+void search(int *A,int *B, int size, int search_value);
+void print_array(int *, int size,int search_value,int num);
+
+int main(void)
+{
+	int A[10] = { 150,180,200,250,290,180,480,100,180,250 };
+	int B[10] = { 0 };
+	int search_value;
+	int num;
+
+	printf("찾는 월급 입력:");
+	scanf("%d", &search_value);
+
+	num = search_num(A, 10, search_value);
+	search(A, B, 10, search_value);
+	print_array(B, 10,search_value, num);
+		
+	return 0;
+}
+int search_num(int *A, int size, int search_value)
+{
+	int i,count = 0;
+	for (i = 0; i < size; i++) {
+		if (*(A + i) == search_value) count++;
+	}
+	return count;
+}
+
+void search(int *A,int *B, int size, int search_value)
+{
+	int i;
+	for (i = 0; i < size; i++) {
+		if (*(A + i) == search_value) {
+			B[i] = 1;
+		}
+	}
+	
+}
+
+void print_array(int *B, int size,int search_value,int num)
+{
+	int i;
+	if (num == 0) {
+		printf("월급 수령액이 %d인 사람은 존재하지 않습니다.\n", search_value);
+	}
+	else {
+		printf("월급 수령액이 %d인 사람은 %d명\n", search_value, num);
+		for (i = 0; i < size; i++) {
+			if (B[i] == 1) printf("사람%d ", i);
+		}
+		printf("\n");
+	}
+}
+*/
+
+
+
+//최소공배수,최대공약수 구하는 함수들
+
+#include <stdio.h>
+int getGcd1(int, int);
+int getGcd2(int, int);
+int getGcd3(int, int);
+int getLcm(int, int);
+
+
+int main(void)
+{
+	int num = 8;
+	int lcm = 2;
+	int i;
+
+	for (i = 3; i <= num; i++) {
+		if (lcm%i != 0) {
+			lcm = getLcm(lcm, i);
+		}
+	}
+	printf("1-%d의 최대 공배수 : %d\n", num, lcm);
+
+	return 0;
+}
+
+int getGcd1(int x1, int x2)
+{
+	int gcd, cnt;
+	if (x1 < x2) {
+		for (cnt = 1; cnt <= x2; cnt++) {
+			if (x1%cnt == 0 && x2%cnt == 0) {
+				gcd = cnt;
+			}
+		}
+	}
+	else {
+		for (cnt = 1; cnt <= x1; cnt++) {
+			if (x1%cnt == 0 && x2%cnt == 0) {
+				gcd = cnt;
+			}
+		}
+	}
+
+	return gcd;
+}
+
+int getGcd2(int x1, int x2)
+{
+	int tmp;
+	int r;
+	//큰 수를 x1, 작은 수를 x2로 
+	if (x1 < x2) {
+		tmp = x1;
+		x1 = x2;
+		x2 = tmp;
+	}
+
+	r = x1%x2;
+
+	while (r != 0) {
+		x1 = x2;
+		x2 = r;
+		r = x1%x2;
+	}
+	
+	return x2;
+}
+
+//재귀함수로
+int getGcd3(int x1, int x2)
+{
+	if (x2 == 0) return x1;
+	else return getGcd2(x2, x1%x2);
+}
+
+int getLcm(int x1, int x2)
+{
+	int gcd,lcm;
+	int tmp;
+	if (x1 < x2) {
+		tmp = x1;
+		x1 = x2;
+		x2 = tmp;
+	}
+
+	if (x1%x2 == 0) {
+		return x1;
+	}
+
+	else{
+		gcd = getGcd1(x1, x2);
+		lcm = (x1 / gcd)*(x2 / gcd)*gcd;
+		return lcm;	
+	}
+}
+
+/*최소공배수,최대공약수 구하는 프로그램(포인터를 이용한)*/
+#include <stdio.h>
+
+void swap(int*, int*);
+void get_lcm_gcd(int, int, int*, int*);
+int get_gcd(int x, int y);
+int get_lcd(int x, int y);
+
+
+int main(void)
+{
+	int x, y, lcd, gcd;
+
+	printf("두개의 수를 입력 :");
+	scanf("%d %d", &x, &y);
+
+	printf("%d와 %d의 ", x, y);
+
+	swap(&x, &y);		//x y중 큰수를 x로 변환
+	get_lcm_gcd(x,y,&lcd,&gcd);
+
+	printf("최대공약수 : %d, 최소공배수 : %d\n",gcd,lcd);
+
+	return 0;
+}
+
+void swap(int *x, int *y)
+{
+	int temp;
+	if (*x <= *y) {
+		temp = *x;
+		*x = *y;
+		*y = temp;
+	}
+}
+
+void get_lcm_gcd(int x, int y, int *lcd, int *gcd)
+{
+	int i;
+	//최대공약수 구하기
+	*gcd = get_gcd(x, y);
+	*lcd = get_lcd(x, y);
+	
+
+
+}
+
+int get_gcd(int x, int y)
+{
+	if (y == 0) return x;
+	else return get_gcd(y, x%y);
+}
+
+int get_lcd(int x, int y)
+{
+	return get_gcd(x, y)*(x / get_gcd(x, y))*(y / get_gcd(x, y));
+}
+
+/*전광판 프로그램1*/
+/*
+#include <stdio.h>
+#include <windows.h>
+#define SIZE 10
+#define mytime 20
+int get_size(char []);
+
+int main(void)
+{
+ char ch[SIZE] = "Hellow!";
+ int i, j;
+ char temp;
+ int size = get_size(ch);
+
+ while (1) {
+  printf("%s", ch);
+  Sleep(mytime);//
+  for (i = 0; i < size; i++) {
+   temp = ch[i];
+   ch[i] = ' ';
+   printf("\b\b\b\b\b\b\b");
+   printf("%s", ch);
+   printf("\b\b\b\b\b\b\b");
+   Sleep(mytime);
+   ch[i] = temp;
+  }
+  printf("%s", ch);
+  Sleep(mytime);
+  for (j = size - 1; j >= 0; j--) {
+   temp = ch[j];
+   ch[j] = ' ';
+   printf("\b\b\b\b\b\b\b");
+   printf("%s", ch);
+   printf("\b\b\b\b\b\b\b");
+   Sleep(mytime);
+   ch[j] = temp;
+  }
+
+ }
+
+ return 0;
+}
+
+int get_size(char ch[])
+{
+ int i, counter = 0;
+ for (i = 0; i < SIZE; i++) {
+  if (ch[i] != NULL) counter++;
+ }
+ return counter;
+}
+*/
+
+
+/*전광판 프로그램2*/
+/*
+#include <stdio.h>
+#include <string.h>
+#include <windows.h>
+#define SIZE 6
+#define mytime 50
+
+void back_f(int);
+
+int main(void)
+{
+	char name[SIZE] = "Hello";
+	char ch[SIZE];         //출력 문자 배열
+	int i = 0, j;
+	int size;
+	
+	while(name[i] != 0){
+		i++;
+	}
+	size = i;
+
+	while (1) {
+		strcpy(ch, name);
+		printf("%s", ch);
+		Sleep(mytime);
+
+
+		for (i = 0; i<SIZE - 2; i++) {
+			ch[SIZE - 2 - i] = ' ';
+			back_f(size);
+			printf("%s", ch);
+			Sleep(mytime);
+		}
+
+		for (i = 0; i < SIZE - 1; i++) {
+			ch[i] = name[i];
+			back_f(size);
+			printf("%s", ch);
+			Sleep(mytime);
+		}
+
+		for (i = 0; i<SIZE - 2; i++) {
+			for (j = 0; j<SIZE - 1 - i; j++) {
+				ch[j] = name[i + j + 1];
+			}
+			ch[SIZE - 2 - i] = ' ';
+			back_f(size);
+			printf("%s", ch);
+			Sleep(mytime);
+		}
+
+		for (i = 0; i < SIZE - 2; i++) {
+			for (j = 0; j<i + 1; j++) {
+				ch[j] = name[SIZE - 2 - i + j];
+			}
+			back_f(size);
+			printf("%s", ch);
+			Sleep(mytime);
+			back_f(size);
+		}
+
+	}
+
+	return 0;
+}
+
+
+void back_f(int n)
+{
+	int i;
+	for (i = 0; i < n; i++) {
+		printf("\b");
+	}
+}
+*/
+
+
+
+
+
+
+/*for문과 증감연산자 활용 방식*/
+/*
+#include <stdio.h>
+
+void merge(int *, int *, int *, int size);
+
+int main(void)
+{
+	int A[4] = { 2,5,7,8 };
+	int B[4] = { 1, 3, 4, 6 };
+	int C[8] = { 0 };
+	int i;
+
+	merge(A, B, C, 4);
+
+	for (i = 0; i < 8; i++) {
+		printf("%d ", C[i]);
+	}
+
+	return 0;
+}
+
+void merge(int *A, int *B, int *C, int size)
+{
+	int i,a,b,c;
+
+	for (a = 0, b = 0, c = 0; a < size&&b < size;) {
+		if (A[a] <= B[b]) {
+			C[c++] = A[a++];
+		}
+		else {
+			C[c++] = B[b++];
+		}
+	}
+	for (i = a; i < size; i++) {
+		C[c++] = A[i];
+	}
+	for (i = b; i < size; i++) {
+		C[c++] = B[i];
+	}
+}
+*/
+
+
+/*문자열 초기값 , 프린트 하는 방법*/
+/*
+#include <stdio.h>
+
+int main(void)
+{
+	int i;
+	char str0[4] = { 'a','b','c','\0' };
+//	char str1[4] = "abc";		//abc\0
+//	char str2[4];
+//	str2[0] = 'a';
+//	str2[1] = 'b';
+//	str2[3] = 'c';
+//	str2[4] = '\0';
+//	char str3[] = "abc";	//배열의 크기는 4가 됨(마지막 \0)
+	for (i = 0; i < 4; i++) {
+		printf("%c", str0[i]);
+	}
+	printf("\n");
+	printf("%s", str0);
+	printf("\n");
+	printf(str0);
+	printf("\n");
+
+	return 0;
+}
+*/
+
+
+/*문자열 복사하기*/
+/*
+#include <stdio.h>
+
+int main(void)
+{
+	char src[] = "The worst things to eat before you sleep";
+	char dst[100];
+	int i;
+
+	printf("원본 문자열:%s\n", src);
+	for (i = 0; src[i] != NULL; i++) {
+		dst[i] = src[i];
+	}
+	dst[i] = NULL;		//마지막 NULL넣기
+	printf("복사된 문자열=%s\n", dst);
+	return 0;
+}
+*/
+
+
+/*문자열의 길이를 구하는 프로그램*/
+/*
+#include <stdio.h>
+
+int main(void)
+{
+	char str[30] = "C language is easy";
+	int i = 0;
+
+	//(str[i]!=\0)가능
+	while (str[i] != 0) {
+		i++;
+	}
+	printf("문자열\"%s\"의 길이는 %d입니다.\n", str, i);
+
+	return 0;
+}
+*/
+
+/*getchar()의 사용*/
+/*
+#include <stdio.h>
+
+int main(void)
+{
+	int ch;			//getchar()의 반환형은 char형이 아니라 int형임.
+	while ((ch = getchar()) != EOF)	//getchar();하나의 문자를 읽어서 반환한다.
+		putchar(ch);	//변수 ch에 저장된 문자를 출력한다.
+
+	return 0;
+}
+*/
+
+
+/*_getch,_putch 사용*/
+
+/*int _getch(void):하나의 문자를 읽어서 반환한다.(버퍼를 사용하지 않음)
+  void _putch(int c):변수 c에 저장된 문자를 출력한다.(버퍼를 사용하지 않음)*/
+/*
+#include <stdio.h>
+#include <conio.h>
+
+int main(void)
+{
+	int ch;
+	while ((ch = _getch()) != 'q')	//에코 필요하면 _getche
+		_putch(ch);
+
+	return 0;
+}
+*/
+
+
+
+/*gets_s와 puts을 이용한 문자열 입출력*/
+/*
+#include <stdio.h>
+
+int main(void)
+{
+	char name[100];
+	char address[100];
+
+	printf("이름을 입력하시오:");
+	gets_s(name);			//99자 이상 입력 안됨. 제한 없는 것은 gets(name) 금지됨
+
+	printf("현재 거주하는 주소를 입력하시오:");
+	gets_s(address);	//gets_s는 한줄 전체 다 받음.BUT scanf는 띄어쓰기 나오기 전까지 나옴. 
+
+	puts(name);		//name이 가리키는 문자열을 받아서 화면에 출력하는 함수
+	puts(address);		//이때 문자열의 끝에 있는 NULL문자('\0')는 줄바꿈('\n')으로 변경. 작업이 성공적이면 음수가 아닌값 반환.실패면 EOF(End of File)이 반환
+
+	return 0;
+}
+*/
+
+/*문자 검사 라이브러리 함수 <ctype.h>*/
+/*
+isalpha(c)	c가 영문자인가?(a-z,A-Z)
+isupper(c)	c가 대문자인가?(A-Z)
+islower(c)	c가 소문가인자?(a-z)
+isdigit(c)	c가 숫자인가?(0-9)
+isalnum(c)	c가 영문자이나 숫자인가?(a-z,A-Z,0-9)
+isxdigit(c)	c가 16진수인가?(0-9,A-F,a-f)
+isspace(c)	c가 공백문자인가?('','\n','\t','\v','\r')
+ispunct(c)	c가 구두점 문자인가?
+isprint(c)	c가 출력 가능한 문자인가?
+iscntrl(c)	c가 제어 문자 인가?
+isascii(c)	c가 아스키 코드인가?
+
+toupper(c)	c를 대문자로 바꾼다
+tolower(c)	c를 소문자로 바꾼다
+toascii(c)	c를 아스키 코드로 바꾼다.
+*/
+
+/*소문자를 대문자로 바꾸는 프로그램*/
+/*
+#include <stdio.h>
+#include <ctype.h>
+
+int main(void)
+{
+	int c;
+
+	while ((c = getchar()) != EOF) {
+		if (islower(c))				//c가 소문자 인가? 맞으면 c를 대문자로 바꿈
+			c = toupper(c);	
+		putchar(c);
+	}
+	return 0;
+}
+*/
+
+/*<ctype.h> 함수모음 프로그램*/
+/*
+#include <stdio.h>
+#include <ctype.h>
+#include <conio.h>
+
+int main(void)
+{
+	int c;
+	while ((c = _getche()) != 'z') {
+		printf("---------------------\n");
+		printf("isdigit(%c)=%d\n",c,isdigit(c));		//숫자인가
+		printf("isalpah(%c)=%d\n", c, isalpha(c));		//영문자인가
+		printf("isupper(%c)=%d\n", c, isupper(c));		//대문자인가
+		printf("islower(%c)=%d\n", c, islower(c));		//소문자인가
+		printf("isalnum(%c)=%d\n", c, isalnum(c));		//영문자 이나 숫자인가
+		printf("isspace(%c)=%d\n", c, isspace(c));		//공백문자인가('','\n','\t','\v','\r')
+		printf("ispunct(%c)=%d\n", c, ispunct(c));		//구두점인가
+		printf("isxdigit(%c)=%d\n", c, isxdigit(c));	//16진수인가
+		printf("isprint(%c)=%d\n", c, isprint(c));		//출력가능한가
+		printf("isascii(%c)=%d\n", c, isascii(c));		//아스키코드인가
+		printf("iscntrl(%c)=%d\n", c, iscntrl(c));		//제어 문자인가
+		printf("---------------------\n");
+		printf("touuper(%c)=%c, int =%d\n", c, toupper(c), toupper(c));
+		printf("tolower(%c)=%c, int =%d\n", c, tolower(c), tolower(c));
+		printf("toascii(%c)=%c=%d, int =%d\n", c, toascii(c), toascii(c), toascii(c));
+
+	}
+	return 0;
+}
+
+*/
+
+
+
+/*단어를 세는 프로그램*/
+/*
+#include <stdio.h>
+#include <ctype.h>
+
+int count_word(char *s);
+int main(void)
+{
+	int wc = count_word("the c book...");
+	printf("단의 개수:%d\n", wc);
+	return 0;
+}
+
+int count_word(char *s)
+{
+	int i, wc = 0, waiting = 1;	//반복문,단어의 개수,단어를 기다리고 있는 상태이면 1
+	for (i = 0; s[i] != NULL; ++i) {
+		if (isalpha(s[i]))
+		{
+			if (waiting)
+			{
+				wc++;
+				waiting = 0;
+			}
+		}
+		else
+			waiting=1;
+	}
+	return wc;
+}
+*/
+
+
+/*한 문장을 입력받아 단어를 세는 프로그램*/
+/*
+#include <stdio.h>
+#include <ctype.h>
+#define SIZE 200
+
+int count_word(char ch[]);
+
+int main(void)
+{
+	int wc;
+	char ch[SIZE];
+	
+	printf("문장을 입력하세요:");
+	gets_s(ch);
+
+	wc = count_word(ch);
+	puts(ch);
+	printf("단어의 개수는 %d입니다.\n", wc);
+
+	return 0;
+
+}
+
+int count_word(char s[])
+{
+	int i, wc = 0, waiting = 1;	//반복문, 단어개수, 단어기다리면 1 아니면 0
+	for (i = 0; s[i] != '\0'; i++) {
+		if (isalpha(s[i])) {
+			if (waiting) {
+				wc++;
+				waiting = 0;
+			}
+		}
+		else {
+			waiting = 1;
+		}
+	}
+	return wc;
+}
+*/
+
+
+/*문자열 처리 라이브러리 함수<string.h>*/
+/*
+strlen(s)		//문자열 s의 길이를 구한다
+size_t strlen(const char *s)
+
+strcpy(s1,s2)		//s2를 s1에 복사한다
+strcat(s1,s2)		//s2를 s1의 끝에 붙여넣는다.
+strcmp(s1,s2)		//s1과 s2를 비교한다
+//같으면0, s1이 앞에있으면 음수, 뒤에있으면 양수가 반환.
+
+strncpy(s1,s2,n)	//s2의 최대 n개의 문자를 s1에 복사한다
+strncat(s1,s2,n)	//s2의 최대 n개의 문자를 s1의 끝에 붙여 넣는다
+strncmp(s1,s2,n)	//최대 n개의 문자까지 s1과 s2를 비교한다
+strchr(s,c)		//문자열 s안에서 문자 c를 찾는다
+strstr(s1,s2)		//문자열 s1에서 문자열 s2를 찾는다
+char *strtok(s,delimit);	//문자열 s를 delimit를 이용하여 토큰으로 분리한다.
+*/
+
+
+/*<string.h> 함수모음 프로그램*/
+/*
+#include <stdio.h>
+#include <string.h>
+
+
+int main(void)
+{
+	char s1[100] ="abcdefghijk";
+	char s2[100]="ABCDEFGHIJK";
+	char *p1, *p2;
+	p1 = s1; p2 = s2;
+	
+	strcpy(p1, "abcdefghijk");
+	strcpy(p2, "ABCDEFGHIJK");
+
+
+
+	
+	printf("s[]=%s\n", s1);
+	printf("strlen(s)=%d\n", strlen(s1));
+	printf("----------------------------------------\n");
+	printf("s1=%s,s2=%s\n\n", s1, s2);
+
+	strcpy(s1, s2);
+	printf("strcpy(s1,s2)\n:s1=%s,s2=%s\n\n\n", s1, s2);
+	strcpy(p1, "abcdefghijk");
+	strcpy(p2, "ABCDEFGHIJK");
+
+	printf("strcat(s1,s2)\n:s1=%s,s2=%s\n\n\n", strcat(s1, s2));
+	strcpy(p1, "abcdefghijk");
+	strcpy(p2, "ABCDEFGHIJK");
+
+	printf("strcmp(s1,s2)=%d\n\n\n", strcmp(s1, s2));	//같으면 0, 틀리면 1
+	strcpy(p1, "abcdefghijk");
+	strcpy(p2, "ABCDEFGHIJK");
+
+	printf("strncpy(s1,s2,3)\n:s1=%s,s2=%s\n\n\n", strncpy(s1, s2, 3));
+	strcpy(p1, "abcdefghijk");
+	strcpy(p2, "ABCDEFGHIJK");
+
+	printf("strncat(s1,s2,2)\n:s1=%s,s2=%s\n\n\n", strncat(s1, s2, 2));
+	
+	strcpy(p1, "abcdefghijk");
+	strcpy(p2, "abcdEFGHIJK");
+
+	printf("s1=%s, s2=%s\n", s1, s2);	
+	printf("strncmp(s1,s2,4)=%d\n\n\n", strncmp(s1, s2, 4));
+	strcpy(p1, "abcdefghijk");
+	strcpy(p2, "ABCDEFGHIJK");
+
+	printf("strchr(s1,c)=%s(%%s)\n\n\n", strchr(s1,'c'));
+	strcpy(p1, "abcdefghijk");
+	strcpy(p2, "ABCDEFGHIJK");
+
+	printf("strstr(s1,\"cde\")=%s\n", strstr(s1, "cde"));
+
+
+	return 0;
+}
+*/
+
+
+
+/*문자열 처리 예제*/
+/*
+#include <stdio.h>
+#include <string.h>
+
+//문자열 길이
+void ex_1(void)
+{
+	int size;
+	size = strlen("Hellow");
+	printf("%d", size);
+}
+
+//문자열 복사
+void ex_2()
+{
+	char dst[6] = {'\0'};
+	char src[6] = "Hello";
+
+//	printf("%s", strcpy(dst, src));
+	printf("%s", strncpy(dst, src, 3));
+}
+
+//문자열 연결
+void ex_3()
+{
+	char string[80];
+	strcpy(string, "Hellow world from ");		//string[]에 헬로워 월드 프롬 복사
+	strcat(string, "strcpy ");
+	strcat(string, "and ");
+	strcat(string, "strcat!");
+	printf("string=%s\n", string);
+	
+}
+
+//문자열 비교
+void ex_4()
+{
+	char s1[80];
+	char s2[80];
+	int result;
+
+	printf("첫번째 단어를 입력하시오:");
+	scanf("%s", s1);
+
+	printf("두번째 단어를 입력하시오:");
+	scanf("%s", s2);
+
+	result = strcmp(s1, s2);
+//	result = strncmp(s1, s2, 3);	//s1,s2앞의 3개만 비교
+	if (result < 0)
+		printf("%s가 %s보다 앞에 있습니다.\n", s1, s2);
+	else if (result == 0)
+		printf("%s와 %s가 같습니다.\n", s1, s2);
+	else
+		printf("%s가 %s보다 앞에 있습니다.\n", s2, s1);
+}
+
+//문자 검색
+void ex_5()
+{
+	char s[] = "language";
+	char c = 'g';		//검색할 문자
+	char *p;
+	int loc;
+	p = strchr(s, c);			//p=&s[3](주소가) 함수의 반환값
+	loc = (int)(p - s);			//&s[3]-s[]
+	if (p != NULL)
+		printf("첫번째 %c가 %d에서 발견되었습니다.\n", c, loc);
+	else
+		printf("%c가 발견되지 않았습니다.\n", c);
+}
+
+//문자열 검색
+void ex_6()
+{
+	char s[] = "A joy that`s shared is a joy made double";
+	char sub[] = "joy";
+	char *p;
+	int loc;
+
+	p = strstr(s, sub);	//s[2]에서 발견. &s[2]를 반환.
+	loc = (int)(p - s);
+	if (p != NULL)
+		printf("첫번째 %s가 %d에서 발견\n", sub, loc);
+	else
+		printf("%s가 발견되지 않음\n", sub);
+}
+
+
+
+/*문자열 검색2*/
+/*
+#include <stdio.h>
+#include <string.h>
+
+int main(void)
+{
+	char s[100] = "A joy that`s shared is a joy made double";
+	char sub[] = "joy";
+	char *ps;
+	int loc, i = 0 , result;
+
+	while (1) {
+		ps = strstr(s, sub);
+		loc = int(ps - s);
+		if (ps != NULL) {
+			printf("%d번째 %s가 %d에서 발견되었음\n", i + 1, sub, loc);
+		}
+		else {
+			break;
+		}
+		*ps = ' ';
+		i++;
+	}
+	return 0;
+}
+*/
+
+//문자열 토큰 분리
+void ex_7()
+{
+	char s[] = "Man is immortal, because he has a soul";
+	char seps[] = " ,\t\n";		//분리자는 스페이스 문자,쉼표,탭문자,줄바꿈 문자
+	char *token;			// ,\t\n만나면 분리되서 반환
+
+	token = strtok(s, seps);
+	while (token != NULL)
+	{
+		printf("토큰:%s\n", token);
+		token = strtok(NULL, seps);
+	}
+
+}
+
+int main(void)
+{
+//	ex_1();
+//	ex_2();
+//	ex_3();
+//	ex_4();
+//	ex_5();
+//	ex_6();
+	ex_7();
+}
+
+*/
+
+
+/*토큰 확인하는 프로그램*/
+
+#include <stdio.h>
+//#include <string.h>
+//
+//void main()
+//{
+//	char s[] = "Iam boy, young";
+//	char seps[] = " ,";
+//	char *token;
+//	int i;
+//
+//	//문자열 나타내는 식
+//	//for (i = 0; i < 15; i++) {
+//	//	if (s[i] == NULL) printf("NULL\n");
+//	//	else printf("s[%d]=%c\n", i, s[i]);
+//	//}
+//	//주소 나타내는 식
+//
+//	//for (i = 0; i < 15; i++) {
+//	//	printf("a[%d]주소:%d\n", i, &s[i]);
+//	//}
+//	//printf("token주소:%d\n", token);
+//
+//
+//	token = strtok(s, seps);
+//	token = strtok(NULL, seps);
+//	token = strtok(NULL, seps);
+//	//token = strtok(NULL, seps);
+//
+//
+//
+//	for (i = 0; i < 15; i++) {
+//		if (s[i] == NULL) printf("NULL\n");
+//		else printf("s[%d]=%c\n", i, s[i]);
+//	}
+//
+//	for (i = 0; i < 15; i++) {
+//		printf("a[%d]주소:%d\n", i, &s[i]);
+//	}
+//	printf("token주소:%d\n", token);
+//
+//
+//}
+
+
+
+
+
+/*sprintf,sscanf 활용하는 프로그램*/
+/*
+#include <stdio.h>
+#include <string.h>
+
+int main(void)
+{
+char filename[100];
+char s[100];
+int i;
+
+for (i = 0; i < 6; i++) {
+strcpy(filename, "image");
+sprintf(s, "%d", i);		//itoa(i,s,10); 10은 10진수
+strcat(filename, s);
+strcat(filename, ".jpg");
+printf("%s\n", filename);
+}
+
+return 0;
+}
+*/
+
+
+
+
+/*atoi,atof 이용하는 프로그램*/
+/*
+#include <stdio.h>
+#include <stdlib.h>
+
+int main(void)
+{
+	char s1[] = "100";
+	char s2[] = "12.93";
+	char buffer[100];
+
+	int i;
+	double d, result;
+
+	i = atoi(s1);	//s1에서 정수 추출
+	d = atof(s2);	//s2에서 실수 추출
+
+	result = i + d;
+
+	sprintf(buffer, "%lf", result);
+	printf("연산 결과는 %s입니다.\n", buffer);
+
+	return 0;
+}
+*/
+
+
+/*2차원 배열 출력하는 프로그램*/
+/*
+#include <stdio.h>
+
+int main(void)
+{
+	char menu[5][10] = {
+		"init",
+		"open",
+		"close",
+		"read",
+		"write"
+	};
+	int i;
+
+	for (i = 0; i < 5; i++) {
+		printf("%d번째 메뉴:%s\n", i, menu[i]);
+	}
+
+	return 0;
+}
+*/
+
+/*2차원 배열로 입력받는 예제*/
+/*
+#include <stdio.h>
+
+int main(void)
+{
+	char fruits[3][20];
+	int i;
+
+	for (i = 0; i < 3; i++) {
+		printf("과일 이름을 입력하시오:");
+		gets_s(fruits[i]);		//==scanf("%s",fruits[i]);
+	}
+
+	for (i = 0; i < 3; i++) {
+		printf("%d번째 과일 : %s\n", i, fruits[i]);
+	}
+
+	return 0;
+}
+*/
+
+
+
+/*2차원 배열 난수 생성 후 각 행 열 합구하는 프로그램*/
+
+#include <stdio.h>
+#include <time.h>
+#include <stdlib.h>
+#define ROWS 4
+#define COLS 4
+
+
+int get_row_sum(int[][COLS],int);
+int get_col_sum(int[][COLS], int);
+
+
+void main(void)
+{
+	int a[ROWS][COLS];
+	int i, j;
+	int row_sum = 0;
+
+	srand((unsigned)time(NULL));
+
+	for (i = 0; i < ROWS; i++) {
+		for (j = 0; j < COLS; j++) {
+			a[i][j] = rand() % 100;
+		}
+	}
+
+	for (i = 0; i < ROWS; i++) {
+		for (j = 0; j < COLS; j++) {
+			printf("%3d ", a[i][j]);
+		}
+		printf("\n");
+	}
+
+	putchar('\n');
+
+	for (i = 0; i < ROWS; i++) {
+		printf("%d행의 합 : %d\n", i+1, get_row_sum(a, i));
+	}
+	
+	putchar('\n');
+	for (i = 0; i < COLS; i++) {
+		printf("%d열의 합 : %d\n", i+1, get_col_sum(a, i));
+	}
+
+
+
+
+
+}
+
+
+int get_row_sum(int m[][COLS],int n)
+{
+	int *p, *endp;
+	int sum = 0;
+	p = &m[n][0];
+	endp = &m[n][COLS-1];
+
+	while (p <= endp) {
+		sum += *p++;
+	}
+	return sum;
+}
+
+
+int get_col_sum(int m[][COLS], int n)
+{
+	int i,sum=0;
+	int *p, *endp;
+
+	p = &m[0][n];
+	endp = &m[ROWS-1][n];
+
+	while (p <= endp) {
+		sum += *p;
+		p = p + COLS;
+	}
+	return sum;
+}
+
+
+
+
+
+
+/*한영사전 프로그램*/
+/*
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#define WORDS 5
+
+void change_lower(char *); //입력문자 소문자로 변경하는 함수
+
+
+int main(void)
+{
+	char dic[WORDS][2][30] = {
+		{"book","책"},
+		{"boy","소년"},
+		{"computer","컴퓨터"},
+		{"language","언어"},
+		{"rain","비"}
+	};
+	char word[30];
+	char *pw;
+	int i, size;
+
+	printf("단어를 입력하시오:");
+	scanf("%s", word);
+
+	size = strlen(word);
+	pw = word;
+	change_lower(pw, size);
+
+
+	for (i = 0; i < WORDS; i++) {				//입력한 단어와 일치하는지 찾음
+		if (strcmp(dic[i][0], word) == 0) {		 //찾는 단어가 사전에 있음
+			printf("%s는 %s입니다.\n", dic[i][0], dic[i][1]);
+			return 0;
+		}
+	}
+	//찾는 단어가 사전에 없음.
+	printf("찾는 단어가 존재 하지 않습니다.\n");
+
+
+	return 0;
+}
+
+void change_lower(char *s)
+{
+	int i;
+
+	for (i = 0; i < strlen(s); i++) {
+		if (isupper(*(s + i))) {
+			*(s + i) = tolower(*(s + i));
+		}
+	}
+}
+*/
+
+
+
+/*한영사전2 (좀더 깔끔)+포인터 더 필요(단어 찾는거)*/
+/*
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#define WORDS 5
+
+void change_lower(char *);
+
+
+
+int main()
+{
+	int i;
+	char p_word[10];
+	char c_word[10]; char *pw;
+	char dic[WORDS][2][20]{
+		{"book","책"},
+		{"boy","소년"},
+		{ "computer","컴퓨터" },
+		{ "language","언어" },
+		{ "rain","비" }
+	};
+
+	printf("단어를 입력 하시오:");
+	scanf("%s", c_word);
+	printf("\"%s\"", c_word);
+
+	pw = c_word;
+	change_lower(pw);
+
+	for (i = 0; i < WORDS; i++) {	
+		if(strcmp(dic[i][0], c_word) == 0) {
+			printf(" : \"%s\" 입니다.\n", dic[i][1]);
+			return 0;
+		}
+	}
+	printf("라는 단어가 존재하지 않습니다.\n");
+	
+}
+
+
+
+void change_lower(char *p)
+{
+	int i, size;
+	for (i = 0; i < strlen(p); i++) {
+		if (isupper(  *(p + i)  )  ) {
+			*(p + i) = tolower(*(p + i));
+		}
+	}
+}
+*/
+
+
+
+/*행을 입력 받아 반은 0 ,나머지는 순서대로 채우는 프로그램1*/
+
+#include <stdio.h>
+#define SIZE 100
+
+void main(void)
+{
+	int a[SIZE][SIZE];
+	int i, j, x = 1 , n;
+	
+	printf("행의 수를 입력해주세요 :");
+	scanf("%d", &n);
+
+	for (i = 0; i < n; i++) {
+		for (j = 0; j < n; j++) {
+			a[i][j] = 0;
+		}
+	}
+
+	for (i = 0; i < n; i++) {
+		for (j = 0; j < n; j++) {
+			a[i][j + i] = x;
+			x++;
+		}
+	}
+
+	for (i = 0; i < n; i++) {
+		for (j = 0; j < n; j++) {
+			printf("%3d", a[i][j]);
+		}
+		printf("\n");
+	}
+
+}
+
+
+/*행을 입력 받아 반은 0 ,나머지는 순서대로 채우는 프로그램2*/
+
+#include <stdio.h>
+#define SIZE 100
+
+void main(void)
+{
+	int a[SIZE][SIZE];
+	int i, j, x = 1 , n;
+	
+	printf("행의 수를 입력해주세요 :");
+	scanf("%d", &n);
+
+	for (i = 0; i < n; i++) {
+		for (j = 0; j < n; j++) {
+			a[i][j] = 0;
+		}
+	}
+
+	for (i = 0; i < n; i++) {
+		for (j = 0; j < n; j++) {
+			if (i <= j) {
+				a[i][j] = x;
+				x++;
+			}
+		}
+	}
+
+	for (i = 0; i < n; i++) {
+		for (j = 0; j < n; j++) {
+			printf("%3d", a[i][j]);
+		}
+		printf("\n");
+	}
+
+}
+
+
+
+
+
+
+
+
+
+/*token을 활용한 문자열의 공백 없애는 프로그램*/
+/*
+#include <stdio.h>
+#include <string.h>
+
+int main(void)
+{
+	char ch[100];
+	char seps[] = " ,\t";
+	char *token;
+
+	printf("공백 문자가 있는 문자열을 입력하시오:");
+	gets_s(ch);
+
+	token = strtok(ch, seps);
+	printf("%s", token);
+	
+	while (token!= NULL) {
+		token = strtok(NULL, seps);
+		if (token != NULL) {
+			printf("%s", token);
+		}
+	}
+	
+	return 0;
+
+}
+*/
+
+/*문자열을 받아 알파벳을 세는 프로그램*/
+/*
+#include <stdio.h>
+#include <string.h>
+
+//ascii : a는 97, z는 122 , a-z는 26개
+
+
+
+int main(void)
+{
+	char s[100];
+	int a[26] = { 0 };		//a[0]은 a개수 ~a[25]는 z개수
+	int i,j,size;
+	char *ps, *pa;
+	
+	printf("문자열을 입력하시오:");
+	gets_s(s);
+
+	size = strlen(s);
+
+	for (i = 0; i < size; i++) {
+		for (j = 97; j < 26+97; j++) {
+			if (s[i]==j) {
+				a[j-97]++;
+			}
+		}
+	}
+
+	for (i = 0; i < 26; i++) {
+		printf("%c:%d\n", i + 97, a[i]);
+	}
+	
+	return 0;
+}
+*/
+
+
+/*전광판을 출력하는 프로그램*/
+
+/*
+#include <stdio.h>
+#include <windows.h>
+#include <string.h>
+#define mytime 300
+
+void ad_print(char *);
+
+void main()
+{
+	char text[50];
+	char *pt;
+
+	printf("광고하고 싶은 텍스트를 입력하시오:");
+	gets_s(text);
+	system("cls");
+	pt = text;
+	ad_print(pt);
+}
+
+void ad_print(char *p)
+{
+	int i,j;
+
+	while (1) {
+		for (i = 0; i < strlen(p); i++) {
+			printf("%s", p + i);
+			for (j = 0; j < i; j++) {
+				printf("%c", p[j]);
+			}
+			Sleep(mytime);
+			system("cls");
+		}
+	}
+}
+*/
+
+
+
+
+
+/*구조체를 멤버로 가지는 구조체*/
+
+#include <stdio.h>
+
+struct point {
+	int x;
+	int y;
+};
+
+struct rect {
+	struct point p1;
+	struct point p2;
+};
+
+void main()
+{
+	struct rect r;
+	int w, h, area, peri;
+
+	printf("왼쪽 상단의 좌표를 입력하시오:");
+	scanf("%d %d", &r.p1.x, &r.p1.y);
+
+	printf("오른쪽 상단의 좌표를 입력하시오:");
+	scanf("%d %d", &r.p2.x, &r.p2.y);
+
+	w = r.p2.x - r.p1.x;
+	h = r.p2.y - r.p1.y;
+
+	area = w*h;
+	peri = 2 * (w + h);
+
+	printf("면적은 %d이고 둘레는 %d입니다.\n", area, peri);
+
+
+}
+
+
+/*구조체 배열의 선언 및 초기화*/
+
+#include <stdio.h>
+
+struct student {
+	int number;
+	char name[10];
+	double grade;
+};
+
+void main()
+{
+	//struct student list[3] = {
+	//	{1,"홍길동",4.3},
+	//	{2,"김유신",3.92},
+	//	{3,"이성계",2.87}
+	//};
+
+	struct student list[3];
+	int i;
+
+	for (i = 0; i < 3; i++) {
+		printf("학번을 입력하시오:");
+		scanf("%d", &list[i].number);
+		printf("이름을 입력하시오:");
+		scanf("%s", list[i].name);
+		printf("학점을 입력하시오(실수)");
+		scanf("%lf", &list[i].grade);
+	}
+	for (i = 0; i < 3; i++) {
+		printf("이름:%s, 학점:%.2lf\n", list[i].name, list[i].grade);
+	}
+
+}
+
+
+
+/*구조체 맞교환 방법*/
+
+#include <stdio.h>
+#include <stdio.h>
+
+struct Book {
+	char title[50];
+	char author[50];
+	int n;
+};
+typedef struct Book Book;
+
+void main()
+{
+	Book b1 = {"태백산맥","조정래",10}, b2 = {"토   지","박경리",20},tmp;
+	
+	puts("---------------");
+	puts("* 구조체 맞교환 *");
+	puts("---------------");
+	
+	printf("b1 :%10s %10s %4d권\n", b1.title, b1.author, b1.n);
+	printf("b2 :%10s %10s %4d권\n", b2.title, b2.author, b2.n);
+	
+	puts("** 교환 후 **");
+
+	tmp = b1;
+	b1 = b2;
+	b2 = tmp;
+
+	printf("b1 :%10s %10s %4d권\n", b1.title, b1.author, b1.n);
+	printf("b2 :%10s %10s %4d권\n", b2.title, b2.author, b2.n);
+
+	puts("----------------------------------------------------");
+	puts("구조체 맞교환은 정수교환과 동일");
+	puts("----------------------------------------------------");
+
+}
+
+
+
+
+
+/*자기 자신을 가리키는 포인터*/
+
+#include <stdio.h>
+#include <windows.h>
+
+struct student {
+	int number;
+	char name[10];
+	double grade;
+	struct student *next;
+};
+
+void main()
+{
+	int i;
+	struct student list[5] = {
+		{ 30,"Kim",4.3,NULL },
+		{ 31,"Park",3.7,NULL },
+		{ 32,"Lee",2.5,NULL },
+		{ 33,"Kang",3.1,NULL },
+		{ 34,"Js",4.4,NULL }
+	};
+
+	struct student *first = NULL;
+	struct student *current = NULL;
+
+	first =&list[0];
+	current = first;
+	for (i = 0; i < 5; i++) {
+		printf("학생의 번호=%d 이름=%s 성적=%lf\n", current->number, current->name, current->grade);
+		list[i].next = &list[i + 1];
+		current = current->next;
+		Sleep(3000);
+	}
+
+}
+
+/*구조체를 함수의 인수로 넘기는 방법(직접)*/
+//구조체의 복사본이 전달됨.
+#include <stdio.h>
+
+struct student {
+	int number;
+	char name[10];
+	double grade;
+};
+
+int equal(struct student, struct student);
+
+void main()
+{
+	struct student a = { 1,"hong",3.8 };
+	struct student b = { 2,"kim",4.0 };
+	if (equal(a, b) == 1) {
+		printf("같은 학생\n");
+	}
+	else {
+		printf("다른 학생\n");
+	}
+}
+
+int equal(struct student s1, struct student s2)
+{
+	if (s1.number == s2.number)
+		return 1;
+	else
+		return 0;
+}
+
+
+
+
+/*함수의 반환 타입 - 구조체 */
+
+#include <stdio.h>
+
+typedef struct student {
+	int num;
+	char name[20];
+	double grade;
+}STUDENT;
+
+STUDENT get_struct(int);
+
+int main(void)
+{
+	STUDENT s[3];
+	int i;
+	for (i = 0; i < 3; i++) {
+		s[i] = get_struct(i);
+	}
+
+
+	for (i = 0; i < 3; i++) {
+		printf("%d.학번 : %d , 이름 : %-10s , 성적 : %.2lf\n", i + 1, s[i].num, s[i].name, s[i].grade);
+	}
+	
+	return 0;
+
+
+}
+
+STUDENT get_struct(int n)
+{
+	STUDENT s;
+	printf("%d번째 학생 학번 : ", n+1);
+	scanf("%d", &s.num);
+
+	printf("%d번째 학생 이름 : ", n+1);
+	scanf("%s", s.name);
+
+	printf("%d번째 학생 성적 : ", n+1);
+	scanf("%lf", &s.grade);
+
+	return s;
+
+}
+
+
+
+/*구조체를 함수의 인수로 넘기는 방법(포인터)*/
+
+#include <stdio.h>
+
+struct student {
+	int number;
+	char name[10];
+	double grade;
+};
+
+int equal(struct student *, struct student *);
+//int equal(struct student const *p1, struct student const *p2) //구조체 원본 변경 금지. 컴파일 시 오류발생
+void main()
+{
+	struct student a = { 1,"hong",3.8 };
+	struct student b = { 2,"kim",4.0 };
+	if (equal(&a,&b) == 1) {
+		printf("같은 학생\n");
+	}
+	else {
+		printf("다른 학생\n");
+	}
+}
+
+int equal(struct student *p1, struct student *p2)
+{
+	if (p1->number == p2->number)
+		return 1;
+	else
+		return 0;
+}
+
+
+/*구조체를 함수의 반환값으로 넘기는 방법*/
+#include <stdio.h>
+#include <string.h>
+
+struct student {
+	int number;
+	char name[10];
+	double grade;
+};
+
+struct student create(struct student);
+
+
+int main(void)
+{
+	struct student a;
+	a = create();
+	printf("%d %s %lf\n", a.number, a.name, a.grade);
+
+	return 0;
+}
+
+struct student create()
+{
+	struct student s;
+	s.number = 3;
+	strcpy(s.name, "park");
+	s.grade = 4.0;
+	return s;
+}
+
+/*구조체를 함수의 반환값으로 넘기는 방법 예제*/
+
+#include <stdio.h>
+
+struct vector {
+	double x;
+	double y;
+};
+
+struct vector get_vector_sum(struct vector a, struct vector b);
+
+void main()
+{
+	struct vector a = { 2.0,3.0 };
+	struct vector b = { 5.0,6.0 };
+	struct vector sum;
+
+	sum = get_vector_sum(a, b);
+	printf("벡터의 합은 (%lf,%lf)입니다.\n", sum.x, sum.y);
+}
+
+struct vector get_vector_sum(struct vector a, struct vector b)
+{
+	struct vector result;
+
+	result.x = a.x + b.y;
+	result.y = a.y + b.y;
+
+	return result;
+}
+
+
+/*공용체 사용 방법 예제*/
+#include <stdio.h>
+
+union example {
+	int i;
+	char c;
+};
+
+void main()
+{
+	union example v;
+
+	v.c = 'A';
+	printf("v.c:%c  v.i:%d\n", v.c, v.i);
+	printf("주소 v.c:%d  v.i:%d\n", &v.c, &v.i);
+
+	v.i = 10000;
+	printf("v.c:%d  v.i:%d\n", v.c, v.i);
+	printf("주소 v.c:%c  v.i:%d\n", &v.c, &v.i);
+
+}
+
+
+/*유니온 사용 예제*/
+
+
+#include <stdio.h>
+#include <string.h>
+
+#define STU_NUMBER 1
+#define REG_NUMBER 2
+
+struct student {
+	int type;
+	union {
+		int stu_number;		//학번
+		char reg_number[15];	//주민등록번호
+	}id;
+	char name[20];
+};
+
+void print(struct student s)
+{
+	switch (s.type)
+	{
+	case STU_NUMBER:
+		printf("학번%d\n", s.id.stu_number);
+		printf("이름:%s\n", s.name);
+		break;
+	case REG_NUMBER:
+		printf("주민등록번호:%s\n", s.id.reg_number);
+		printf("이름:%s\n", s.name);
+		break;
+	default:
+		printf("타입오류\n");
+		break;
+	}
+}
+
+void main()
+{
+	struct student s1, s2;
+
+	//학번 사용
+	s1.type = STU_NUMBER;
+	s1.id.stu_number = 2007001;
+	strcpy(s1.name, "홍길동");
+
+	//주민등록번호 사용
+	s2.type = REG_NUMBER;
+	strcpy(s2.id.reg_number, "860101-1056076");
+	strcpy(s2.name, "김철수");
+
+	print(s1);
+	print(s2);
+
+}
+
+
+
+/*typedef 사용하기*/
+/*점과 평행이동을 계산하는 프로그램*/
+
+#include <stdio.h>
+
+typedef struct point {
+	int x;
+	int y;
+}POINT;
+
+POINT translate(POINT p, POINT delta);
+
+int main(void)
+{
+	POINT p = { 2,3 };		//원래 점
+	POINT delta = { 10,10 };	//x,y축으로 10씩 평생이동
+	POINT result;
+
+	result=translate(p, delta);
+
+	printf("새로운 점의 좌표는 (%d,%d)입니다.\n", result.x, result.y);
+
+	return 0;
+}
+POINT translate(POINT p, POINT delta)
+{
+	POINT new_p;
+	new_p.x = p.x + delta.x;
+	new_p.y = p.y + delta.y;
+	return new_p;
+}
+
+
+
+
+/*데이터베이스 기능을 하는 음악 파일 관리하는 프로그램*/
+#include <stdio.h>
+#include <conio.h>
+#include <string.h>
+#include <windows.h>
+
+typedef struct data {
+	char name[20];		//제목
+	char singer[20];	//가수
+	char loc[50];		//저장 위치
+	char classify[10];	//분류
+}LIST, *PLIST;
+
+void print_menu(void);
+
+void add_menu(struct data *);
+
+void print_data(struct data[], int i);
+
+int find_data(struct data[], char[], int n);
+
+void main()
+{
+	LIST list[50];
+	PLIST pt;
+	int choice, i = 0, f;	//메뉴선택, 저장된 곡 수 , 검색 인덱스
+	char f_name[50];
+
+	while (1) {
+		print_menu();
+		scanf("%d", &choice);
+		system("cls");
+		printf("\b");
+		while (getchar() != '\n');
+		if (choice == 4) { break; }
+		else if (choice == 1) {
+			pt = &list[i];
+			add_menu(&list[i]);
+			i++;
+		}
+		else if (choice == 2) {
+			print_data(list, i);
+		}
+		else if (choice == 3) {
+			printf("검색할 노래의 제목을 입력하세요:");
+			gets_s(f_name);
+			f = find_data(list, f_name, i);
+			printf("List[%d]:%s // %s // %s // %s\n", f + 1, list[f].name, list[f].singer, list[f].loc, list[f].classify);
+		}
+	}
+
+}
+
+void print_menu(void)
+{
+	printf("=================================================\n");
+	printf("\t\t\t1.추가\n");
+	printf("\t\t\t2.출력\n");
+	printf("\t\t\t3.검색\n");
+	printf("\t\t\t4.종료\n");
+	printf("=================================================\n");
+}
+
+void add_menu(struct data *a)
+{
+	printf("제목 입력:");
+	gets_s(a->name);
+	printf("가수 입력:");
+	gets_s(a->singer);
+	printf("저장된 위치 :");
+	gets_s(a->loc);
+	printf("분류(가요,팝,클래식,영화음악):");
+	gets_s(a->classify);
+}
+
+void print_data(struct data a[], int n)
+{
+	int i;
+
+	for (i = 0; i < n; i++) {
+		printf("List[%d]:%s // %s // %s // %s\n", i + 1, a[i].name, a[i].singer, a[i].loc, a[i].classify);
+	}
+
+}
+
+int find_data(struct data d[], char ch[], int n)
+{
+	int i;
+	for (i = 0; i <= n; i++) {
+		if (strcmp(d[i].name, ch) == 0) return i;
+	}
+
+}
+
+
+/*이중 포인터 예제*/
+
+#include <stdio.h>
+
+void main()
+{
+	int i=100;
+	int *p, **q;
+	p = &i;
+	q = &p;
+	*p = 200;
+	printf("i=%d\n", i);
+	**q = 300;
+	printf("i=%d\n", i);
+
+}
+
+/*이중 포인터 예제*/
+//이중포인터를 함수의 인자로 받아 포인터 값을 변경하는 프로그램
+#include <stdio.h>
+
+void set_pointer(char **q);
+char *proverb = "All that glisters is not gold.";
+
+void main()
+{
+	char *p = "zzz";
+	printf("p주소값:%d\nproverb:%d\n", p, proverb);
+	set_pointer(&p);
+	printf("%s \n", p);
+
+	printf("p주소값:%d\nproverb:%d\n", p, proverb);
+}
+void set_pointer(char **q)
+{
+	*q = proverb;
+}
+
+
+
+//문자열 배열
+
+#include <stdio.h>
+
+void main()
+{
+	int i, n;
+	char *fruits[] = {
+		"apple",
+		"blueberry",
+		"orange",
+		"melon",
+	};
+	n = sizeof(fruits) / sizeof(fruits[0]);
+	for (i = 0; i < 4; i++) {
+		printf("%s\n", fruits[i]);
+	}
+}
+
+
+
+/*여러 가지 플래그 옵션*/
+
+#include <stdio.h>
+
+void main()
+{
+	printf("12345678901234567890\n");
+	printf("%-10c%c\n",'A','B');
+	printf("010d\n",1971);		//확보된 공간에서 남는 왼쪽공간을 모두 0으로 채운다.
+	printf("%+d\n",128);		//'+'플래그는 부호를 함께 출력한다.
+	printf("%#x\n",2005);		//'#'플래그는 8진수와 16진수를 출력할 때 접두어를 붙여준다.(0 ,0x)
+	printf("%010x\n",0x7d5);
+}
+
+
+/*배열 포인터*/
+
+#include <stdio.h>
+
+int main(void)
+{
+	int a[5] = { 1,2,3,4,5 };
+	int(*pa)[5];
+	int i;
+
+	pa = &a;
+	for (i = 0; i < 5; i++) {
+		printf("%d\n", (*pa)[i]);
+	}
+	return 0;
+}
+
+
+/*함수 포인터의 배열*/
+#include <stdio.h>
+
+void print_menu(void);
+int add(int, int);
+int sub(int, int);
+int mul(int, int);
+int div(int, int);
+int remain(int, int);
+
+void main()
+{
+	int choice, x1, x2, result;
+	int(*pf[5])(int, int) = { add,sub,mul,div,remain };
+
+	while (1) {
+		print_menu();
+		scanf("%d", &choice);
+		if (choice == 5) break;
+		else if (choice < 0 && choice>5) printf("0-5의 메뉴를 입력해주세요.");
+		else {
+			printf("2개의 정수를 입력하시오:");
+			scanf("%d%d", &x1, &x2);
+			result = (*pf[choice])(x1, x2);
+			printf("연산 결과 = %d\n", result);
+		}
+	}
+}
+
+void print_menu(void)
+{
+	printf("==============\n");
+	printf("0.덧셈\n");
+	printf("1.뺄셈\n");
+	printf("2.곱셈\n");
+	printf("3.나눗셈\n");
+	printf("4.나머지\n");
+	printf("5.종료\n");
+	printf("==============\n");
+}
+int add(int a, int b)
+{
+	return a + b;
+}
+int sub(int a, int b)
+{
+	return a - b;
+}
+int mul(int a, int b)
+{
+	return a*b;
+}
+int div(int a, int b)
+{
+	return a / b;
+}
+int remain(int a, int b)
+{
+	return a%b;
+}
+
+
+
+
+
+/*함수 인수로서의 함수 포인터*/
+/*시그마 1부터 n 까지 f(k)^2+f(k)+1 을 구하는 프로그램*/
+
+
+#include <stdio.h>
+#include <math.h>
+
+double f1(double k);	//f(k)=1/k
+double f2(double k);	//f(k)=cos(k)
+double formula(double (*pf)(double), int n);
+
+void main()
+{
+	printf("%.3lf\n", formula(f1, 10));	//f(k)=1/k , n=10
+	printf("%.3lf\n", formula(f2, 10));	//f(k)=cos(k), n=10
+}
+
+double formula(double (*pf)(double), int n)
+{
+	int i;
+	double sum = 0.0;
+	for (i = 1; i < n; i++) {
+		sum += pf(i) * pf(i) + pf(i) + 1;
+	}
+	return sum;
+}
+
+double f1(double k)
+{
+	return 1.0 / k;
+}
+
+double f2(double k)
+{
+	return cos(k);
+}
+
+
+
+
+
+/*포인터를 이용한 다차원 배열 운행*/
+//특정 행의 원소 or 전체 원소의 평균을 구하는 프로그램
+#include <stdio.h>
+#define ROWS 4
+#define COLS 3
+
+double get_row_avg(int m[][COLS], int r);
+double get_total_avg(int m[][COLS]);
+
+void main()
+{
+	int m[ROWS][COLS] = {
+		{ 10,20,30 },
+		{ 10,20,30 },
+		{ 10,20,30 },
+		{ 10,20,30 }
+	};
+
+	double row_avg,total_avg;
+	row_avg = get_row_avg(m, 0);
+	total_avg = get_total_avg(m);
+	printf("0행 평균 : %lf\n", row_avg);
+	printf("전체 평균 :%lf\n", total_avg);
+
+}
+double get_row_avg(int m[][COLS], int r)
+{
+	int *p, *endp;
+	double sum = 0.0;
+
+	p = &m[r][0];
+	endp = &m[r][COLS - 1];
+
+	while (p <= endp) {
+		sum += *p++;
+	}
+	sum /= COLS;
+
+	return sum;
+}
+
+double get_total_avg(int m[][COLS])
+{
+	int *p, *endp;
+	double sum = 0.0;
+
+	p = &m[0][0];
+	endp = &m[ROWS - 1][COLS - 1];
+
+	while (p <= endp) {
+		sum += *p++;
+	}
+	sum /= ROWS*COLS;
+
+	return sum;
+}
+
+
+/*포인터를 이용한 다차원 배열 운행2*/
+//특정 행의 원소 or 전체 원소의 평균을 구하는 프로그램2
+
+#include <stdio.h>
+#define ROWS 3
+#define COLS 3
+
+double get_row_avg(int m[][COLS], int);
+double get_total_avg(int m[][COLS]);
+void print_arr(int[][COLS]);
+
+void main(void)
+{
+	int m[3][3] = {
+		{1,2,3},
+		{10,20,30},
+		{100,200,300}
+	};
+	int n;
+	double sum,total_sum;
+
+	print_arr(m);
+
+	printf("원하는 행의 합 입력 :");
+	scanf("%d", &n);
+
+	sum = get_row_avg(m, n);
+	total_sum = get_total_avg(m);
+
+	printf("%d행의 평균은 : %.2lf\n", n, sum);
+	printf("전체 매트릭스의 평균은 : %.2lf\n", total_sum);
+
+}
+
+void print_arr(int m[][COLS])
+{
+	int i, j;
+
+	for (i = 0; i < ROWS; i++) {
+		for (j = 0; j < COLS; j++) {
+			printf("%3d ", m[i][j]);
+		}
+		putchar('\n');
+	}
+	
+}
+
+double get_row_avg(int m[][COLS], int n)
+{
+	int *p, *endp;
+	p = &m[n-1][0];
+	endp = &m[n-1][COLS - 1];
+	double sum = 0.0;
+	while (p <= endp) {
+		sum += *p++;
+	}
+	sum /= COLS;
+	return sum;
+
+}
+
+double get_total_avg(int m[][COLS])
+{
+	int *p, *endp;
+	double sum = 0.0;
+	p = &m[0][0];
+	endp = &m[ROWS - 1][COLS - 1];
+	
+	while (p <= endp) {
+		sum += *p++;
+	}
+	sum /= (ROWS*COLS);
+	return sum;
+
+}
+
+
+
+
+
+
+
+/*const 포인터와 volatile 포인터*/
+//const char *p 와 char *const p의 차이점
+
+
+#include <stdio.h>
+
+void main(void)
+{
+	char s[] = "Barking dogs";
+	char t[] = "A bad workman";
+	const char *p=s;
+	char * const q=s;
+	
+//	p[3] = ' ';	//p가 가리키는 곳의 내용을 변경할 수 없음
+	p = t;		//p가 가리키는 곳은 변경 할 수 있음.
+	
+	q[3] = 'a';	//q가 가리키는 곳의 내용은 변경할 수 있음
+//	q = t;		//q가 가리키는 곳은 변경할 수 없음. 초기 선언한 그대로 포인터 주소를 가지고 있음.
+
+	puts(p);
+	puts(q);
+
+}
+
+
+
+/*void 포인터 예제*/
+
+#include <stdio.h>
+
+void main()
+{
+	int a = 20;
+	char b = 'q';
+	double d = 3.14;
+	char text[10] = "zac";
+	void* p;
+
+	p = &a;
+	printf("%d\n", *(int*)p);
+
+	p = &b;
+	printf("%c\n", *(char*)p);
+
+	p=text;
+	printf("%s\n", vp);
+	
+	p = &d;
+	printf("%.2lf\n", *(double*)p);
+}
+
+
+
+
+/*void 포인터*/
+
+
+#include <stdio.h>
+
+void main()
+{
+	int a[] = { 10,20,30,40,50 };
+	void *vp;
+
+	vp = a;			//가능
+//	printf("vp=a한뒤\n *(int *)vp=%d\n", *(int *)vp);
+
+//	vp = &a[2];		//가능
+
+	//*vp = 35;		//오류
+	//vp++;			//오류
+
+	*(int *)vp = 35;	//가능
+
+	for (int i = 0; i < 5; i++) {
+		printf("%d ", a[i]);
+	}
+
+//	printf("vp=&a[2] & *(int *)vp=35 한뒤 a[2]=%d\n", *(int *)vp);
+}
+
+
+
+
+/*main 함수의 인수*/
+
+//예제1
+#include <stdio.h>
+
+int main(int argc, char *argv[])
+{
+	int i = 0;
+
+	for (i = 0; i < argc; i++)
+		printf("명령어 행에서 %d번째 문자열 = %s\n", i, argv[i]);
+
+	return 0;
+
+}
+
+//실행 : 프로젝트 창-> 맨밑 속성 -> 구성 속성 탭의 디버깅  ->명령 인수에 입력.
+
+//예제2
+
+#include <stdio.h>
+#include <stdlib.h>
+
+int main(int argc, char *argv[])
+{
+	double mile, km;
+	if (argc != 2) {
+		printf("사용 방법 : mile2km 거리\n");
+		return 1;
+	}
+
+	mile = atof(argv[1]);
+	km = 1.609*mile;
+	printf("입력된 거리는 %lf km 입니다.\n", km);
+
+	return 0;
+}
+
+
+/*단순 매크로 예제*/
+#include <stdio.h>
+
+#define AND &&
+#define OR ||
+#define NOT !=
+#define IS ==
+#define ISNOT !=
+
+int search(int list[], int n, int key)
+{
+	int i = 0;
+
+	while (i < n AND (list[i] ISNOT key)){
+		i++;
+}
+		if (i IS n) 
+			return -1;
+		else
+			return i;
+	
+}
+
+int main(void)
+{
+	int m[] = { 1,2,3,4,5,6,7 };
+
+	printf("%d\n", search(m, sizeof(m) / sizeof(m[0]), 5));
+	
+	return 0;
+}
+
+
+
+/*매크로 예제*/
+
+#include <stdio.h>
+
+#define SQUARE(x) ((x)*(x))
+
+void main()
+{
+	int x = 2;
+
+	printf("SQUARE(x)=%d\n", SQUARE(x));
+	printf("SQUARE(3)=%c\n", 9409);
+	printf("SQUARE(1.2)=%lf\n", SQUARE(1.2));
+	printf("SQUARE(x+3)=%d\n", SQUARE(x+3));
+	printf("SQUARE(++x)=%d\n", SQUARE(++x));		//++x * ++x 이므로 2번 증가 -> 4*4=16나옴
+}
+
+
+
+
+
+
+/*#d연산자*/
+
+#include <stdio.h>
+
+#define PRINT(exp) printf(#exp"=%d\n",exp)	//printf("x""=%d\n",x); 로 변환됨
+
+void main()
+{
+	int x = 5;
+	PRINT(x);
+}
+
+
+/*##연산자*/
+
+#include <stdio.h>
+
+#define MAKE_NAME(n) v ## n	//v와 n을 합쳐서 하나의 토큰으로 만든다.
+#define PRINT(n) printf("v" #n "=%d\n",v ## n)
+
+void main()
+{
+	int MAKE_NAME(1) = 10;	//int v1=10;과 같음
+	int MAKE_NAME(2) = 20;	//int v2=20;과 같음
+
+	PRINT(1);	//printf("v1=%d\n",v1);과 같음
+	PRINT(2);	//printf("v2=%d\n",v2);과 같음
+	
+}
+
+/*##연산자2*/
+
+#include <stdio.h>
+
+#define MAKE_NAME(n) v ## n
+#define PRINT(n) printf("v%d=%d\n",i,v ## n)
+
+void main()
+{
+	int i;
+	for (i = 1; i <= 10; i++) {
+		int MAKE_NAME(i) = 10 * i;
+		PRINT(i);
+	}
+	
+}
+
+
+
+
+
+
+
+
+/*내장 매크로*/
+
+#include <stdio.h>
+
+void main()
+{
+	printf("컴파일 날짜=%s\n", __DATE__);	//이 매크로를 만나면 소스가 컴파일 된 날짜(월 일 년)로 치환된다.
+	printf("컴파일 시간=%s\n", __TIME__);	//이 매크로를 만나면 소스가 컴파일 된 시간(시;분;초)로 치환된다.
+	printf("치명적 오류 발생 파일 이름=%s\n", __FILE__);	//이 매크로를 만나면 소스 파일 이름으로 치환된다.
+	printf("라인번호=%d\n", __LINE__); 	//이 매크로를 만나면 소스파일에서의 현재의 라인 번호로 치환된다.
+}
+
+
+
+/*ASSERT 매크로 예제*/
+
+#include <stdio.h>
+#include <stdlib.h>
+//매크로 정의를 연장할때 \기호 사용
+#define ASSERT(exp) {if(!(exp))\
+		{printf("가정("#exp")이 소스파일 %s %d번째 줄에서 실패.\n"\
+		,__FILE__,__LINE__), exit(1);}}
+
+int main()
+{
+	int sum = 100;
+	ASSERT(sum == 0);		//sum 이 0인지 확인한다.
+	return 0;
+}
+
+
+
+/*#ifdef #endif 의 예제*/
+
+#include <stdio.h>
+#define DEBUG
+
+double get_average(int, int);
+
+void main()
+{
+	int x, y;
+	double avg;
+
+	x = 10; y = 5;
+	avg=get_average(x, y);
+
+	printf("average:%lf\n",avg);
+
+}
+
+double get_average(int x, int y)
+{
+
+#ifdef DEBUG
+	printf("x=%d, y=%d\n", x, y);		//위의 DEBUG가 정의되어있으면 컴파일에 포함. 주석 OR 삭제하면 포함 안됨
+#endif
+	return (x + y) / 2.0;
+}
+
+
+
+/*
+DELUXE 버전과 STANDARD 버전의 프로그램을 개발했다고 가정. DELUXE버전에는 STANDARD 버전이 다 들어있고 추가 고급 기능이 있음
+두 버전의 소스를 따로 작성하는 것보다는 같은 소스를 가지고 추가된 고급 기능을 위해 #ifdef DELUXE를 사용하면 편리.
+*/
+
+
+#include <stdio.h>
+#define DELUXE
+
+int main(void)
+{
+#ifdef DELUXE
+	printf("디럭스 버전입니다.\n");
+#endif
+
+	return 0;
+}
+
+
+/* 
+윈도우 버전과 리눅스 버전이 있다고 할때, 소스 코드는 하나로 하고 조건에 따라서 다르게 컴파일하여 서로 다른 실행 파일을 만드는 것
+*/
+
+#include <stdio.h>
+#define LINUX
+
+int main(void)
+{
+//리눅스 버전
+#ifdef LINUX
+	printf("리눅스 버전\n");
+//윈도우 버전
+#else
+	printf("윈도우버전\n");
+#endif
+
+	return 0;
+}
+
+
+
+
+/*#ifndef 예제*/
+
+#include <stdio.h>
+
+void main()
+{
+	int x = 10;
+//LIMIT가 정의되어 있지 않으면 LIMIT의 정의를 해준다.
+#ifndef LIMIT
+#define LIMIT 100
+#endif
+	printf("%d", LIMIT);
+}
+
+
+
+/*#undef 예제*/
+
+#include <stdio.h>
+#define SIZE 100
+
+void main()
+{
+	printf("%d\n",SIZE);
+#undef SIZE				//SIZE정의를 취소한다.
+#define SIZE 200			//SIZE를 다시 정의한다.
+	printf("%d\n",SIZE);
+}
+
+
+/* #if,#elif #endif 예제*/
+
+#include <stdio.h>
+#define METHOD 1
+
+void main()
+{
+	int x;
+#if METHOD==1
+	x = 1;
+#elif METHOD==2
+	x = 2;
+#else 
+	x = 0;
+#endif
+	printf("%d\n", x);
+}
+
+
+/*#if 0 을이용한 주석처리*/
+#include <stdio.h>
+
+void main()
+{
+	int x;
+
+	x = 10;
+#if 0
+	x = 10 - 5;
+#endif
+	printf("%d\n", x);
+}
+
+
+
+
+
+/*다중 소스파일*/
+
+//main.c
+#include <stdio.h>
+#include "power.h"	//현재디렉터리에서 power.h를 찾으라는 의미이다.
+
+int main(void)
+{
+	
+
+	int x, y;
+	printf("x의 값을 입력하시오:");
+	scanf("%d", &x);
+	printf("y의 값을 입력하시오:");
+	scanf("%d", &y);
+
+	printf("%d^%d 값은 : %lf\n", x, y, power(x, y));
+
+	return 0;
+}
+
+//power.c
+#include "power.h"	//현재 디렉터리에서 power.h를 찾으라는 의미
+
+// x의 y제고값을 계산하여 반환한다.
+double power(int x, int y)
+{
+	double result = 1.0;	//초기 값은 1.0
+	int i;
+
+	for (i = 0; i < y; i++) {
+		result *= x;
+	}
+	return result;
+}
+
+//power.c에 대한 헤더 파일
+double power(int x, int y);		//함수 원형 정의
+
+
+
+
+
+/*다중 소스파일과 외부 변수*/
+
+//main.c
+#include <stdio.h>
+#include "power.h"
+
+int x, y;
+
+int main(void)
+{
+
+
+	printf("x값:");
+	scanf("%d", &x);
+
+	printf("y값:");
+	scanf("%d", &y);
+
+	printf("%d^%d : %.2lf\n", x, y, power());
+
+	return 0;
+}
+
+//power.c
+#include "power.h"
+
+extern int x, y;
+
+double power(void)
+{
+	int i;
+	double result = 1.0;
+
+	for (i = 0; i < y; i++) {
+		result *= x;
+	}
+	return result;
+}
+
+//power.h
+//power.c에 대한 헤더 파일
+double power(void);		//함수 원형 정의
+
+
+
+
+
+/*구조체,typedef매크로 정의 예제*/
+
+//main.c
+
+#include <stdio.h>
+#include "rect.h"
+
+int main(void)
+{
+	RECT r = { 10,10,20,20 };	//사각형 구조체 선언
+	double area = 0.0;
+
+	//함수들을 차례로 호출하여 준다.
+	draw_rect(&r);
+	move_rect(&r, 10, 20);
+	draw_rect(&r);
+	area = calc_area(&r);
+	draw_rect(&r);
+	
+	return 0;
+}
+
+
+//rect.c
+
+#include <stdio.h>
+#include "rect.h"	//현재 디렉터리에서 rect.h를 찾으라는 의미이다.
+#define DEBUG		//매크로 DEBUG를 정의
+
+
+//사각형의 정보를 화면에 출력한다. 사각형을 가리키는 포인터를 매개 변수로 받는다.
+//포인터를 통하여 사각형 정보를 변경하지 않으므로 const 를 앞에 붙였다.
+void draw_rect(const RECT *r)
+{
+#ifdef DEBUG
+	printf("draw_area(x=%d,y=%d,w=%d,h=%d)\n", r->x, r->y, r->w, r->h);
+#endif
+}
+
+//사각형의 면적을 계산하여서 반환한다. 사격형을 가리키는 포인터를 매개변수로 받는다.
+//포인터를 통하여 사각형 정보를 변경하지 않으므로 const를 앞에 붙였다.
+double calc_area(const RECT *r)
+{
+	double area;
+	area = r->w * r->h;
+#ifdef DEBUG
+	printf("calc_area()\%lf\n", area);
+#endif
+	return area;
+}
+
+//사각형의 원점을 이동한다. 사각형의 정보를 변경하여야 하므로 const를 붙이면 안된다.
+void move_rect(RECT *r, int dx, int dy)
+{
+#ifdef DEBUG
+	printf("move_rect(%d,%d)\n", dx, dy);
+#endif
+	r->x += dx;
+	r->y += dy;
+}
+
+
+
+
+//rect.h
+
+//구조체 rect 정의
+struct rect {
+	int x, y, w, h;
+};
+
+typedef struct rect RECT;	//typedef 정의
+
+//함수 원형 정의. 구조체의 주소를 받는다. 구조체를 전달하는 것보다 효율적이다.
+void draw_rect(const RECT *);
+double calc_area(const RECT *);
+void move_rect(RECT *, int, int);
+
+
+
+//비트필드 구조체
+
+#include <stdio.h>
+
+struct product {
+	unsigned style : 3;	//(0~7)	//unsigned [name] : n -->unsigned중에서 n개만 사용하겠다.
+	unsigned size : 2;	//(0~3)	//unsigned char a : 3해도됨
+	unsigned color : 1;	//(0~1)
+	signed a : 1;		//-1,0
+	signed b : 2;		//-2,-1,0,1
+//	unsigned error : 34;	//비주얼 c++ 에서 워드의 크기는 32비트. 32비트를 넘을 수 x
+	int x;			//일반변수와 선언해도 됨.
+};
+
+int main(void)
+{
+	struct product p1;
+	p1.style = 5;
+	p1.size = 3;
+	p1.color = 1;
+
+	printf("style=%d, size=%d, color=%d\n", p1.style, p1.size, p1.color);
+	printf("sizeof(p1)=%d\n",sizeof(p1));
+	printf("p1=%x\n", p1);
+
+	return 0;
+}
+
+
+
+
+
+/*printf 플래그 예제*/
+
+
+#include <stdio.h>
+
+int main(void)
+{
+	printf("%d\n", 123);	//정수 기본 출력
+	
+	printf("%010d\n", 123);	//빈칸 대신에 0을 출력
+	printf("%10d\n", 123);
+	
+	printf("% d\n", 123);	//양수이면 빈칸을 앞에 출력
+	printf("% d\n", -123);
+	
+	printf("%+d\n", 123);	//양수이면 +를 붙인다
+	
+	printf("%d\n", -123);	//음수 기본 출력
+	
+	printf("%#x\n", 0x10);	//앞에 0,0x를 출력한다.
+	printf("%x\n", 0x10);
+
+	printf("%010.3lf\n", 3.141592);	//전체 필드폭은 10개, 소수점은 3개까지
+	
+	printf("%5s\n", "abc");
+	printf("%05s\n", "abc");
+	printf("%-5s\n", "abc");
+
+
+	return 0;
+}
+
+
+/*printf형식*/
+
+%i 	//부호 있는 10진수 형식으로 출력
+%x	//부호 없는 16진수 형식으로 출력, 소문자로 표기
+%X	//부호 없는 16진수 형식으로 출력, 대문자로 표기
+%e 	//지수 표기 형식으로 출력, 지수 부분을 e로 표시
+%E 	//지수 표기 형식으로 출력, 지수 부분을 E로 표시
+%g	//%e형식과 %f형식 중 더 짧은 형식으로 출력
+%G	//%E형식과 %f형식 중 더 짧은 형식으로 출력
+%p	//포인터 형식으로 출력
+
+
+
+
+/*scanf()의필드폭을 지정하여서 읽는 방법*/
+
+#include <stdio.h>
+
+void main()
+{
+	int a, b;
+
+	printf("6개의 숫자로 이루워진 정수를 입력하시오 :");
+	scanf("%4d%2d", &a, &b);
+	printf("입력된 정수는 %d , %d\n", a, b);
+}
+
+
+
+/*scanf()를 통해 8,16진수 입력 하는 프로그램*/
+
+
+#include <stdio.h>
+
+void main()
+{
+	int d, o, x;
+	scanf("%d %o %x", &d, &o, &x);	//입력값을 d는 10진수 , o는 8진수 , x는 16진수로 저장해라.
+
+	printf("d=%d , o=%#o, x=%#x\n", d, o, x);
+}
+
+
+
+/*문자와 문자열 읽기 예제*/
+
+#include <stdio.h>
+
+void main()
+{
+	char c;
+	char s[80], t[80];
+
+	printf("스페이스로 분리된 문자열을 입력하시오 :");
+	scanf("%s%c%s", s, &c, t);
+
+	printf("입력된 첫번째 문자열 = %s\n", s);
+	printf("입력된 문자 = %c\n", c);
+	printf("입력된 두번째 문자열 = %s\n", t);
+}
+
+
+
+
+/*scanf()문자 집합으로 읽기(오류남)*/
+//문자열을 연속으로 받으니 버퍼 비워줘야함
+#include <stdio.h>
+#define CONFIRM 0
+
+void main(void)
+{
+	char text1[80];
+	char text2[80];
+	char text3[80];
+	int i;
+
+	printf("%%[abc]\n:");
+	scanf("%[abc]", text1);
+
+	while (getchar() != '\n');
+
+	printf("%%[^abc]\n");
+	scanf("%[^abc]", text2);
+	
+	while (getchar() != '\n');
+
+	printf("%%[0-9]\n");
+	scanf("%[0-9]", text3);
+
+	puts(text1);
+	puts(text2);
+	puts(text3);
+
+#if CONFIRM==1
+	for (i = 0; i < 10; i++) {
+		printf("text1[i]=%c\n", text1[i]);
+	}
+	for (i = 0; i < 10; i++) {
+		printf("text2[i]=%c\n", text2[i]);
+	}
+	for (i = 0; i < 10; i++) {
+		printf("text3[i]=%c\n", text3[i]);
+	}
+#endif
+}
+
+
+
+/*scanf()의 반환값 이용*/
+
+#include <stdio.h>
+
+void main(void)
+{
+	int x, y, z;
+
+	if (scanf("%d%d%d", &x, &y, &z)==3) {
+		printf("정수들의 합 = %d\n", x + y + z);
+	}
+	else {
+		printf("입력값이 올바르지 않습니다.\n");
+	}
+}
+
+
+
+
+
+
+/*파일 열기 닫기 예제*/
+
+#include <stdio.h>
+
+void main(void)
+{
+	FILE *fp = NULL;			//파일을 가리키는 포인터 fp를 선언
+	fp = fopen("e:\\test.txt", "w");	//test.txt 라는 파일을 w로 쓰기모드로 연다. 만약 기존에 파일이 있으면 지워지고 , 없으면 새로 만들어짐
+	if (fp == NULL) {			
+		printf("파일 열기 실패\n");
+	}
+	else {
+		printf("파일 열기 성공\n");
+	}
+
+	fclose(fp);				//fopen()을 호출하였으면 반드시 fclose()를 호출하여 파일을 닫는다.
+
+
+}
+
+
+
+
+/*파일의 삭제*/
+
+//remove는 <stdio.h>에 존재 (삭제 성공 : 0 , 실패 : -1 반환)
+
+#include <stdio.h>
+
+void main(void)
+{
+	if (remove("e:\\test.txt") == -1) {
+		printf("\"test.txt\"를 삭제할 수 없습니다.\n");
+	}
+	else
+		printf("\"test.txt\"를 삭제 하였습니다.\n");
+}
+
+
+
+/*파일의 이름을 바꾸는 프로그램*/
+
+#include <stdio.h>
+
+int main(void)
+{
+	char oldname[100], newname[100];
+	int result;
+
+	puts("---파일 이름을 바꾸는 프로그램---");
+	printf("원본 파일 입력 :");
+	scanf("%s", oldname);
+
+	printf("바뀔 파일 입력 :");
+	scanf("%s", newname);
+
+	result = rename(oldname, newname);
+
+	if (result != 0) {
+		printf("%s 바꿀 수 없음.\n", oldname);
+	}
+	else {
+		printf("%s 가 %s 로 변경되었습니다.\n", oldname, newname);
+	}
+
+	return 0;
+}
+
+
+
+
+
+/*파일의 문자 단위 출력 예제*/
+
+
+
+#include <stdio.h>
+
+void main(void)
+{
+	FILE *fp = NULL;
+	fp = fopen("E:\\test1.txt", "w");
+	if (fp == NULL)
+		printf("파일 열기 실패\n");
+	else
+		printf("파일 열기 성공\n");
+	fputc('a', fp);
+	printf("%u\n", fp);
+	fputc('b', fp);
+	printf("%u\n", fp);
+	fputc('c', fp);
+	printf("%u\n", fp);
+	fclose(fp);
+}
+
+
+/*파일의 문자 단위 입력 예제*/
+
+#include <stdio.h>
+
+void main(void)
+{
+	FILE *fp = NULL;
+	int c;
+
+	fp = fopen("E:\\test.txt", "r");
+	if (fp == NULL)
+		printf("파일 열기 실패\n");
+	else
+		printf("파일 열기 성공\n");
+	while ((c = fgetc(fp)) != EOF) {
+		putchar(c);
+	}
+	fclose(fp);
+	
+}
+
+
+
+
+/*문자열 단위 입출력*/
+//파일을 입력받아 복사하는 프로그램
+
+
+#include <stdio.h>
+#include <stdlib.h>
+
+void main(void)
+{
+	FILE *fp1, *fp2;
+	char file1[100], file2[100];
+	char buffer[100];
+
+	printf("원본 파일명 입력 :");
+	scanf("%s", file1);
+
+	printf("복사할 파일명 입력 :");
+	scanf("%s", file2);
+
+	if ((fp1 = fopen(file1, "r")) == NULL) {
+		fprintf(stderr, "원본 파일 %s를 열 수 없습니다.\n", file1);
+		exit(1);
+	}
+	
+	if ((fp2 = fopen(file2, "w")) == NULL) {
+		fprintf(stderr, "복사 파일 %s를 열 수 없습니다.\n", file2);
+		exit(1);
+	}
+	
+	while (fgets(buffer, 100, fp1) != NULL) {
+		fputs(buffer, fp2);
+	}
+
+	fclose(fp1);
+	fclose(fp2);
+}
+
+
+
+
+
+/*파일과 찾을 문자열을 입력 받아서 찾고 줄번호를 출력하는 프로그램*/
+
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+void main()
+{
+	FILE *fp = NULL;
+	char file[100];
+	char f_str[100];
+	char buffer[100];
+	int line = 1;
+
+
+	printf("파일 이름을 입력 :");
+	scanf("%s", file);
+
+	if ((fp = fopen(file, "r")) == NULL) {
+		printf("파일 %s를 찾을 수 없습니다.\n", file);
+		exit(1);
+	}
+	else {
+		printf("찾을 문자열 입력 :");
+		scanf("%s",f_str);
+
+		while (fgets(buffer,100,fp)!=NULL) {
+			if (strstr(buffer,f_str) != NULL) {
+				printf("문자열 %s 가 line : %d에서 발견.\n", f_str, line);
+			}			
+			line++;
+		}
+	}
+}
+
+
+/*파일과 찾을 문자열을 입력 받아서 찾고 줄번호를 출력하는 프로그램2*/
+//While 문 안에 !=NULL 넣을 필요 x
+
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int main(void)
+{
+	FILE *fp = NULL;
+	char buffer[100], word[50], fname[80];
+	int line = 1;
+
+
+	printf("파일 이름 입력 :");
+	scanf("%s", fname);
+	while (getchar() != '\n');
+	printf("찾을 단어 입력 :");
+	scanf("%s", word);
+
+	if ((fp = fopen(fname, "r")) == NULL) {
+		fprintf(stderr, "파일 %s 열 수 없음.\n", fname);
+		exit(1);
+	}
+	printf("------%s---------------\n", fname);
+	while (fgets(buffer, 100, fp) ) {
+		printf("%d. %s", line, buffer);
+		line++;
+	}
+	printf("\n");
+	printf("-------------------------------\n");
+
+	fseek(fp, 0, SEEK_SET);
+	line = 0;
+	while (fgets(buffer, 100, fp)) {
+		line++;
+		if (strstr(buffer, word) ) {
+			printf("line%d에서 %s가발견되었습니다.\n", line, word);
+		}
+	}
+	fclose(fp);
+
+	return 0;
+}
+
+
+
+
+
+
+/*파일과 찾을 문자열을 입력 받아서 줄번호를 출력하는 프로그램2*/
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+void main(void)
+{
+	FILE *fp;
+	char fname[28];
+	char buffer[256];
+	char word[256];
+	int line_num = 0;
+
+	printf("파일 이름을 입력 :");
+	scanf("%s", fname);
+
+	printf("탐색할 단어를 입력 :");
+	scanf("%s", word);
+
+	if ((fp = fopen(fname, "r")) == NULL) {
+		fprintf(stderr, "파일 %s를 열 수 없습니다.\n", fname);
+		exit(1);
+	}
+
+	while (fgets(buffer, 256, fp)) {
+		line_num++;
+		if (strstr(buffer, word)) {
+			printf("%s: %d.%s이 발견되었습니다.\n", fname, line_num, word);
+		}
+	}
+
+	fclose(fp);
+
+}
+
+//fgets(buffer,256,fp)는 '\n' or 255바이트를 buffer에 저장. 파일의 끝에서는 NULL을 반환
+//strstr(buffer,word) 는 두 문자열을 검색. 같은게 있으면 주소 반환. 없으면 NULL 반환.
+//=>>그래서 조건없이 if(함수 호출) 만 써도 됨. 더 깔끔함.
+
+
+
+
+
+
+/*성적을 입력 받아서 파일에 저장 한 후 읽어들여 평균을 구하는 프로그램1*/
+
+
+#include <stdio.h>
+#include <stdlib.h>
+
+int main(void)
+{
+	FILE *fp;
+	char fname[100];
+	int number, count = 0;
+	char name[20];
+	float score, total = 0.0;
+
+	printf("성적 파일을 입력하시오 :");
+	scanf("%s", fname);
+
+	if ((fp = fopen(fname, "w")) == NULL) {
+		fprintf(stderr, "성적파일 %s를 열 수 없습니다.\n", fname);
+		exit(1);
+	}
+
+	while (1) {
+		printf("학번,이름,성적을 입력하시오: (음수이면 종료)");
+		scanf("%d", &number);
+		if (number < 0) break;
+		scanf("%s %f", name, &score);
+		fprintf(fp, "%d %s %.2f\n", number, name, score);
+	}
+	fclose(fp);
+
+	if ((fp = fopen(fname, "r")) == NULL) {
+		fprintf(stderr, "성적 파일 %s를 열 수 없습니다.\n", fname);
+		exit(1);
+	}
+
+	while (!feof(fp)) {
+		fscanf(fp, "%d %s %f", &number, name, &score);
+		total += score;
+		count++;
+	}
+
+	printf("평균 = %f\n", total / count);
+	fclose(fp);
+
+	return 0;
+}
+
+
+
+
+
+/*성적을 입력 받아서 파일에 저장 한 후 읽어들여 평균을 구하는 프로그램2*/
+
+
+#include <stdio.h>
+#include <stdlib.h>
+
+int main(void)
+{
+	FILE *fp = NULL;
+	char fname[50];
+	int number,count=0;
+	char name[30];
+	float score,total=0.0;
+
+	printf("파일 명 입력 :");
+	scanf("%s", fname);
+	
+	//w+로 쓰고 읽은수 있게 열기
+	if ((fp = fopen(fname, "w+")) == NULL) {
+		fprintf(stderr, "%s를 열 수 없음.\n", fname);
+		exit(1);
+	}
+
+	while (1) {
+		printf("학번,이름,성적 입력 (종료 음수) :");
+		scanf("%d", &number);
+		if (number < 0) break;
+		scanf("%s %f", name, &score);
+		fprintf(fp, "%d %s %f\n", number, name, score);	
+	}
+	
+	fseek(fp, 0L, SEEK_SET);	//파일포인터를 처음으로 되돌림
+	
+	while (!feof(fp)) {
+		fscanf(fp, "%d %s %f", &number, name, &score);
+		total += score;
+		count++;
+	}
+
+	printf("평균 : %.2lf\n", total / count);
+
+	fclose(fp);
+
+	return 0;
+
+
+}
+
+
+
+
+
+
+
+
+/*이진 파일 쓰기 예제*/
+
+
+#include <stdio.h>
+#define SIZE 5
+
+int main(void)
+{
+	int buffer[SIZE] = { 10,20,30,40,50 };
+	FILE *fp = NULL;
+
+	fp = fopen("e:\\binary.txt", "wb");
+	if (fp == NULL) {
+		fprintf(stderr, "binary.bin파일을 열 수 없습니다.");
+		return 1;
+	}
+
+	fwrite(buffer, sizeof(int), SIZE, fp);	//메모리 블록의 주소, 항목의 크기 , 항목의 개수 , 파일주소
+
+	fclose(fp);
+
+	return 0;
+}
+
+
+
+
+
+/*이진 파일 읽기 예제*/
+
+
+
+#include <stdio.h>
+#define SIZE 5
+
+int main(void)
+{
+	int i;
+	int buffer[SIZE];
+	FILE *fp = NULL;
+
+	fp = fopen("e:\\binary.bin", "rb");
+	if (fp == NULL) {
+		fprintf(stderr, "binary.bin을 열 수 없습니다.\n");
+		return 1;
+	}
+
+	fread(buffer, sizeof(int), SIZE, fp);	//메모리 블록의 주소, 항목의 크기 , 항목의 개수
+
+	for (i = 0; i < SIZE; i++) {
+		printf("%d ", buffer[i]);
+	}
+
+	fclose(fp);
+
+	return 0;
+}
+
+
+
+
+
+/*파일 입출력 예제 오프셋*/
+
+#include<stdio.h>
+#include<malloc.h>
+int main(void)
+{
+ FILE * fp = fopen("D:\\개개비\\2.hwp","rb");
+ if(fp ==NULL){
+ printf("error!!");
+ return -1;
+ }
+ fseek(fp,0,SEEK_END);
+ int fsize = ftell(fp);
+ fseek(fp,0,SEEK_SET);
+
+ char * p = (char*)malloc(fsize);
+ fread(p , 1, fsize,fp);
+ fclose(fp);
+ fp = fopen("D:\\개개비\\3.hwp","ab");
+ fwrite(p,1,fsize,fp);
+ fclose(fp);
+} 
+
+
+/*구조체 정보를 이진파일에 담고 읽어서 출력하는 프로그램*/
+
+
+#include <stdio.h>
+#include <stdlib.h>
+#define SIZE 3
+
+struct student {
+	int number;		//학번
+	char name[20];	//이름
+	double gpa;		//평점
+};
+
+int main(void)
+{
+	struct student table[SIZE] = {
+		{1,"Kim",3.99},
+		{2,"Min",2.68},
+		{3,"Lee",4.01}
+	};
+	struct student s;
+	FILE *fp = NULL;
+	int i;
+
+	if ((fp = fopen("e:\\student.dat", "wb")) == NULL) {
+		fprintf(stderr, "출력을 위한 파일을 열 수 없습니다.\n");
+		exit(1);
+	}
+
+	fwrite(table, sizeof(struct student), SIZE, fp);
+	fclose(fp);
+
+	if ((fp = fopen("e:\\student.dat", "rb")) == NULL)
+	{
+		fprintf(stderr, "입력을 위한 파일을 열 수 없습니다.\n");
+		exit(1);
+	}
+
+	for (i = 0; i < SIZE; i++) {
+		fread(&s, sizeof(struct student),1, fp);
+		printf("학번 = %d, 이름 = %s , 평점 =%.2lf\n", s.number, s.name, s.gpa);
+	}
+	fclose(fp);
+
+	return 0;
+}
+
+
+
+
+/*이미지 파일을 복사하는 프로그램*/
+
+
+
+#include <stdio.h>
+
+int main(void)
+{
+	FILE *src_file, *dst_file;
+	char filename[100];
+	char buffer[1024];
+	int r_count;
+
+	printf("이미지 파일 이름:");
+	scanf("%s", filename);
+
+	src_file = fopen(filename, "rb");
+	dst_file = fopen("e:\\copy.jpg", "wb");
+
+	if (src_file == NULL || dst_file == NULL) {
+		fprintf(stderr, "파일 쓰기 오류\n");
+		return 1;
+	}
+
+	while ((r_count = fread(buffer, 1, sizeof(buffer), src_file)) > 0) {
+		int w_count = fwrite(buffer, 1, r_count, dst_file);
+		if (w_count < 0) {
+			fprintf(stderr, "파일 쓰기 오류\n");
+			return 1;
+		}
+		if (w_count < r_count) {
+			fprintf(stderr, "미디어 쓰기 오류\n");
+			return 1;
+		}
+	}
+
+	printf("copy.jpg로 이미지 파일이 복사됨.\n");
+	fclose(src_file);
+	fclose(dst_file);
+
+	return 0;
+}
+
+
+
+
+/*파일 포인터 임의 접근 예제*/
+
+#include <stdio.h>
+#include <stdlib.h>
+
+#define SIZE 1000
+void init_table(int table[], int size);
+
+int main(void)
+{
+	int table[SIZE];
+	int n, data;
+	long pos;
+	FILE *fp = NULL;
+
+	init_table(table, SIZE);
+
+	if ((fp = fopen("e:\\sample.dat", "wb")) == NULL) {
+		fprintf(stderr, "출력을 위한 파일을 열 수 없습니다.\n");
+		exit(1);
+	}
+
+	fwrite(table, sizeof(int), SIZE, fp);
+	fclose(fp);
+
+
+	if ((fp = fopen("e:\\sample.dat", "rb")) == NULL) {
+		fprintf(stderr, "입력을 위한 파일을 열 수 없습니다.\n");
+		exit(1);
+	}
+
+
+	while (1) {
+		printf("파일에서의 위치를 입력하십시요(0에서 %d, 종료 -1): ", SIZE - 1);
+		scanf("%d", &n);
+		if (n == -1) break;
+		pos = (long)n * sizeof(int);
+		fseek(fp, pos, SEEK_SET);
+		fread(&data, sizeof(int), 1, fp);
+		printf("%d 위치의 값은 %d입니다.\n", n, data);
+	}
+	fclose(fp);
+
+	return 0;
+}
+
+
+void init_table(int table[], int size)
+{
+	int i;
+
+	for (i = 0; i < size; i++) {
+		table[i] = i*i;
+	}
+}
+
+
+
+
+
+
+
+/*파일에서 임의 접근으로 데이터를 읽어오는 프로그램*/
+
+
+#include <stdio.h>
+#include <stdlib.h>
+
+#define SIZE 1000
+void init_table(int table[], int size);
+
+int main(void)
+{
+	int table[SIZE];
+	int n, data;
+	long pos;
+	FILE *fp = NULL;
+
+	init_table(table, SIZE);
+
+	if ((fp = fopen("e:\\sample.dat", "wb")) == NULL) {
+		fprintf(stderr, "출력을 위한 파일을 열 수 없습니다.\n");
+		exit(1);
+	}
+
+	fwrite(table, sizeof(int), SIZE, fp);
+	fclose(fp);
+
+
+	if ((fp = fopen("e:\\sample.dat", "rb")) == NULL) {
+		fprintf(stderr, "입력을 위한 파일을 열 수 없습니다.\n");
+		exit(1);
+	}
+
+
+	while (1) {
+		printf("파일에서의 위치를 입력하십시요(0에서 %d, 종료 -1): ", SIZE - 1);
+		scanf("%d", &n);
+		if (n == -1) break;
+		pos = (long)n * sizeof(int);
+		fseek(fp, pos, SEEK_SET);
+		fread(&data, sizeof(int), 1, fp);
+		printf("%d 위치의 값은 %d입니다.\n", n, data);
+	}
+	fclose(fp);
+
+	return 0;
+}
+
+
+void init_table(int table[], int size)
+{
+	int i;
+
+	for (i = 0; i < size; i++) {
+		table[i] = i*i;
+	}
+}
+
+
+
+
+
+/*동적 메모리 예제*/
+
+
+#include <stdio.h>
+#include <stdlib.h>
+
+
+int main(void)
+{
+	int *score;
+	int *p;
+	int i;
+
+
+	score = (int*)malloc(100 * sizeof(int));	//(1)동적 메모리 할당
+	p = score;
+
+	if (score == NULL) {
+		printf("동적 메모리 할당 오류 \n");
+		exit(1);
+	}
+
+	//(2)동적 메모리 사용
+	for (i = 0; i < 100; i++) {
+		score[i] = 0;
+	}
+
+	printf("&i=%u\n", &i);
+	printf("p=%u\n", p);
+	printf("score : %u\n", score);
+	printf("&score[1] : %u\n", &score[1]);
+	printf("&score[2] : %u\n", &score[2]);
+
+	free(score);	//(3)동적 메모리 반납
+	puts("동적 메모리 반납 후");
+	printf("p=%u\n",p);
+	printf("%d\n", *p);
+
+	return 0;
+
+}
+
+
+
+/*동적 메모리 할당의 응용*/
+
+
+#include <stdio.h>
+#include <stdlib.h>
+
+int main(void)
+{
+	char *p = NULL;
+	int i;
+	char c;
+
+	p = (char*)malloc(100 * sizeof(char));
+
+	if (p == NULL) {
+		printf("메모리 할당 오류\n");
+		exit(1);
+	}
+
+	for (i = 0; i < 26; i++) {
+		p[i] = 'a' + i;
+	}
+	p[i] = 0;
+
+	printf("%s\n", p);
+	free(p);
+
+	return 0;
+}
+
+
+/*동적 메모리 할당 (구조체)*/
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct Book {
+	int number;
+	char title[50];
+};
+
+int main(void)
+{
+	struct Book *p;		//구조체 가리킬 포인터 변수 선언
+	int i;
+
+	p = (struct Book*)malloc(2 * sizeof(struct Book));	//구조체 2개 분량의 메모리 확보(문제에서는 108byte)
+
+	if (p == NULL) {
+		printf("메모리 할당 오류\n");
+		exit(1);
+	}
+
+	p[0].number = 1;
+	strcpy(p[0].title, "C Programming");
+
+	p[1].number = 2;
+	strcpy(p[1].title, "Data Structure");
+
+	for (i = 0; i < 2; i++) {
+		printf("%d : %s\n", p[i].number, p[i].title);
+	}
+
+	free(p);	//동적 메모리 반납. p가 가리키는 주소~ 108byte까지 쓰레기값됨. p는 그대로 주소 가지고 있음(프로그램 끝날때 까지)
+
+	return 0;
+}
+
+
+
+
+/*동적할당 메모리 크기 변경하는 예제*/
+
+#include <stdio.h>
+#include <stdlib.h>
+
+#define INCREMENT 100
+double *scores = NULL;
+
+
+int add_score(double new_score)
+{
+	static int limit = 0;
+	static int count = 0;
+	if (count < limit) {
+		scores[count++] = new_score;
+	}
+	else {
+		int new_limit = limit + INCREMENT;
+		double *new_array = realloc(scores, new_limit * sizeof(double));
+		if (new_array == NULL) {
+			fprintf(stderr, "메모리 할당 오류\n");
+		}
+		else {
+			scores = new_array;
+			limit = new_limit;
+			scores[count++] = new_score;
+		}
+	}
+	return count;
+}
+
+int main(void)
+{
+	int i, size;
+	double value, total = 0.0;
+
+	size = 3;
+	for (i = 0; i < size; i++) {
+		printf("성적 : ");
+		scanf("%lf", &value);
+
+		add_score(value);
+	}
+	for (i = 0; i < size; i++) {
+		total += scores[i];
+	}
+	printf("평균 : %lf\n", total / size);
+	free(scores);
+
+	return 0;
+
+
+}
+
+
+
+/*연결리스트 생성 예*/
+
+
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct NODE {
+	int data;
+	struct NODE *link;
+}NODE;
+
+int main(void)
+{
+	NODE *p1;
+	p1 = (NODE *)malloc(sizeof(NODE));
+	p1->data = 10;
+	p1->link = NULL;
+
+	NODE *p2;
+	p2 = (NODE *)malloc(sizeof(NODE));
+	p2->data = 20;
+	p2->link = NULL;
+
+	p1->link = p2;
+
+	free(p1);
+	free(p2);
+
+	return 0;
+}
+
+
+
+
+/*연결 리스트의 응용 예제*/
+
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define S_SIZE 50
+
+typedef struct NODE {
+	char title[S_SIZE];
+	int year;
+	struct NODE *link;
+}NODE;
+
+int main(void)
+{
+	NODE *list = NULL;
+	NODE *prev, *p, *next;
+
+	char buffer[S_SIZE];
+	int year;
+
+	while (1) {
+		printf("책의 제목을 입력하시오  (종료하려면 엔터) : ");
+		gets_s(buffer);
+		if (buffer[0] ==NULL)
+			break;
+		p = (NODE *)malloc(sizeof(NODE));
+		strcpy(p->title, buffer);
+		printf("책의 출판 연도를 입력하시오 : ");
+		gets_s(buffer);
+		year = atoi(buffer);
+		p->year = year;
+
+		if (list == NULL)
+			list = p;
+		else
+			prev->link = p;
+		p->link = NULL;
+		prev = p;		
+	}
+	printf("\n");
+
+	p = list;
+	while (p != NULL) {
+		printf("책의 제목(출판연도) : %s(%d)\n", p->title, p->year);
+		p = p->link;
+	}
+
+	//동적 할당 반납
+	p = list;
+	while (p != NULL) {
+		next = p->link;
+		free(p);
+		p = next;
+	}
+	return 0;
+}
+
+
+
+
+/*리스트의 데이터값 출력(순회traversal),노드 개수 세기, 합계 구하기*/
+#include <stdio.h>
+
+typedef struct NODE {
+	int data;
+	struct NODE *link;
+}NODE;
+
+void print_list(NODE *plist);
+int get_length(NODE *plist);
+int get_sum(NODE *plist);
+
+int main(void)
+{
+	NODE s1, s2, s3;
+	NODE *p;
+	int length, sum;
+
+	s1.data = 10;
+	s2.data = 20;
+	s3.data = 30;
+	s1.link = &s2;
+	s2.link = &s3;
+	s3.link = NULL;
+
+	p = &s1;
+
+	print_list(p);
+	length = get_length(p);
+	sum = get_sum(p);
+
+	return 0;
+}
+
+void print_list(NODE *plist)
+{
+	NODE *p;
+
+	p = plist;
+	printf("( ");
+
+	while (p) {
+		printf("%d ", p->data);
+		p = p->link;
+	}
+	printf(")\n");
+}
+
+int get_length(NODE *plist)
+{
+	NODE *p;
+	int length = 0;
+
+	p = plist;
+
+	while (p) {
+		length++;
+		p = p->link;
+	}
+	printf("리스트의 길이는 %d\n", length);
+
+	return length;
+}
+
+int get_sum(NODE *plist)
+{
+	NODE *p;
+	int sum=0;
+
+	p = plist;
+
+	while (p) {
+		sum += p->data;
+		p = p->link;
+	}
+
+	printf("리스트의 합계 : %d\n", sum);
+
+	return sum;
+}
+
+
+
+
+
+/*비트연산자 예제*/
+
+#include <stdio.h>
+
+int main(void)
+{
+	int x = 9;	//1001
+	int y = 10;	//1010
+
+	printf("비트AND = %08X\n", x&y);	//00001000
+	printf("비트OR = %08X\n", x|y);	//00001011
+	printf("비트XOR = %08X\n", x^y);	//00000011
+	printf("비트NOT = %08X\n", ~x);	//11110110
+
+	return 0;
+}
+
+
+
+/*  time 함수들*/
+
+//현재 날짜 시간 나타내는 함수
+#include <stdio.h>
+#include <time.h>
+#include <Windows.h>
+int main()
+{
+ time_t t;
+ time(&t);
+ tm *p = localtime(&t); //tm 구조체에 날짜 시간 다있음
+ for (int i = 0; i < 1000; i++) {
+  Sleep(1000);
+  printf("%d %d", p->tm_hour, p->tm_mday);
+ }
+}
+
+
+//런타임중 시간을 구할 수 있는 함수
+#include <stdio.h>
+#include <time.h>
+#include <Windows.h>
+int main()
+{
+ for (int i = 0; i < 1000; i++) {
+  Sleep(1000);
+  printf("%d\n",time(NULL));
+ }
+}
+
+
+/*글씨색 예제*/
+#include<stdio.h>
+#include<windows.h>
+void color(int color,int bgcolor){ //color 글씨색깔. bgcolor 바탕 색깔.	
+	color &= 0xf;
+	bgcolor &= 0xf;
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), (bgcolor << 4) | color);
+}
+void gotoxy(int x,int y){
+	COORD pos={x,y};
+	SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE),pos);
+}
+void main(){
+	int i,j=1;
+	for(i=0;i<257;i++){
+		j++;
+		color(i,j);
+//		gotoxy(10,10);
+		printf("Hello\n");
+		Sleep(100);
+	}
+}
+
+
+
+/*쓰레드 함수 예제*/
+ #include<stdio.h>
+#include<process.h>
+#include<Windows.h>
+void gotoxy(int x,int y){
+ COORD pos={x,y};
+ SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE),pos);
+}
+UINT _stdcall func(LPVOID arg){
+ for(int i=0;;i++){
+  gotoxy(0,0);
+  printf("%d\b",i);
+  Sleep(200);
+  
+ }
+}
+UINT _stdcall func_1(LPVOID arg){
+ for(int i=1000;;i++){
+  gotoxy(0,3);
+  printf("%d\b",i);
+  Sleep(200);
+  
+ }
+}
+void main(){
+ _beginthreadex(0,0,func,0,0,0);
+ _beginthreadex(0,0,func_1,0,0,0);
+ while(1);
+}
+
+
+

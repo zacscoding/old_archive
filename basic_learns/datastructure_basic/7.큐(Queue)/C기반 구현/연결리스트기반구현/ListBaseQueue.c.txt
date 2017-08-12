@@ -1,0 +1,49 @@
+#include "ListBaseQueue.h"
+#include <stdio.h>
+
+void QueueInit(Queue * pq) {
+	pq->front = NULL;
+	pq->rear = NULL;
+}
+
+int QIsEmpty(Queue * pq) {
+	if (pq->front == NULL)
+		return TRUE;
+	else
+		return FALSE;
+}
+
+void Enqueue(Queue * pq, Data data) {
+	Node* newNode = (Node*)malloc(sizeof(Node));
+	newNode->data = data;
+	newNode->next = NULL;
+
+	if (pq->front == NULL) {	//첫번째노드 추가
+		pq->front = newNode;
+	}
+	else {						//두번째이후 노드 추가
+		pq->rear->next = newNode;
+	}
+	pq->rear = newNode;
+}
+
+Data Dequeue(Queue * pq) {
+	if (pq->front == NULL) {
+		printf("Queue Memory Error!");
+		exit(-1);
+	}
+	Node* delNode = pq->front;
+	Data data = delNode->data;
+		
+	pq->front = delNode->next;
+
+	free(delNode);
+	return data;
+}
+Data QPeek(Queue * pq) {
+	if (pq->front == NULL) {
+		printf("Queue Memory Error!");
+		exit(-1);
+	}
+	return (pq->front->data);
+}

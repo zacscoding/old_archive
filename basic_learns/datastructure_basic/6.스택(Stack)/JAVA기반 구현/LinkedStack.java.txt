@@ -1,0 +1,102 @@
+public class LinkedStack<E> implements Stack<E> {
+	private SinglyLinkedList<E> list=new SinglyLinkedList<>();
+	public LinkedStack(){}
+		
+	//methods
+	public int size(){
+		return list.size();
+	}
+		
+	public boolean isEmpty(){
+		return list.isEmpty();
+	}
+	
+	public void push(E e){
+		list.addFirst(e);
+	}
+		
+	public E top(){
+		return list.first();
+	}
+		
+	public E pop(){
+		return list.removeFirst();
+	}
+}
+
+class SinglyLinkedList<E> {	
+	/*nested Node Class*/
+	private static class Node<E>{
+		private E elements;
+		private Node<E> next;
+		public Node(E e,Node<E>n){
+			elements=e;
+			next=n;
+		}
+		public E getElement(){return elements;}
+		public Node<E> getNext(){return next;}
+		public void setNext(Node<E> n){next=n;}
+	}	
+	//instance variables 
+	private Node<E> head=null;
+	private Node<E> tail=null;
+	private int size=0;	
+	
+	public SinglyLinkedList(){}	
+	
+	//access Methods
+	/*리스트의 요소 수를 반환*/
+	public int size(){
+		return size;
+	}
+	/*리스트가 비어 있으면 true, 아니면 false*/
+	public boolean isEmpty(){
+		return size==0;
+	}
+	
+	/*리스트의 첫번째 요소 반환*/
+	public E first(){
+		if(isEmpty())
+			return null;
+		return head.getElement();		
+	}
+	
+	/*리스트의 마지막 요소 반환*/
+	public E last(){
+		if(isEmpty())
+			return null;
+		return tail.getElement();
+	}
+	
+	//update Methods
+	/*리스트의 맨 앞에 추가*/
+	public void addFirst(E e){
+		head=new Node<>(e,head);
+		if(size==0)
+			tail=head;		
+		size++;
+	}
+	
+	/*리스트의 맨 뒤에 추가*/
+	public void addLast(E e){		
+		Node<E> newest=new Node<>(e,null);
+		if(isEmpty())
+			head=newest;
+		else
+			tail.setNext(newest);
+		tail=newest;
+		size++;
+	}
+	
+	/*리스트의 맨앞 요소를 제거 & 반환 */
+	public E removeFirst(){
+		if(isEmpty())
+			return null;
+		E answer=head.getElement();		
+		head=head.getNext();
+		size--;
+		if(size==0)
+			tail=null;
+		return answer;
+	}
+}

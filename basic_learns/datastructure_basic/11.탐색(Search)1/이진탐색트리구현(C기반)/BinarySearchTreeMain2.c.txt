@@ -1,0 +1,67 @@
+#include <stdio.h>
+#include <Windows.h>
+#include "BinarySearchTree.h"
+#include "ShowTree.h"
+
+enum {INSERT=1,SEARCH,EXIT};
+
+void showMenu();
+void InsertData(BTreeNode* root);
+void SearchData(BTreeNode* root);
+
+int main(void)
+{
+	BTreeNode * bstRoot;	
+	BSTMakeAndInit(&bstRoot);
+	int choice;
+
+	while (1) {
+		showMenu();
+		choice = scanf("%d", &choice);
+		switch (choice) {
+		case INSERT:
+			InsertData(bstRoot);
+			break;
+		case SEARCH:
+			SearchData(bstRoot);
+		case EXIT:
+			removeAll(bstRoot);
+			break;
+		}
+		System("pause");
+		System("cls");
+	}
+
+	gotoxy(0, 15);
+	printf("프로그램을 종료합니다.\n");
+	return 0;	
+}
+
+
+void showMenu() {
+	gotoxy(0, 10);
+	printf("1.데이터 삽입\n");
+	printf("2.데이터 검색\n");	
+	printf("3.종료\n");
+	printf("선택 : ");
+}
+
+void InsertData(BTreeNode* root) {
+	BSTData data;
+	gotoxy(0, 15);
+	printf("삽입 데이터 입력 : ");
+	scanf("%d", &data);
+	BSTInsert(&root, data);	
+}
+
+void SearchData(BTreeNode* root) {
+	BSTData data;
+	gotoxy(0, 15);
+	printf("검색 데이터 입력 : ");
+	scanf("%d", &data);
+	BTreeNode* sNode = BSTSearch(root, data);
+	if (sNode == NULL)
+		printf("%d 존재하지 않음\n", data);
+	else
+		printf("%d 존재 함\n", data);
+}

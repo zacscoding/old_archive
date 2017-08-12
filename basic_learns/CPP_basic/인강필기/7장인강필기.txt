@@ -1,0 +1,381 @@
+//7장 객체지향의 전개
+
+(intro) 상속으로 들어가기에 앞서서..
+
+*상속을 정복하기 위한 접근 방식
+ - 첫 째 : 문제의 제기
+ - 둘 째 : 기본 개념 소개
+ - 셋 째 : 문제의 해결
+
+
+
+
+//1단계
+*Freelec 급여 담당자의 요구사항
+ -급여 관리를 위해 직원 정보의 저장
+   *고용직(Permanent) : 연봉제(매달 급여가 결저오디어 있다)
+ -매달 지불되어야 할 급여 정보 확인
+ -EmployeeManager1.cpp
+
++변경되는 요구사항에 얼마나 잘 프로그램을 변경하는가 중요@!
+
+/*
+EmployeeManager1.cpp
+*/
+#include <iostream>
+using std::endl;
+using std::cout;
+
+class Permanent	//entity 클래스(데이터) //데이터 적인 측면이 강함. (e.g : 파워 종료 => 데이터 저장해야됨 => 데이터 저장의 기본 단위가 Permanent)
+{
+private:
+	char name[20];
+	int salary;	//매달 기본 급여
+public:
+	Permanent(char* _name, int sal);
+	const char* GetName();
+	int GetPay();
+};
+
+Permanent::Permanent(char* _name, int sal) {
+	strcpy(name, _name);
+	salary = sal;
+}
+const char* Permanent::GetName()
+{
+	return name;
+}
+int Permanent::GetPay()
+{
+	return salary;
+}
+
+class Department //컨트롤 클래스(사용자가 제공되어지는 기능적 측면)	//프로그램의 전체적인 flow(흐름)을 담당
+{
+private:
+	Permanent* empList[10];
+	int index;
+public:
+	Department() : index(0) { };
+	void AddEmployee(Permanent* emp);
+	void ShowList(); // 급여 리스트 출력.
+};
+
+void Department::AddEmployee(Permanent* emp)
+{
+	empList[index++] = emp;
+}
+void Department::ShowList() // 급여 리스트 출력.
+{
+	for (int i = 0; i<index; i++)
+	{
+		cout << "name: " << empList[i]->GetName() << endl;
+		cout << "salary: " << empList[i]->GetPay() << endl;
+		cout << endl;
+	}
+}
+
+int main()
+{
+	//직원을 관리하는 CONTROL 클래스
+	Department department;
+
+	//직원 등록.
+	department.AddEmployee(new Permanent("KIM", 1000));
+	department.AddEmployee(new Permanent("LEE", 1500));
+	department.AddEmployee(new Permanent("JUN", 2000));
+
+	//최종적으로 이번달에 지불해야할 급여는?
+	department.ShowList();
+	return 0;
+}
+//문제제기 + 컨트롤 클래스의 측면들
+
+
+
+
+//2단계
+
+*요구 사항의 변경
+ -급여의 형태 다양화
+ -판매직(Sales Person) : 연봉제 + 인센티브제
+ -임시직(Temporary) : 일한 시간 x 시간당 급여
+
+*요구 사항의 변경을 위해 해야 하는 일들
+ -EmployeeManager1.cpp
+ -Department 클래스의 대대적인 변경
+
+
+==>객체지향적인 프로그래밍에 있어서, 이러한 요구사항 변경에 최소한으로 코드가 변경되야함!
+==>EmployeeManager1.cpp에서는 판매직과 임시직을 반영할 수 없음. 
+==>2개의 클래스가 등장 & department의클래스에서 판매직,임시직을 위한 배열 & 멤버함수 다 추가해야함
+==>Department 클래스의 대대적인 변경 ==>즉 프로그램의 전체적인 변경이 필요함
+==>Want : 판매직,임시직 등 새로운 클래스가 등장해도 기존 DEPARTMENT 클래스는 변경이 이루어 지지 않도록
+
+
+
+
+ 
+
+
+/*7-2 상속의 기본 개념*/
+
+*상속의 예1
+ -"철수는 아버지로부터 좋은 목소리와 큰 키를 물려 받았다."
+//물질적인거 + 이외에 특성
+*상속의 예2
+ -"Student 클래스가 Person 클래스를 상속한다."
+
+철수 - UML(디자인) -> 아버지
+Student -UML->Person
+
+==>Person, 아버지는 차이가 없음 // 철수 , student 는 상속여부에 따라 달라짐 
+
+==>과정
+1.첫째 : 메모리 공간 할당
+2.둘째 : Base 클래스의 생성자 실행
+3.셋째 : Derived 클래스의 생성자 실행
+(호출은 Derived가 먼저 되지만, 실행은 Base가 먼저 호출 및 실행)
+
+
+
+
+//1단계
+/*
+BasicInheri1.cpp
+*/
+
+#include <iostream>
+using std::endl;
+using std::cout;
+
+class Person
+{
+	int age;
+	char name[20];
+public:
+
+	int GetAge() const {
+		return age;
+	}
+	const char* GetName() const {
+		return name;
+	}
+
+	Person(int _age = 1, char* _name = "noname") {
+		age = _age;
+		strcpy(name, _name);
+	}
+};
+
+class Student : public Person
+{
+	char major[20]; //전공
+public:
+	Student(char* _major) {
+		strcpy(major, _major);
+	}
+	const char* GetMajor() const {
+		return major;
+	}
+	void ShowData() const {
+		cout << "이름: " << GetName() << endl;	//Student 클래스가 Person 클래스를 상속해서 호출 가능
+		cout << "나이: " << GetAge() << endl;
+		cout << "전공: " << GetMajor() << endl;
+	}
+};
+
+int main(void)
+{
+	Student Kim("computer");
+	//student 클래스의 생성자 호출 -> Person 생성자 호출 및 실행 -> student 클래스 생성자 실행
+	//문제점 : Student 객체를 생성하면서 이름과 나이를 원하는 값으로 초기화 못시킴!
+	//초기화를 못시키면, Person 클래스에 멤버함수추가 + Student 에 멤버함수 추가 + 메인에 또 써야됨
+	//==>프로그램이 복잡해짐!!
+	Kim.ShowData();
+
+	return 0;
+};
+
+
+
+
+
+
+//2단계
+
+*멤버 이니셜라이저
+ -Base 클래스의 생성자 명시적 호출
+ -BasicInheri2.cpp
+
+
+
+class Student : public Person
+{
+	char major[20]; //전공
+public:
+	Student(int _age, char* _name, char* _major) {
+		//public이면 가능 => 정보은닉을 무너뜨림.
+		age = _age;
+		strcpy(name, _name);
+		strcpy(major, _major);
+	}
+...
+}
+//Person 멤버변수 age,name 이 public이면 위와 같이 가능. BUT 정보은닉에 위배
+//==>private: 하면 컴파일 에러! student 클래스에서는 접근할 수 X(비록 상속이래도)
+//즉, 자기가 선언이 되어 있는 클래스 내에서만 private가 가능하다.
+
+
+
+//3단계
+
+
+class Student : public Person
+{
+	char major[20]; //전공
+public:
+	Student(int _age, char* _name, char* _major)
+		:Person(_age,_name)
+ 	{
+		strcpy(major, _major);
+	}
+...
+}
+
+//Derived 클래스의 생성자 호출 ->Base 클래스의 생성자{ Person(_age,_name) } 호출 및 실행
+//->Derived 클래스의 생성자 실행
+
+
+
+
+
+//상속의 소멸
+
+*첫째 : Derived 객체 소멸자 호출
+*둘째 : Base 객체 소멸자 호출
+*셋째 : 메모리 반환
+//=>Base , Derived 의 클래스 내에서 동적할당한다면 소멸자를 통해 해제가 이루어 져야 메모리 유출X
+
+
+
+
+
+
+//protected 멤버
+
+ -상속 관계에 놓여있을 경우 접근을 허용
+ -그 외에는 private 멤버와 동일!!! 
+(차이 : private : 클래스 내에서만 접근 상속도 불가능 protected : 상속에서 접근 가능)
+ -Basicinheri4.cpp
+
+==>>
+//protect를 통해서 Derived 클래스가 Base클래스의 멤버를 조작하는 것보다, private와 이니셜라이저를 통해
+//접근하는 것이 더 좋은 구조임
+//이유: Base의 멤버 변수의 이름을 바꿈 => Base 클래스 뿐만 아니라 다른 클래스인 Derived도 변경을 유발
+//BUT private를 이용하면, 하나의 클래스만 변경하고 다른 클래스는 변경할 필요 x.
+
+
+
+//7-5 세 가지 형태의 상속
+
+*접근 권한 변경
+ -Base 클래스의 멤버는 상속되는 과정에서 접근 권한 변경
+ 
+		상속 형태	public 상속	protected상속	private상속
+Base 클래스
+
+Public 멤버			public		protected	private
+Protected멤버			protected	protected	private
+Private멤버			접근 불가	접근 불가	접근 불가
+
+
+#include <iostream>
+using std::cout; using std::endl;
+
+class Base
+{
+private:
+	int a;
+protected:
+	int b;
+public:
+	int c;
+	Base(int _a = 1, int _b = 2, int _c = 3)
+		:a(_a),b(_b),c(_c)
+	{
+		cout << "Called Base(int _a = 1, int _b = 2, int _c = 3)" << endl;
+	}
+};
+
+//class Derived : protected Base
+//int c(public 멤버변수)는 protected 됨			//(public은 protected보다 범위가 넓음) 
+//int b(protected 멤버 변수)는 그대로 protected
+//int a(private 멤버변수)는 접근 불가(private,public,protected도 아님)
+
+class Derived : private Base
+//int c(public 멤버변수) ->private
+//int b(protected 멤버 변수) ->private
+//int a(private 멤버 변수) -> 접근 불가
+{
+	Derived(int _a, int _b, int _c)
+		:Base(_a, _b, _c)
+	{
+		cout << "Called Derived(int _a,int _b,int _c)" << endl;
+	}
+};
+
+int main(void)
+{
+	//Derived object(4,5,6); //컴파일 에러 
+	return 0;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,9 @@
+#ifndef __SHOW_TREE_H__
+#define __SHOW_TREE_H__
+
+#include "BinaryTree2.h"
+
+void gotoxy(int x, int y);
+void show_tree(BTreeNode *p);
+
+#endif

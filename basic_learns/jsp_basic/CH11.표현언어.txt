@@ -1,0 +1,1168 @@
+-----------CH11.표현언어-----------------
+;표현 언어(Expression Language)는 다른 형태의 스크립트 언어로서 스크립트 요소 중 하나.
+이장에서 다루는 내용
+-표현 언어의 데이터 타입
+-표현 언어의 기본 객체
+-연산자
+-컬렉션
+-표현 언어에서 메소드 호출하기
+-표현 언어의 람다식과 스트림 API
+
+---------------------------------------------------------------------------------------------
+
+//01 표현 언어란?
+;표현 언어는 값을 표현하는 데 사용하는 스크립트 언어로, JSP의 스크립트 요소를 보완하는 역할.
+-JSP의 네 가지 기본 객체가 제공하는 영역의 속성 사용
+-수치 연산, 관계 연산, 논리 연산자 제공
+-자바 클래스 메소드 호출 기능 제공
+-쿠키, 기본 객체의 속성 등 JSP를 위한 표현 언어의 기본 객체 제공
+-람다식을 이용한 함수 정의와 실행(EL3.0)
+-스트림 API를 통한 컬렉션 처리(EL3.0)
+-정적 메소드 실행(EL 3.0)
+
+=>
+<%--표현식--%>
+<%=member.getAddress().getZipcode()%>
+
+<%--표현 언어--%>
+${member.address.zipcode}
+
+-----------
+
+//1.1EL의 구성
+${expr}
+=>expr 부분에는 표현 언어가 정의한 문법에 따라 값을 표현하는 식이 옴
+
+=>
+1)액션 태그나 JSTL의 속성값으로 사용할 수 있음.
+<jsp:include page="/module/${skin.id}/header.jsp" flush="true" />
+
+2)비스크립트 요소 부분에서도 사용 가능
+<b>${sessionScope.member.id}</b>님 환영합니다.
+
+=>EL은 JSP의 스크립트 요소(스크립트릿,표현식,선언부)를 제외한 나머지 부분에서 사용 가능!
+=>JSP 2.1 버전부터는 ${expr} , #{expr} 구문을 새롭게 지원(차이는 EL의 값의 생성 시기)
+
+e.g)${expr} vs  #{expr}
+
+1)${expr}
+
+<%
+	Member m=new Member();
+	m.setName("이름!");
+%>
+<c:set var="m" value="<%= m %>" />
+<c:set var="name" value="${m.name}" />	<!-- 이 시점에 바로 값 계산 -->
+<% m.setName("이름2"); %>
+${name}	<!-- name의 value는 "이름1" -->
+
+
+
+2)#{expr}
+
+<%
+	Member m=new Member();
+	m.setName("이름!");
+%>
+
+<c:set var="m" value="<%= m %>" />
+<c:set var="name" value="#{m.name}" />	<!-- 이 시점에는 값 생성하지 않음 -->
+<% m.setName("이름2"); %>
+${name}	<!-- 사용될 때 값 계산, "이름2" 출력 -->
+<% m.setName("이름3"); %>
+${name}	<!-- 사용될 때 값 계산, "이름3" 출력 -->
+
+
+=>#{m.name}은 실제로 값을 계산하지 않고 name 변수의 값을 m.name 으로 가저온다고 선언
+=>Deffered Expression 이라고 부름.
+=>JSP 템플릿 텍스트에서 사용 불가능
+
+<%--JSP의 템플릿 텍스트에서 #{expr}를 사용하면 에러 발생 --%>
+#{sessionScope.name.id}님 환영합니다.
+
+=>JSP에서 Deffered Expression을 허용하는 태그의 속성에만 위치할 수 있음
+e.g)<c:out>
+
+---------------------------------------------------------------------------------------------
+
+//02 EL 기초
+;EL은 일종의 스크립트 언어로, 자료타입 / 수치 연산자 / 논리 연산자 / 비교 연산자 등을 제공
+
+-----------
+
+//2.1 EL의 데이터 타입과 리터럴
+;java.lang.Integer~~~ String 까지 기본 타입 들
+
+-불리언 타입
+-정수 타입
+-실수 타입
+-문자열 타입
+-널타입
+
+${10}은 정수, ${10.1}은 실수
+
+
+-----------
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>EL</title>
+</head>
+<body>
+
+\${5+2} : ${5+2} <br><br>
+\${5/2} : ${5/2}<br><br>
+\${5 div 2} : ${5 div 2}<br><br>
+\${5 mod 2} : ${5 mod 2}<br><br>
+\${5>2} : ${5>2}<br><br>
+\${2 gt 10} : ${2 gt 10}<br><br>
+\${(5>2) ? 5:2} : ${(5>2)?5:2}<br><br>
+\${(5>2) || (2<10)} : ${(5>2) || (2<10)}<br><br>
+<%
+	String input = null;
+	String input2 = "";
+%>
+\${empty input} : ${empty input}<br><br>
+\${empty input2} : ${empty input2}<br><br>
+
+</body>
+</html>
+
+
+<< 실행 결과 >>
+${5+2} : 7 
+
+ ${5/2} : 2.5
+
+ ${5 div 2} : 2.5
+
+ ${5 mod 2} : 1
+
+ ${5>2} : true
+
+ ${2 gt 10} : false
+
+ ${(5>2) ? 5:2} : 5
+
+ ${(5>2) || (2<10)} : true
+
+ ${empty input} : true
+
+ ${empty input2} : true
+
+
+-----------
+
+//2.2 EL의 기본 객체
+
+p.254책 설명 보기
+-EL에서 사용할 수 있는 기본 객체
+	pageContext
+	pageScope
+	requestScope
+	sessionPage
+	applicationScope
+	param
+	paramValues
+	header
+	headerValues
+	cookie
+	initParam
+	
+=>
+속성					JSP 내장 객체			서블릿 클래스						표현언어 내장 객체
+page 속성				pageContext			javax.servlet.jsp.JspContext				pageScope
+request 속성				request				javax.servlet.ServletRequest				requestScope
+session 속성				session				javax.servlet.http.HttpSession				sessionScope
+application 속성			application			javax.servlet.ServletContext				applicationScope
+
+
+param			요청 파라미터의 <파라미터 이름, 값> 매핑을 저장한 Map 객체. 파라미터 값 타입은 String이며 request.getParameter(이름)의 결과와 동일
+paramValues		요청 파라미터의 <파라미터 이름, 값 배열> 매핑을 저장한 Map 객체이다. 값 타입은 String[]로서 request.getParameterValues(이름)의 결과와 동일
+header			요청 정보의 <헤더 이름,값> 매핑을 저장한 Map 객체이다. request.getHeader(이름)의 결과와 동일
+headerValues	요청 정보의 <헤더 이름, 값 배열> 매핑을 저장한 Map 객체. request.getHeaders(이름)의 결과와 동일
+cookie			<쿠키 이름, Cookie> 매핑을 저장한 Map 객체. request.getCookies()로 구한 Cookie 배열로부터 매핑을 생성한다.
+initParam		초기화 파라미터의 <이름,값> 매핑을 저장한 Map 객체이다. application.getInitParameter(이름)의 결과와 동일하다.
+
+
+/*  EL의 기본 객체를 사용해서 몇가지 정보를 보여주는 예 : useELObject   */
+
+
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%
+	request.setAttribute("name","Zacc");
+%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>EL Object</title>
+</head>
+<body>
+
+<%--pageContext.getRequest().getRequestURL()의 값을 출력 --%>
+요청 URL : ${pageContext.request.requestURL}<br> 
+
+<%--request 영역에 저장된 name의 속성의 값을 출력한다. --%>
+request의 속성 : ${requestScope.name}<br> 
+
+<%--이름이 "code"인 요청 파라미터 값을 출력. 파라미터가 존재하지 않으면 아무것도 출력하지 않음(null아님) --%>
+code 파라미터 : ${param.code}				
+
+</body>
+</html>
+
+
+<< 실행 결과 >>
+요청 URL : http://localhost:8080/chap11/useELObject.jsp
+request의 속성 : Zacc
+code 파라미터 : 
+
+
+<< 실행 결과 : http://localhost:8080/chap11/useELObject.jsp?code=DDD >>
+요청 URL : http://localhost:8080/chap11/useELObject.jsp
+request의 속성 : Zacc
+code 파라미터 : DDD 
+
+
+=>e.g) 이름이 "ID"인 쿠키의 값을 출력하는 예제
+
+${cookie.ID.value}
+
+=>cookie 기본 객체는 <쿠키 이름, Cookie 객체> 맵이기 때문에
+cookie.ID는 이름이 ID인 Cookie 객체를 리턴 ->getValue() 메소드 호출
+=>(이름이 "ID"인 Cookie 객체).getValue();
+=>이름이 "ID"인 쿠키가 존재하지 않으면 아무 값도 출력하지 않는다.
+
+-----------
+
+//2.3 객체 접근
+; EL 언어는 객체에 저장된 값에 접근할 때 접(.)이나 대괄호([])를 사용한다. 이 두 연산자는 동일한 연산자로서
+cookie.name 과 cookie['name']은 같은 결과를 리턴한다.
+== <표현1>.<표현2> 또는 <표현1>[<표현2>]
+
+----------------------------------------------------------------
+==>표현식 <표현1>.<표현1> 의 값을 반환하는 과정
+
+1.<표현1>을 <값1>로 변환한다.
+
+2.<값1>이 null이면 null을 리턴한다.
+
+3.<값1>이 null이 아닌경우 <표현2>를 <값2>로 변환한다.
+	A.<값2>가 null이면 null을 리턴
+	
+4.<값1>이 Map,List, 배열인 경우
+	A.<값1>이 Map이면
+		1)<값1>.containsKey(<값2>)가 false이면 null을 리턴
+		2)그렇지 않으면 <값1>.get(<값2>)를 리턴
+	
+	B.<값1>이 List나 배열이면
+		1)<값2>가 정수값인지 검사한다. (정수값이 아닌 경우 에러 발생)
+		2)<값1>.get(<값2>) 또는 Array.get(<값1>,<값2>)를 리턴한다.
+		3)위 코드가 익셉션을 발생하면 에러를 발생한다.
+
+5,<값1>이 다른 객체이면
+	A.<값2>를 문자열로 변환한다.
+	B.<값1> 객체가 <값2>를 이름으로 갖는 읽기 가능한 프로퍼티를 포함하고 있다면 프로퍼티의 값을 리턴한다.
+	C.그렇지 않을 경우 에러를 발생한다.
+----------------------------------------------------------------	
+
+=>위의 과정에 맞춰 ${cookie.ID.value} EL표현식을 분석하면
+1.cookie는 EL이 제공하는 기본 객체로 타입은 Map 이다(과정 중 4-A)
+2.cookie.ID 의 값을 구할 때에는 cookie.containsKey("ID")의 존재여부를 확인한 후,
+  존재할 경우 cookie.get("ID")를 리턴한다.(과정 4-A-2)
+3.cookie.get("ID")가 리턴하는 객체는 Cookie 객체이므로 cookie.ID.value는 위의 과정에서
+  5에 해당. value를 문자열로 변환한 후 , cookie.ID 객체에 읽기 가능한 value 프로퍼티가 있는지 조사한다.(5-B과정)
+4.cookie.ID는 Cookie 클래스의 객체이고 Cookie 클래스는 getValue() 메소드를 제공하므로 읽기 가능한 value 프로퍼티가 존재한다.
+  따라서 결과적으로 cookie.ID.value는 이름이 ID인 쿠키의 값을 리턴한다.
+
+-----------
+
+//2.4 객체 탐색
+;EL은 PAGE,REQUEST,SESSION,APPLICATION 영역에 저장된 속성에 접근할 때에는
+ pageScore,requestScope,sessionScope,applicationScope 기본 객체를 사용
+=>e.g)PAGE 영역에 저장되어 있는 NAME이라는 속성 값을 참고
+${pageScope.NAME}
+
+=>EL 기본 객체를 사용하지 않고 이름만 지정하는 경우
+${name}
+
+=>이 요소는 PAGE,REQUEST,SESSION,APPLICATION 영역을 차례대로 검사해서 이름이 name인 속성이
+존재하는지 확인 & 존재하는 경우 그 속성의 값을 사용
+
+-----------
+
+//2.5 수치 연산자
+;+ - * /(또는 div) %(또는 mod) - 단항연산자
+=>수치 타입은 정수 타입과 실수 타입에 대해서만 동작
+=>${"10"+1}
+=>자바 : "101"	vs EL : 11 ("10"을 정수 10으로 변환 & 정수+정수 로 실행)
+=>${"일"+10} => "일"은 정수나 실수로 변환할 수 없으므로 에러 발생
+
+
+
+=>수치 연산자는 몇 가지 규칙을 사용해서 타입을 변환
+
+1)${A+B},${A-B},${A*B}
+
+1.A와 B가 null이면, Long 타입 0을 리턴
+
+2.A나 B가 BigDecimal이면 다른 하나를 BigDecimal로 변환한 뒤에 연산을 수행한다.
+  (BigDecimal에 정의된 add(),subtract(),multiply() 사용)
+  
+3.A나 B가 Float,Double 또는 실수값을 표현하는 문자열(.이 있거나 e,E문자를 표현하는 수 표현)인 경우
+ a.다른 하나가 BigInteger면 모두 BigDecimal로 변환한 뒤 연산을 수행
+ b.다른 하나가 BigInteger가 아니라면 모두 Double로 변환한 뒤 연산을 수행
+ 
+4.A나 B가 BigInteger면 둘다 BigInteger로 변환한 뒤 연산을 수행
+
+5.1부터 4까지 모두 아니면 A와 B를 Long으로 변환한 뒤 연산을 수행한다.
+
+6.변환이나 연산에 실패하면 익셉션 발생
+
+
+
+2)${A/B}
+
+1.A와B가 null이면 Long타입 0을 리턴
+
+2.A와B가 BigDecimal 이나 BigInteger면
+ a.둘다 BigDecimal로 변환한 뒤에 A.divie(B,BigDecimal.ROUND_HALF_UP)으로 연산
+
+3.둘 다 Double로 변환한 뒤에 연산 (${3/2}는 Double형으로 처리되서 1.5  )
+
+4.변환이나 연산에 실패하면 익셉션을 발생한다.
+
+
+3)${A%B}
+
+1.A와B가 null이면, Long 타입 0을 리턴한다.
+2.A나 B가 Float,Double 또는 실수값을 표현하는 문자열(.이 있거나 e,E문자를 표현하는 수 표현)인 경우 
+  둘 다 Double로 변환해서 연산
+3.A나 B가 BigInteger면 둘 다 BigInteger로 변환한 뒤에 A.reminder(B)로 결과를 구한다.
+4.1부터 3 모두 아니면 A와 B를 Long으로 변환해서 연산한다.
+5.변환이나 연산에 실패하면 익셉션을 발생한다.
+
+
+4)단항 뺄셈 연산자 ${-someValue}와 같이 사용하고 음수를 양수로, 양수를 음수로 변환.
+
+1.A가 null이면 Long타입 0을 리턴한다.
+2.A가 BigDecimal이나 BigInteger면 A.negate()를 리턴한다.
+3.A가 문자열이고 "."이나 "e","E"를 포함하면 Double로 변환 후 연산을 수행
+4.A가 문자열이면 Long으로 변환 후 연산을 수행한다.
+5.A가 Byte,Short,Integer,Long,Float,Double 타입이면 타입을 그대로 유지하고 연산을 수행한다.
+6.모두 아니면 에러를 발생한다.
+
+-----------
+
+//2.6 비교 연산자
+- == 또는 eq
+- != 또는 ne
+- < 또는 lt
+- > 또는 gt
+- <= 또는 le
+- >= 또는 ge
+
+=>문자열을 비교하는 경우 String.compareTo() 메소드를 사용 '' 사용 ""아님
+${someValue=='2004'}
+== (someValue.compareTo("2004")==0)
+
+-----------
+
+//2.7 논리 연산자
+- && 또는 and
+- || 또는 or
+- ! 또는 not
+
+-----------
+
+//2.8 empty 연산자
+;검사할 객체가 텅 빈 객체인지 검사
+empty <값>
+
+=>리턴 되는 값
+1.<값>이 null이면 true 리턴
+2.<값>이 빈 문자열("")이면 true를 리턴
+3.<값>이 길이가 0인 배열이면 true를 리턴
+4.<값>이 빈 Map이면 true를 리턴
+5.<값>이 빈 Collection이면 true를 리턴
+6.이외의 경우에는 false를 리턴
+
+-----------
+
+//2.9 비교 선택 연산자
+<수식>>?<값1>:<값2>
+=><수식>의 결과가 true이면 <값1>리턴, false이면 <값2>리턴
+
+-----------
+
+//2.10 문자열 연결
+자바 : "String"+"String" => "StringString" 
+EL : "String"+"String" => 에러 ("String"을 숫자로 변환할 수 없음)
+==>EL3.0버전부터 문자열 연결을 위한 +=연산자 추가
+==>
+
+e.g)
+<%
+	request.setAttribute("title","JSP 프로그래밍");
+%>
+
+${"문자"+="열"+="연결"}<br>
+${"제목 : "+=title}
+
+<< 실행 결과>>
+문자열연결
+제목 : JSP 프로그래밍 
+
+
+-----------
+
+//2.11 컬렉션
+;EL2.2 버전은 컬렉션을 위한 표현 방식을 지원 X BUT EL3.0부터 직접 객체 생성가능
+
+-EL2.2버전에서 스크립트릿을 이용해서 List 객체를 생성하는 예제
+<%
+	List<Long> values=Arrays.asList(1L,2L,5L,10L);
+	request.setAttribute("vals","values");
+%>
+${myfunc:sum(vals)}
+
+-JSTL을 사용한 List 객체 생성
+<%
+	List<Long> values=Arrays.asList(1L,2L,5L,10L);		
+%>
+<%-- vals 변수에 values 값 할당 --%>
+<c:set var="vals" value=<%=values%> />
+${myfunc:sum(vals)}
+(<c:set> 태그를 사용하려면 JSTL 라이브버리를 WEB-INF/lib 에 복사해줘야함)
+
+
+=> EL3.0 버전부터 EL 식에서 직접 List,Map,Set 타입의 객체 생성 가능
+<c:set var="vals" values="${[1,2,5,10]}" />
+${myfunc:sum(vals)}
+
+=>vals 변수가 필요 없으면
+${myfunc:sum([1,2,5,10])}
+
+
+1.List
+=> EL에서 List 타입 객체를 생성할 때는 [원소1,원소2,원소3]을 이용
+<c:set var="vals" values="%{[1,2,5,10]}" />
+${vals[2]}   
+=>5반환
+
+2.Map
+{'name':'홍길동', 'age':20}		
+=>중괄호 사이에 (키,값) 쌍을 콤마로 구분해서 지정하고 키와 값은 콜론:으로 구분한다.
+=>
+<c:set var="mem" value="${ {'name':'홍길동', 'age':20} }" />
+${mem.name},${mem.age}
+
+3.Set
+{원소1,원소2,원소3}구문 사용
+<c:set var="hangul" value="${ {'가','나','다'} }" />
+${hangul}}
+
+4.Map과 List 혼합
+<c:set var="codes" value="${[ {'code':'001','lable':'1번'},{'code':'001','lable':'1번'} ]}  "
+${codes[0].code}/${codes[0].label}
+
+
+-----------
+
+//2.12 세미콜론 연산자
+=>EL 3.0에서 추가된 연산자
+
+${1+1;10+10}
+20 나옴 => ${A;B} 하면 A값은 출력되지 않고, B 값만 출력된다.
+
+-----------
+
+//2.13 할당 연산자
+앞서 EL 변수를 생성하기 위해 두 코드 중 하나를 사용
+1)
+<% request.setAttribute("val1",10L); %>
+2)
+<c:set var="val1" value="${10}" />
+
+=>EL 3.0버전은 할당 연산자 제공
+${var1=10}
+=>할당 연산자의 주의할 점은 할당 연산자 자체도 출력 결과를 생성
+e.g)
+${var1=10}<br>
+${var1}
+<<실행 결과>>
+10
+10 
+
+=>출력을 원하지 않으면; 사용
+${hangul=['가','나','다'];''}	<%--;뒤에 ' ' <<빈 문자열 추가 --%>
+${hangul[0]}
+
+<< 실행 결과 >>
+가 
+
+-----------
+
+//2.14 연산자 우선순위
+-EL에서 연산자 우선 순위(높은 순서 & 같은 줄이면 동일 우선순위(왼쪽부터 실행)
+	[] .
+	()
+	-(단항) not ! empty
+	* / div % mode
+	+ -
+	+=
+	< > <= >= lt gt le ge
+	== != eq ne
+	&& and
+	|| or
+	? :
+	->
+	=	
+	;
+
+-----------
+
+//2.15 특수 문자 처리하기
+
+표현식 기본 문법 : \${expr} 또는 \#{expr}
+=> "\${expr}" 또는 "\#{expr}"를 출력
+
+---------------------------------------------------------------------------------------------
+
+//03 EL에서 객체의 메소드 호출
+${m.getName()}	<%-- JSP2.1 또는 그 이전 버전에서는 컴파일 에러 --%>
+=> 리턴타입이 void 이거나 파라미터 개수가 한개 이상 존재하는 메소드를 EL 에서 호출할 수 있음.
+
+/*자바코드의 메소드 호출하는 예제 */
+
+1)Thermometer.java
+package chap11;
+
+import java.util.HashMap;
+import java.util.Map;
+
+public class Thermometer {
+	private Map<String,Double> locationCelsiusMap=new HashMap<String,Double>();
+	
+	public void setCelsius(String location,Double value){
+		locationCelsiusMap.put(location, value);
+	}
+	
+	public Double getCelsius(String location){
+		return locationCelsiusMap.get(location);
+	}
+	
+	public Double getFahrenheit(String location){
+		Double celsius=getCelsius(location);
+		if(celsius==null)
+			return null;
+		return celsius.doubleValue()*1.8+32.0;
+	}
+	
+	public String getInfo(){
+		return "온도계 변환기 1.1";
+	}	
+}
+
+
+
+//thermometer.jsp
+
+
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ page import="chap11.Thermometer" %>
+<%
+	Thermometer thermometer= new Thermometer();
+	request.setAttribute("t",thermometer);	//EL에서 사용할 수 있도록 request 속성에 추가
+%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>온도 변환 예제</title>
+</head>
+<body>
+	${t.setCelsius('서울',27.3)}
+	서울 온도 : 섭씨 ${t.getCelsius('서울')}도 / 화씨 ${t.getFahrenheit('서울')}
+
+	<br/>
+	정보 : ${t.info}
+
+</body>
+</html>
+
+
+
+<< 실행 결과 >>
+서울 온도 : 섭씨 27.3도 / 화씨 81.14 
+정보 : 온도계 변환기 1.1 
+
+
+---------------------------------------------------------------------------------------------
+
+//04 EL에서 정적 메소드 호출하기1
+
+
+
+-----------
+//4.1 예제에서 사용할 클래스 작성
+/*chap11\WEB-INF\src\util\FormatUtil.java*/
+
+package util;
+
+import java.text.DecimalFormat;
+
+public class FormatUtil {
+	public static String number(long number,String pattern){
+		DecimalFormat format=new DecimalFormat(pattern);
+		return format.format(number);
+	}
+}
+
+
+-----------
+//4.2 함수를 정의한 TLD 파일 작성
+;TLD(Tag Library Descriptor)
+
+/*chap11\WEB-INF\tlds\el-funtions.tld*/
+
+
+
+<?xml version="1.0" encoding="UTF-8"?>
+
+<taglib xmlns="http://java.sun.com/xml/ns/javaee" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
+		http://java.sun.com/xml/ns/javaee/web-jsptaglibrary_2_1.xsd"
+	version="2.1">
+
+	<description>EL에서 함수실행</description>
+	<tlib-version>1.0</tlib-version>
+	<short-name>ELfunctions</short-name>
+
+	<function>
+		<description>숫자 포맷팅</description>	<!-- EL에서 사용할 함수를 정의 -->
+		<name>formatNumber</name>	<!-- el에서 사용할 함수의 이름정의 -->
+		<function-class>util.FormatUtil</function-class> <!-- 함수 기능을 제공할 클래스의 완전한 이름 지정 -->
+		<function-signature><!-- 함수 기능을 실행할 메소드를 지정 리턴타입/함수이름/매개변수타입 -->
+			java.lang.String number(long, java.lang.String)
+		</function-signature>
+	</function>
+</taglib>
+
+-----------
+
+//4.3 web.xml파일에 TLD 내용 추가하기
+
+
+<?xml version="1.0" encoding="UTF-8"?>
+
+<web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee
+			 http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
+		 version="3.1">
+	
+	<jsp-config>
+		<taglib>
+			<taglib-uri>
+				/WEB-INF/tlds/el-functions.tld
+			</taglib-uri>
+			<taglib-location>
+				/WEB-INF/tlds/el-functions.tld
+			</taglib-location>
+		</taglib>
+
+        <jsp-property-group>
+            <url-pattern>/oldversion/*</url-pattern>
+            <el-ignored>true</el-ignored>
+        </jsp-property-group>
+
+	</jsp-config>
+
+</web-app>
+
+=>
+<taglib> : 사용할 태그 라이브러리를 지정
+<taglib-uri> : JSP에서 해당 태그 라이브러리를 참조할 때 사용하는 식별자
+<taglib-location> : 태그 라이브러리를 기술한 TLD 파일의 위치를 명시
+
+-----------
+
+//4.4 EL에서 함수 사용하기
+;사용형식
+<%@ taglib prefix="pre" uri=".." %>
+...
+${pre:functionNumber(arg1,arg2,..)}
+..
+
+
+/*활용 예제 : chap11\viewNumber.jsp*/
+
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ taglib prefix="elfunc" uri="/WEB-INF/tlds/el-functions.tld" %>
+<%
+	request.setAttribute("price",12345);
+%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>EL 함수 호출</title>
+</head>
+<body>
+
+오늘은 <b>${elfunc:formatNumber(price,'#,##0')}</b>입니다.
+
+</body>
+</html>
+
+
+
+<< 실행 결과 >>
+가격은 12,345원 입니다.
+
+---------------------------------------------------------------------------------------------
+
+//5.EL에서 정적 메소드 호출하기2
+=>EL 3.0기준으로 TLD,web.xml 설정할 필요 X
+
+/*chap11/viewPrice2.jsp*/
+
+
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ page import="util.FormatUtil" %>	<!-- 정적 메소드를 포함한 클래스를 import -->
+<%
+	request.setAttribute("price",12345L);
+%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>EL 함수 호출</title>
+</head>
+<body>
+
+가격은 <b>${FormatUtil.number(price,'#,##0')}</b> 입니다.
+<!-- EL에서 import한 클래스의 static method를 호출 -->
+
+</body>
+</html>
+
+<<실행 결과 >>
+가격은 12,345 입니다. 
+
+=>java.lang 패키지는 기본적으로 임포트 하므로 
+${Long.parseLong('10')} 
+Long,Integer와 같은 클래스의 static method도 사용가능!
+
+
+---------------------------------------------------------------------------------------------
+
+//06 람다식(lambda expression) 사용하기
+;EL 3.0에 추가된 것
+(파라미터1,파라미터2) -> EL 식
+
+
+
+/*람다식 예제 : lambdaTest.jsp*/
+
+
+
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+
+<!-- 1)변수에 할당하고 활용하기 -->
+${graterThan=(a,b)->a>b?true:false;''} 	<!--;은 빈문자열을 출력하기 위해서-->
+${graterThan(1,3)}<br>						<!-- 1>3?true:false -->
+
+<!-- 2)특정 변수에 할당하지 않고 바로 호출하기 -->
+${((a,b)->a>b?true:false)(1,3)}<br>
+
+<!-- 3)재귀호출 가능 -->
+${factorial=(n)->n==1?1:n*factorial(n-1);''}
+<!-- ${factorial=n->n==1?1:n*factorial(n-1);''} 파라미터가 한 개인 경우 괄호 생략 가능 -->
+${factorial(5)}
+
+</body>
+</html>
+
+
+<< 실행 결과 >>
+false  
+false 
+120 
+
+---------------------------------------------------------------------------------------------
+
+//07 스트림 API 사용하기
+;EL은 for나 while 같은 반복문을 제공하지 않음.
+
+=>EL 3.0이전에 List에 담긴 정수합 구하기
+<c:set var="lst" value="<%=java.util.Arrays.asList(1,2,3,4,5)%>"/>
+<c:forEach var="val" item="${lst}">
+	<c:set var="sum" value="${sum+val}" />
+</c:forEach>
+
+=>EL 3.0 이후 컬렉션 객체를 위한 스트림 API 가 추가.
+<c:set var="lst" value="<%=java.util.Arrays.asList(1,2,3,4,5)%>"/>
+<c:set var="sum" value="${lst.stream().sum()}" />
+
+-----------
+//71. 스트림 API 기본
+
+collection.stream()			//콜렉션에서 스트림 생성
+			.map(x->x*x)	//중간 연산(스트림 변환)
+			.toList()		//최종 연산(결과 생성)
+
+			
+e.g)리스트에서 짝수인 값만 골라서 제곱한 결과 리스트를 구하기
+${lst.stream().filter(x->x%2==0).map(x->x*x).toList()}
+
+-----------
+
+//7.2 stream()을 이용한 스트림 생성
+${lst=[1,2,3,4,5];''}
+${lst.stream().sum()}
+
+=>Map 타입의 값에 대해 stream()을 지원하지 않음
+=>Map.entrySet() 과 같이 Map에서 컬렉션 타입 객체를 생성한 다음에 그 객체의 stream()메소드를 사용
+e.g)
+<%
+	java.util.Map<String,String> map=new java.util.HashMap<String,String>();
+	map.put("code1","코드1");
+	map.put("code2","코드2");
+	request.setAttribute("map",map);
+%>
+${map.entrySet().stream().map(entry->entry.value).toList()}
+
+Note)
+EL의 stream() vs 자바8의 stream() 
+<%
+	List<String> lst=Arrrays.asList("1","2","3");
+	Stream<String> str=lst.stream();	//자바 8의 stream()
+	request.setAttribute("lst",lst);
+%>
+${lst.stream()} <!-- EL의 stream() -->
+
+-----------
+//7.3 filter()를 이용한 걸러내기
+;filter()는 값을 걸러낼 때 사용한다. filter()메소드는 람다식을 파라미터로 갖음.
+=>filter()메소드는 스트림의 각 원소에 대해 람다식을 실행하고 그 결과가 true인 원소를 제공하는 새로운 스트림을 생성
+
+e.g)
+collection.stream()				//콜렉션이 [1,2,3,4,5]일 경우
+			.filter(x->x%2==0)	//각 원소에 대해 filter()의 람다식 실행에서 람다식이 true인 [2,4]원소를 갖는
+								새로운 스트림 생성
+			.toList()			//filter()의 결과 스트림에서 새로운 List 생성
+
+
+
+-----------
+
+//7.4 map()을 이용한 변환
+;map()은 원소를 변환한 새로운 스트림을 생성
+
+e.g)
+collection.stream()			//콜렉션이 [1,2,3,4,5]일 경우
+			.map(x->x*x)	//각 원소에 대해 map()의 람다식을 실행해서 
+							  [1,4,9,16,25]를 원소로 갖는 새로운 스트림 생성
+			.toList()
+
+=>map()은 원본 컬렉션의 각 원소를 제곱한 값을 갖는 스트림을 생성
+map의 활용 예제
+1)회원의 나이를 리스트로 갖는 리스트 객체 생성
+${ageList=members.stream().map(mem->mem.age).toList();}
+
+2)map()과 filter() 조합
+;나이가 20이상인 회원들의 평균값 구하기
+${members.stream().map(mem->mem.age).filter(x->x>=20).average().get()}
+${members.stream().filter(x->x>=20).map(mem->mem.age).average().get()}
+						
+-----------
+
+//7.5 sorted()를 이용한 정렬
+;sorted()를 사용하여 스트림을 정렬할 수 있음
+
+e.g)sorted()를 이용한 오름차순 정렬
+${ vals=[20,17,30,2,9,23];
+   sortedVals=vals.stream().sorted().toList()}
+ 
+<< 실행 결과 >>
+[2, 9, 17, 20, 23, 30] 
+
+=>Comparable 인터페이스를 구현한 클래스만 sorted가능
+=>Comparable 인터페이스를 구현하지 않는 클래스 or 정렬 기준 설정하는 예제
+
+e.g)내림차순 정렬
+${ vals=[20,17,30,2,9,23];
+   sortedVals=vals.stream().sorted((x1,x2)->x1<x2?1:-1).toList()}
+
+<< 실행 결과 >>
+[30, 23, 20, 17, 9, 2] 
+   
+
+e.g)Comparable 인터페이스를 구현하지 않는 Member클래스의 age 필드 정렬하기
+<$sortedMem=members.stream().sorted((m1,m2)->m1.age.compareTo(m2.age)).toList();''}
+   
+   
+-----------
+
+//7.6 limit()을 이용한 개수 제한
+;지정한 개수를 갖는 새로운 스트림 생성
+
+e.g)숫자를 정렬하고 그 중 앞에 3개만 갖는 리스트를 생성하는 EL
+${nums.stream().sorted().limit(3).toList()}
+
+
+-----------
+
+//7.7 toList()와 toArray()를 이용한 결과 생성
+;toList() : 자바 리스트 객체를 생성	// toArray() : 자바 배열 객체 생성
+e.g)
+${lst=members.stream().map(m->m.name).toList();''}
+${lst=members.stream().map(m->m.age).toArray();''}
+
+=>toList()는 리스트 객체가 출력 e.g) "[홍길동,이순신,유관순,왕건]"
+  toArray()는 배열의 주소값 출력 e.g) [[Ljava.lang.Object;@78fb6c1b
+  
+
+-----------
+
+//7.8 count()를 이용한 개수 확인
+${members.stream().count()}
+=>결과값 타입은 Long 임.
+
+${ vals=[20,17,30,2,9,23]; vals.stream().count()}
+<< 실행 결과 >>
+6
+
+
+-----------
+
+//7.9 Optional 타입
+;
+-get()			: 값이 존재할 경우 값을 리턴. 값이 존재하지 않으면 ELException 발생
+-orElse(other)	: 값이 존재하면 해당 값을 리턴하고, 값이 존재하지 않으면 other를 리턴
+-orElseGet((()->T) other): 값이 존재하면 해당 값 리턴, 존재하지 않으면 람다식 other를 실행한 결과를 리턴
+-ifPresent(((x)->void)consumer) : 값이 존재하면 람다식 consumer를 실행, 존재하는 값을 람다식의 파라미터로 전달
+
+1)get()
+${[1,2,3].stream().max().get()}
+=>max()의 결과는 Optional이므로 get()은 3을 리턴
+
+${[].stream().min().get()}
+=>빈 스트림에 대한 min()의 결과의 값이 없는 Optional이므로 ELException 발생
+=>값이 존재하지 않을 수도 있으면 orElse()를 사용해서 값이 없을 때 다른 값 사용해야함
+
+
+
+2)orElse()
+${[].stream().min().orElse('없음')}
+<br>
+${[1,2,3].stream().min().orElse('없음')}
+
+<< 실행 결과 >>
+없음
+1
+
+
+3)orElseGet()
+${[].stream().min().orElseGet(()->-1)}
+<< 실행 결과 >>
+-1
+
+
+4)ifPresent()
+
+${minValue='-';''}
+${[1,2,3].stream().min().ifPresent(x->(minValue=x))}	<%-- ->연산자가 = 보다 우선순위 높음 --%>
+최소값은 ${minValue} 입니다.
+
+
+<<실행 결과 >>
+최소값은 1 입니다.
+
+-----------
+
+//7.10 sum(),average()를 이용한 수치 연산 결과 생성
+;sum()은 빈 리스트면 0반환 // average()는 EL의 Optional 타입을 리턴
+
+${ [1,2,3,4,5].stream().sum() }						->15
+${ [1,2,3,4,5].stream().average().get() }			->3.0
+${ [1,2,3,4,5].stream().average().orElse(null) }	->3.0
+${ [].stream().average().orElse(0) }				->0
+${ [].stream().average().orElse(null) }				->빈문자열('')
+${[1].stream().average().ifPresent(x->somObject.add(x))} ->1.0을 someObject.add() 메소드에 전달
+
+
+-----------
+
+//7.11 min()과 max()를 이용한 최소/최대 구하기
+;min()과 max()는 Optional 타입을 리턴
+
+e.g)
+${someLongValue.stream().min().get()}
+
+e.g)비교를 위한 람다식 사용
+${maxAgeMemOpt=members.stream().max((m1,m2)->m1.age.compareTo(m2.age));''}
+${maxAgeMemOpt.get().name} (${maxAgeMemOpt.get().age}세)
+=>min(),max()는 Optional 타입을 리턴하므로 실제 값을 구할 때는 get()이나 orElse() 등을 이용해서 구한다.
+
+-----------
+
+//7.12 anyMatch(), allMatch(), noneMatch()를 이용한 존재 여부 확인
+
+1)anyMatch()
+;스트림에 조건을 충족하는 요소가 존재하는지 검사할 때 사용 (S)->Boolean 타입 람다식 사용
+
+e.g)
+
+${lst=[1,2,3,4,5];''}
+
+<%-- 4보다 큰 원소가 존재하는지 확인 --%>
+${matchOpt=lst.stream().anyMatch(v->v>4);''}
+${matchOpt.get()}
+
+<< 실행 결과 >>
+true
+
+e.g)
+${matchOpt=[].stream().anyMatch(v->v>4);''}
+${matchOpt.orElse(false)}	<%-- ->값이 없는 Optional인 경우 false 리턴 --%>
+${matchOpt.get()} 			<%-- ->값이 없는 Optional 인 경우 ELException 발생--%>
+
+
+
+2)allMatch()
+;스트림의 모든 원소가 조건을 충족할 때 true를 값으로 갖는 Optional을 리턴
+
+${list=[1,2,3,4,5];''list.stream().allMatch(x->x>5).get()}
+=>false
+
+3)nonMatch()
+;조건을 충족하는 원소가 한개도 없을 때 true를 값으로 갖는 Optional 을 리턴
+
+${list=[1,2,3,4,5];''list.stream().noneMatch(x->x>5).get()}
+=>true
+
+
+---------------------------------------------------------------------------------------------
+
+//08 표현 언어 비활성화 방법
+;JSP 규약은 ${expr} , #{expr}과 같은 EL을 비활성화시키는 세 가지 방법을 제공
+-web.xml 파일에 비활성화 옵션 지정하기
+-JSP 페이지에 비활성화 옵션 지정하기
+-web.xml 파일을 서블릿 2.3 또는 2.4 버전에 맞게 작성하기
+
+
+-----------
+
+//8.1 web.xml 파일에 EL 비활성화 옵션 추가 하기
+
+
+1)${expr} 형식,#{expr} 형식 /oldversion/* 의 URL 패턴을 만족하는 JSP에서 비활성화 하기
+
+	<jsp-config>
+		....
+        <jsp-property-group>
+            <url-pattern>/oldversion/*</url-pattern>
+            <el-ignored>true</el-ignored>
+        </jsp-property-group>
+	</jsp-config>
+
+=> <el-ignored> 태그의 값으로 true로 설정하면 <url-pattern> 태그로 명시한 URL 패턴에 해당하는 JSP는
+   ${expr}	#{expr}형식의 EL을 모두 일반 문자로 처리.
+   
+
+2)${expr}형식은 허용 & #{expr} 형식 /oldversion2_4/* 의 URL패턴을 만족하는 JSP에서 비활성화 하기
+	<jsp-config>
+		....
+        <jsp-property-group>
+            <url-pattern>/oldversion/*</url-pattern>
+            <el-ignored>true</el-ignored>
+        </jsp-property-group>
+		
+        <jsp-property-group>
+            <url-pattern>/oldversion2_4/*</url-pattern>
+            <deffered-syntax-allowed-as-literal>
+				true
+			</deffered-syntax-allowed-as-literal>
+        </jsp-property-group>
+	</jsp-config>
+	
+
+
+-----------
+
+//8.2 JSP 페이지에서 EL 비활성화 시키기
+;page 디렉티브 속성을 이용해서 web.xml과 상관없이 비활성화 시키기
+-isELIgnored : 이 값이 true일 경우 EL을 일반 문자열로 처리
+-defferedSyntaxAllowedAsLiteral : 이 값이 true 일 경우 #{expr} 형식의 EL 을 문자열로 처리
+
+
+-----------
+
+//8.3 web.xml 파일의 버전에 따른 EL 처리
+;web.xml 파일이 사용하는 서블릿 버전에 따라서 EL 지원 여부가 결정된다.
+-서블릿 2.3 버전의 web.xml : EL을 지원하지 않는다.
+-서블릿 2.4 버전의 web.xml : #{expr}을 지원하지 않는다.
+-서블릿 2.5/서블릿 3.0/서블릿 3.1 버전 web.xml : ${expr}과 #{expr}을 지원한다.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

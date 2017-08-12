@@ -1,0 +1,23 @@
+#wrap{
+	width: 80%;	
+	margin : auto;
+	margin-left : auto;
+}
+table {
+	width : 100%;
+	border-collapse: collapse;
+	font-size : 12px;
+	border : 0;	
+	line-height: 24px; 
+}
+
+table th { 
+	border : #d3d3d3 solid 1px;
+	padding : 5px;	
+	color : white;
+	background : blue;
+}
+table td{ 
+	border : #d3d3d3 solid 1px; 
+	padding : 5px;	
+}

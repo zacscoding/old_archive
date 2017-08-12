@@ -1,0 +1,164 @@
+//1.클래스와 객체
+
+-OOP 특징
+1)은닉화	2)상속성	3)다형성	4)추상화
+
+
+package 패키지명;
+import 패키지명; or 클래스명;
+또 다른 클래스;
+
+접근제한자 지정예약어 class 클래스명 extends 상위 클래스 implements 상위 인터페이스 {
+	멤버 필드 : 
+	멤버 메소드 : 
+	생성자 : 
+	중첩 클래스 :
+}
+
+
+=> 변수 -> 배열 -> 구조체(사용자 정의 자료형) -> 클래스(사용자 정의 자료형 + 기능)
+=> 클래스는 "선언부와 실행부(기능)로 나뉜다" 라고도 표현 => 선언부 == 멤버 필드 , 실행부 == 멤버 메소드
+
+
+=> 생성자(Why, How 가 젤 중요함)
+ -클래스 이름과 동일한 메소드 *
+ -멤버필드의 초기값을 부여하기 위해 만들었다. *
+ -반환형이 없다.
+ -객체를 생성하기 위해 꼭 한번 호출되어 실행이 된다.
+ -생성자가를 선언하지 않으면, JVM이 알아서 default 생성자(매개변수가 없는 생성자)를 만든다.
+ -일반 메소드처럼 호출하여 사용하지 못함.
+ -생성자도 메소드이므로 오버로딩이 가능하다.
+
+
+=> 지정예약어
+ -멤버 필드 
+	static : 정적, 공용, 공통
+	final : 상수화 => 초기화 주는 방법 1)선언과 동시 2) 일반 구문 3)생성자
+	static final : 정적 상수 
+	transient : 직렬화,역직렬화에서 제외 ( e.g 과일과게에서 비닐봉지 )
+
+ -멤버 메소드
+	static : 정적 메소드 
+	final : 상속 or 다른곳에서 메소드를 오버라이드를 방지하는 기능
+	static final : static + final
+	abstract : 추상화
+	synchronized : 동기화
+	native	: 다른 언어(자바가 아닌)로 만들어놓은 것을 가져다 사용할때
+
+ -클래스
+	static : 중첩 클래스
+	final : 상속 X
+	abstract : 추상화 클래스
+
+
+=> 중첩 클래스
+ - 일반 중첩 클래스
+ - static 중첩 클래스
+ - 지역중첩클래스 (동일한 이름이면 Outer$1Inner1.class , Outer$3Inner1.class , Outer$3Inner1.class // 아니면 Outer$1Inner.class )
+ - 익명중첩클래스
+
+=> 
+
+
+
+e.g)
+
+class Tv{
+	//Tv의 속성(멤버필드)
+	String color;		//색상
+	boolean power;		//전원상태(on/off)
+	int channel;		//채널
+	
+	//Tv의 기능(메소드)
+	void power() {power=!power;}	//TV를 켜거나 끄는 기능을 하는 메소드
+	void channelUp(){ ++channel; }	//TV의 채널을 높이는 기능을 하는 메소드
+	void channelDown(){ --channel;}	//TV의 채널을 낮추는 기능을 하는 메소드
+}
+public class TvTest {
+	public static void main(String[] args){
+		//클래스 및 인스턴스
+		Tv t1=new Tv();
+		Tv t2=new Tv();
+		t2=t1;
+		//=>t2는 t1이 가리키는 객체의 주소값으로 변경 => 기존에 t2가 가리키는 객체는 참조할 수 있는 변수 x => 해재 by GC
+		//=>t1,t2는 같은 객체를 가리킴
+		
+		
+		//2.5객체 배열
+		Tv[] tvArr=new Tv[3];	//길이가 3인 Tv타입의 참조변수 배열
+		for(int i=0;i<tvArr.length;i++){
+			tvArr[i]=new Tv();
+		}
+		Tv[] tvArr2={new Tv(),new Tv(),new Tv()};
+		
+		
+	}
+
+}
+
+
+
+
+//3.변수와 메소드
+
+
+//3.1선언위치에 따른 변수의 종류
+
+
+public class Variables {
+	int iv;			//인스턴스변수	==>인스턴스가 생성될 때 생성
+	static int cv;	//클래스변수(static변수,공유변수)	==>클래스가 메모리에 올라갈 때 생성
+					//public으로 선언하면 전역변수
+	void method()
+	{
+		int lv=0;	//지역변수
+	}
+
+}
+
+
+//3.2클래스변수와 인스턴스 변수
+//static으로 선언된 클래스 변수의 예제
+
+
+public class CardTest {
+	public static void main(String[] args){
+		System.out.println("Card.width= "+Card.width);	//클래스이름.클래스변수 로 쓰기
+		System.out.println("Card.height= "+Card.height);
+		//==>객체생성없이 사용 가능
+		
+		Card c1=new Card();
+		c1.kind="Heart";
+		c1.number=7;
+		
+		Card c2=new Card();
+		c2.kind="Spade";
+		c2.number=4;
+		
+		System.out.println("c1은 "+c1.kind+","+c1.number+"이며 크기는 ("+c1.width+", "+c1.height+")");	//(100,250)나옴
+		System.out.println("c2은 "+c2.kind+","+c2.number+"이며 크기는 ("+c2.width+", "+c2.height+")");	//(100,250)나옴
+		
+		c1.width=50;	//인스턴스의 멤버변수로 오해할 소지 있음
+		c1.height=80;
+		
+		System.out.println("c1은"+c1.kind+","+c1.number+"이며 크기는 ("+c1.width+", "+c1.height+")");	//(50,80)나옴
+		System.out.println("c2은"+c2.kind+","+c2.number+"이며 크기는 ("+c2.width+", "+c2.height+")");	//(50,80)나옴		
+		
+	}	
+
+}
+
+class Card{
+	String kind;			//카드의 무늬 - 인스턴스변수
+	int number;				//카드의 숫자 - 인스턴스변수
+	static int width=100;	//카드의 폭	 -	클래스 변수
+	static int height=250;	//카드의 높이 - 클래스변수
+}
+
+
+
+//3.8 기본형 매개변수와 참조형 매개변수
+
+
+
+

@@ -1,0 +1,462 @@
+//10장. 연산자 오버로딩1
+(단순히 이해가 요구되는 내용)
+-----------------------------------------------------------------
+
+//10.1 연산자 오버로딩의 이해와 유형
+(Intro)
+Point 라는 클래스 & p1,p2 객체 생성
+==> + - * / 가 불가능
+==> 기본자료형과 유사한 형태의 연산을 허용하기를 원한다
+
+p1+p2?
+=>덧셈이 불가능 한 대상. 
+=>BUT C++컴파일러는 약속. P2 operator+ 라는 함수로 간주한다고 약속
+
+1)멤버함수
+
+p1+p2
+==>p1 operator + p2
+p1을 대상으로 함수를 호출한다고 약속
+==>p1.operator+()	//p2는사용안됨
+
+결론 : p1+p2 
+==>p1.operator+(p2);	//이문장으로 해석함
+
+
+
+2)전역함수
+operator+(p1,p2)
+
+
+==>멤버함수이던, 전역함수이던 컴파일러는 2가지로 각각 해결함
+-----------------------------------------------------------------
+Why 연산자 오버로딩?
+
+3 + 4
+p1 + p2
+
+==>피연산자에 따라 진행되는 연산이 다름
+(Like fct() & fct(int)처럼)
+
+
+
+/*멤버함수의 예제*/
+
+#include <iostream>
+using std::endl; using std::cout;
+
+class Point
+{
+private :
+	int xpos, ypos;
+public:
+	Point()
+	{
+		cout << "Point() 생성자 호출" << endl;
+	}
+	Point(int x = 0, int y = 0) :xpos(x), ypos(y)
+	{
+		cout << "Point(int,int) 생성자 호출" << endl;
+	}
+	void ShowPosition()const
+	{
+		cout << '[' << xpos << ',' << ypos << ']' << endl;
+	}
+	Point operator+(const Point &ref)
+	{
+		Point pos(xpos + ref.xpos, ypos + ref.ypos);
+		return pos;
+	}
+
+	Point operator+(const Point&ref)
+	{
+		Point pos(xpos + ref.xpos, ypos + ref.ypos);
+		return pos;
+	}
+	Point operator-(const Point & ref)
+	{
+		Point pos(xpos - ref.xpos, ypos - ref.ypos);
+		return pos;
+	}
+	Point operator*(const Point&ref)
+	{
+		Point pos(xpos*ref.xpos, ypos*ref.ypos);
+		return pos;
+	}
+};
+
+int main(void)
+{
+	Point pos1(3, 4);
+	Point pos2(10, 20);
+	//Point pos3 = pos1.operator+(pos2);
+	Point pos3 = pos1 + pos2;
+	//==>함수호출의 경로를 또 하나 마련해 준것이다.
+
+	pos1.ShowPosition();
+	pos2.ShowPosition();
+	pos3.ShowPosition();
+
+	return 0;
+}
+
+
+//전역함수 에제
+
+class Point
+{
+private :
+	int xpos, ypos;
+public:
+	Point()
+	{
+		cout << "Point() 생성자 호출" << endl;
+	}
+	Point(int x = 0, int y = 0) :xpos(x), ypos(y)
+	{
+		cout << "Point(int,int) 생성자 호출" << endl;
+	}
+	void ShowPosition()const
+	{
+		cout << '[' << xpos << ',' << ypos << ']' << endl;
+	}
+	friend Point operator+(const Point &pos1, const Point &pos2);
+	//멤버변수 접근하도록 friend 선언!
+
+};
+
+Point operator+(const Point &pos1,const Point &pos2)
+{
+	Point pos(pos1.xpos + pos2.xpos, pos1.ypos + pos2.ypos);
+	return pos;
+}
+
+
+==> -,* 해보기
+
+
+//오버로딩 주의사항
+-본래의 의도를 벗어난 형태의 연산자 오버로딩은 좋지 않다!
+ 프로그램을 혼란스럽게 만들 수 있다.
+
+-연산자의 우선순위와 결합성은 바뀌지 않는다.
+ 따라서 이 둘을 고려해서 연산자를 오버로딩 해야 한다.
+
+-매개변수의 디폴트 값 설정이 불가능하다.
+ 매개변수의 자료형에 따라서 호출되는 함수가 결정되므로.
+(연산자를 오버로딩했다는 것은, 피연산자(객체)가 함수를 호출하므로.
+
+-연산자의 순수 기능까지 빼앗을 수는 없다.
+int operator+(const int num1, const int num2)
+{
+	return num1*num2;
+}
+
+
+
+//10.2 단항 연산자 오버로딩
+++,--
+(Intro)
+Point pos
+=>
+
+1.++pos;
+
+1)전역함수 
+==> operator++(pos);
+
+2)멤버함수 
+==> pos.operator++();
+
+2.pos++;
+1)전역함수
+==>operator++(pos,int);
+
+2)멤버함수 
+==>operator++(int);
+
+===>매개변수가 달라야 오버로딩
+
+
+
+
+//전위증가,감소 예제
+
+#include <iostream>
+using std::endl; using std::cout;
+
+class Point
+{
+private:
+	int xpos, ypos;
+public:
+	Point()
+	{
+		cout << "Point()생성자 호출" << endl;
+	}
+	Point(int x=0, int y=0) : xpos(x),ypos(y)
+	{
+		cout << "Point(int,int)생성자 호출" << endl;
+	}
+	void ShowPosInfo()
+	{
+		cout << '[' << xpos << ',' << ypos << ']' << endl;
+	}
+
+	Point& operator++()
+	{
+		xpos += 1;
+		ypos += 1;
+		return *this;	//pos자신이 반환
+	}	
+	friend Point& operator--(Point &ref);
+};
+Point& operator--(Point &ref)
+{
+	ref.xpos += 1;
+	ref.ypos += 1;
+	return ref;
+}
+
+int main(void)
+{
+	Point pos(1, 2);
+	++pos;	//참조값이 반환됨
+	pos.ShowPosInfo();
+	++(++pos);//++(++num);과 같이 하기위해서 위에 Point&반환형을 쓰며 참조값으로 받음
+	pos.ShowPosInfo();
+	--(--pos);
+	pos.ShowPosInfo();
+	return 0;
+	
+}
+
+
+
+
+
+
+//전위증가와 후위증가의 구분
+
+	const Point operator++(int)
+	{
+		const Point retobj(xpos, ypos);
+		xpos += 1;
+		ypos += 1;
+		return retobj;
+	}
+
+Point pos(3,4)
+->(pos++).fct();	//pos값은 증가 & 반환된 retobj복사본이 실행됨 즉 copy.fct();
+
+
+
+
+//반환형에서 const 선언과 const 객체
+int main(void)
+{
+	const Point pos(3,4);
+	const Point &ref=pos;	//컴파일 OK
+	//const가 아니면 ref를 가지고 변경이 가능해짐.그래서 const 참조자로 참조해야됨
+	...
+}
+
+=>
+const 객체는 멤버변수의 변경이 불가능한 객체
+const 객체는 const 참조자로만 참조가 가능하다.
+const 객체를 대상으로는 const 함수만 호출 가능하다.
+
+
+const Point operator++(int)
+{
+	const Point retobj(xpos, ypos);
+	xpos += 1;
+	ypos += 1;
+	return retobj;
+}
+
+
+(In c언어)
+(num++)++; 는 표준안이 아니라서 어떠한 결과를 나올지 모름.
+
+=> (pos++)++;
+
+1)Point operator++(int)이면 const가 아닌 retobj에 의해 ()++는 컴파일 에러X
+2)const Point operator++(int)이면 ()는 const형 객체가 오고 const객체++이므로 컴파일 에러
+(operator++가 const가 아니므로. 멤버에 접근해서 조작해주므로 당연히 const가 아님)
+
+
+
+
+
+
+
+
+//10.3 교환법칙 문제의 해결
+
+(Intro)
+p1+p2, p1+3==p1.operator+(3) 문제는 안됨.
+BUT 3+p1==p1+3
+3+p1 ->3.operator+(p1), p1.operator+(3) 불가능..
+==>전역함수 operator+(3,p1);
+
+class Point
+{
+....
+	Point operator*(int times)
+	{
+		Point pos(xpos*times, ypos*times);
+		return pos;
+	}
+	friend Point operator*(int times, Point &ref);
+};
+
+Point operator*(int times, Point&ref)
+{
+	Point pos(ref.xpos*times, ref.ypos*times);
+	return pos;
+}
+
+Point operator*(int times, Point& ref)
+{
+	return ref*times;
+}
+
+
+
+
+
+//10.4 cout, cin 그리고 endl의 정체
+
+cout과 endl 이해하기
+
+#include <iostream>
+
+namespace mystd {
+	class ostream
+	{
+	public:
+		ostream& operator<<(char *str)
+		{
+			printf("%s", str);
+			return *this
+		}
+		ostream& operator<<(char str)
+		{
+			printf("%c", str);
+			return *this
+		}
+		ostream& operator<<(int num)
+		{
+			printf("%d", num);
+			return *this
+		}
+		ostream& operator<<(double e)
+		{
+			printf("%g", e);
+			return *this
+		}
+		ostream& operator<<(ostream& (*fp)(ostream&ostm))
+		{
+			fp(*this);
+			return *this
+		}
+	};
+
+	ostream& endl(ostream &ostm)
+	{
+		ostm << '\n';
+		fflush(stdout);
+		return ostm;
+	}
+	ostream cout;
+}
+
+int main(void)
+{
+	using mystd::cout;
+	using mystd::endl;
+
+	cout << "Simple String";
+	cout << endl;
+	//cout.operator<<(endl);
+	//위의 fp에 endl함수 주소값 넘김
+	//=>fp(*this); =>endl()함수를 호출하면서 cout을 인자로 전달! =>ostm<<'\n'
+	cout << 3.14;
+	endl(cout);
+
+	cout<<123<<3.14;
+	//cout.operator<<(123)
+	//cout의 참조가 반환이 됨
+	//==> (cout의 참조자)<<3.14;	//즉 cout<<3.14;와 같음
+	return 0;
+}
+
+
+
+// <<, >> 연산자의 오버로딩
+
+class Point
+{
+private:
+	int xpos, ypos;
+public:
+	Point(int x = 0, int y = 0) : xpos(x), ypos(y)
+	{}
+	void ShowPosInfo()
+	{
+		cout << '[' << xpos << ',' << ypos << ']' << endl;
+	}
+
+	friend ostream& operator<<(ostream&, const Point&);
+};
+
+ostream& operator<<(ostream& os, const Point& pos)
+{
+	os << '[' << pos.xpos << ", " << pos.ypos << ']' << endl;
+	return os;
+}
+
+int main(void)
+{
+	
+	
+	Point pos1(1, 3);
+	cout << pos1;
+	//1)cout.operator<<(pos1); 불가능 
+	//이미 ostream을 결정하고 Point클래스를 만듬. ==>멤버함수로는 오버로딩이 불가능 ==>전역함수
+	//operator<<(cout,pos1);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,303 @@
+-------------------ch19-3.Objects Å¬·¡½º-----------------------
+
+java.util.Objects
+;°´Ã¼ ºñ±³, ÇØ½ÃÄÚµå »ý¼º, null ¿©ºÎ, °´Ã¼ ¹®ÀÚ¿­ ¸®ÅÏ µîÀÇ ¿¬»êÀ» ¼öÇàÇÏ´Â Á¤Àû ¸Þ¼Òµåµé·Î ±¸¼ºµÈ Object À¯Æ¿¸®Æ¼ Å¬·¡½º
+
+<T> int compare(T a, T b, Comparator<? super T> c)				//µÎ °´Ã¼ a¿Í b¸¦ Comparator¸¦ »ç¿ëÇØ¼­ ºñ±³
+ 
+boolean deepEquals(Object a, Object b) 							//µÎ °´Ã¼ÀÇ ±íÀº ºñ±³(¹è¿­ÀÇ Ç×¸ñ±îÁö ºñ±³)
+ 
+boolean equals(Object a, Object b) 								//µÎ °´Ã¼ÀÇ ¾èÀº ºñ±³(¹øÁö¸¸ ºñ±³)
+
+int hash(Object... values) 										//¸Å°³°ªÀÌ ÀúÀåµÈ ¹è¿­ÀÇ ÇØ½ÃÄÚµå »ý¼º
+ 
+int hashCode(Object o)											//°´Ã¼ÀÇ ÇØ½ÃÄÚµå »ý¼º
+ 
+boolean isNull(Object obj) 										//°´Ã¼°¡ nullÀÎÁö Á¶»ç
+ 
+boolean nonNull(Object obj) 									//°´Ã¼°¡ nullÀÌ ¾Æ´ÑÁö Á¶»ç
+ 
+<T> T requireNonNull(T obj)										//°´Ã¼°¡ nullÀÎ °æ¿ì ¿¹¿Ü ¹ß»ý 
+ 
+<T> T requireNonNull(T obj, String message) 					//°´Ã¼°¡ nullÀÎ °æ¿ì ¿¹¿Ü ¹ß»ý(ÁÖ¾îÁø ¿¹¿Ü ¸Þ¼¼Áö Æ÷ÇÔ)
+ 
+<T> T requireNonNull(T obj, Supplier<String> messageSupplier) 	//°´Ã¼°¡ nullÀÎ °æ¿ì ¿¹¿Ü ¹ß»ý(¶÷´Ù½ÄÀÌ ¸¸µç ¿¹¿Ü ¸Þ¼¼Áö Æ÷ÇÔ)
+ 
+String toString(Object o) 										//°´Ã¼ÀÇ toString() ¸®ÅÏ°ª ¸®ÅÏ
+
+String toString(Object o, String nullDefault) 					//°´Ã¼ÀÇ toString() ¸®ÅÏ°ª ¸®ÅÏ, Ã¹ ¹øÂ° ¸Å°³°ªÀÌ nullÀÏ °æ¿ì µÎ ¹øÂ° ¸Å°³°ª ¸®ÅÏ
+
+
+¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡
+
+//1.°´Ã¼ ºñ±³(compare(T a,T b,Comparator<T> c)
+:Objects.compare(T a,T b,Comparator<T> c) ¸Þ¼Òµå´Â µÎ °´Ã¼¸¦ ºñ±³ÀÚ Comparator<T>·Î ºñ±³ÇØ¼­ int °ªÀ» ¸®ÅÏÇÑ´Ù.
+Áï, c.compare(s1,s2)¸¦ ¸®ÅÏÇÔ
+
+/*¿¹Á¦*/
+
+import java.util.Comparator;
+import java.util.Objects;
+
+public class ComparatorExample {
+	public static void main(String[] args){
+		Student s1=new Student(1);
+		Student s2=new Student(1);
+		Student s3=new Student(3);
+		int result=Objects.compare(s1,s2,new StudentComparator());
+		System.out.println(result);
+		result=Objects.compare(s1, s3, new StudentComparator());
+		System.out.println(result);
+	}
+	
+	static class Student{
+		int sno;
+		Student(int sno){
+			this.sno=sno;
+		}
+	}
+	
+	static class StudentComparator implements Comparator<Student>{
+		@Override
+		public int compare(Student a,Student b){
+			if(a.sno<b.sno)
+				return -1;
+			else if(a.sno==b.sno)
+				return 0;
+			else
+				return 1;
+		}
+	}
+}
+
+
+<< ½ÇÇà °á°ú >>
+0
+-1
+
+
+
+¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡
+
+//2.µ¿µîºñ±³( equals()¿Í deepEquals() )
+
+1)Objects.equals(Object a,Object b)
+(µÑ´Ù nullÀÌ¸é true¸¦ ¹ÝÈ¯ÇÔ)
+
+a			b				Objects.equals(a,b)
+¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡
+not null	not null		a.equals(b)ÀÇ ¸®ÅÏ °ª
+null		not null		false
+not null	null			false
+null		null			true
+
+
+
+
+
+2)Objects.deepEquals(Object a,Object b)
+a						b						Objects.deepEquals(a,b)
+¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡
+not null(not array)		not null(not array)		a.equals(b)ÀÇ ¸®ÅÏ °ª
+not null(array)			not null(array)			Arrays.deepEquals(a,b)ÀÇ ¸®ÅÏ °ª
+not null				null					false
+null					not null				false
+null					null					true
+
+
+import java.util.Arrays;
+import java.util.Objects;
+
+public class Main {
+	public static void main(String[] args){
+		Integer o1=1000;
+		Integer o2=1000;
+		System.out.println(Objects.equals(o1, o2));
+		System.out.println(Objects.equals(o1, null));
+		System.out.println(Objects.equals(null, o2));
+		System.out.println(Objects.equals(null, null));
+		System.out.println(Objects.deepEquals(o1, o2));
+		
+		Integer[] arr1={1,2};
+		Integer[] arr2={1,2};
+		System.out.println(Objects.equals(arr1, arr2));
+		System.out.println(Objects.deepEquals(arr1, arr2));
+		System.out.println(Arrays.deepEquals(arr1, arr2));
+		System.out.println(Objects.deepEquals(null, arr2));
+		System.out.println(Objects.deepEquals(arr1, null));
+		System.out.println(Objects.deepEquals(null, null));		
+	}	
+}
+
+
+<< ½ÇÇà °á°ú >>
+true
+false
+false
+true
+true
+false
+true
+true
+false
+false
+true
+
+
+¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡
+
+//3.ÇØ½ÃÄÚµå »ý¼º( hash(),hashCode() )
+=> Objects.hash(Object...values)´Â ÁÖ¾îÁø ¸Å°³°ªµé·Î ¹è¿­À» »ý¼º & Arrays.hashCode(Object[])È£ÃâÇØ¼­ ÇØ½ÃÄÚµå¸¦ ¾ò°í ÀÌ°ªÀ» ¸®ÅÏ.
+   (¸Å°³°ªÀ¸·Î ÁÖ¾îÁø °ªµéÀ» ÀÌ¿ëÇØ¼­ ÇØ½Ã ÄÚµå¸¦ »ý¼ºÇÏ´Â ¿ªÇÒ)
+=> Å¬·¡½º°¡ hashCode() ¸Þ¼Òµå¸¦ ÀçÁ¤ÀÇ ÇÒ ¶§ ¸®ÅÏ°ªÀ» »ý¼ºÇÏ±â À§ÇØ »ç¿ëÇÏ¸é ÁÁÀ½
+class MyClass{
+	@Override
+	public int hashCode(){
+		return Objects.hash(field1,field2,fild3);
+	}
+}
+
+==>¿¹Á¦
+import java.util.Objects;
+
+public class Main {
+	public static void main(String[] args){
+		Student s1=new Student(1,"È«±æµ¿");
+		Student s2=new Student(1,"È«±æµ¿");
+		
+		System.out.println(s1.hashCode());
+		System.out.println(Objects.hashCode(s2));		
+	}	
+	
+	static class Student{
+		int sno;
+		String name;
+		Student(int sno,String name){
+			this.sno=sno;
+			this.name=name;
+		}
+		@Override
+		public int hashCode(){
+			return Objects.hash(sno,name);
+		}
+	}
+}
+
+
+<< ½ÇÇà °á°ú >>
+54151054
+54151054
+
+
+Objects.hashCode(Object o)´Â o.hashCode()ÀÇ ¸®ÅÏ°ª°ú µ¿ÀÏ. Â÷ÀÌÁ¡Àº ¸Å°³°ªÀÌ nullÀÌ¸é 0À» ¸®ÅÏ.
+
+¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡
+
+//4.³Î ¿©ºÎ Á¶»ç( isNull(), nonNull(), requireNonNull() )
+;isNull(), nonNull() Àº »ý°¢ÇÏ´Â µ¥·Î ¹ÝÈ¯.
+
+requireNonNull()¸Þ¼Òµå´Â 3°¡Áö·Î ¿À¹ö·Îµù µÇ¾îÀÖÀ½
+
+¸®ÅÏÅ¸ÀÔ	¸Þ¼Òµå(¸Å°³º¯¼ö)						¼³¸í
+¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡
+T		requireNonNull(T obj)			not null -> obj
+										null -> NullPointerException
+										
+T		requireNonNull(T obj,			not null -> obj
+		 String message)				null ->NullPointerException(message)
+		 
+T		requireNonNull(T obj,			not null -> obj
+		Supplier<String> msgSupplier)	null ->NullPointerException(msgSupplier.get())
+
+
+import java.util.Objects;
+
+public class Main {
+	public static void main(String[] args){
+		String str1="È«±æµ¿";
+		String str2=null;
+		
+		System.out.println(Objects.requireNonNull(str1));	//str1¹ÝÈ¯ & str1.toString()
+		
+		
+		//¿¹¿Ü¹ß»ý°ú 3°¡Áö ¿À¹ö·Îµù
+		try{
+			String name=Objects.requireNonNull(str2);	
+		} catch(Exception e){
+			System.out.println(e.getMessage());
+		}
+		
+		try{
+			String name=Objects.requireNonNull(str2,"ÀÌ¸§ÀÌ ¾ø½À´Ï´Ù.");
+		}catch(Exception e){
+			System.out.println(e.getMessage());
+		}
+		
+		try{
+			String name=Objects.requireNonNull(str2,()->"ÀÌ¸§ÀÌ ¾ø´Ù´Ï±î¿ä");	
+													//¶÷´Ù½Ä
+		}catch(Exception e){
+			System.out.println(e.getMessage());
+		}				
+	}		
+}
+
+
+¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡
+
+//5.°´Ã¼ ¹®ÀÚ Á¤º¸( toString() )
+Objects.toString() ¸Þ¼Òµå´Â 2°¡Áö·Î ¿À¹ö·Îµù
+
+¸®ÅÏÅ¸ÀÔ		¸Þ¼Òµå(¸Å°³º¯¼ö)					¼³¸í
+¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡
+String		toString(Object o)			not null -> o.toString();
+										null ->"null"
+										
+String		toString(Object o,			not null -> o.toString();
+				String nullDefault)		null->nullDefault
+
+				
+				
+				
+import java.util.Objects;
+
+public class Main {
+	public static void main(String[] args){
+		String str1="zac";
+		String str2=null;
+		
+		System.out.println(Objects.toString(str1));
+		System.out.println(Objects.toString(str2));
+		System.out.println(Objects.toString(str2,"ÀÌ¸§ÀÌ ¾÷½À´Ï´Ù."));	
+	}		
+}
+
+
+<< ½ÇÇà °á°ú >>
+zac
+null
+ÀÌ¸§ÀÌ ¾÷½À´Ï´Ù.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

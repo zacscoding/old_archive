@@ -1,0 +1,343 @@
+-----------CH17-2. 다양한 입력 양식-----------------
+
+//01 로그인 
+
+
+/*	login.jsp	*/
+
+
+
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>서블릿</title>
+</head>
+<body>
+
+<form method="get" action="LoginServlet">
+	<label for="userid">아이디 : </label>
+	<input type="text" name="id" id="userid"><br>
+	
+	<label for="userpwd">암 &nbsp; 호 : </label>
+	<input type="password" name="pwd" id="userpwd"><br>
+	
+	<input type="submit" value="로그인">
+</form>
+
+</body>
+</html>
+
+
+
+/*	LoginServlet.java	*/
+
+
+package unit07;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+@WebServlet("/LoginServlet")
+public class LoginServlet extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+	
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		response.setContentType("text/html; charset = UTF-8");
+		
+		String id = request.getParameter("id");
+		String pwd = request.getParameter("pwd");
+		
+		PrintWriter out = response.getWriter();
+		out.print("<html><body>");
+		out.println("입력한 정보<br>");
+		out.println("아이디 : "+id+"<br>");
+		out.println("비밀번호 : "+pwd+"<br>");
+		out.println("<br><a href='javascript:history.go(-1)'>홈으로</a>");
+		
+		out.close();		
+	}
+}
+
+
+=>HTML5 이후 입력 양식에 대해서 설명을 덧붙이기 위한 <label>태그 추가
+=>label 클릭하면 <input type="text" ..> 부분에 포커스 얻음(커서)
+
+
+
+
+---------------------------------------------------------------------------------------------
+
+//02 여러 줄 입력할 수 있는 글상자와 베타적 선택을 하는 라디오 버튼
+
+<textarea>
+rows : 텍스트 영역의 높이를 지정
+cols : 텍스트 영역의 너비를 지정
+name : 텍스트 영역이 여러 개일 경우 name 속성에 특정 이름을 지정하면 어느 입력 양식에 입력된 데이터인지 구분할 수 있음
+
+<radio>
+베타적 선택(나열된 항목들 중에서 선택할 수 있는 항목이 오로지 하나)
+
+
+/*	radio.jsp	*/
+
+
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>서블릿(radio , textarea)</title>
+</head>
+<body>
+
+<form method="get" action="RadioServlet">
+	<!-- 성별 체크 -->
+	<label for="gender">성별 : </label>
+	<input type="radio" id="gender" name="gender" value="남자" checked>남자
+	<input type="radio" id="gender" name="gender" value="여자">여자 <br><br>
+	
+	<!-- 이메일 수신 여부 -->
+	<label for="chk_mail"> 메일 정보 수신 여부 : </label>
+	<input type="radio" id="chk_mail" name="chk_mail" value="yes" checked>수신
+	<input type="radio" id="chk_mail" name="chk_mail" value="yes">거부 <br><br>
+	
+	<!-- 가입인사 -->
+	<label for="content">간단한 가입 인사를 적어주세요. </label><br>
+	<textarea id="content" name="content" rows="3" cols="35"></textarea><br>
+	
+	<input type="submit" value="전송">
+</form>
+
+
+
+</body>
+</html>
+
+
+
+
+/*	RadioServlet.java	*/
+
+
+import java.io.IOException;
+import java.io.PrintWriter;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+@WebServlet("/RadioServlet")
+public class RadioServlet extends HttpServlet{
+	@Override
+	protected void doGet(HttpServletRequest request,HttpServletResponse response) throws ServletException, IOException{
+		response.setContentType("text/html; charset=utf-8");
+		
+		String gender = request.getParameter("gender");
+		String chk_mail = request.getParameter("chk_mail");
+		String content = request.getParameter("content");
+		
+		PrintWriter out = response.getWriter();
+		
+		out.print("<html><body>");
+		out.println("입력한 정보<hr>");
+		out.println("성별 : <b> " + gender + "</b><br>");
+		out.println("메일 정보 수신 여부 : <b>"+ chk_mail + "</b><br>");
+		out.println("가입 인사 : <br><br>" + content + "<br>");		
+		
+		out.println("<br><br><a href='javascript:history.go(-1)'>홈으로</a>");
+		out.println("</body></html>");
+		
+		out.close();
+	}
+}
+
+---------------------------------------------------------------------------------------------
+
+//03 체크 박스와 request의 getParameterValues()
+
+
+/*	checkbox.jsp	*/
+
+
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>서블릿(체크박스)</title>
+</head>
+<body>
+
+<h2>악세사리</h2>
+관심항목을 선택하세요.<hr>
+
+<form method="get" action="CheckboxServlet">
+	<input type="checkbox" name="item" value="신발">신발
+	<input type="checkbox" name="item" value="가방">가방
+	<input type="checkbox" name="item" value="벨트">벨트<br>
+	<input type="checkbox" name="item" value="모자">모자
+	<input type="checkbox" name="item" value="시계">시계
+	<input type="checkbox" name="item" value="쥬얼리">쥬얼리<br>
+	
+	<input type="submit" value="전송">
+</form>
+
+</body>
+</html>
+
+
+/*	CheckboxServlet.java	*/
+
+
+
+import java.io.IOException;
+import java.io.PrintWriter;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+@WebServlet("/CheckboxServlet")
+public class CheckboxServlet extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		response.setContentType("text/html; charset=utf-8");
+
+		String[] selectedItems = request.getParameterValues("item");
+
+		PrintWriter out = response.getWriter();
+
+		out.print("<html><body>");
+		if (selectedItems == null) {
+			out.println("선택하신 항목이 없습니다.");
+		} else {
+			out.println("선택하신 항목 : <hr>");
+			for (String item : selectedItems)
+				out.println(item+"  ");
+		}
+		
+		out.println("<br><br><a href='javascript:history.go(-1)'>[이전페이지]</a>");
+		out.println("</body></html>");
+
+	}
+}
+
+
+---------------------------------------------------------------------------------------------
+
+//04 목록 상자
+
+
+/*	select.jsp	*/
+
+
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>서블릿(목록 상자)</title>
+</head>
+<body>
+
+<form method="post" action="SelectServlet">
+	<span style="float: left; margin-right: 20px">	
+		<!-- 1개 선택하는 콤보박스 // size는 한번에 보여줄 항목 개수-->
+		<label for="job">직업</label>
+		<select id="job" name="job" size="1">
+			<option value="">선택하세요</option>
+			<option value="학생">학생</option>
+			<option value="컴퓨터/인터넷">컴퓨터/인터넷</option>
+			<option value="언론">언론</option>
+			<option value="공무원">공무원</option>
+			<option value="군인">군인</option>
+			<option value="서비스업">서비스업</option>
+			<option value="교육">교육</option>	
+		</select>
+	</span>	
+		<!-- 다중선택 -->
+		<label for="interest" style="float: left;">관심분야</label>
+		<select id="interest" name="interest" size="5" multiple="multiple">
+			<option value="에스프레소">에스프레소</option>
+			<option value="로스팅">로스팅</option>
+			<option value="생두">생두</option>
+			<option value="원두">원두</option>
+			<option value="핸드드립">핸드드립</option>	
+		</select>
+		<br><br>		
+	<input type="submit" value="전송" style="margin-right:50px">
+</form>
+
+</body>
+</html>
+
+
+
+
+
+/*	SelectServlet.java	*/
+
+import java.io.IOException;
+import java.io.PrintWriter;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+@WebServlet("/SelectServlet")
+public class SelectServlet extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+	
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		request.setCharacterEncoding("UTF-8");
+		response.setContentType("text/html; charset=utf-8");
+		
+		String job = request.getParameter("job");
+		String[] interests = request.getParameterValues("interest");
+		
+		PrintWriter out = response.getWriter();
+		
+		out.println("<html><body>");
+		out.println("선택 내용 <hr>");
+		if(job == null || job.isEmpty())
+			out.println("선택하신 직업이 없습니다.<br>");
+		else
+			out.println("선택하신 직업 : "+ job + "<br>");
+		if(interests == null){
+			out.println("선택하신 관심분야가 없습니다.<br>");
+		}else{
+			out.println("선택하신 관심분야 : ");
+			for(String interest : interests)
+				out.println(interest+" ");
+		}
+			
+		out.println("<br><br><a href='javascript:history.go(-1)'>이전페이지</a>");
+		out.println("</body></html>");
+		
+		out.close();
+	}
+}
+
+
+
+

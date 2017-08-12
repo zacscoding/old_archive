@@ -1,0 +1,507 @@
+-----------Ch.02-----------------------
+
+/*자바에서의 주석 방법*/
+
+
+--주석
+-한줄 주석 : //
+-여러줄 주석 : /* ~~~*/
+-자바 주석 : /** ~~~*/   << 자바 API 주석
+
+
+-자바 실행 과정
+
+소스 -> 컴파일(1차,byte코드 class) 
+-> JVM(import java lang.*;를 기본으로 가지고 있음) ->실행
+
+import java.lang.*; //모르는 클래스에 대해 알려주는 선언문( #include <stdio.h> ) 
+  //자바에서 import는 생략가능 => 코드 작성시 생략 가능
+public class HelloJava { //하나의 클래스 = 하나의 파일이 이상적
+ public static void main(String[] args){ // == int main(void)
+  System.out.println("Hello,Java!!"); //콘솔에서 출력 
+ }
+}
+
+
+*사용자 정의 명칭
+ - 클래스명이나 변수명, 메소드(함수)명 등은 사용자가 직접 정의하여 사용한다.
+ =>형식 : 영문 대,소문자, 숫자, $, _ 사용 가능 (한글은 가능 BUT OS에 따라 에러 날 수 있음 -> 쓰지말기)
+ : 숫자는 첫글자로는 올 수 없다. ( 1HelloJava (x) , HelloJava1 (O) )
+ : 예약어는 사용 불가능
+ : 공백 사용 불가
+
+ - 자바에서의 규칙 (컴파일 에러는 아니고, 암묵적 규칙)
+ : 클래스명은 영문 대문자로  // 메소드나 변수명은 영문 소문자로 (e.g helloJava)
+ : 합성어의 첫글자는 대문자로 (e.g Hello + Java => HelloJava
+ 
+
+*자료형, 변수, 상수
+ - 상수 : 변하지 않는 수 10
+ - 변수 : 변하는 수
+ - 자료형 : 변수의 크기
+
+
+*컴퓨터에서의 기본 단위
+ 처리능력의 기본 단위 : bit
+ 저장의 기본 단위 : byte
+ 처리속도 : hz
+
+
+
+
+
+
+
+
+
+*자바에서의 기본 자료형
+==>초기화 오버플로우 컴파일 에러 // 표현은 C와 같이 로테이션 
+==>Java 는 32비트 application
+
+ 논리형자료형 : 
+  boolean (1byte) // true or false
+=>boolean a=true;  boolean b=false;
+
+ 정수형자료형 :  
+  byte (1byte)    // -128 ~ 127
+  short (2byte)   // -32728 ~ 32727  //이전에 16비트 운영체제에서는 int형이 2byte => 호환성에 의해 생김 //거의안씀
+  char (2byte)  // 0 ~ 65535  //문자자료형
+  int (4byte) : 기본자료형 // int절 이하 연산의 결과는 항상 int이다.
+  long (8byte)   // long a= 10L or 10l; 
+
+ 실수형자료형 : 
+  float(4byte)   // 1byte - 가수부, 3byte - 지수부 // float a=10.23F or 10.23f;
+  double(8byte): 기본 자료형  // 1byte - 가수부, 7byte - 지수부
+
+**기본자료형 (e.g)
+byte a=10;
+byte b=20;
+byte c=a+b;
+==>a+b =30 이라는 연산의 결과를 메모리에 임시 변수로 저장 (그때 int형으로 저장)
+
+
+*기본자료형은 아니지만, 자바에선 기본 자료형으로 사용되는 자료형 
+ 문자열자료형 : String //String name="홍길동";
+ 
+
+
+*형변환 : 정수자료형, 실수자료형끼리는 서로 데이터를 주고 받을 수 있다. 이때, 자료형의 크기때문에 데이타를 주고 받을 때 에러가 발생하는데 이 에러를 해결해주는 방법이 형변환이다.
+
+->자동형변환 : 작은 자료형에서 큰 자료형으로 이동할때
+e.g)
+byte a = 10;
+int b= (int) a;
+==>int b= a; //생략가능
+
+->강제형변환 : 큰 자료형에서 작은 자료형으로 이동할때  => 작은 자료형을 변수명앞에 적어준다.
+  (==명시적 형변환)
+e.g)
+int a=128;
+byte b=(byte) a; //byte b=127 + 1; ==> byte b = -128;
+
+*자료형의 크기 (표현되는 값의 크기)
+ int절 이하 < int < long < float < double
+(long < float 이유 : long 은 92경?개 float은 그 이상 // 소수점)
+
+e.g)
+long a=10L;
+float b=a;
+long c=(long)b;
+
+e.g)
+byte a=10;
+char b=a; ==>에러 ( 음수) ==> char b=(char) a;
+short c =b; ==>char형이 unsigned 이므로 에러  ==>short c = (short) b;
+char d = c; ==> ==>char d = (char) c;
+int e=d;
+
+
+
+*상수(constant) , 리터럴(literal) , 문자열(String) 관련 예제들
+
+package ch02;
+public class Constant {
+	public static void main(String[] args){
+//		final int MAX_SPEED;	//에러 -> 상수는 선언과 동시에 초기화		
+		final int MAX_SPEED = 100;		
+//		MAX_SPEED=200;	// 에러 -> 상수의 값은 변경될 수 없음
+		
+		int year=2014;	//year : 변수 , 2014 :리터럴
+		final int MAX_VALUE=100;	//MAX_VALUE : 상수 , 100 : 리터럴
+	
+		//2,8,16진수를 표현하는 방법
+		int octNum=010;		//8진수 10 
+		int hexNum=0x10;	//16진수 10
+		int binNum=0b10;	//2진수 10
+		
+		
+		//실수형 리터럴의 예
+		double d1=10.;		//double d1=10.0
+		double d2=.10;		//double d2=0.10;
+		
+		float f1=10f;		//float f1=10.0f;
+		float f2=3.14e3f;	//float f2=3140.0f
+		
+		double d3=1e1;		//double d3=10.0;
+		double d4=1e-3;		//double d4=0.001;
+		
+		
+		//문자열 예제
+		String name1=new String("Java");
+		System.out.println(name1);	//Java 출력
+		
+		String name2="Ja"+"va2";
+		System.out.println(name2);	//java2 출력
+		
+		String name3=name1+8.0;
+		System.out.println(name3);	//java8.0 출력
+		//+에서 피연산자 중 어느 한쪽이 String이면 나머지 한 쪽을 먼저 String으로 변환한 다음 두 String을 결합한다.
+		
+		String name4=7+7+"";	//14+"" -> "14"
+		System.out.println(name4);	
+		
+		
+		
+		}
+	}
+
+
+
+
+
+
+
+*/
+
+
+
+
+
+
+/*
+
+
+*printf 의 서식제어 문자들 예제
+
+package ch02;
+
+public class PrintfEx1 {
+	public static void main(String[] args){
+		boolean result=true;
+		
+		
+		byte b=1;
+		short s=2;
+		char c='A';
+		
+		int finger=10;
+		long big=100_100_000_000L;
+		long hex=0xFFFF_FFFF_FFFF_FFFFL;
+		
+		int octNum=010;		//8진수 10 -> 10진수 8
+		int hexNum=0x10;	//16진수 10 -> 10진수 16
+		int binNum=0b10;	//2진수 10 -> 10진수 2
+		
+		System.out.printf("result=%b\n",result);	//true 출력
+		
+		System.out.printf("b=%d\n",b);
+		System.out.printf("s=%d\n",s);
+		System.out.printf("c=%c , %d\n",c,(int)c);	//char형 반드시 형변환 필요. 안하면 에러
+		
+		System.out.printf("finger=[%5d]\n",finger);
+		System.out.printf("bin=%d\n",big);
+		System.out.printf("hex=%#x\n", hex);
+		
+		System.out.printf("octNum=%o\n",octNum);
+		System.out.printf("hexNum=%#x\n",hexNum);
+		System.out.printf("binNum=%s ,%d\n",Integer.toBinaryString(binNum),binNum);	//(i) i값을 2진수로 바꿔 문자열로 저장
+		System.out.printf("10=%s\n",Integer.toBinaryString(10));
+	
+	}
+}
+
+
+
+
+
+
+*/
+
+
+
+
+/*
+
+*printf 예제2
+
+
+package ch02;
+public class PrintfEx2 {
+	public static void main(String[] args){
+		String url="www.codechobo.com";
+		
+		float f1=.10f;	//f1=0.10
+		float f2=1e1f;	//f2=10.0;
+		float f3=3.14e3f;	//f3=3140.0
+		double d=1.23456789;
+				
+		System.out.printf("f1=%f, %e, %g\n",f1,f1,f1);	//e는 지수, g는 간략하게 표현할때 쓰임
+		System.out.printf("f2=%f, %e, %g\n",f2,f2,f2);
+		System.out.printf("f3=%f, %e, %g\n",f3,f3,f3);
+		
+		System.out.printf("d=%f\n",d);
+		System.out.printf("d=%14.10f\n",d);	//14칸확보 & 소수점 10개  우측 정렬
+		
+		System.out.printf("[12345678901234567890]\n");
+		System.out.printf("[%s]\n",url);
+		System.out.printf("[%20s]\n",url);
+		System.out.printf("[%-20s]\n",url);
+		System.out.printf("[%.8s]\n",url);	//왼쪽에서 8글자만 출력
+		
+		
+		
+	}
+
+}
+
+
+
+
+
+
+
+
+
+*/
+
+
+
+
+
+
+
+
+/*
+
+*Scanner 예제
+
+package ch02;
+import java.util.*;
+import java.io.*;
+public class ScannerEx {
+	public static void main(String[] args) throws IOException{
+		Scanner scanner=new Scanner(System.in);
+		System.out.print("문자열1 입력 :");
+		String str1=scanner.nextLine();	//입력받은 내용을 input에 저장
+		System.out.print("문자열2 입력 :");
+		String str2=scanner.nextLine();
+		
+		System.out.print("정수1입력:");
+		String input=scanner.nextLine();
+		int num1=Integer.parseInt(input);	//입력받은 내용을 int타입의 값으로 변환
+		System.out.print("정수2입력:");
+		int num2=scanner.nextInt();
+		
+		System.out.println("문자열 1은"+str1);
+		System.out.println("문자열 2은"+str2);
+		System.out.println("정수1은"+num1);
+		System.out.println("정수2는"+num2+"입니다.");
+
+		
+		
+		
+	}
+
+}
+
+
+
+
+
+
+*/
+
+
+
+
+/*int 형 변수 x,y의 스왑 예제 클래스*/
+
+package ch2;
+
+public class VarEx2 {
+	public static void main(String[] agrs){
+		int x=10;
+		int y=20;
+		System.out.println("---스왑 전---");
+		System.out.println("x : "+x+",y : "+y);
+		int temp=x;
+		x=y; y=temp;
+		System.out.println("---스왑 후 ---");
+		System.out.println("x : "+x+",y : "+y);
+	}
+
+}
+
+/*
+
+자바의 기본 입출력
+
+(intro)
+이동 통로 : 하드웨어 -> 버스    //  소프트웨어 -> 스트림
+키보드,모니터가 가장 표준이 됨 => standard(std) // 표준 입력,출력 스트림 
+==>System이라는 Class가 맡아서 함 
+==>입력은 in , 출력은 out 을 통해 관리가 이루어짐. (요즘에는 마우스도 in)
+
+
+*기본 입출력을 다루는 클래스(입력 : 키보드 // 출력 : 모니터)
+
+ -System
+  입력 : in
+  출력 : out
+
+
+* Java API 보기
+
+1)www.oracle.com
+=>Download => java se
+=>Java SE 8 Documentation or Java APIs
+
+2)한글 API 주소 : www.changki.net
+
+=>시냇물 == 스트림
+
+
+*/
+
+ 
+
+/*
+
+*자바의 기본 출력 예제
+class : OutputTest1.java
+
+import java.lang.*;
+public class OutputTest1 {
+ public static void main(String[] args){
+  System.out.print("안녕하세요"); //줄바꿈 없이 출력
+  System.out.println("자바 수업시간입니다.");//줄바꿈 포함 
+  System.out.println("10시부터 13시까지 열심히 공부하세요"); 
+  
+  byte c=127; //128에러
+  ++c;
+  System.out.println(c);
+  
+  int a=10;
+  int b=20;
+  System.out.println(a+b);
+  System.out.printf("%d+ %d = %d\n",a,b,a+b); //출력 포멧 방식을 내가 지정하겠다.(Since java 1.5) 
+  System.out.println(a+"+"+b+"="+(a+b));  
+ }
+}
+
+*/
+
+
+/*
+
+*Input 예제1
+
+import java.lang.*;
+import java.io.*;
+public class InputTest1 {
+ public static void main(String[] args) throws IOException{
+  System.out.print("아무 키나 누르세요");
+  
+  //키보드로 부터 한글자를 입력받아 처리해 주는 문장
+//  int res=System.in.read(); //에러 -> throws IOException -> import java.io.*;
+  
+//  char res2=(char)System.in.read();
+//  System.out.println("입력하신 키는" + res + "입니다.");
+//  System.out.println("입력하신 키는" + res2+"입니다.");
+  
+ }
+}
+
+
+*/
+
+ 
+
+ 
+
+ 
+
+/*
+
+*input 예제 2
+
+import java.io.*;
+public class InputTest3 {
+ public static void main(String[] agrs) throws IOException{
+  System.out.print("첫번째 수를 입력 하세요 :");
+  int a=System.in.read()-48;
+  //System.in.read() 엔터 버퍼도 입력스트림으로 가져옴 
+  //엔터 : \r \n 
+  
+  System.in.read();
+  System.in.read();
+//  while(System.in.read()!='\n'); //엔터 버퍼 지우기
+  
+  System.out.print("두번째 수를 입력 하세요 :");
+  int b=System.in.read()-48;
+  
+  System.out.printf("%d + %d = %d",a,b,a+b);
+//  System.out.println(a+" + "+b+"="+(a+b)+"입니다.");
+ }
+
+}
+
+
+*/
+
+ 
+
+/*
+
+*입출력 예제 3
+
+
+import java.util.Scanner;
+
+public class InputTest4 {
+ public static void main(String[] args){
+  Scanner in = new Scanner(System.in);
+  //BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+  //+throws IOException 까지
+  //int kor = Integer.parseInt(in.nextLine());
+  
+  System.out.print("당신의 이름은:");
+  String name=in.next(); //문자열로 입력    
+  
+  System.out.print("국어점수를 입력 :");
+  int kor=in.nextInt(); //정수형으로 입력
+  
+  System.out.print("평균을 입력 :");
+  double average=in.nextDouble(); //정수형으로 입력
+    
+  
+  System.out.println(name+"님의 국어점수는"+kor+"점, 평균은"+average+"입니다.");
+ }
+}
+
+
+*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+

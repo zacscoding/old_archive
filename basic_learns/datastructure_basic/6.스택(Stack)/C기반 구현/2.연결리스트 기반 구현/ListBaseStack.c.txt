@@ -1,0 +1,58 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include "ListBaseStack.h"
+
+void StackInit(Stack* pstack){
+	pstack->head = NULL;	
+}
+
+int SIsEmpty(Stack* pstack) {
+	if (pstack->head ==NULL)
+		return TRUE;
+	else
+		return FALSE;
+}
+
+void SPush(Stack* pstack, Data data) {
+	Node* newNode = (Node*)malloc(sizeof(Node));
+	newNode->data = data;	//새 노드에 데이터 저장
+	
+	newNode->next = pstack->head;	//새노드가 최근에 추가된 노드를 가리킴 & head가 NULL이면 newNode->next==NULL
+	pstack->head = newNode;	//포인터 변수 head가 새 노드를 가리키게 함	
+}
+
+Data SPop(Stack* pstack) {
+	if(SIsEmpty(pstack)){	//SPop은 데이터의 존재 유무를 확인한 후 호출하여야하지만, 예외상황이 존재하므로 예외 처리
+		printf("Stack Memory Error!");
+		exit(-1);
+	}
+	
+	Node* rnod = pstack->head;	//삭제할 노드의 주소 값을 임시로 저장
+	Data rdata = rnod->data;	//삭제할 노드의 데이터를 임시로 저장
+	pstack->head = rnod->next;	//삭제할 노드의 다음 노드를 head가 가리킴
+	free(rnod);	//노드삭제
+	return rdata;	//삭제된 노드 반환
+}
+
+Data SPeek(Stack* pstack){
+	if(SIsEmpty(pstack)){	//SPop은 데이터의 존재 유무를 확인한 후 호출하여야하지만, 예외상황이 존재하므로 예외 처리
+		printf("Stack Memory Error!");
+		exit(-1);
+	}
+	
+	return pstack->head->data;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+

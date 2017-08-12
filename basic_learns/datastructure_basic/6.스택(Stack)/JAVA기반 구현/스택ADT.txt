@@ -1,0 +1,16 @@
+public interface Stack<E> {
+	//Stack의 elts 개수 리턴
+	int size();
+	
+	//
+	boolean isEmpty();
+	
+	//stack의 top에 e 삽입
+	void push(E e);
+	
+	//stack의 top의 E 반환 BUT 삭제X
+	E top();
+	
+	//stack의 top elt 반환 & 삭제
+	E pop();
+}
