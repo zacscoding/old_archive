@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+<mapper namespace="com.dogsound.persistence.OracleTestMapper">
+	<!-- insert -->	
+	<insert id="insertOne">
+		INSERT INTO test_table (
+			varchar2_col, boolean_col, short_col, integer_col , 
+			long_col , float_col, double_col, bigdecimal_col, timestamp_col 
+		) values (			
+			#{stringCol}, #{booleanCol}, #{shortCol}, #{integerCol}, 
+			#{longCol}, #{floatCol}, #{doubleCol}, #{bigdecimalCol}, #{timestampCol}
+		)		
+	</insert>
+	
+	<insert id="insertMultiple">	
+		INSERT ALL
+			<foreach collection="list" item="item">		
+			INTO test_table ( 
+				varchar2_col, short_col, integer_col , long_col , 
+				float_col, double_col, bigdecimal_col, timestamp_col 
+			) values (
+				#{item.booleanCol}, #{item.shortCol}, #{item.integerCol}, 
+				#{item.longCol}, #{item.floatCol}, #{item.doubleCol}, #{item.bigdecimalCol}, #{item.timestampCol}			
+			)
+			</foreach>
+		select 1 from DUAL 	
+	</insert>
+	
+	<!-- 
+	<insert id="insertMultiple">	
+		INSERT 
+			INTO
+		test_table(
+			varchar2_col, boolean_col, short_col, integer_col , long_col , 
+			float_col, double_col, bigdecimal_col, timestamp_col
+		) values
+		<foreach collection="list" item="item" separator="," >
+			(
+			#{item.varchar2Col}, #{item.booleanCol}, #{item.shortCol}, #{item.integerCol}, 
+			#{item.longCol}, #{item.floatCol}, #{item.doubleCol}, #{item.bigdecimalCol}, #{item.timestampCol}			
+			)
+		</foreach>	
+	</insert>
+	 -->	
+</mapper>
