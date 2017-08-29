@@ -3,6 +3,7 @@ package com.dogsound.persistence;
 import static org.junit.Assert.assertNotNull;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 import javax.sql.DataSource;
@@ -19,32 +20,36 @@ import org.springframework.test.context.web.WebAppConfiguration;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebAppConfiguration
-@ContextConfiguration(locations={"file:src/main/webapp/WEB-INF/spring/root-context.xml"})
-//@ActiveProfiles("db.oracle.11gExp")
-@ActiveProfiles("db.sqlserver.2008")
+@ContextConfiguration(locations = { "file:src/main/webapp/WEB-INF/spring/root-context.xml" })
+@ActiveProfiles("db.oracle.11gExp")
+// @ActiveProfiles("db.sqlserver.2008")
 public class DataSourceTest {
 	private static final Logger logger = LoggerFactory.getLogger(DataSourceTest.class);
-	
-	@Autowired DataSource dataSource;
-	
+
+	@Autowired
+	DataSource dataSource;
+
 	@Test
-	public void dataSource () {
+	public void dataSource() {
 		assertNotNull(dataSource);
 	}
-	
+
 	@Test
 	public void connection() throws Exception {
 		Connection conn = null;
-		try {			
+		try {
 			conn = dataSource.getConnection();
+			PreparedStatement state = null;
+			
 			assertNotNull(dataSource);
 			logger.info(conn.toString());
-		} catch(SQLException e) {
+		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
 			conn.close();
 		}
 	}
+
 	
 
 }

@@ -1,7 +1,12 @@
 package com.dogsound.controller;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServletResponseWrapper;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,10 +31,24 @@ public class TestController {
 
 	// MAIN VIEW
 	@RequestMapping(value = "/", method = RequestMethod.GET)
-	public String home(Model model) {
+	public String home(HttpServletRequest req, HttpServletResponse res,Model model) throws Exception {
 		model.addAttribute("dbProfile", GeneralConfig.ACTIVE_DB_PROFILE.substring(3));
+		
+		
+//		HttpServletResponseWrapper wrapper = new HttpServletResponseWrapper(res);
+//		StringWriter sw = new StringWriter();
+//		PrintWriter pw = new PrintWriter(sw);		
+//		println("");
+		
 		return "index";
 	}
+	
+	private void println(String ... values) {
+		for(String value : values) {
+			System.out.println(value);
+		}
+	}
+	
 
 	@RequestMapping("redirect_test")
 	public String redirect() {

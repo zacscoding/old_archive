@@ -7,6 +7,7 @@ import java.util.Properties;
 import org.springframework.core.io.ClassPathResource;
 
 public class PropertyUtil {
+	private PropertyUtil(){}
 	/**
 	 * 프로퍼티 값을 로드하는 메소드
 	 * 

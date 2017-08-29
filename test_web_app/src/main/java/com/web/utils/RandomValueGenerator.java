@@ -7,6 +7,8 @@ package com.web.utils;
  * @date 2017. 8. 25.
  */
 public class RandomValueGenerator {
+	private RandomValueGenerator(){}
+	
     private static final String DEFAULT_RATIONAL_FORMAT="00.00";
     private static final int DEFAULT_INTEGER_RANGE = 100;
     private static final int DEFAULT_INTEGER_START = 0;
