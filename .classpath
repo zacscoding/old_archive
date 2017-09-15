@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<classpath>
-	<classpathentry kind="src" path="test_web_server/src/main/java"/>
-	<classpathentry excluding="com/dogsound/config/|com/dogsound/" kind="src" path="test_web_server/src/test/java"/>
-	<classpathentry excluding="config/" kind="src" path="test_web_server/src/test/java/com/dogsound"/>
-	<classpathentry kind="src" path="test_web_server/src/test/java/com/dogsound/config"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="output" path="bin"/>
-</classpath>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd">
+	<context:property-placeholder location="classpath:properties/db.properties" />
+	<!-- oracle 11g exp -->
+	<!-- data source -->		
+	<bean id="oracle11gDataSource"
+		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="net.sf.log4jdbc.sql.jdbcapi.DriverSpy" />
+		<property name="url" value="${db.oracle.11g.url}"></property>
+		<property name="username" value="${db.oracle.11g.username}"></property>
+		<property name="password" value="${db.oracle.11g.password}"></property>
+	</bean>
+	<!-- sqlSessionFactory -->
+	<bean id="oracle11gSqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="oracle11gDataSource" />
+		<property name="configLocation" value="classpath:/mybatis-config.xml"></property>
+		<property name="mapperLocations" value="classpath:mappers/**/*Mapper.xml"></property>
+	</bean>
+	<!-- datasource scanner -->
+	<bean id="oracle11gScanner" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage" value="com.web.mapper.oracle.v11g" />
+		<property name="sqlSessionFactoryBeanName" value="oracle11gSqlSessionFactory" />
+	</bean>
+	<!-- /. oracle 11g exp -->
+	
+	
+	
+	
+	
+
+</beans>
