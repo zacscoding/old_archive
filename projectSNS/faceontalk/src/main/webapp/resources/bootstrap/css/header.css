@@ -1,0 +1,16 @@
+@CHARSET "UTF-8";
+
+.navbar-right{
+	margin-right : 10%;
+}
+
+.topMenu{
+		/*	위,오른쪽,아래,왼쪽 padding:5px;*/
+		/*	padding: 5px 5px 5px 5px;	*/
+		padding: auto;
+		margin : auto;
+				
+}
+				
+	
+		

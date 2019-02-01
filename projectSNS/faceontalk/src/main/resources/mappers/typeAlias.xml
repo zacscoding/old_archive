@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="com.faceontalk.mapper.TypeAliasMapper">
+
+	<!-- member type alias -->
+	<resultMap type="com.faceontalk.mapper.MemberMapper" id="memberResultMap">
+		<result property="userNo" column="user_no"/>
+		<result property="userId" column="user_id"/>
+		<result property="userEmail" column="user_email"/>
+		<result property="profilePic" column="profile_pic"/>
+	</resultMap>
+	
+	<!-- feed type alias -->
+	
+	<!-- reply type alias -->	
+
+</mapper>

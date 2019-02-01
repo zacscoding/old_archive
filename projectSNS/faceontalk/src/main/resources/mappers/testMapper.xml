@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="com.faceontalk.mapper.TestMapper">
+
+	<insert id="test1">
+		insert into test values(#{num},#{ch})
+	</insert>
+	
+	<insert id="test2">
+		insert into test 
+		(
+			num
+			<if test="ch!=null">
+				,ch
+			</if>
+		)
+		values
+		(
+			#{num}
+			<if test="ch!=null">
+				, #{memo}
+			</if>
+		)		
+	</insert>
+	
+	<insert id="test3">
+		insert into test values(#{num},#{ch,jdbcType=VARCHAR})			
+	</insert>
+
+</mapper>
